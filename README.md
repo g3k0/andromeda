@@ -229,12 +229,37 @@ pnpm dev
 Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address and add the
 authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
 
-### Deployment
+### Deployment (Vercel)
 
-The web app is deployed on Vercel. Use `pnpm build` as the build command.
-Point the project root to `apps/web` (or use the root with the workspace
-scripts) and configure the `NEXT_PUBLIC_*` environment variables in the Vercel
-dashboard.
+The web app is deployed on [Vercel](https://vercel.com/). Configure the project
+as follows in **Settings → General** and **Settings → Build & Deployment**:
+
+| Setting | Value |
+| --- | --- |
+| **Root Directory** | `apps/web` |
+| **Framework Preset** | Next.js |
+| **Include source files outside of Root Directory** | Enabled (required for the pnpm monorepo) |
+| **Install Command** | Override **off** (uses `apps/web/vercel.json`) |
+| **Build Command** | Override **off** (uses `apps/web/vercel.json`) |
+
+The [`apps/web/vercel.json`](apps/web/vercel.json) file runs `pnpm install` from
+the monorepo root and `next build` inside `apps/web`:
+
+```json
+{
+  "installCommand": "cd ../.. && corepack enable && pnpm install --frozen-lockfile",
+  "buildCommand": "next build"
+}
+```
+
+If Vercel runs `npm i` instead of `pnpm install`, the Root Directory is wrong
+or the Install Command override is enabled in the dashboard — both cause the
+*"No Next.js version detected"* error, because `next` lives in `apps/web`, not
+at the repository root.
+
+Add the `NEXT_PUBLIC_*` environment variables from `apps/web/.env.example` in
+**Settings → Environment Variables** (Production for `main`, Preview for
+`develop` and pull requests).
 
 ## Roadmap
 
