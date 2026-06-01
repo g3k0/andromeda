@@ -231,9 +231,11 @@ authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
 
 ### Deployment (Vercel)
 
-The web app is deployed on [Vercel](https://vercel.com/).
+The web app is deployed on [Vercel](https://vercel.com/). The Next.js app in
+`apps/web` is self-contained (it does not import other workspace packages), so
+Vercel installs dependencies directly inside `apps/web` with npm.
 
-#### Recommended project settings
+#### Project settings
 
 In **Settings → General** and **Settings → Build & Deployment**:
 
@@ -241,26 +243,23 @@ In **Settings → General** and **Settings → Build & Deployment**:
 | --- | --- |
 | **Root Directory** | `apps/web` |
 | **Framework Preset** | Next.js |
-| **Include source files outside of Root Directory** | Enabled |
-| **Install Command** | Override **off** |
-| **Build Command** | Override **off** |
+| **Install Command** | Override **off** (uses [`apps/web/vercel.json`](apps/web/vercel.json)) |
+| **Build Command** | Override **off** (uses [`apps/web/vercel.json`](apps/web/vercel.json)) |
 
-With Root Directory set to `apps/web`, Vercel reads
-[`apps/web/vercel.json`](apps/web/vercel.json) and runs `pnpm install` from the
-monorepo root.
+[`apps/web/vercel.json`](apps/web/vercel.json) runs:
 
-#### Fallback (repository root as Root Directory)
+```bash
+npm install --legacy-peer-deps
+next build
+```
 
-If the Root Directory is left empty and Vercel runs `npm i` at the repository
-root, the root [`vercel.json`](vercel.json) and a root `postinstall` script
-install the web app dependencies. A root `devDependencies.next` entry lets
-Vercel detect the Next.js version.
+**Include source files outside of Root Directory** is not required for deploy
+(the web app has no workspace dependencies), but enabling it does not hurt.
 
-If deploys still fail, open **Settings → Build & Deployment** and either:
+If deploys fail with *No Next.js version detected*, check that:
 
-- turn **off** the Install Command and Build Command overrides, or
-- set Install Command to `npm install` and Build Command to
-  `npm run build --prefix apps/web`
+- **Root Directory** is exactly `apps/web`
+- Install Command and Build Command overrides are **disabled** in the dashboard
 
 Add the `NEXT_PUBLIC_*` environment variables from `apps/web/.env.example` in
 **Settings → Environment Variables** (Production for `main`, Preview for
