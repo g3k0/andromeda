@@ -182,19 +182,39 @@ andromeda/
 pnpm install
 ```
 
-### Smart contracts
+### Build
+
+All commands below are run from the repository root.
+
+**Web app (Next.js)**
 
 ```bash
-# Compile and run the test suite
-pnpm contracts:build
-pnpm contracts:test
-
-# Deploy to Polygon Amoy testnet (configure packages/contracts/.env first)
-pnpm contracts:deploy:amoy
+pnpm build    # production build
+pnpm start    # run the production server (after build)
+pnpm lint     # ESLint
 ```
 
-Copy `packages/contracts/.env.example` to `packages/contracts/.env` and fill in
-your RPC URL, deployer private key, and Polygonscan API key before deploying.
+**Smart contracts (Hardhat)**
+
+```bash
+pnpm contracts:build          # compile Solidity contracts
+pnpm contracts:test           # compile and run the test suite
+pnpm contracts:deploy:amoy    # deploy to Polygon Amoy testnet
+```
+
+Equivalent commands scoped to a single package:
+
+```bash
+pnpm --filter @andromeda/web build
+pnpm --filter @andromeda/contracts build
+pnpm --filter @andromeda/contracts deploy:polygon   # deploy to Polygon mainnet
+```
+
+### Smart contracts
+
+See [Build](#build) for compile, test, and deploy commands. Before deploying,
+copy `packages/contracts/.env.example` to `packages/contracts/.env` and fill in
+your RPC URL, deployer private key, and Polygonscan API key.
 
 ### Web app
 
@@ -211,9 +231,10 @@ authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
 
 ### Deployment
 
-The web app is deployed on Vercel. Point the project root to `apps/web` (or use
-the root with the `dev`/`build` workspace scripts) and configure the
-`NEXT_PUBLIC_*` environment variables in the Vercel dashboard.
+The web app is deployed on Vercel. Use `pnpm build` as the build command.
+Point the project root to `apps/web` (or use the root with the workspace
+scripts) and configure the `NEXT_PUBLIC_*` environment variables in the Vercel
+dashboard.
 
 ## Roadmap
 
