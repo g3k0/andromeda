@@ -39,6 +39,106 @@ gain a genuine, ownable, and collectible edition of the texts they love.
 4. **Buy, Read & Collect** — Readers purchase copies, read them, and keep them
    as part of their collection.
 
+## Content & NFT Flow
+
+Andromeda separates **where the text lives** (off-chain, on IPFS) from
+**what is recorded on-chain** (ownership and author certification). Third-party
+marketplaces such as [OpenSea](https://opensea.io/) are used for discovery and
+secondary trading — not for the primary minting flow.
+
+### Roles of each layer
+
+| Layer | Responsibility |
+| --- | --- |
+| **IPFS** | Stores the literary work and token metadata (title, author, cover, edition attributes). |
+| **Andromeda** (smart contract + web app) | Author certification, limited-edition minting, primary sales, reading access, and platform administration. |
+| **OpenSea** (optional) | Indexes ERC-721 tokens on Polygon and enables secondary-market trading between collectors. |
+
+### End-to-end flow
+
+```
+Author uploads work + metadata
+        │
+        ▼
+   IPFS (text + JSON metadata)
+        │
+        ▼
+registerWork(metadataURI, price, maxCopies)   ← author certifies the work on-chain
+        │
+        ▼
+Readers buy via Andromeda: mintCopy(workId)   ← one NFT per copy (e.g. 100 editions)
+        │
+        ├──► Andromeda web app — read, collect, manage library
+        │
+        └──► OpenSea — list and resell owned copies (secondary market)
+```
+
+### What goes on IPFS
+
+Two distinct assets are stored off-chain:
+
+1. **Work content** — the text of the literary work (or an encrypted file
+   accessible only to token holders).
+2. **Token metadata** — a JSON document compatible with the
+   [OpenSea metadata standard](https://docs.opensea.io/docs/metadata-standards),
+   referenced by the on-chain `metadataURI`.
+
+Example metadata for a numbered edition:
+
+```json
+{
+  "name": "Short Story — Copy #7/100",
+  "description": "Author-certified edition.",
+  "image": "ipfs://…cover…",
+  "external_url": "https://andromeda.example/read/…",
+  "attributes": [
+    { "trait_type": "Author", "value": "Jane Doe" },
+    { "trait_type": "Copy", "value": "7" },
+    { "trait_type": "Edition", "value": "100" },
+    { "trait_type": "Content", "value": "ipfs://…text…" }
+  ]
+}
+```
+
+OpenSea reads this JSON to display the token name, image, traits, and links.
+Andromeda uses the content pointer to grant read access to owners.
+
+### Why mint on Andromeda, not on OpenSea
+
+Creator tools on OpenSea (e.g. OpenSea Studio) can mint simple collections,
+but they do not provide the publishing model Andromeda needs:
+
+- on-chain **author certification** (`registerWork` sets the caller as author);
+- **limited editions** with an on-chain copy counter (`maxCopies`, `minted`);
+- **direct payment to the author** on each primary sale;
+- integrated **reading and collection** experience on the Andromeda platform.
+
+Minting happens through the `AndromedaWorks` ERC-721 contract on Polygon.
+OpenSea is used **after** minting, when collectors want visibility or wish to
+resell a copy they already own.
+
+### Numbered editions (current state & next step)
+
+The `AndromedaWorks` contract supports a maximum number of copies per work
+(e.g. `maxCopies = 100`). Today, every minted copy shares the same
+`metadataURI` registered with the work. To display distinct edition numbers
+on OpenSea and in wallets (Copy #1/100, #2/100, …), the contract will be
+extended so each token receives metadata that includes its copy number — either
+as a dedicated IPFS file per token or via a dynamic metadata endpoint keyed by
+`tokenId`.
+
+### What Andromeda owns vs. what OpenSea provides
+
+| Capability | Andromeda | OpenSea |
+| --- | :---: | :---: |
+| IPFS upload & pinning workflow | ✓ | |
+| Author certification | ✓ | |
+| Primary sale (mint + pay author) | ✓ | |
+| Read access for token holders | ✓ | |
+| Platform admin & curation | ✓ | |
+| Secondary-market listing & trading | | ✓ |
+| Discovery for NFT collectors | | ✓ |
+
 ## Tech Stack
 
 - **Frontend & Admin** — [Next.js](https://nextjs.org/) (App Router) + TypeScript
@@ -54,6 +154,8 @@ gain a genuine, ownable, and collectible edition of the texts they love.
   [OpenZeppelin](https://www.openzeppelin.com/contracts) (ERC-721), developed and
   tested with [Hardhat](https://hardhat.org/).
 - **Monorepo** — [pnpm](https://pnpm.io/) workspaces.
+- **Decentralized storage** — [IPFS](https://ipfs.tech/) for work content and
+  token metadata; pinning via a provider such as Pinata or web3.storage.
 
 ## Project Structure
 
@@ -116,10 +218,12 @@ the root with the `dev`/`build` workspace scripts) and configure the
 ## Roadmap
 
 - [x] Core smart contracts for minting and certifying works
+- [ ] IPFS upload workflow for work content and metadata
 - [ ] Author publishing flow
+- [ ] Per-copy metadata for numbered editions
 - [ ] Reader marketplace and library
 - [ ] In-app reading experience
-- [ ] Collection and resale support
+- [ ] OpenSea integration for secondary-market visibility
 
 ## Contributing
 
