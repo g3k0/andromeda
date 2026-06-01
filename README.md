@@ -39,14 +39,83 @@ gain a genuine, ownable, and collectible edition of the texts they love.
 4. **Buy, Read & Collect** — Readers purchase copies, read them, and keep them
    as part of their collection.
 
+## Tech Stack
+
+- **Frontend & Admin** — [Next.js](https://nextjs.org/) (App Router) + TypeScript
+  + [Tailwind CSS](https://tailwindcss.com/), deployed on
+  [Vercel](https://vercel.com/). A single app serves both the public reader
+  experience and a wallet-gated `/admin` area.
+- **Web3 client** — [wagmi](https://wagmi.sh/) + [viem](https://viem.sh/) with
+  MetaMask / WalletConnect connectors.
+- **Blockchain** — [Polygon PoS](https://polygon.technology/) (mainnet) and
+  Polygon Amoy (testnet), chosen for low transaction fees and a mature NFT
+  ecosystem.
+- **Smart contracts** — [Solidity](https://soliditylang.org/) +
+  [OpenZeppelin](https://www.openzeppelin.com/contracts) (ERC-721), developed and
+  tested with [Hardhat](https://hardhat.org/).
+- **Monorepo** — [pnpm](https://pnpm.io/) workspaces.
+
+## Project Structure
+
+```
+andromeda/
+├── apps/
+│   └── web/          # Next.js app (public site + protected /admin)
+├── packages/
+│   └── contracts/    # Hardhat project with the ERC-721 contract
+├── package.json      # workspace root scripts
+└── pnpm-workspace.yaml
+```
+
 ## Getting Started
 
-> The project is in its early stages. Setup and usage instructions will be added
-> as the platform takes shape.
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) >= 20
+- [pnpm](https://pnpm.io/) >= 10
+
+### Installation
+
+```bash
+pnpm install
+```
+
+### Smart contracts
+
+```bash
+# Compile and run the test suite
+pnpm contracts:build
+pnpm contracts:test
+
+# Deploy to Polygon Amoy testnet (configure packages/contracts/.env first)
+pnpm contracts:deploy:amoy
+```
+
+Copy `packages/contracts/.env.example` to `packages/contracts/.env` and fill in
+your RPC URL, deployer private key, and Polygonscan API key before deploying.
+
+### Web app
+
+```bash
+# Copy and configure environment variables
+cp apps/web/.env.example apps/web/.env.local
+
+# Start the dev server (http://localhost:3000)
+pnpm dev
+```
+
+Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address and add the
+authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
+
+### Deployment
+
+The web app is deployed on Vercel. Point the project root to `apps/web` (or use
+the root with the `dev`/`build` workspace scripts) and configure the
+`NEXT_PUBLIC_*` environment variables in the Vercel dashboard.
 
 ## Roadmap
 
-- [ ] Core smart contracts for minting and certifying works
+- [x] Core smart contracts for minting and certifying works
 - [ ] Author publishing flow
 - [ ] Reader marketplace and library
 - [ ] In-app reading experience
