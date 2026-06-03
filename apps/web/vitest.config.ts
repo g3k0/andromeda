@@ -1,16 +1,26 @@
 import path from "node:path";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  plugins: [react()],
   test: {
     environment: "node",
-    include: ["src/**/*.test.ts"],
+    setupFiles: ["./vitest.setup.ts"],
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     coverage: {
       provider: "v8",
-      include: ["src/lib/authors/**/*.ts", "src/lib/auth/**/*.ts"],
+      include: [
+        "src/lib/authors/**/*.ts",
+        "src/lib/auth/**/*.ts",
+        "src/components/author/**/*.ts",
+        "src/components/author/**/*.tsx",
+      ],
       exclude: [
-        "src/lib/**/*.test.ts",
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
         "src/lib/authors/types.ts",
+        "src/components/author/constants.ts",
       ],
       thresholds: {
         lines: 80,
