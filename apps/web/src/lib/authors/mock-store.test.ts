@@ -13,6 +13,10 @@ import {
   upsertAuthor,
 } from "./mock-store";
 import { MemoryStorage, resetAuthorStoreStorage, setAuthorStoreStorage } from "./storage";
+import {
+  AUTHORS_RECORD_STORAGE_KEY,
+  walletPreferencesStorageKey,
+} from "./storage-keys";
 
 const VALID = "0xabcdef0123456789abcdef0123456789abcdef01";
 const OTHER = "0x1111111111111111111111111111111111111111";
@@ -42,7 +46,7 @@ describe("author mock store", () => {
 
     it("does not auto-generate profiles on read", () => {
       expect(getAuthorByAddress(VALID)).toBeNull();
-      expect(storage.getItem("andromeda:authors")).toBeNull();
+      expect(storage.getItem(AUTHORS_RECORD_STORAGE_KEY)).toBeNull();
     });
   });
 
@@ -157,25 +161,25 @@ describe("author mock store", () => {
 
   describe("storage edge cases", () => {
     it("returns empty record when authors JSON is corrupt", () => {
-      storage.setItem("andromeda:authors", "{not json");
+      storage.setItem(AUTHORS_RECORD_STORAGE_KEY, "{not json");
       expect(getAuthorByAddress(VALID)).toBeNull();
     });
 
     it("returns null when preferences JSON is corrupt", () => {
-      storage.setItem(`andromeda:wallet-prefs:${VALID}`, "{broken");
+      storage.setItem(walletPreferencesStorageKey(VALID), "{broken");
       expect(getWalletPreferences(VALID)).toBeNull();
     });
 
     it("returns null when preferences JSON has wrong shape", () => {
       storage.setItem(
-        `andromeda:wallet-prefs:${VALID}`,
+        walletPreferencesStorageKey(VALID),
         JSON.stringify({ other: true }),
       );
       expect(getWalletPreferences(VALID)).toBeNull();
     });
 
     it("returns empty record when authors JSON is an array", () => {
-      storage.setItem("andromeda:authors", JSON.stringify([]));
+      storage.setItem(AUTHORS_RECORD_STORAGE_KEY, JSON.stringify([]));
       expect(hasAuthorProfile(VALID)).toBe(false);
     });
   });

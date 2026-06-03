@@ -251,6 +251,11 @@ apps/web/src/
 
 **Definition of done:** documentazione allineata a ruoli e flusso onboarding.
 
+**Implemented**
+
+- README: [Author pages (mock implementation)](../../README.md#author-pages-mock-implementation)
+- Code reference: `apps/web/src/lib/authors/mock-limitations.ts`, `storage-keys.ts` (unit tested)
+
 ---
 
 ## Step futuro (non in questi commit) — Database

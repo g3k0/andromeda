@@ -5,17 +5,15 @@ import {
   InvalidAddressError,
 } from "./errors";
 import { getAuthorStoreStorage } from "./storage";
+import {
+  AUTHORS_RECORD_STORAGE_KEY,
+  walletPreferencesStorageKey,
+} from "./storage-keys";
 import type {
   AuthorProfile,
   CreateAuthorProfileInput,
   WalletPreferences,
 } from "./types";
-
-const AUTHORS_STORAGE_KEY = "andromeda:authors";
-
-function walletPreferencesKey(address: string): string {
-  return `andromeda:wallet-prefs:${address}`;
-}
 
 function requireNormalizedAddress(address: string): string {
   const normalized = normalizeAddress(address);
@@ -27,7 +25,7 @@ function requireNormalizedAddress(address: string): string {
 
 function readAuthorsRecord(): Record<string, AuthorProfile> {
   const storage = getAuthorStoreStorage();
-  const raw = storage.getItem(AUTHORS_STORAGE_KEY);
+  const raw = storage.getItem(AUTHORS_RECORD_STORAGE_KEY);
   if (!raw) {
     return {};
   }
@@ -44,7 +42,7 @@ function readAuthorsRecord(): Record<string, AuthorProfile> {
 
 function writeAuthorsRecord(record: Record<string, AuthorProfile>): void {
   const storage = getAuthorStoreStorage();
-  storage.setItem(AUTHORS_STORAGE_KEY, JSON.stringify(record));
+  storage.setItem(AUTHORS_RECORD_STORAGE_KEY, JSON.stringify(record));
 }
 
 export function getAuthorByAddress(address: string): AuthorProfile | null {
@@ -108,7 +106,7 @@ export function getWalletPreferences(address: string): WalletPreferences | null 
   }
 
   const storage = getAuthorStoreStorage();
-  const raw = storage.getItem(walletPreferencesKey(normalized));
+  const raw = storage.getItem(walletPreferencesStorageKey(normalized));
   if (!raw) {
     return null;
   }
@@ -136,7 +134,7 @@ export function setWalletPreferences(
   const normalized = requireNormalizedAddress(address);
   const storage = getAuthorStoreStorage();
   storage.setItem(
-    walletPreferencesKey(normalized),
+    walletPreferencesStorageKey(normalized),
     JSON.stringify(preferences),
   );
   return preferences;
