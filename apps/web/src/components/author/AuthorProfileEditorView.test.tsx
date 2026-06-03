@@ -74,6 +74,32 @@ describe("AuthorProfileEditorView", () => {
     );
   });
 
+  it("renders the author name field directly below the profile image", () => {
+    render(
+      <AuthorProfileEditorView
+        profile={profile}
+        form={createEditorFormState(profile)}
+        isAdminEditingOther={false}
+        onDisplayNameChange={vi.fn()}
+        onAvatarFileSelect={vi.fn()}
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    const image = screen.getByRole("img", { name: "Jane Doe" });
+    const nameInput = screen.getByLabelText("Author name");
+    const fileInput = screen.getByLabelText("Profile image");
+
+    expect(
+      image.compareDocumentPosition(nameInput) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      nameInput.compareDocumentPosition(fileInput) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
   it("forwards display name and file changes", () => {
     const onDisplayNameChange = vi.fn();
     const onAvatarFileSelect = vi.fn();
@@ -90,7 +116,7 @@ describe("AuthorProfileEditorView", () => {
       />,
     );
 
-    fireEvent.change(screen.getByLabelText("Display name"), {
+    fireEvent.change(screen.getByLabelText("Author name"), {
       target: { value: "New Name" },
     });
     const file = new File(["avatar"], "avatar.png", { type: "image/png" });

@@ -40,18 +40,22 @@ export function AuthorProfileEditorView({
         alt={form.displayName || profile.displayName}
       />
 
-      <div className="w-full space-y-4">
-        <label className="block space-y-1 text-left">
-          <span className="text-sm text-white/60">Display name</span>
-          <input
-            type="text"
-            value={form.displayName}
-            maxLength={80}
-            onChange={(event) => onDisplayNameChange(event.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-andromeda-light/50"
-          />
-        </label>
+      <label
+        htmlFor="author-display-name"
+        className="w-full space-y-1 text-left"
+      >
+        <span className="text-sm text-white/60">Author name</span>
+        <input
+          id="author-display-name"
+          type="text"
+          value={form.displayName}
+          maxLength={80}
+          onChange={(event) => onDisplayNameChange(event.target.value)}
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-andromeda-light/50"
+        />
+      </label>
 
+      <div className="w-full space-y-4">
         <label className="block space-y-1 text-left">
           <span className="text-sm text-white/60">Profile image</span>
           <input
