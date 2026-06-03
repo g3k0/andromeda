@@ -36,6 +36,18 @@ export default function HomePage() {
           </div>
         ))}
       </section>
+
+      <section className="border-t border-white/10 pt-8">
+        <blockquote className="max-w-2xl space-y-3">
+          <p className="text-lg italic text-white/80">
+            — non si fa l&apos;arte per sentirsi dare del poeta, ma perché la
+            si ama, semplicemente
+          </p>
+          <footer className="text-sm not-italic text-white/50">
+            (Alda Merini)
+          </footer>
+        </blockquote>
+      </section>
     </div>
   );
 }
