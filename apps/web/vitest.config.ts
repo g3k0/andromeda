@@ -15,12 +15,19 @@ export default defineConfig({
         "src/lib/auth/**/*.ts",
         "src/components/author/**/*.ts",
         "src/components/author/**/*.tsx",
+        "src/components/auth/**/*.ts",
+        "src/components/auth/**/*.tsx",
       ],
       exclude: [
         "src/**/*.test.ts",
         "src/**/*.test.tsx",
         "src/lib/authors/types.ts",
         "src/components/author/constants.ts",
+        "src/components/author/AuthorProfileEditor.tsx",
+        "src/components/author/AuthorPageContent.tsx",
+        "src/components/author/AuthorPageClient.tsx",
+        "src/components/auth/AuthorOnboarding.tsx",
+        "src/components/auth/AuthorOnboardingDialog.tsx",
       ],
       thresholds: {
         lines: 80,
@@ -31,6 +38,7 @@ export default defineConfig({
     },
   },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
