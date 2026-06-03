@@ -2,18 +2,13 @@
 
 import type { ReactNode } from "react";
 import { useAccount } from "wagmi";
+import { isAdminAddress } from "@/lib/auth/admin";
 import { WalletButton } from "./WalletButton";
-
-const adminAddresses = (process.env.NEXT_PUBLIC_ADMIN_ADDRESSES ?? "")
-  .split(",")
-  .map((a) => a.trim().toLowerCase())
-  .filter(Boolean);
 
 export function AdminGate({ children }: { children: ReactNode }) {
   const { address, isConnected } = useAccount();
 
-  const isAdmin =
-    isConnected && !!address && adminAddresses.includes(address.toLowerCase());
+  const isAdmin = isConnected && isAdminAddress(address);
 
   if (!isConnected) {
     return (
