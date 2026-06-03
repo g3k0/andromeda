@@ -192,6 +192,8 @@ All commands below are run from the repository root.
 pnpm build    # production build
 pnpm start    # run the production server (after build)
 pnpm lint     # ESLint
+pnpm web:test # unit tests (Vitest)
+pnpm web:test:coverage   # unit tests with coverage report (80% threshold on covered web modules)
 ```
 
 **Smart contracts (Hardhat)**
@@ -206,6 +208,8 @@ Equivalent commands scoped to a single package:
 
 ```bash
 pnpm --filter @andromeda/web build
+pnpm --filter @andromeda/web test
+pnpm --filter @andromeda/web test:coverage
 pnpm --filter @andromeda/contracts build
 pnpm --filter @andromeda/contracts deploy:polygon   # deploy to Polygon mainnet
 ```
@@ -228,6 +232,71 @@ pnpm dev
 
 Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address and add the
 authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
+
+#### Unit tests
+
+Web unit tests use [Vitest](https://vitest.dev/) and live under `apps/web/src/**/*.test.ts`.
+Run them from the repository root (there is no root-level `pnpm test` script):
+
+```bash
+pnpm web:test              # run once
+pnpm web:test:coverage     # run with coverage (enforces 80% on covered author/auth modules)
+```
+
+From `apps/web` you can also run:
+
+```bash
+cd apps/web
+pnpm test                  # run once
+pnpm test:watch            # re-run on file changes
+pnpm test:coverage         # run with coverage
+```
+
+Smart contract tests are separate: `pnpm contracts:test` (Hardhat).
+
+#### Continuous integration
+
+Pull requests and pushes to `develop` and `main` run the [CI workflow](.github/workflows/ci.yml)
+(GitHub Actions). It currently runs web unit tests with coverage. More steps (lint, build,
+contract tests, and so on) can be added to that workflow over time.
+
+#### Author pages (mock implementation)
+
+Author profiles and onboarding are implemented in the web app with a **browser-only mock**
+(`apps/web/src/lib/authors/mock-store.ts`). There is no database or API backend for profiles yet.
+
+**Routes**
+
+| Route | Purpose |
+| --- | --- |
+| `/author` | Resolves the connected wallet to `/author/[address]`, onboarding, or reader mode |
+| `/author/[address]` | Public profile view; edit mode for the profile owner or platform admin |
+
+**User roles** (cumulative capabilities)
+
+| Role | How it is determined |
+| --- | --- |
+| **Reader** | Connected wallet without an author profile, or the user declined page creation |
+| **Author** | Connected wallet with a created author profile |
+| **Admin** | Wallet listed in `NEXT_PUBLIC_ADMIN_ADDRESSES` (full reader + author + edit any profile + `/admin`) |
+
+On first connect, users without a profile are prompted to create an author page. If they decline,
+`declinedAuthorPage` is stored in `localStorage` and they remain in reader mode.
+
+**Mock limitations**
+
+- Profiles and preferences persist in `localStorage` only (keys in `storage-keys.ts`).
+- Data does not sync across browsers or devices; clearing site data removes it.
+- Avatar uploads are stored as data URLs in the mock store, not on IPFS or object storage.
+- Programmatic reference: `mock-limitations.ts` (also covered by unit tests).
+
+**Planned database step** (not implemented)
+
+- Tables: `authors`, `wallet_preferences`
+- API: `GET /authors/:address`, `POST /authors`, `PATCH /authors/:address` (owner signature or server-verified admin)
+- Replace `mock-store.ts`; keep `roles.ts`, `lib/auth/admin.ts`, and UI components
+
+See [documentation/plans/author-page.md](documentation/plans/author-page.md) for the full implementation plan.
 
 ### Deployment (Vercel)
 
