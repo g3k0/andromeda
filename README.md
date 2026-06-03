@@ -192,6 +192,8 @@ All commands below are run from the repository root.
 pnpm build    # production build
 pnpm start    # run the production server (after build)
 pnpm lint     # ESLint
+pnpm web:test # unit tests (Vitest)
+pnpm web:test:coverage   # unit tests with coverage report (80% threshold on src/lib/authors)
 ```
 
 **Smart contracts (Hardhat)**
@@ -206,6 +208,8 @@ Equivalent commands scoped to a single package:
 
 ```bash
 pnpm --filter @andromeda/web build
+pnpm --filter @andromeda/web test
+pnpm --filter @andromeda/web test:coverage
 pnpm --filter @andromeda/contracts build
 pnpm --filter @andromeda/contracts deploy:polygon   # deploy to Polygon mainnet
 ```
@@ -228,6 +232,27 @@ pnpm dev
 
 Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address and add the
 authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
+
+#### Unit tests
+
+Web unit tests use [Vitest](https://vitest.dev/) and live under `apps/web/src/**/*.test.ts`.
+Run them from the repository root (there is no root-level `pnpm test` script):
+
+```bash
+pnpm web:test              # run once
+pnpm web:test:coverage     # run with coverage (enforces 80% on apps/web/src/lib/authors)
+```
+
+From `apps/web` you can also run:
+
+```bash
+cd apps/web
+pnpm test                  # run once
+pnpm test:watch            # re-run on file changes
+pnpm test:coverage         # run with coverage
+```
+
+Smart contract tests are separate: `pnpm contracts:test` (Hardhat).
 
 ### Deployment (Vercel)
 
