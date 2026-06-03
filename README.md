@@ -254,6 +254,12 @@ pnpm test:coverage         # run with coverage
 
 Smart contract tests are separate: `pnpm contracts:test` (Hardhat).
 
+#### Continuous integration
+
+Pull requests and pushes to `develop` and `main` run the [CI workflow](.github/workflows/ci.yml)
+(GitHub Actions). It currently runs web unit tests with coverage. More steps (lint, build,
+contract tests, and so on) can be added to that workflow over time.
+
 #### Author pages (mock implementation)
 
 Author profiles and onboarding are implemented in the web app with a **browser-only mock**
