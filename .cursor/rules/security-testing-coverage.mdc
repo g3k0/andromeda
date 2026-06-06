@@ -1,0 +1,37 @@
+---
+description: Sicurezza, testabilità e coverage minima 80% (unit test)
+alwaysApply: true
+---
+
+# Sicurezza, testabilità e coverage
+
+## Sicurezza
+
+- Ogni mutazione richiede firma wallet verificata server-side (`verify-wallet.ts`, `authorize.ts`).
+- Valida tutti gli input con Zod prima del service layer; rifiuta payload malevoli con status appropriati (`401`, `403`, `422`).
+- Mai esporre `MONGODB_URI`, stack trace o errori driver al client.
+- `NEXT_PUBLIC_*` solo per dati davvero pubblici; admin e segreti solo server-side.
+- Rate limiting su endpoint di mutazione; preferenze wallet non esposte via GET pubblico.
+- Sanitizza/hardening su campi utente (`displayName`, `avatarUrl`); non fidarti dell’indirizzo wagmi senza firma.
+
+## Testabilità
+
+- Logica di business in funzioni pure o service testabili con **fake in-memory** (no MongoDB nei test di dominio).
+- Dipendenze iniettate via port/factory (`createAuthorService`, `getAuthorService`); evita singleton non resettabili nei test.
+- Separare moduli server-only (`*-server.ts`) da moduli importabili dal client per evitare bundle errati.
+- Test significativi sul comportamento reale; evita test che ripetono l’implementazione o asseriscono l’ovvio.
+
+## Coverage ≥ 80%
+
+- Soglia minima: **80%** su lines, functions, branches e statements (vedi `apps/web/vitest.config.ts`).
+- Dopo modifiche a `apps/web`, esegui `pnpm web:test:coverage` e correggi regressioni prima di considerare il lavoro finito.
+- Nuovo codice in `src/lib/**` e componenti testabili: aggiungi unit test nello stesso PR/commit.
+- Se aggiungi cartelle coperte da coverage, aggiorna `coverage.include` in `vitest.config.ts`.
+- Componenti solo-UI complessi (dialog, pagine con molti hook) possono restare esclusi se la logica è estratta e testata in moduli puri.
+
+## Checklist prima di chiudere un task
+
+1. Architettura a strati rispettata (nessun leak Mongoose/React nel dominio).
+2. Auth e validazione su ogni nuovo percorso di mutazione.
+3. Unit test aggiunti o aggiornati per il comportamento introdotto.
+4. `pnpm web:test:coverage` verde con soglia ≥ 80% sulle aree incluse.

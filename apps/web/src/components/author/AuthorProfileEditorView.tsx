@@ -1,3 +1,4 @@
+import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { AuthorAvatar } from "./AuthorAvatar";
 import type { EditorFormState } from "./author-profile-editor-state";
@@ -80,8 +81,11 @@ export function AuthorProfileEditorView({
           <button
             type="submit"
             disabled={form.isSaving}
-            className="rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:opacity-50"
           >
+            {form.isSaving ? (
+              <LoadingSpinner size="sm" label="Saving profile" />
+            ) : null}
             {form.isSaving ? "Saving…" : "Save"}
           </button>
           <button

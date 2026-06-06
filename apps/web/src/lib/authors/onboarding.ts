@@ -1,11 +1,6 @@
 import { normalizeAddress } from "./address";
 import { InvalidAddressError } from "./errors";
-import {
-  createAuthorProfile,
-  getWalletPreferences,
-  hasAuthorProfile,
-  setWalletPreferences,
-} from "./mock-store";
+import type { AuthorService } from "./author-service";
 
 export type AuthorOnboardingSnapshot = {
   normalizedAddress: string;
@@ -14,10 +9,11 @@ export type AuthorOnboardingSnapshot = {
   declinedAuthorPage: boolean;
 };
 
-export function buildAuthorOnboardingSnapshot(
+export async function buildAuthorOnboardingSnapshotFromService(
   address: string | null | undefined,
   isConnected: boolean,
-): AuthorOnboardingSnapshot | null {
+  service: AuthorService,
+): Promise<AuthorOnboardingSnapshot | null> {
   if (!isConnected || !address) {
     return null;
   }
@@ -27,12 +23,13 @@ export function buildAuthorOnboardingSnapshot(
     return null;
   }
 
+  const preferences = await service.getWalletPreferences(normalizedAddress);
+
   return {
     normalizedAddress,
     isConnected: true,
-    hasAuthorProfile: hasAuthorProfile(normalizedAddress),
-    declinedAuthorPage:
-      getWalletPreferences(normalizedAddress)?.declinedAuthorPage ?? false,
+    hasAuthorProfile: await service.hasAuthorProfile(normalizedAddress),
+    declinedAuthorPage: preferences?.declinedAuthorPage ?? false,
   };
 }
 
@@ -57,13 +54,4 @@ export function authorPagePath(address: string): string {
     throw new InvalidAddressError(address);
   }
   return `/author/${normalized}`;
-}
-
-export function acceptAuthorOnboarding(address: string): { redirectPath: string } {
-  const profile = createAuthorProfile(address);
-  return { redirectPath: authorPagePath(profile.address) };
-}
-
-export function declineAuthorOnboarding(address: string): void {
-  setWalletPreferences(address, { declinedAuthorPage: true });
 }

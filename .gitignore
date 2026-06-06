@@ -13,10 +13,14 @@ dist/
 *.tsbuildinfo
 next-env.d.ts
 
-# Environment variables
+# Environment variables and local secrets (never commit credentials)
 .env
 .env*.local
 .env.local
+# Covers .env.development.local, .env.production.local, etc.
+
+# Local secrets reference (never commit)
+secrets.md
 
 # Hardhat
 artifacts/
@@ -37,3 +41,4 @@ pnpm-debug.log*
 
 # Vercel
 .vercel
+.env*
