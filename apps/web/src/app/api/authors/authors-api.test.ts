@@ -147,6 +147,30 @@ describe("authors API", () => {
     expect(response.status).toBe(422);
   });
 
+  it("returns 429 when mutation rate limit is exceeded", async () => {
+    const request = async () => {
+      const body = await signedPayload(OWNER, { displayName: "Writer" });
+      return POST(
+        new Request("http://localhost", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-forwarded-for": "203.0.113.10",
+          },
+          body: JSON.stringify(body),
+        }),
+      );
+    };
+
+    for (let attempt = 0; attempt < 30; attempt += 1) {
+      const response = await request();
+      expect([201, 409]).toContain(response.status);
+    }
+
+    const limited = await request();
+    expect(limited.status).toBe(429);
+  });
+
   it("PUT stores wallet preferences for the signer only", async () => {
     const body = await signedPayload(OWNER, { declinedAuthorPage: true });
     const response = await PUT(
