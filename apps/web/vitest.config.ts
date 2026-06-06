@@ -13,6 +13,7 @@ export default defineConfig({
       include: [
         "src/lib/authors/**/*.ts",
         "src/lib/auth/**/*.ts",
+        "src/lib/navigation/**/*.ts",
         "src/components/author/**/*.ts",
         "src/components/author/**/*.tsx",
         "src/components/auth/**/*.ts",
@@ -26,8 +27,10 @@ export default defineConfig({
         "src/components/author/AuthorProfileEditor.tsx",
         "src/components/author/AuthorPageContent.tsx",
         "src/components/author/AuthorPageClient.tsx",
+        "src/components/author/AuthorIndexPage.tsx",
         "src/components/auth/AuthorOnboarding.tsx",
         "src/components/auth/AuthorOnboardingDialog.tsx",
+        "src/components/navigation/**/*.tsx",
       ],
       thresholds: {
         lines: 80,
