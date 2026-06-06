@@ -27,7 +27,7 @@
 use andromeda
 db.createUser(
   {
-    user: "andromeda",
+    user: "app_andromeda",
     pwd: passwordPrompt(),
     roles: [
       { role: "readWrite", db: "andromeda" },
@@ -45,6 +45,111 @@ Inserisci la connection string in `apps/web/.env.development.local` o `apps/web/
 ```
 mongodb://<user>:<password>@127.0.0.1:27017/andromeda?authSource=andromeda
 ```
+
+## Collezioni
+
+L'app usa Mongoose (`apps/web/src/lib/db/models/`). Al primo avvio le collection vengono create
+automaticamente; i comandi sotto servono per preparare manualmente schema, indici e dati di test.
+
+| Collection (Mongoose) | Modello | Uso |
+| --- | --- | --- |
+| `authors` | `Author` | Profili autore pubblici |
+| `walletpreferences` | `WalletPreferences` | Preferenze onboarding (es. `declinedAuthorPage`) |
+
+Riferimento schema autore: `apps/web/src/lib/db/models/author.model.ts`
+(`displayName` max 64 caratteri, `avatarUrl` max 700 000 caratteri).
+
+### Collection `authors`
+
+Campi allineati al modello Mongoose (`timestamps: true` → `createdAt` e `updatedAt` gestiti
+dall'applicazione o inseriti a mano):
+
+| Campo | Tipo | Vincoli |
+| --- | --- | --- |
+| `address` | `string` | obbligatorio, lowercase, univoco |
+| `displayName` | `string` | obbligatorio, max 64 caratteri |
+| `avatarUrl` | `string` \| `null` | opzionale, max 700 000 caratteri (data URL validato dall'app) |
+| `createdAt` | `date` | obbligatorio |
+| `updatedAt` | `date` | obbligatorio |
+
+#### Creare la collection con validatore e indice univoco
+
+```shell
+mongosh "mongodb://app_andromeda:<password>@127.0.0.1:27017/andromeda?authSource=andromeda"
+```
+
+```javascript
+use andromeda
+
+db.createCollection("authors", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["address", "displayName", "createdAt", "updatedAt"],
+      properties: {
+        address: {
+          bsonType: "string",
+          description: "Indirizzo Ethereum normalizzato in lowercase (0x + 40 hex).",
+        },
+        displayName: {
+          bsonType: "string",
+          maxLength: 64,
+        },
+        avatarUrl: {
+          bsonType: ["string", "null"],
+          maxLength: 700000,
+        },
+        createdAt: { bsonType: "date" },
+        updatedAt: { bsonType: "date" },
+      },
+      additionalProperties: false,
+    },
+  },
+  validationLevel: "moderate",
+  validationAction: "error",
+})
+
+db.authors.createIndex(
+  { address: 1 },
+  { unique: true, name: "address_unique" },
+)
+```
+
+Se la collection esiste già (es. creata da Mongoose senza validatore), puoi applicare solo
+l'indice univoco:
+
+```javascript
+db.authors.createIndex(
+  { address: 1 },
+  { unique: true, name: "address_unique" },
+)
+```
+
+#### Inserire un profilo autore di esempio (sviluppo)
+
+L'indirizzo deve essere lowercase. Senza un profilo in `authors`, `/author/<address>` restituisce
+«not found».
+
+```javascript
+db.authors.insertOne({
+  address: "0xabcdef0123456789abcdef0123456789abcdef01",
+  displayName: "Jane Doe",
+  avatarUrl: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+})
+```
+
+Verifica:
+
+```javascript
+db.authors.findOne(
+  { address: "0xabcdef0123456789abcdef0123456789abcdef01" },
+  { _id: 0 },
+)
+```
+
+Pagina corrispondente in locale: `http://localhost:3000/author/0xabcdef0123456789abcdef0123456789abcdef01`
 
 ### Produzione
 

@@ -17,7 +17,17 @@ type StoredNonce = {
   used: boolean;
 };
 
-const nonceStore = new Map<string, StoredNonce>();
+declare global {
+  // eslint-disable-next-line no-var
+  var walletAuthNonceStore: Map<string, StoredNonce> | undefined;
+}
+
+function getNonceStore(): Map<string, StoredNonce> {
+  if (!global.walletAuthNonceStore) {
+    global.walletAuthNonceStore = new Map();
+  }
+  return global.walletAuthNonceStore;
+}
 
 export type WalletSignatureInput = {
   address: string;
@@ -46,7 +56,7 @@ export function createWalletAuthMessage(
     `Expires: ${new Date(expiresAt).toISOString()}`,
   ].join("\n");
 
-  nonceStore.set(nonce, {
+  getNonceStore().set(nonce, {
     address: normalized,
     expiresAt,
     used: false,
@@ -86,7 +96,7 @@ function parseWalletAuthMessage(message: string): {
 
 /** @internal Resets nonce cache between tests. */
 export function resetWalletAuthStoreForTests(): void {
-  nonceStore.clear();
+  getNonceStore().clear();
 }
 
 export async function verifyWalletSignature(
@@ -105,7 +115,7 @@ export async function verifyWalletSignature(
     throw new WalletAuthExpiredError();
   }
 
-  const stored = nonceStore.get(parsed.nonce);
+  const stored = getNonceStore().get(parsed.nonce);
   if (!stored || stored.address !== parsed.address || stored.used) {
     throw new WalletAuthReplayError();
   }
