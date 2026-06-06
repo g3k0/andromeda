@@ -6,7 +6,7 @@ import {
 } from "@/lib/authors/api-utils";
 import { normalizeAddress } from "@/lib/authors/address";
 import { verifySignedMutation } from "@/lib/authors/mutation-handler";
-import { updateAuthorBodySchema } from "@/lib/authors/schemas";
+import { updateAuthorMutationSchema } from "@/lib/authors/schemas";
 import { getAuthorService } from "@/lib/authors/server";
 
 type RouteContext = {
@@ -54,7 +54,7 @@ export async function PATCH(
       return limited;
     }
 
-    const body = updateAuthorBodySchema.parse(await request.json());
+    const body = updateAuthorMutationSchema.parse(await request.json());
     const signer = await verifySignedMutation(body);
     assertCanUpdateAuthorProfile(signer, normalized);
 

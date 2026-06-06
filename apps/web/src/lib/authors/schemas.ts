@@ -49,9 +49,13 @@ export const createAuthorBodySchema = walletAuthSchema.extend({
   avatarUrl: avatarUrlSchema,
 });
 
-export const updateAuthorBodySchema = walletAuthSchema.extend({
+export const updateAuthorMutationSchema = walletAuthSchema.extend({
   displayName: displayNameSchema,
   avatarUrl: avatarUrlSchema,
+});
+
+export const updateAuthorActionSchema = updateAuthorMutationSchema.extend({
+  targetAddress: ethereumAddressSchema,
 });
 
 export const walletPreferencesBodySchema = walletAuthSchema.extend({
@@ -60,5 +64,6 @@ export const walletPreferencesBodySchema = walletAuthSchema.extend({
 
 export type WalletAuthInput = z.infer<typeof walletAuthSchema>;
 export type CreateAuthorBody = z.infer<typeof createAuthorBodySchema>;
-export type UpdateAuthorBody = z.infer<typeof updateAuthorBodySchema>;
+export type UpdateAuthorMutation = z.infer<typeof updateAuthorMutationSchema>;
+export type UpdateAuthorActionInput = z.infer<typeof updateAuthorActionSchema>;
 export type WalletPreferencesBody = z.infer<typeof walletPreferencesBodySchema>;

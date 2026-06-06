@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createAuthorBodySchema,
-  updateAuthorBodySchema,
+  updateAuthorActionSchema,
   walletPreferencesBodySchema,
 } from "./schemas";
 
@@ -54,11 +54,12 @@ describe("createAuthorBodySchema", () => {
   });
 });
 
-describe("updateAuthorBodySchema", () => {
-  it("requires displayName", () => {
+describe("updateAuthorActionSchema", () => {
+  it("requires displayName and targetAddress", () => {
     expect(
-      updateAuthorBodySchema.parse({
+      updateAuthorActionSchema.parse({
         ...auth,
+        targetAddress: ADDRESS,
         displayName: "Updated",
         avatarUrl: null,
       }).displayName,

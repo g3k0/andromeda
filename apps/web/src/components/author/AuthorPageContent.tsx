@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { upsertAuthor } from "@/lib/authors/mock-store";
+import { useSignMessage } from "wagmi";
+import { updateAuthorAction } from "@/app/actions/authors";
+import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 import type { AuthorProfile } from "@/lib/authors/types";
 import {
   isAdminEditingOtherAuthorPage,
@@ -16,7 +18,6 @@ export type AuthorPageContentProps = {
   isConnected: boolean;
   isAdmin: boolean;
   onProfileSaved?: (profile: AuthorProfile) => void;
-  saveProfile?: typeof upsertAuthor;
 };
 
 export function AuthorPageContent({
@@ -25,8 +26,8 @@ export function AuthorPageContent({
   isConnected,
   isAdmin,
   onProfileSaved,
-  saveProfile = upsertAuthor,
 }: AuthorPageContentProps) {
+  const { signMessageAsync } = useSignMessage();
   const [profile, setProfile] = useState(initialProfile);
 
   const canEdit = resolveCanEditAuthorPage({
@@ -43,13 +44,26 @@ export function AuthorPageContent({
   });
 
   async function handleSave(input: AuthorProfileEditorSaveInput) {
-    const updated = saveProfile({
-      ...profile,
-      displayName: input.displayName,
-      avatarUrl: input.avatarUrl,
-    });
-    setProfile(updated);
-    onProfileSaved?.(updated);
+    if (!viewerAddress) {
+      return;
+    }
+
+    try {
+      const signed = await createSignedWalletPayload(
+        viewerAddress,
+        signMessageAsync,
+      );
+      const updated = await updateAuthorAction({
+        ...signed,
+        targetAddress: profile.address,
+        displayName: input.displayName,
+        avatarUrl: input.avatarUrl,
+      });
+      setProfile(updated);
+      onProfileSaved?.(updated);
+    } catch {
+      // Errors surface via server action validation/auth failures.
+    }
   }
 
   return (

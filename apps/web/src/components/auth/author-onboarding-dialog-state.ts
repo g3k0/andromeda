@@ -1,9 +1,5 @@
-import {
-  acceptAuthorOnboarding,
-  buildAuthorOnboardingSnapshot,
-  declineAuthorOnboarding,
-  shouldPromptAuthorPageCreation,
-} from "@/lib/authors/onboarding";
+import type { AuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
+import { shouldPromptAuthorPageCreation } from "@/lib/authors/onboarding";
 
 export type AuthorOnboardingDialogState = {
   open: boolean;
@@ -13,23 +9,11 @@ export type AuthorOnboardingDialogState = {
 export function resolveAuthorOnboardingDialogState(
   address: string | undefined,
   isConnected: boolean,
+  snapshot: AuthorOnboardingSnapshot | null,
 ): AuthorOnboardingDialogState {
-  const snapshot = buildAuthorOnboardingSnapshot(address, isConnected);
+  void isConnected;
   return {
     open: shouldPromptAuthorPageCreation(snapshot),
     canInteract: Boolean(address),
   };
-}
-
-export function handleAuthorOnboardingAccept(address: string): {
-  redirectPath: string;
-  open: false;
-} {
-  const { redirectPath } = acceptAuthorOnboarding(address);
-  return { redirectPath, open: false };
-}
-
-export function handleAuthorOnboardingDecline(address: string): { open: false } {
-  declineAuthorOnboarding(address);
-  return { open: false };
 }

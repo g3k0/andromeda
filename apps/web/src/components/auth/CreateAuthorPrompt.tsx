@@ -2,12 +2,14 @@ export type CreateAuthorPromptProps = {
   open: boolean;
   onAccept: () => void;
   onDecline: () => void;
+  disabled?: boolean;
 };
 
 export function CreateAuthorPrompt({
   open,
   onAccept,
   onDecline,
+  disabled = false,
 }: CreateAuthorPromptProps) {
   if (!open) {
     return null;
@@ -40,14 +42,16 @@ export function CreateAuthorPrompt({
           <button
             type="button"
             onClick={onAccept}
-            className="rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark"
+            disabled={disabled}
+            className="rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:cursor-not-allowed disabled:opacity-60"
           >
             Sì, crea la pagina
           </button>
           <button
             type="button"
             onClick={onDecline}
-            className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5"
+            disabled={disabled}
+            className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
           >
             No, resto lettore
           </button>
