@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteHeaderNav } from "./navigation/SiteHeaderNav";
 import { WalletButton } from "./WalletButton";
 
 export function SiteHeader() {
@@ -8,12 +9,7 @@ export function SiteHeader() {
         Andromeda
       </Link>
       <nav className="flex items-center gap-6 text-sm">
-        <Link href="/" className="text-white/70 hover:text-white">
-          Library
-        </Link>
-        <Link href="/admin" className="text-white/70 hover:text-white">
-          Admin
-        </Link>
+        <SiteHeaderNav />
         <WalletButton />
       </nav>
     </header>
