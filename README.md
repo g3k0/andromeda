@@ -223,12 +223,28 @@ your RPC URL, deployer private key, and Polygonscan API key.
 ### Web app
 
 ```bash
-# Copy and configure environment variables
+# Copy and configure local secrets (optional — .env.development already provides local defaults)
 cp apps/web/.env.example apps/web/.env.local
 
 # Start the dev server (http://localhost:3000)
 pnpm dev
 ```
+
+#### Environment configuration
+
+The web app uses [Next.js environment files](https://nextjs.org/docs/app/guides/environment-variables)
+in `apps/web/`. Next.js sets `NODE_ENV` automatically; you do not need to export it locally.
+
+| Environment | Command | `NODE_ENV` (set by Next.js) | Files loaded |
+| --- | --- | --- | --- |
+| **Local** | `pnpm dev` | `development` (default when unset) | `.env.development`, then `.env.local` |
+| **Production** | `pnpm build` / `pnpm start` / Vercel deploy | `production` | `.env.production`, then `.env.production.local` |
+| **Tests** | `pnpm web:test` | `test` | `.env.test` |
+
+- **Local defaults** live in [`apps/web/.env.development`](apps/web/.env.development) (Amoy testnet, local MongoDB).
+- **Production defaults** live in [`apps/web/.env.production`](apps/web/.env.production) (Polygon mainnet).
+- **Secrets** (WalletConnect project id, contract address, admin wallets, production `MONGODB_URI`) go in
+  `.env.local` or your deployment platform — see [`apps/web/.env.example`](apps/web/.env.example).
 
 Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address and add the
 authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
