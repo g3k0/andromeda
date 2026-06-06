@@ -5,6 +5,7 @@ import {
   InvalidAddressError,
 } from "./errors";
 import {
+  RateLimitExceededError,
   WalletAuthExpiredError,
   WalletAuthMessageInvalidError,
   WalletAuthReplayError,
@@ -30,6 +31,9 @@ export function mapAuthorErrorToStatus(error: unknown): number {
   }
   if (error instanceof WalletAuthorizationError) {
     return 403;
+  }
+  if (error instanceof RateLimitExceededError) {
+    return 429;
   }
   if (error instanceof AuthorProfileExistsError) {
     return 409;

@@ -1,15 +1,30 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useNotifications } from "@/components/notifications/NotificationProvider";
+import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
 
 function shorten(address: string) {
   return `${address.slice(0, 6)}…${address.slice(-4)}`;
 }
 
 export function WalletButton() {
+  const router = useRouter();
+  const { notify } = useNotifications();
   const { address, isConnected } = useAccount();
   const { connect, connectors, isPending } = useConnect();
-  const { disconnect } = useDisconnect();
+  const { disconnect } = useDisconnect({
+    mutation: {
+      onSuccess: () => {
+        notify({
+          variant: "info",
+          message: WALLET_DISCONNECTED_MESSAGE,
+        });
+        router.push("/");
+      },
+    },
+  });
 
   if (isConnected && address) {
     return (

@@ -1,8 +1,6 @@
-import { assertCanCreateAuthorProfile } from "@/lib/authors/authorize";
+import { runCreateAuthorMutation } from "@/lib/authors/author-mutations";
 import { enforceRateLimit, errorResponse, jsonResponse } from "@/lib/authors/api-utils";
-import { verifySignedMutation } from "@/lib/authors/mutation-handler";
 import { createAuthorBodySchema } from "@/lib/authors/schemas";
-import { getAuthorService } from "@/lib/authors/server";
 
 export async function POST(request: Request): Promise<Response> {
   try {
@@ -12,15 +10,7 @@ export async function POST(request: Request): Promise<Response> {
       return limited;
     }
 
-    const signer = await verifySignedMutation(body);
-    assertCanCreateAuthorProfile(signer, body.address);
-
-    const service = await getAuthorService();
-    const profile = await service.createAuthorProfile(body.address, {
-      displayName: body.displayName,
-      avatarUrl: body.avatarUrl ?? null,
-    });
-
+    const profile = await runCreateAuthorMutation(body);
     return jsonResponse(profile, 201);
   } catch (error) {
     return errorResponse(error);

@@ -1,3 +1,5 @@
+import "server-only";
+
 import mongoose from "mongoose";
 import { MongoDbUriMissingError } from "./errors";
 

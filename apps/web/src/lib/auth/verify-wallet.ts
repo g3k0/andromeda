@@ -1,3 +1,5 @@
+import "server-only";
+
 import { randomUUID } from "node:crypto";
 import { verifyMessage } from "viem";
 import { normalizeAddress } from "@/lib/authors/address";

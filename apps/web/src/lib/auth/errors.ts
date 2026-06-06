@@ -32,3 +32,10 @@ export class WalletAuthorizationError extends Error {
     this.name = "WalletAuthorizationError";
   }
 }
+
+export class RateLimitExceededError extends Error {
+  constructor() {
+    super("Too many requests.");
+    this.name = "RateLimitExceededError";
+  }
+}

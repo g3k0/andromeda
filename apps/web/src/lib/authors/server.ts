@@ -1,3 +1,5 @@
+import "server-only";
+
 import { createMongoAuthorRepositories } from "./adapters/create-repositories";
 import { createAuthorService, type AuthorService } from "./author-service";
 

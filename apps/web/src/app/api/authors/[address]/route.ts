@@ -1,11 +1,10 @@
-import { assertCanUpdateAuthorProfile } from "@/lib/authors/authorize";
+import { runUpdateAuthorMutation } from "@/lib/authors/author-mutations";
 import {
   enforceRateLimit,
   errorResponse,
   jsonResponse,
 } from "@/lib/authors/api-utils";
 import { normalizeAddress } from "@/lib/authors/address";
-import { verifySignedMutation } from "@/lib/authors/mutation-handler";
 import { updateAuthorMutationSchema } from "@/lib/authors/schemas";
 import { getAuthorService } from "@/lib/authors/server";
 
@@ -55,21 +54,7 @@ export async function PATCH(
     }
 
     const body = updateAuthorMutationSchema.parse(await request.json());
-    const signer = await verifySignedMutation(body);
-    assertCanUpdateAuthorProfile(signer, normalized);
-
-    const service = await getAuthorService();
-    const existing = await service.getAuthorByAddress(normalized);
-    if (!existing) {
-      return jsonResponse({ error: "Author profile not found." }, 404);
-    }
-
-    const updated = await service.upsertAuthor({
-      ...existing,
-      displayName: body.displayName,
-      avatarUrl: body.avatarUrl ?? null,
-    });
-
+    const updated = await runUpdateAuthorMutation(normalized, body);
     return jsonResponse(updated);
   } catch (error) {
     return errorResponse(error);

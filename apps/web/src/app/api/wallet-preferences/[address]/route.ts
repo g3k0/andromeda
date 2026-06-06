@@ -1,13 +1,11 @@
-import { assertCanManageWalletPreferences } from "@/lib/authors/authorize";
+import { runSetWalletPreferencesMutation } from "@/lib/authors/author-mutations";
 import {
   enforceRateLimit,
   errorResponse,
   jsonResponse,
 } from "@/lib/authors/api-utils";
 import { normalizeAddress } from "@/lib/authors/address";
-import { verifySignedMutation } from "@/lib/authors/mutation-handler";
 import { walletPreferencesBodySchema } from "@/lib/authors/schemas";
-import { getAuthorService } from "@/lib/authors/server";
 
 type RouteContext = {
   params: Promise<{ address: string }>;
@@ -33,14 +31,7 @@ export async function PUT(
     }
 
     const body = walletPreferencesBodySchema.parse(await request.json());
-    const signer = await verifySignedMutation(body);
-    assertCanManageWalletPreferences(signer, normalized);
-
-    const service = await getAuthorService();
-    const preferences = await service.setWalletPreferences(normalized, {
-      declinedAuthorPage: body.declinedAuthorPage,
-    });
-
+    const preferences = await runSetWalletPreferencesMutation(normalized, body);
     return jsonResponse(preferences);
   } catch (error) {
     return errorResponse(error);

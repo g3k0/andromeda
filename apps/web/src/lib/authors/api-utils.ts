@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/auth/rate-limit";
+import { buildRateLimitKey } from "@/lib/auth/rate-limit-key";
 import {
   mapAuthorErrorToMessage,
   mapAuthorErrorToStatus,
@@ -26,7 +27,7 @@ export function getRequestRateLimitKey(
 ): string {
   const forwarded = request.headers.get("x-forwarded-for");
   const ip = forwarded?.split(",")[0]?.trim() ?? "unknown";
-  return scope ? `${ip}:${scope}` : ip;
+  return buildRateLimitKey(ip, scope);
 }
 
 export function enforceRateLimit(

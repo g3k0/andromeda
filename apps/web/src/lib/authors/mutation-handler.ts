@@ -1,3 +1,5 @@
+import "server-only";
+
 import { verifyWalletSignature } from "@/lib/auth/verify-wallet";
 import type { WalletAuthInput } from "./schemas";
 

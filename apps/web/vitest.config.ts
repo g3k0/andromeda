@@ -15,10 +15,13 @@ export default defineConfig({
         "src/lib/auth/**/*.ts",
         "src/lib/db/**/*.ts",
         "src/lib/navigation/**/*.ts",
+        "src/lib/notifications/**/*.ts",
         "src/components/author/**/*.ts",
         "src/components/author/**/*.tsx",
         "src/components/auth/**/*.ts",
         "src/components/auth/**/*.tsx",
+        "src/components/WalletButton.tsx",
+        "src/components/notifications/**/*.tsx",
       ],
       exclude: [
         "src/**/*.test.ts",
