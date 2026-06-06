@@ -1,49 +1,44 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
+import { createAuthorService } from "./author-service";
 import {
-  AuthorProfileExistsError,
-} from "./errors";
-import {
-  acceptAuthorOnboarding,
   authorPagePath,
-  buildAuthorOnboardingSnapshot,
-  declineAuthorOnboarding,
+  buildAuthorOnboardingSnapshotFromService,
   shouldPromptAuthorPageCreation,
 } from "./onboarding";
-import {
-  createAuthorProfile,
-  getWalletPreferences,
-  setWalletPreferences,
-} from "./mock-store";
-import { MemoryStorage, resetAuthorStoreStorage, setAuthorStoreStorage } from "./storage";
+import { createInMemoryAuthorRepositories } from "./testing/in-memory-repositories";
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 
 describe("author onboarding", () => {
-  let storage: MemoryStorage;
+  function service() {
+    return createAuthorService(createInMemoryAuthorRepositories());
+  }
 
-  beforeEach(() => {
-    storage = new MemoryStorage();
-    setAuthorStoreStorage(storage);
-  });
-
-  afterEach(() => {
-    resetAuthorStoreStorage();
-  });
-
-  describe("buildAuthorOnboardingSnapshot", () => {
-    it("returns null when the wallet is disconnected", () => {
-      expect(buildAuthorOnboardingSnapshot(ADDRESS, false)).toBeNull();
-      expect(buildAuthorOnboardingSnapshot(null, true)).toBeNull();
+  describe("buildAuthorOnboardingSnapshotFromService", () => {
+    it("returns null when the wallet is disconnected", async () => {
+      await expect(
+        buildAuthorOnboardingSnapshotFromService(ADDRESS, false, service()),
+      ).resolves.toBeNull();
+      await expect(
+        buildAuthorOnboardingSnapshotFromService(null, true, service()),
+      ).resolves.toBeNull();
     });
 
-    it("returns null for invalid addresses", () => {
-      expect(buildAuthorOnboardingSnapshot("bad", true)).toBeNull();
+    it("returns null for invalid addresses", async () => {
+      await expect(
+        buildAuthorOnboardingSnapshotFromService("bad", true, service()),
+      ).resolves.toBeNull();
     });
 
-    it("returns snapshot data for a connected wallet", () => {
-      setWalletPreferences(ADDRESS, { declinedAuthorPage: true });
+    it("returns snapshot data for a connected wallet", async () => {
+      const svc = service();
+      await svc.setWalletPreferences(ADDRESS, { declinedAuthorPage: true });
 
-      const snapshot = buildAuthorOnboardingSnapshot(ADDRESS, true);
+      const snapshot = await buildAuthorOnboardingSnapshotFromService(
+        ADDRESS,
+        true,
+        svc,
+      );
       expect(snapshot).toEqual({
         normalizedAddress: ADDRESS,
         isConnected: true,
@@ -52,10 +47,15 @@ describe("author onboarding", () => {
       });
     });
 
-    it("detects an existing author profile", () => {
-      createAuthorProfile(ADDRESS);
+    it("detects an existing author profile", async () => {
+      const svc = service();
+      await svc.createAuthorProfile(ADDRESS);
 
-      const snapshot = buildAuthorOnboardingSnapshot(ADDRESS, true);
+      const snapshot = await buildAuthorOnboardingSnapshotFromService(
+        ADDRESS,
+        true,
+        svc,
+      );
       expect(snapshot?.hasAuthorProfile).toBe(true);
     });
   });
@@ -100,25 +100,6 @@ describe("author onboarding", () => {
   describe("authorPagePath", () => {
     it("builds the author page URL for a normalized address", () => {
       expect(authorPagePath(ADDRESS.toUpperCase())).toBe(`/author/${ADDRESS}`);
-    });
-  });
-
-  describe("acceptAuthorOnboarding", () => {
-    it("creates a profile and returns the redirect path", () => {
-      const result = acceptAuthorOnboarding(ADDRESS);
-      expect(result.redirectPath).toBe(`/author/${ADDRESS}`);
-      expect(() => acceptAuthorOnboarding(ADDRESS)).toThrow(
-        AuthorProfileExistsError,
-      );
-    });
-  });
-
-  describe("declineAuthorOnboarding", () => {
-    it("persists the reader-only preference", () => {
-      declineAuthorOnboarding(ADDRESS);
-      expect(getWalletPreferences(ADDRESS)).toEqual({
-        declinedAuthorPage: true,
-      });
     });
   });
 });

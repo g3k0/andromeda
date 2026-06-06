@@ -223,12 +223,32 @@ your RPC URL, deployer private key, and Polygonscan API key.
 ### Web app
 
 ```bash
-# Copy and configure environment variables
+# Copy and configure local secrets (required for MongoDB and other credentials)
 cp apps/web/.env.example apps/web/.env.local
+# Or only database credentials:
+# cp apps/web/.env.development.local.example apps/web/.env.development.local
 
 # Start the dev server (http://localhost:3000)
 pnpm dev
 ```
+
+#### Environment configuration
+
+The web app uses [Next.js environment files](https://nextjs.org/docs/app/guides/environment-variables)
+in `apps/web/`. Next.js sets `NODE_ENV` automatically; you do not need to export it locally.
+
+| Environment | Command | `NODE_ENV` (set by Next.js) | Files loaded |
+| --- | --- | --- | --- |
+| **Local** | `pnpm dev` | `development` (default when unset) | `.env.development`, then `.env.local` / `.env.development.local` |
+| **Production** | `pnpm build` / `pnpm start` / Vercel deploy | `production` | `.env.production`, then `.env.production.local` |
+| **Tests** | `pnpm web:test` | `test` | `.env.test` |
+
+- **Committed defaults** (no secrets): [`.env.development`](apps/web/.env.development) (Amoy testnet),
+  [`.env.production`](apps/web/.env.production) (Polygon mainnet).
+- **Local secrets** (gitignored): `.env.local` or `.env.development.local` — copy from
+  [`.env.example`](apps/web/.env.example) or [`.env.development.local.example`](apps/web/.env.development.local.example).
+- **Production secrets**: set in Vercel **Settings → Environment Variables** (never in the repo).
+- **Personal reference**: optional `secrets.md` at the repo root (also gitignored).
 
 Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address and add the
 authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
@@ -260,10 +280,11 @@ Pull requests and pushes to `develop` and `main` run the [CI workflow](.github/w
 (GitHub Actions). It currently runs web unit tests with coverage. More steps (lint, build,
 contract tests, and so on) can be added to that workflow over time.
 
-#### Author pages (mock implementation)
+#### Author pages (MongoDB)
 
-Author profiles and onboarding are implemented in the web app with a **browser-only mock**
-(`apps/web/src/lib/authors/mock-store.ts`). There is no database or API backend for profiles yet.
+Author profiles and wallet preferences are persisted in **MongoDB** via Mongoose adapters
+(`apps/web/src/lib/db/*`). Mutations require an **EIP-191 wallet signature** verified server-side;
+UI role checks are UX-only — the API and Server Actions enforce authorization.
 
 **Routes**
 
@@ -271,6 +292,15 @@ Author profiles and onboarding are implemented in the web app with a **browser-o
 | --- | --- |
 | `/author` | Resolves the connected wallet to `/author/[address]`, onboarding, or reader mode |
 | `/author/[address]` | Public profile view; edit mode for the profile owner or platform admin |
+
+**API** (server-only auth on mutations)
+
+| Method | Path | Auth |
+| --- | --- | --- |
+| `GET` | `/api/authors/[address]` | Public read |
+| `POST` | `/api/authors` | Owner signature |
+| `PATCH` | `/api/authors/[address]` | Owner or server-verified admin signature |
+| `PUT` | `/api/wallet-preferences/[address]` | Owner signature (no public `GET`) |
 
 **User roles** (cumulative capabilities)
 
@@ -281,22 +311,17 @@ Author profiles and onboarding are implemented in the web app with a **browser-o
 | **Admin** | Wallet listed in `NEXT_PUBLIC_ADMIN_ADDRESSES` (full reader + author + edit any profile + `/admin`) |
 
 On first connect, users without a profile are prompted to create an author page. If they decline,
-`declinedAuthorPage` is stored in `localStorage` and they remain in reader mode.
+`declinedAuthorPage` is stored in MongoDB and they remain in reader mode.
 
-**Mock limitations**
+**Configuration**
 
-- Profiles and preferences persist in `localStorage` only (keys in `storage-keys.ts`).
-- Data does not sync across browsers or devices; clearing site data removes it.
-- Avatar uploads are stored as data URLs in the mock store, not on IPFS or object storage.
-- Programmatic reference: `mock-limitations.ts` (also covered by unit tests).
+- Set `MONGODB_URI` in `apps/web/.env.development.local` (gitignored). See
+  [documentation/database/mongodb-commands.md](documentation/database/mongodb-commands.md).
+- Mutation endpoints are rate-limited (30 requests/min per IP and scope).
+- Avatar uploads are validated data URLs until IPFS integration.
 
-**Planned database step** (not implemented)
-
-- Tables: `authors`, `wallet_preferences`
-- API: `GET /authors/:address`, `POST /authors`, `PATCH /authors/:address` (owner signature or server-verified admin)
-- Replace `mock-store.ts`; keep `roles.ts`, `lib/auth/admin.ts`, and UI components
-
-See [documentation/plans/author-page.md](documentation/plans/author-page.md) for the full implementation plan.
+See [documentation/plans/author-page.md](documentation/plans/author-page.md) and
+[documentation/plans/db-integration.md](documentation/plans/db-integration.md) for architecture and security notes.
 
 ### Deployment (Vercel)
 
@@ -329,6 +354,11 @@ If deploys fail with *No Next.js version detected*, check that:
 
 - **Root Directory** is exactly `apps/web`
 - Install Command and Build Command overrides are **disabled** in the dashboard
+
+If the build succeeds but deploy fails with a duplicated path such as
+`/vercel/path0/vercel/path0/.next/routes-manifest.json`, do **not** set
+`outputFileTracingRoot` in `next.config.mjs` when the Vercel root is `apps/web`
+(the app has no workspace dependencies). Remove that option and redeploy.
 
 Add the `NEXT_PUBLIC_*` environment variables from `apps/web/.env.example` in
 **Settings → Environment Variables** (Production for `main`, Preview for

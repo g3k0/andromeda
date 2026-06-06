@@ -1,5 +1,4 @@
 import { normalizeAddress } from "./address";
-import { getAuthorByAddress } from "./mock-store";
 import type { AuthorProfile } from "./types";
 
 export type AuthorPageResolved =
@@ -7,18 +6,20 @@ export type AuthorPageResolved =
   | { status: "not_found"; address: string }
   | { status: "ready"; profile: AuthorProfile };
 
-export type AuthorProfileLookup = (address: string) => AuthorProfile | null;
+export type AuthorProfileLookup = (
+  address: string,
+) => AuthorProfile | null | Promise<AuthorProfile | null>;
 
-export function resolveAuthorPage(
+export async function resolveAuthorPage(
   addressParam: string,
-  lookup: AuthorProfileLookup = getAuthorByAddress,
-): AuthorPageResolved {
+  lookup: AuthorProfileLookup,
+): Promise<AuthorPageResolved> {
   const normalized = normalizeAddress(addressParam);
   if (!normalized) {
     return { status: "invalid_address" };
   }
 
-  const profile = lookup(addressParam);
+  const profile = await lookup(normalized);
   if (!profile) {
     return { status: "not_found", address: normalized };
   }

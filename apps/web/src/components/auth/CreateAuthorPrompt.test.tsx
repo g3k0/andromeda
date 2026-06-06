@@ -47,4 +47,19 @@ describe("CreateAuthorPrompt", () => {
     expect(onAccept).toHaveBeenCalledOnce();
     expect(onDecline).toHaveBeenCalledOnce();
   });
+
+  it("disables actions and shows a spinner while loading", () => {
+    render(
+      <CreateAuthorPrompt
+        open
+        loading
+        onAccept={vi.fn()}
+        onDecline={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("status", { name: "Creating author page" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Sì, crea la pagina/ })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "No, resto lettore" })).toBeDisabled();
+  });
 });

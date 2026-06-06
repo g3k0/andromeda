@@ -1,10 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createAuthorProfile } from "./mock-store";
-import {
-  MemoryStorage,
-  resetAuthorStoreStorage,
-  setAuthorStoreStorage,
-} from "./storage";
+import { describe, expect, it } from "vitest";
 import type { AuthorProfile } from "./types";
 import { resolveAuthorPage } from "./author-page";
 
@@ -18,49 +12,33 @@ const profile: AuthorProfile = {
 };
 
 describe("resolveAuthorPage", () => {
-  it("returns invalid_address for malformed params", () => {
-    expect(resolveAuthorPage("not-valid", () => profile)).toEqual({
+  const lookup = () => profile;
+
+  it("returns invalid_address for malformed params", async () => {
+    await expect(resolveAuthorPage("not-valid", lookup)).resolves.toEqual({
       status: "invalid_address",
     });
   });
 
-  it("returns not_found when lookup returns null", () => {
-    expect(resolveAuthorPage(ADDRESS, () => null)).toEqual({
+  it("returns not_found when lookup returns null", async () => {
+    await expect(resolveAuthorPage(ADDRESS, () => null)).resolves.toEqual({
       status: "not_found",
       address: ADDRESS,
     });
   });
 
-  it("returns ready with the profile when it exists", () => {
-    expect(resolveAuthorPage(ADDRESS, () => profile)).toEqual({
+  it("returns ready with the profile when it exists", async () => {
+    await expect(resolveAuthorPage(ADDRESS, () => profile)).resolves.toEqual({
       status: "ready",
       profile,
     });
   });
 
-  it("normalizes address param before not_found response", () => {
+  it("normalizes address param before not_found response", async () => {
     const upper = "0xABCDEF0123456789ABCDEF0123456789ABCDEF01";
-    expect(resolveAuthorPage(upper, () => null)).toEqual({
+    await expect(resolveAuthorPage(upper, () => null)).resolves.toEqual({
       status: "not_found",
       address: ADDRESS,
-    });
-  });
-});
-
-describe("resolveAuthorPage with mock store", () => {
-  beforeEach(() => {
-    setAuthorStoreStorage(new MemoryStorage());
-  });
-
-  afterEach(() => {
-    resetAuthorStoreStorage();
-  });
-
-  it("loads an existing profile from the mock store", () => {
-    const created = createAuthorProfile(ADDRESS, { displayName: "Stored Author" });
-    expect(resolveAuthorPage(ADDRESS)).toEqual({
-      status: "ready",
-      profile: created,
     });
   });
 });

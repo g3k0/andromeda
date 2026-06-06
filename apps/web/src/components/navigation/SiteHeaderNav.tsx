@@ -1,15 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { getAuthorOnboardingSnapshotAction } from "@/app/actions/onboarding";
 import { isAdminAddress } from "@/lib/auth/admin";
 import { getUserRole } from "@/lib/auth/roles";
-import { buildAuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
+import type { AuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
 
 export function SiteHeaderNav() {
   const { address, isConnected } = useAccount();
-  const snapshot = buildAuthorOnboardingSnapshot(address, isConnected);
+  const [snapshot, setSnapshot] = useState<AuthorOnboardingSnapshot | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getAuthorOnboardingSnapshotAction(address, isConnected).then((next) => {
+      if (!cancelled) {
+        setSnapshot(next);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [address, isConnected]);
+
   const isAdmin = isAdminAddress(address);
   const role = getUserRole({
     address,
