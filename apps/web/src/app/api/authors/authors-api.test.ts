@@ -7,6 +7,7 @@ import { resetMongoConnectionForTests } from "@/lib/db/mongodb";
 import { AuthorModel } from "@/lib/db/models/author.model";
 import { WalletPreferencesModel } from "@/lib/db/models/wallet-preferences.model";
 import { resetAuthorServiceForTests } from "@/lib/authors/server";
+import { setAdminAddressesForTests } from "@/lib/auth/admin";
 import { resetRateLimitsForTests } from "@/lib/auth/rate-limit";
 import { resetWalletAuthStoreForTests } from "@/lib/auth/verify-wallet";
 import { GET, PATCH } from "./[address]/route";
@@ -46,6 +47,7 @@ describe("authors API", () => {
     await WalletPreferencesModel.deleteMany({});
     resetWalletAuthStoreForTests();
     resetRateLimitsForTests();
+    setAdminAddressesForTests(null);
     resetAuthorServiceForTests();
     resetMongoConnectionForTests();
     process.env.MONGODB_URI = memoryServer.getUri();
@@ -169,6 +171,37 @@ describe("authors API", () => {
 
     const limited = await request();
     expect(limited.status).toBe(429);
+  });
+
+  it("PATCH allows verified admin signatures on another profile", async () => {
+    const ADMIN = privateKeyToAccount(generatePrivateKey());
+    setAdminAddressesForTests([ADMIN.address.toLowerCase()]);
+
+    const createBody = await signedPayload(OWNER, { displayName: "Writer" });
+    await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(createBody),
+      }),
+    );
+
+    const patchBody = await signedPayload(ADMIN, {
+      displayName: "Curated by admin",
+      avatarUrl: null,
+    });
+    const response = await PATCH(
+      new Request("http://localhost", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(patchBody),
+      }),
+      { params: Promise.resolve({ address: OWNER_ADDRESS }) },
+    );
+
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json.displayName).toBe("Curated by admin");
   });
 
   it("PUT stores wallet preferences for the signer only", async () => {
