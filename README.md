@@ -355,6 +355,11 @@ If deploys fail with *No Next.js version detected*, check that:
 - **Root Directory** is exactly `apps/web`
 - Install Command and Build Command overrides are **disabled** in the dashboard
 
+If the build succeeds but deploy fails with a duplicated path such as
+`/vercel/path0/vercel/path0/.next/routes-manifest.json`, do **not** set
+`outputFileTracingRoot` in `next.config.mjs` when the Vercel root is `apps/web`
+(the app has no workspace dependencies). Remove that option and redeploy.
+
 Add the `NEXT_PUBLIC_*` environment variables from `apps/web/.env.example` in
 **Settings → Environment Variables** (Production for `main`, Preview for
 `develop` and pull requests).
