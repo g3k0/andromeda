@@ -1,0 +1,40 @@
+---
+description: SOLID, DRY, Clean Code e Clean Architecture per Andromeda
+alwaysApply: true
+---
+
+# Principi di implementazione
+
+## SOLID
+
+- **S** — Una classe/modulo, una responsabilità. Estrai helper solo se riusati o se il file supera chiaramente un solo scopo.
+- **O** — Estendi con nuovi adapter/strategie, non modificando il dominio. Esempio: nuovo DB → nuovo adapter su `repository.ts`, non query Mongoose in `author-service.ts`.
+- **L** — Le implementazioni rispettano il contratto della port (stessi errori, stessa semantica del fake in-memory).
+- **I** — Port piccole e focalizzate (`AuthorRepository`, `WalletPreferencesRepository`), non interfacce “god object”.
+- **D** — Il dominio dipende da astrazioni (`repository.ts`, tipi puri), non da `mongoose`, `fetch` o wagmi.
+
+## DRY
+
+- Non duplicare regole di business, validazione o autorizzazione tra API route, Server Actions e UI.
+- Estrai guard condivisi (`authorize.ts`, `mutation-handler.ts`, schemi Zod) e riusali.
+- Evita copy-paste di tipi: un’unica fonte in `types.ts` / schemi Zod.
+
+## Clean Code
+
+- Nomi che rivelano intento; funzioni brevi e a un livello di astrazione.
+- Preferisci codice autoesplicativo; commenta solo invarianti di business o vincoli non ovvi.
+- Gestione errori esplicita: errori di dominio tipizzati, messaggi client generici, dettagli solo server-side.
+- Nessun dead code, nessun `any` senza motivo, nessun commit di segreti o `.env` con credenziali.
+
+## Clean Architecture (layer Andromeda)
+
+```
+UI (components) → app/actions | app/api → Zod + auth → author-service → repository port → adapter → lib/db
+```
+
+- **Dominio** (`lib/authors`, `lib/auth`): niente import di framework o driver DB.
+- **Infrastruttura** (`lib/db`, adapter Mongo): mapping documento ↔ dominio centralizzato.
+- **Delivery** (`app/api`, `app/actions`): validazione + auth prima del service.
+- **Client Components**: solo UX; autorizzazione reale sempre server-side.
+
+Dipendenze puntano verso l’interno: i layer esterni conoscono quelli interni, mai il contrario.
