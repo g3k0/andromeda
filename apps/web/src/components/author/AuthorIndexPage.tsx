@@ -1,24 +1,43 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
+import { getAuthorOnboardingSnapshotAction } from "@/app/actions/onboarding";
 import { WalletButton } from "@/components/WalletButton";
+import type { AuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
 import { resolveAuthorIndexPage } from "@/lib/authors/author-index";
-import { buildAuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
 import { AuthorPageStatusMessage } from "./AuthorPageStatusMessage";
 
 export function AuthorIndexPage() {
   const { address, isConnected } = useAccount();
   const router = useRouter();
-  const snapshot = buildAuthorOnboardingSnapshot(address, isConnected);
+  const [snapshot, setSnapshot] = useState<AuthorOnboardingSnapshot | null>(null);
   const resolved = resolveAuthorIndexPage(snapshot);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getAuthorOnboardingSnapshotAction(address, isConnected).then((next) => {
+      if (!cancelled) {
+        setSnapshot(next);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [address, isConnected]);
 
   useEffect(() => {
     if (resolved.status === "redirect") {
       router.replace(resolved.path);
     }
   }, [resolved, router]);
+
+  if (!snapshot) {
+    return null;
+  }
 
   if (resolved.status === "redirect") {
     return null;
