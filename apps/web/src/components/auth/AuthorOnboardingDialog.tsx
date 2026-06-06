@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSignMessage } from "wagmi";
 import { createAuthorAction, setWalletPreferencesAction } from "@/app/actions/authors";
+import { useLoading } from "@/components/loading/LoadingProvider";
 import { getAuthorOnboardingSnapshotAction } from "@/app/actions/onboarding";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 import type { AuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
@@ -24,7 +25,7 @@ export function AuthorOnboardingDialog({
   const { signMessageAsync } = useSignMessage();
   const [snapshot, setSnapshot] = useState<AuthorOnboardingSnapshot | null>(null);
   const [open, setOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const { isLoading, runWithLoading } = useLoading();
 
   useEffect(() => {
     let cancelled = false;
@@ -54,21 +55,16 @@ export function AuthorOnboardingDialog({
     return null;
   }
 
-  const handleAccept = async () => {
-    setBusy(true);
-    try {
+  const handleAccept = () =>
+    void runWithLoading(async () => {
       const signed = await createSignedWalletPayload(address, signMessageAsync);
       await createAuthorAction(signed);
       setOpen(false);
       onNavigate(authorPagePath(address));
-    } finally {
-      setBusy(false);
-    }
-  };
+    }, "Creating author page…");
 
-  const handleDecline = async () => {
-    setBusy(true);
-    try {
+  const handleDecline = () =>
+    void runWithLoading(async () => {
       const signed = await createSignedWalletPayload(address, signMessageAsync);
       await setWalletPreferencesAction({
         ...signed,
@@ -80,17 +76,14 @@ export function AuthorOnboardingDialog({
           ? { ...current, declinedAuthorPage: true }
           : current,
       );
-    } finally {
-      setBusy(false);
-    }
-  };
+    }, "Saving your preference…");
 
   return (
     <CreateAuthorPrompt
       open={open}
-      onAccept={() => void handleAccept()}
-      onDecline={() => void handleDecline()}
-      disabled={busy}
+      onAccept={handleAccept}
+      onDecline={handleDecline}
+      loading={isLoading}
     />
   );
 }

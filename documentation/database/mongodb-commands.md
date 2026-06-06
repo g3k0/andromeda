@@ -56,6 +56,23 @@ automaticamente; i comandi sotto servono per preparare manualmente schema, indic
 | `authors` | `Author` | Profili autore pubblici |
 | `walletpreferences` | `WalletPreferences` | Preferenze onboarding (es. `declinedAuthorPage`) |
 
+**Non usare** la collection `author` (singolare): è un residuo da setup manuali errati.
+L'app persiste solo su `authors` (vedi `AUTHOR_COLLECTION_NAME` in `author.model.ts`).
+
+#### Rimuovere la collection `author` obsoleta
+
+Se esiste una collection vuota `author`, eliminala dopo aver verificato che i dati
+sono in `authors`:
+
+```javascript
+use andromeda
+
+db.authors.countDocuments()
+db.author.countDocuments()
+
+db.author.drop()
+```
+
 Riferimento schema autore: `apps/web/src/lib/db/models/author.model.ts`
 (`displayName` max 64 caratteri, `avatarUrl` max 700 000 caratteri).
 

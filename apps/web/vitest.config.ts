@@ -16,6 +16,8 @@ export default defineConfig({
         "src/lib/db/**/*.ts",
         "src/lib/navigation/**/*.ts",
         "src/lib/notifications/**/*.ts",
+        "src/lib/loading/**/*.ts",
+        "src/components/loading/**/*.tsx",
         "src/components/author/**/*.ts",
         "src/components/author/**/*.tsx",
         "src/components/auth/**/*.ts",

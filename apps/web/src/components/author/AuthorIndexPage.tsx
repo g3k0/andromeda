@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 import { getAuthorOnboardingSnapshotAction } from "@/app/actions/onboarding";
+import { LoadingPanel } from "@/components/loading/LoadingPanel";
 import { WalletButton } from "@/components/WalletButton";
 import type { AuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
 import { resolveAuthorIndexPage } from "@/lib/authors/author-index";
@@ -35,12 +36,8 @@ export function AuthorIndexPage() {
     }
   }, [resolved, router]);
 
-  if (!snapshot) {
-    return null;
-  }
-
-  if (resolved.status === "redirect") {
-    return null;
+  if (!snapshot || resolved.status === "redirect") {
+    return <LoadingPanel label="Loading author page…" />;
   }
 
   if (resolved.status === "connect_wallet") {

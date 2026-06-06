@@ -60,6 +60,7 @@ describe("WalletButton", () => {
           mockDisconnect();
           options?.mutation?.onSuccess?.();
         },
+        isPending: false,
       } as ReturnType<typeof useDisconnect>;
     });
 

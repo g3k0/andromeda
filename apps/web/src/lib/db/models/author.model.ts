@@ -4,6 +4,9 @@ import {
   AUTHOR_DISPLAY_NAME_MAX_LENGTH,
 } from "@/lib/authors/field-limits";
 
+/** MongoDB collection for author profiles (explicit — do not use `author`). */
+export const AUTHOR_COLLECTION_NAME = "authors";
+
 const authorSchema = new Schema(
   {
     address: {
@@ -29,6 +32,7 @@ const authorSchema = new Schema(
   {
     timestamps: true,
     versionKey: false,
+    collection: AUTHOR_COLLECTION_NAME,
   },
 );
 

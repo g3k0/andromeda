@@ -1,8 +1,11 @@
+import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
+
 export type CreateAuthorPromptProps = {
   open: boolean;
   onAccept: () => void;
   onDecline: () => void;
   disabled?: boolean;
+  loading?: boolean;
 };
 
 export function CreateAuthorPrompt({
@@ -10,6 +13,7 @@ export function CreateAuthorPrompt({
   onAccept,
   onDecline,
   disabled = false,
+  loading = false,
 }: CreateAuthorPromptProps) {
   if (!open) {
     return null;
@@ -42,15 +46,16 @@ export function CreateAuthorPrompt({
           <button
             type="button"
             onClick={onAccept}
-            disabled={disabled}
-            className="rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={disabled || loading}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:cursor-not-allowed disabled:opacity-60"
           >
+            {loading ? <LoadingSpinner size="sm" label="Creating author page" /> : null}
             Sì, crea la pagina
           </button>
           <button
             type="button"
             onClick={onDecline}
-            disabled={disabled}
+            disabled={disabled || loading}
             className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
           >
             No, resto lettore

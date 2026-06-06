@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSignMessage } from "wagmi";
 import { updateAuthorAction } from "@/app/actions/authors";
+import { useLoading } from "@/components/loading/LoadingProvider";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 import type { AuthorProfile } from "@/lib/authors/types";
 import {
@@ -28,6 +29,7 @@ export function AuthorPageContent({
   onProfileSaved,
 }: AuthorPageContentProps) {
   const { signMessageAsync } = useSignMessage();
+  const { runWithLoading } = useLoading();
   const [profile, setProfile] = useState(initialProfile);
 
   const canEdit = resolveCanEditAuthorPage({
@@ -49,18 +51,20 @@ export function AuthorPageContent({
     }
 
     try {
-      const signed = await createSignedWalletPayload(
-        viewerAddress,
-        signMessageAsync,
-      );
-      const updated = await updateAuthorAction({
-        ...signed,
-        targetAddress: profile.address,
-        displayName: input.displayName,
-        avatarUrl: input.avatarUrl,
-      });
-      setProfile(updated);
-      onProfileSaved?.(updated);
+      await runWithLoading(async () => {
+        const signed = await createSignedWalletPayload(
+          viewerAddress,
+          signMessageAsync,
+        );
+        const updated = await updateAuthorAction({
+          ...signed,
+          targetAddress: profile.address,
+          displayName: input.displayName,
+          avatarUrl: input.avatarUrl,
+        });
+        setProfile(updated);
+        onProfileSaved?.(updated);
+      }, "Saving profile…");
     } catch {
       // Errors surface via server action validation/auth failures.
     }

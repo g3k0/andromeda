@@ -5,6 +5,7 @@ import { useState, type ReactNode } from "react";
 import { WagmiProvider } from "wagmi";
 import { wagmiConfig } from "@/lib/wagmi";
 import { AuthorOnboarding } from "@/components/auth/AuthorOnboarding";
+import { LoadingProvider } from "@/components/loading/LoadingProvider";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -13,10 +14,12 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <NotificationProvider>
-          <AuthorOnboarding />
-          {children}
-        </NotificationProvider>
+        <LoadingProvider>
+          <NotificationProvider>
+            <AuthorOnboarding />
+            {children}
+          </NotificationProvider>
+        </LoadingProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
