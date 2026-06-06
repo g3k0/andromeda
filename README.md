@@ -223,8 +223,10 @@ your RPC URL, deployer private key, and Polygonscan API key.
 ### Web app
 
 ```bash
-# Copy and configure local secrets (optional — .env.development already provides local defaults)
+# Copy and configure local secrets (required for MongoDB and other credentials)
 cp apps/web/.env.example apps/web/.env.local
+# Or only database credentials:
+# cp apps/web/.env.development.local.example apps/web/.env.development.local
 
 # Start the dev server (http://localhost:3000)
 pnpm dev
@@ -237,14 +239,16 @@ in `apps/web/`. Next.js sets `NODE_ENV` automatically; you do not need to export
 
 | Environment | Command | `NODE_ENV` (set by Next.js) | Files loaded |
 | --- | --- | --- | --- |
-| **Local** | `pnpm dev` | `development` (default when unset) | `.env.development`, then `.env.local` |
+| **Local** | `pnpm dev` | `development` (default when unset) | `.env.development`, then `.env.local` / `.env.development.local` |
 | **Production** | `pnpm build` / `pnpm start` / Vercel deploy | `production` | `.env.production`, then `.env.production.local` |
 | **Tests** | `pnpm web:test` | `test` | `.env.test` |
 
-- **Local defaults** live in [`apps/web/.env.development`](apps/web/.env.development) (Amoy testnet, local MongoDB).
-- **Production defaults** live in [`apps/web/.env.production`](apps/web/.env.production) (Polygon mainnet).
-- **Secrets** (WalletConnect project id, contract address, admin wallets, production `MONGODB_URI`) go in
-  `.env.local` or your deployment platform — see [`apps/web/.env.example`](apps/web/.env.example).
+- **Committed defaults** (no secrets): [`.env.development`](apps/web/.env.development) (Amoy testnet),
+  [`.env.production`](apps/web/.env.production) (Polygon mainnet).
+- **Local secrets** (gitignored): `.env.local` or `.env.development.local` — copy from
+  [`.env.example`](apps/web/.env.example) or [`.env.development.local.example`](apps/web/.env.development.local.example).
+- **Production secrets**: set in Vercel **Settings → Environment Variables** (never in the repo).
+- **Personal reference**: optional `secrets.md` at the repo root (also gitignored).
 
 Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address and add the
 authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
