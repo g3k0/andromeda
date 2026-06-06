@@ -13,6 +13,7 @@ export default defineConfig({
       include: [
         "src/lib/authors/**/*.ts",
         "src/lib/auth/**/*.ts",
+        "src/lib/db/**/*.ts",
         "src/lib/navigation/**/*.ts",
         "src/components/author/**/*.ts",
         "src/components/author/**/*.tsx",

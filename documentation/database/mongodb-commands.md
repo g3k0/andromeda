@@ -46,3 +46,10 @@ Inserisci la connection string in `apps/web/.env.development.local` o `apps/web/
 mongodb://<user>:<password>@127.0.0.1:27017/andromeda?authSource=andromeda
 ```
 
+### Produzione
+
+- Usa un utente applicativo con **solo** `readWrite` sul database `andromeda` — **non** `dbAdmin`.
+- Abilita **TLS** nella connection string (`mongodb+srv://` su Atlas o `tls=true` dove supportato).
+- Conserva `MONGODB_URI` solo in secrets del deploy (Vercel, ecc.); non committare credenziali.
+- Limita l'accesso di rete (IP allowlist o VPC) quando il provider lo supporta.
+

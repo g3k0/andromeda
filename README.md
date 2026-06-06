@@ -280,10 +280,11 @@ Pull requests and pushes to `develop` and `main` run the [CI workflow](.github/w
 (GitHub Actions). It currently runs web unit tests with coverage. More steps (lint, build,
 contract tests, and so on) can be added to that workflow over time.
 
-#### Author pages (mock implementation)
+#### Author pages (MongoDB)
 
-Author profiles and onboarding are implemented in the web app with a **browser-only mock**
-(`apps/web/src/lib/authors/mock-store.ts`). There is no database or API backend for profiles yet.
+Author profiles and wallet preferences are persisted in **MongoDB** via Mongoose adapters
+(`apps/web/src/lib/db/*`). Mutations require an **EIP-191 wallet signature** verified server-side;
+UI role checks are UX-only — the API and Server Actions enforce authorization.
 
 **Routes**
 
@@ -291,6 +292,15 @@ Author profiles and onboarding are implemented in the web app with a **browser-o
 | --- | --- |
 | `/author` | Resolves the connected wallet to `/author/[address]`, onboarding, or reader mode |
 | `/author/[address]` | Public profile view; edit mode for the profile owner or platform admin |
+
+**API** (server-only auth on mutations)
+
+| Method | Path | Auth |
+| --- | --- | --- |
+| `GET` | `/api/authors/[address]` | Public read |
+| `POST` | `/api/authors` | Owner signature |
+| `PATCH` | `/api/authors/[address]` | Owner or server-verified admin signature |
+| `PUT` | `/api/wallet-preferences/[address]` | Owner signature (no public `GET`) |
 
 **User roles** (cumulative capabilities)
 
@@ -301,22 +311,17 @@ Author profiles and onboarding are implemented in the web app with a **browser-o
 | **Admin** | Wallet listed in `NEXT_PUBLIC_ADMIN_ADDRESSES` (full reader + author + edit any profile + `/admin`) |
 
 On first connect, users without a profile are prompted to create an author page. If they decline,
-`declinedAuthorPage` is stored in `localStorage` and they remain in reader mode.
+`declinedAuthorPage` is stored in MongoDB and they remain in reader mode.
 
-**Mock limitations**
+**Configuration**
 
-- Profiles and preferences persist in `localStorage` only (keys in `storage-keys.ts`).
-- Data does not sync across browsers or devices; clearing site data removes it.
-- Avatar uploads are stored as data URLs in the mock store, not on IPFS or object storage.
-- Programmatic reference: `mock-limitations.ts` (also covered by unit tests).
+- Set `MONGODB_URI` in `apps/web/.env.development.local` (gitignored). See
+  [documentation/database/mongodb-commands.md](documentation/database/mongodb-commands.md).
+- Mutation endpoints are rate-limited (30 requests/min per IP and scope).
+- Avatar uploads are validated data URLs until IPFS integration.
 
-**Planned database step** (not implemented)
-
-- Tables: `authors`, `wallet_preferences`
-- API: `GET /authors/:address`, `POST /authors`, `PATCH /authors/:address` (owner signature or server-verified admin)
-- Replace `mock-store.ts`; keep `roles.ts`, `lib/auth/admin.ts`, and UI components
-
-See [documentation/plans/author-page.md](documentation/plans/author-page.md) for the full implementation plan.
+See [documentation/plans/author-page.md](documentation/plans/author-page.md) and
+[documentation/plans/db-integration.md](documentation/plans/db-integration.md) for architecture and security notes.
 
 ### Deployment (Vercel)
 

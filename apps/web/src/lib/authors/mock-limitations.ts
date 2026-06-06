@@ -1,9 +1,4 @@
 import type { UserRole } from "@/lib/auth/roles";
-import {
-  AUTHORS_RECORD_STORAGE_KEY,
-  WALLET_PREFERENCES_KEY_PREFIX,
-  walletPreferencesStorageKey,
-} from "./storage-keys";
 
 export type UserRoleDefinition = {
   role: UserRole;
@@ -42,45 +37,37 @@ export const USER_ROLE_DEFINITIONS: readonly UserRoleDefinition[] = [
   },
 ] as const;
 
-export const MOCK_PERSISTENCE_LIMITATIONS: readonly string[] = [
-  "Author profiles and wallet preferences are stored in the browser only (localStorage).",
-  "Data does not sync across devices, browsers, or users.",
-  "Clearing site data removes profiles and onboarding preferences.",
-  "There is no server-side validation of profile updates in this iteration.",
-  "Avatar uploads are stored as data URLs in localStorage, not on IPFS or object storage.",
+export const DATABASE_PERSISTENCE_NOTES: readonly string[] = [
+  "Author profiles and wallet preferences are stored in MongoDB via Mongoose adapters.",
+  "Mutations require a signed wallet message verified server-side.",
+  "MONGODB_URI must be configured via gitignored env files or deployment secrets.",
+  "Avatar uploads are stored as validated data URLs until IPFS integration.",
 ] as const;
 
-export const FUTURE_DATABASE_MIGRATION = {
-  tables: {
-    authors: ["address", "display_name", "avatar_url", "created_at", "updated_at"],
+export const DATABASE_MIGRATION_STATUS = {
+  collections: {
+    authors: ["address", "displayName", "avatarUrl", "createdAt", "updatedAt"],
     wallet_preferences: [
       "address",
-      "declined_author_page",
-      "onboarding_completed_at",
+      "declinedAuthorPage",
+      "onboardingCompletedAt",
     ],
   },
   api: {
-    getAuthor: "GET /authors/:address",
-    createAuthor: "POST /authors",
-    patchAuthor: "PATCH /authors/:address",
+    getAuthor: "GET /api/authors/:address",
+    createAuthor: "POST /api/authors",
+    patchAuthor: "PATCH /api/authors/:address",
+    putWalletPreferences: "PUT /api/wallet-preferences/:address",
   },
   authorization:
-    "PATCH requires wallet signature from the profile owner or a server-verified admin allowlist.",
-  modulesToReplace: ["mock-store.ts"],
-  modulesToKeep: ["roles.ts", "components/author/*", "lib/auth/admin.ts"],
+    "Mutations require EIP-191 wallet signatures; admin edits verified server-side.",
+  modulesToKeep: [
+    "roles.ts",
+    "components/author/*",
+    "lib/auth/admin.ts",
+    "author-service.ts",
+  ],
 } as const;
-
-export function getAuthorMockStorageKeys() {
-  return {
-    authorsRecord: AUTHORS_RECORD_STORAGE_KEY,
-    walletPreferencesPrefix: WALLET_PREFERENCES_KEY_PREFIX,
-    walletPreferencesFor: walletPreferencesStorageKey,
-  };
-}
-
-export function usesBrowserLocalStorageForMock(): boolean {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
-}
 
 export function getUserRoleDefinition(role: UserRole): UserRoleDefinition {
   const definition = USER_ROLE_DEFINITIONS.find((entry) => entry.role === role);
