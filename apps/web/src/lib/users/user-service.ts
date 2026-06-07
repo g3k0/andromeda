@@ -69,6 +69,7 @@ export function createUserService(
     async getSnapshot(
       address: string | null | undefined,
       isConnected: boolean,
+      authorLookupOverride?: AuthorProfileLookup,
     ): Promise<UserSnapshot | null> {
       if (!isConnected || !address) {
         return null;
@@ -84,8 +85,9 @@ export function createUserService(
         return null;
       }
 
-      const hasAuthorProfile = authorLookup
-        ? await authorLookup.hasAuthorProfile(normalized)
+      const lookup = authorLookupOverride ?? authorLookup;
+      const hasAuthorProfile = lookup
+        ? await lookup.hasAuthorProfile(normalized)
         : user.role === "author";
 
       return {
