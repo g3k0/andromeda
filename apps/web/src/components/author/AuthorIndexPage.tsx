@@ -3,23 +3,23 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
-import { getAuthorOnboardingSnapshotAction } from "@/app/actions/onboarding";
+import { getUserSnapshotAction } from "@/app/actions/users";
 import { LoadingPanel } from "@/components/loading/LoadingPanel";
 import { WalletButton } from "@/components/WalletButton";
-import type { AuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
+import type { UserSnapshot } from "@/lib/users/types";
 import { resolveAuthorIndexPage } from "@/lib/authors/author-index";
 import { AuthorPageStatusMessage } from "./AuthorPageStatusMessage";
 
 export function AuthorIndexPage() {
   const { address, isConnected } = useAccount();
   const router = useRouter();
-  const [snapshot, setSnapshot] = useState<AuthorOnboardingSnapshot | null>(null);
+  const [snapshot, setSnapshot] = useState<UserSnapshot | null>(null);
   const resolved = resolveAuthorIndexPage(snapshot);
 
   useEffect(() => {
     let cancelled = false;
 
-    void getAuthorOnboardingSnapshotAction(address, isConnected).then((next) => {
+    void getUserSnapshotAction(address, isConnected).then((next) => {
       if (!cancelled) {
         setSnapshot(next);
       }

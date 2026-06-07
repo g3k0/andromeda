@@ -3,20 +3,19 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { getAuthorOnboardingSnapshotAction } from "@/app/actions/onboarding";
-import { isAdminAddress } from "@/lib/auth/admin";
+import { getUserSnapshotAction } from "@/app/actions/users";
 import { getUserRole } from "@/lib/auth/roles";
-import type { AuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
+import type { UserSnapshot } from "@/lib/users/types";
 
 export function SiteHeaderNav() {
   const { address, isConnected } = useAccount();
-  const [snapshot, setSnapshot] = useState<AuthorOnboardingSnapshot | null>(null);
+  const [snapshot, setSnapshot] = useState<UserSnapshot | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    void getAuthorOnboardingSnapshotAction(address, isConnected).then((next) => {
+    void getUserSnapshotAction(address, isConnected).then((next) => {
       if (!cancelled) {
         setSnapshot(next);
       }
@@ -27,12 +26,12 @@ export function SiteHeaderNav() {
     };
   }, [address, isConnected]);
 
-  const isAdmin = isAdminAddress(address);
   const role = getUserRole({
     address,
     isConnected,
     hasAuthorProfile: snapshot?.hasAuthorProfile ?? false,
-    isAdmin,
+    isAdmin: snapshot?.role === "admin",
+    userRole: snapshot?.role,
   });
 
   const links = buildHeaderNavLinks({

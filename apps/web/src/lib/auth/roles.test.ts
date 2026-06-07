@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { canEditAuthorPage, getUserRole } from "./roles";
+import {
+  canEditAuthorPage,
+  getUserRole,
+  resolveCanEditAuthorPageFromRole,
+} from "./roles";
 
 const VIEWER = "0xabcdef0123456789abcdef0123456789abcdef01";
 const OWNER = "0x1111111111111111111111111111111111111111";
@@ -82,6 +86,18 @@ describe("getUserRole", () => {
     ).toBe("reader");
   });
 
+  it("prefers persisted userRole over derived flags", () => {
+    expect(
+      getUserRole({
+        address: VIEWER,
+        isConnected: true,
+        hasAuthorProfile: false,
+        isAdmin: false,
+        userRole: "admin",
+      }),
+    ).toBe("admin");
+  });
+
   it("prefers admin over author when both apply", () => {
     expect(
       getUserRole({
@@ -116,5 +132,28 @@ describe("canEditAuthorPage", () => {
 
   it("denies edit when profile owner address is invalid", () => {
     expect(canEditAuthorPage(VIEWER, "bad", false)).toBe(false);
+  });
+});
+
+describe("resolveCanEditAuthorPageFromRole", () => {
+  it("allows admins to edit any profile", () => {
+    expect(
+      resolveCanEditAuthorPageFromRole("admin", VIEWER, OWNER),
+    ).toBe(true);
+  });
+
+  it("allows authors to edit only their own profile", () => {
+    expect(
+      resolveCanEditAuthorPageFromRole("author", VIEWER, VIEWER),
+    ).toBe(true);
+    expect(
+      resolveCanEditAuthorPageFromRole("author", VIEWER, OWNER),
+    ).toBe(false);
+  });
+
+  it("denies readers from editing", () => {
+    expect(
+      resolveCanEditAuthorPageFromRole("reader", VIEWER, VIEWER),
+    ).toBe(false);
   });
 });
