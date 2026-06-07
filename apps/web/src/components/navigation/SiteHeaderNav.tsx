@@ -1,15 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { getUserSnapshotAction } from "@/app/actions/users";
+import { useNotifications } from "@/components/notifications/NotificationProvider";
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
+import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
 import type { UserSnapshot } from "@/lib/users/types";
+import { RoleMenuDropdown } from "@/components/RoleMenuDropdown";
 
 export function SiteHeaderNav() {
+  const router = useRouter();
+  const { notify } = useNotifications();
   const { address, isConnected } = useAccount();
   const [snapshot, setSnapshot] = useState<UserSnapshot | null>(null);
+  const { disconnect, isPending: isLoggingOut } = useDisconnect({
+    mutation: {
+      onSuccess: () => {
+        notify({
+          variant: "info",
+          message: WALLET_DISCONNECTED_MESSAGE,
+        });
+        router.push("/");
+      },
+    },
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -43,6 +60,14 @@ export function SiteHeaderNav() {
           {link.label}
         </Link>
       ))}
+
+      {isConnected && snapshot ? (
+        <RoleMenuDropdown
+          role={snapshot.role}
+          onLogout={() => disconnect()}
+          isLoggingOut={isLoggingOut}
+        />
+      ) : null}
     </>
   );
 }

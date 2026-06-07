@@ -28,6 +28,21 @@ function requireNormalizedAddress(address: string): string {
   return normalized;
 }
 
+async function ensureRoleMatchesAuthorProfile(
+  users: UserRepository,
+  user: User,
+  hasAuthorProfile: boolean,
+): Promise<User> {
+  if (user.role === "admin" || !hasAuthorProfile || user.role === "author") {
+    return user;
+  }
+
+  return users.update({
+    ...user,
+    role: "author",
+  });
+}
+
 export function createUserService(
   users: UserRepository,
   authorLookup?: AuthorProfileLookup,
@@ -53,14 +68,21 @@ export function createUserService(
 
     async findOrCreateByWallet(address: string): Promise<User> {
       const normalized = requireNormalizedAddress(address);
+      const hasAuthorProfile = authorLookup
+        ? await authorLookup.hasAuthorProfile(normalized)
+        : false;
       const existing = await users.getByAddress(normalized);
       if (existing) {
-        return existing;
+        return ensureRoleMatchesAuthorProfile(
+          users,
+          existing,
+          hasAuthorProfile,
+        );
       }
 
       return users.create({
         address: normalized,
-        role: "reader",
+        role: hasAuthorProfile ? "author" : "reader",
         status: "active",
         preferences: defaultUserPreferences(),
       });
@@ -80,7 +102,7 @@ export function createUserService(
         return null;
       }
 
-      const user = await users.getByAddress(normalized);
+      let user = await users.getByAddress(normalized);
       if (!user) {
         return null;
       }
@@ -89,6 +111,12 @@ export function createUserService(
       const hasAuthorProfile = lookup
         ? await lookup.hasAuthorProfile(normalized)
         : user.role === "author";
+
+      user = await ensureRoleMatchesAuthorProfile(
+        users,
+        user,
+        hasAuthorProfile,
+      );
 
       return {
         normalizedAddress: normalized,

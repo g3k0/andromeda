@@ -16,6 +16,30 @@ describe("user service", () => {
     expect(again.address).toBe(created.address);
   });
 
+  it("creates an author when the wallet already has an author profile", async () => {
+    const service = createUserService(createInMemoryUserRepository(), {
+      hasAuthorProfile: async () => true,
+    });
+
+    const created = await service.findOrCreateByWallet(ADDRESS);
+    expect(created.role).toBe("author");
+  });
+
+  it("syncs an existing reader to author when an author profile exists", async () => {
+    const repository = createInMemoryUserRepository();
+    const service = createUserService(repository, {
+      hasAuthorProfile: async () => true,
+    });
+
+    await repository.create({ address: ADDRESS, role: "reader" });
+
+    const snapshot = await service.getSnapshot(ADDRESS, true);
+    expect(snapshot?.role).toBe("author");
+
+    const stored = await repository.getByAddress(ADDRESS);
+    expect(stored?.role).toBe("author");
+  });
+
   it("builds a connected snapshot with author profile lookup", async () => {
     const repository = createInMemoryUserRepository();
     const service = createUserService(repository, {
