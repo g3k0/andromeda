@@ -6,6 +6,7 @@ import { updateAuthorAction } from "@/app/actions/authors";
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 import type { AuthorProfile } from "@/lib/authors/types";
+import type { UserRole } from "@/lib/users/types";
 import {
   isAdminEditingOtherAuthorPage,
   resolveCanEditAuthorPage,
@@ -18,6 +19,7 @@ export type AuthorPageContentProps = {
   viewerAddress: string | null | undefined;
   isConnected: boolean;
   isAdmin: boolean;
+  viewerRole?: UserRole | null;
   onProfileSaved?: (profile: AuthorProfile) => void;
 };
 
@@ -26,6 +28,7 @@ export function AuthorPageContent({
   viewerAddress,
   isConnected,
   isAdmin,
+  viewerRole,
   onProfileSaved,
 }: AuthorPageContentProps) {
   const { signMessageAsync } = useSignMessage();
@@ -36,12 +39,14 @@ export function AuthorPageContent({
     viewerAddress,
     isConnected,
     isAdmin,
+    viewerRole,
     profileOwnerAddress: profile.address,
   });
 
   const isAdminEditingOther = isAdminEditingOtherAuthorPage({
     viewerAddress,
     isAdmin,
+    viewerRole,
     profileOwnerAddress: profile.address,
   });
 

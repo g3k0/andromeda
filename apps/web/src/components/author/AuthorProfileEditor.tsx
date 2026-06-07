@@ -21,12 +21,16 @@ export type AuthorProfileEditorProps = {
   profile: AuthorProfile;
   isAdminEditingOther: boolean;
   onSave: (input: AuthorProfileEditorSaveInput) => void | Promise<void>;
+  onCancel?: () => void;
+  cancelLabel?: string;
 };
 
 export function AuthorProfileEditor({
   profile,
   isAdminEditingOther,
   onSave,
+  onCancel,
+  cancelLabel,
 }: AuthorProfileEditorProps) {
   const [form, setForm] = useState<EditorFormState>(() =>
     createEditorFormState(profile),
@@ -76,6 +80,11 @@ export function AuthorProfileEditor({
   }
 
   function handleCancel() {
+    if (onCancel) {
+      onCancel();
+      return;
+    }
+
     setForm(resetEditorFormState(profile));
   }
 
@@ -90,6 +99,7 @@ export function AuthorProfileEditor({
       onAvatarFileSelect={(file) => void handleAvatarFileSelect(file)}
       onSubmit={() => void handleSubmit()}
       onCancel={handleCancel}
+      cancelLabel={cancelLabel}
     />
   );
 }

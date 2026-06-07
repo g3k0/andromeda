@@ -4,6 +4,7 @@ import {
   AuthorProfileNotFoundError,
   InvalidAddressError,
 } from "./errors";
+import { RouteAccessDeniedError } from "@/lib/navigation/route-guard";
 import {
   RateLimitExceededError,
   WalletAuthExpiredError,
@@ -29,7 +30,10 @@ export function mapAuthorErrorToStatus(error: unknown): number {
   ) {
     return 401;
   }
-  if (error instanceof WalletAuthorizationError) {
+  if (
+    error instanceof WalletAuthorizationError ||
+    error instanceof RouteAccessDeniedError
+  ) {
     return 403;
   }
   if (error instanceof RateLimitExceededError) {

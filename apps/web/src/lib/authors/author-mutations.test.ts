@@ -22,18 +22,42 @@ vi.mock("./server", () => ({
   getAuthorService: vi.fn(),
 }));
 
+vi.mock("@/lib/users/server", () => ({
+  getUserService: vi.fn(),
+}));
+
+import { getUserService } from "@/lib/users/server";
 import { getAuthorService } from "./server";
 
 const mockedGetAuthorService = vi.mocked(getAuthorService);
+const mockedGetUserService = vi.mocked(getUserService);
 
 describe("author mutations", () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  function mockService() {
+  function mockUserService(
+    getByAddress: () => Promise<unknown> = async () => null,
+  ) {
+    mockedGetUserService.mockResolvedValue({
+      promoteToAuthor: vi.fn(async (address: string) => ({
+        address,
+        role: "author",
+      })),
+      findOrCreateByWallet: vi.fn(),
+      setPreferences: vi.fn(),
+      assertActive: vi.fn(),
+      getByAddress: vi.fn(getByAddress),
+    } as never);
+  }
+
+  function mockService(
+    getByAddress: () => Promise<unknown> = async () => null,
+  ) {
     const service = createAuthorService(createInMemoryAuthorRepositories());
     mockedGetAuthorService.mockResolvedValue(service);
+    mockUserService(getByAddress);
     return service;
   }
 
@@ -50,6 +74,29 @@ describe("author mutations", () => {
 
     expect(profile.displayName).toBe("Writer");
     expect(profile.address).toBe(ADDRESS);
+  });
+
+  it("allows a reader to create their first author profile", async () => {
+    mockService(async () => ({
+      address: ADDRESS,
+      role: "reader",
+      status: "active",
+      permissions: [],
+      preferences: { declinedAuthorPage: false, onboardingCompletedAt: null },
+      metadata: {},
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }));
+
+    const profile = await runCreateAuthorMutation({
+      address: ADDRESS,
+      message: "msg",
+      signature: "0x00",
+      displayName: "New author",
+      avatarUrl: null,
+    });
+
+    expect(profile.displayName).toBe("New author");
   });
 
   it("updates an existing author profile", async () => {

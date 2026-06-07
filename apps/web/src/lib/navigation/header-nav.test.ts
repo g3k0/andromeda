@@ -49,13 +49,13 @@ describe("buildHeaderNavLinks", () => {
     );
   });
 
-  it("omits La mia pagina for readers who declined onboarding", () => {
+  it("omits My page for readers who declined onboarding", () => {
     expect(buildHeaderNavLinks({ role: "reader", hasAuthorProfile: false })).not.toContainEqual(
       MY_AUTHOR_PAGE_NAV_LINK,
     );
   });
 
-  it("includes La mia pagina for authors and admins with a profile", () => {
+  it("includes My page for authors and admins with a profile", () => {
     expect(buildHeaderNavLinks({ role: "author", hasAuthorProfile: true })).toContainEqual(
       MY_AUTHOR_PAGE_NAV_LINK,
     );

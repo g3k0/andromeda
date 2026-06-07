@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { AdminGate } from "@/components/AdminGate";
+import { RouteGuard } from "@/components/navigation/RouteGuard";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  return <AdminGate>{children}</AdminGate>;
+  return <RouteGuard routeId="admin">{children}</RouteGuard>;
 }

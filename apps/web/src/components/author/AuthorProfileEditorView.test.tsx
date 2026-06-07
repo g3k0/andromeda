@@ -100,6 +100,23 @@ describe("AuthorProfileEditorView", () => {
     ).toBeTruthy();
   });
 
+  it("shows the public address with a label", () => {
+    render(
+      <AuthorProfileEditorView
+        profile={profile}
+        form={createEditorFormState(profile)}
+        isAdminEditingOther={false}
+        onDisplayNameChange={vi.fn()}
+        onAvatarFileSelect={vi.fn()}
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Public address")).toBeInTheDocument();
+    expect(screen.getByText(profile.address)).toBeInTheDocument();
+  });
+
   it("forwards display name and file changes", () => {
     const onDisplayNameChange = vi.fn();
     const onAvatarFileSelect = vi.fn();

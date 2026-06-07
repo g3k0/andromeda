@@ -1,10 +1,15 @@
-import { canEditAuthorPage } from "@/lib/auth/roles";
+import {
+  canEditAuthorPage,
+  resolveCanEditAuthorPageFromRole,
+} from "@/lib/auth/roles";
 import { normalizeAddress } from "@/lib/authors/address";
+import type { UserRole } from "@/lib/users/types";
 
 export type AuthorPageEditContext = {
   viewerAddress: string | null | undefined;
   isConnected: boolean;
   isAdmin: boolean;
+  viewerRole?: UserRole | null;
   profileOwnerAddress: string;
 };
 
@@ -12,23 +17,35 @@ export function resolveCanEditAuthorPage({
   viewerAddress,
   isConnected,
   isAdmin,
+  viewerRole,
   profileOwnerAddress,
 }: AuthorPageEditContext): boolean {
   if (!isConnected) {
     return false;
   }
+
+  if (viewerRole) {
+    return resolveCanEditAuthorPageFromRole(
+      viewerRole,
+      viewerAddress,
+      profileOwnerAddress,
+    );
+  }
+
   return canEditAuthorPage(viewerAddress, profileOwnerAddress, isAdmin);
 }
 
 export function isAdminEditingOtherAuthorPage({
   viewerAddress,
   isAdmin,
+  viewerRole,
   profileOwnerAddress,
 }: Pick<
   AuthorPageEditContext,
-  "viewerAddress" | "isAdmin" | "profileOwnerAddress"
+  "viewerAddress" | "isAdmin" | "viewerRole" | "profileOwnerAddress"
 >): boolean {
-  if (!isAdmin) {
+  const isAdminViewer = viewerRole === "admin" || isAdmin;
+  if (!isAdminViewer) {
     return false;
   }
   const viewer = normalizeAddress(viewerAddress ?? "");
