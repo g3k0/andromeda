@@ -1,5 +1,6 @@
 import "server-only";
 
+import { assertRouteApiAccess } from "@/lib/navigation/route-guard";
 import { assertCanEditAuthorProfile } from "@/lib/users/authorize";
 import {
   assertCanCreateAuthorProfile,
@@ -23,13 +24,19 @@ export async function runCreateAuthorMutation(
   const signer = await verifySignedMutation(body);
   assertCanCreateAuthorProfile(signer, body.address);
 
+  const userService = await getUserService();
+  const signerUser = await userService.getByAddress(signer);
+  if (signerUser) {
+    userService.assertActive(signerUser);
+    assertRouteApiAccess(signerUser, "POST", "/api/authors");
+  }
+
   const service = await getAuthorService();
   const profile = await service.createAuthorProfile(body.address, {
     displayName: body.displayName,
     avatarUrl: body.avatarUrl ?? null,
   });
 
-  const userService = await getUserService();
   await userService.findOrCreateByWallet(body.address);
   await userService.promoteToAuthor(body.address);
 
@@ -44,6 +51,12 @@ export async function runUpdateAuthorMutation(
   const userService = await getUserService();
   const signerUser = await userService.getByAddress(signer);
   if (signerUser) {
+    userService.assertActive(signerUser);
+    assertRouteApiAccess(
+      signerUser,
+      "PATCH",
+      `/api/authors/${targetAddress}`,
+    );
     assertCanEditAuthorProfile(signerUser, targetAddress);
   } else {
     assertCanUpdateAuthorProfile(signer, targetAddress);

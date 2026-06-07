@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { getUserSnapshotAction } from "@/app/actions/users";
-import { getUserRole } from "@/lib/auth/roles";
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
 import type { UserSnapshot } from "@/lib/users/types";
 
@@ -26,17 +25,11 @@ export function SiteHeaderNav() {
     };
   }, [address, isConnected]);
 
-  const role = getUserRole({
-    address,
-    isConnected,
-    hasAuthorProfile: snapshot?.hasAuthorProfile ?? false,
-    isAdmin: snapshot?.role === "admin",
-    userRole: snapshot?.role,
-  });
-
   const links = buildHeaderNavLinks({
-    role,
+    role: snapshot?.role ?? "reader",
     hasAuthorProfile: snapshot?.hasAuthorProfile ?? false,
+    isConnected,
+    snapshot,
   });
 
   return (

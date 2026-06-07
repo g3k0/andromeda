@@ -91,6 +91,25 @@ describe("authors API", () => {
     expect(getResponse.status).toBe(200);
   });
 
+  it("POST rejects readers without author write permission", async () => {
+    await UserModel.create({
+      address: OWNER_ADDRESS,
+      role: "reader",
+      status: "active",
+    });
+
+    const body = await signedPayload(OWNER, { displayName: "Writer" });
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+    );
+
+    expect(response.status).toBe(403);
+  });
+
   it("POST rejects unsigned mutations", async () => {
     const response = await POST(
       new Request("http://localhost", {

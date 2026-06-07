@@ -4,6 +4,7 @@ import {
   mapAuthorErrorToMessage,
   mapAuthorErrorToStatus,
 } from "@/lib/authors/api-errors";
+import { RouteAccessDeniedError } from "@/lib/navigation/route-guard";
 import {
   UserExistsError,
   UserNotFoundError,
@@ -21,6 +22,9 @@ export function mapUserErrorToStatus(error: unknown): number {
     return 404;
   }
   if (error instanceof UserSuspendedError) {
+    return 403;
+  }
+  if (error instanceof RouteAccessDeniedError) {
     return 403;
   }
   return mapAuthorErrorToStatus(error);
