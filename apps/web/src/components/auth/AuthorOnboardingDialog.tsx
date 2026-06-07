@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { useSignMessage } from "wagmi";
 import { createAuthorAction, setWalletPreferencesAction } from "@/app/actions/authors";
 import { useLoading } from "@/components/loading/LoadingProvider";
-import { getAuthorOnboardingSnapshotAction } from "@/app/actions/onboarding";
+import { getUserSnapshotAction } from "@/app/actions/users";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
-import type { AuthorOnboardingSnapshot } from "@/lib/authors/onboarding";
+import type { UserSnapshot } from "@/lib/users/types";
 import { authorPagePath } from "@/lib/authors/onboarding";
 import { CreateAuthorPrompt } from "./CreateAuthorPrompt";
 import { resolveAuthorOnboardingDialogState } from "./author-onboarding-dialog-state";
@@ -23,7 +23,7 @@ export function AuthorOnboardingDialog({
   onNavigate,
 }: AuthorOnboardingDialogProps) {
   const { signMessageAsync } = useSignMessage();
-  const [snapshot, setSnapshot] = useState<AuthorOnboardingSnapshot | null>(null);
+  const [snapshot, setSnapshot] = useState<UserSnapshot | null>(null);
   const [open, setOpen] = useState(false);
   const { isLoading, runWithLoading } = useLoading();
 
@@ -31,10 +31,7 @@ export function AuthorOnboardingDialog({
     let cancelled = false;
 
     async function loadSnapshot() {
-      const nextSnapshot = await getAuthorOnboardingSnapshotAction(
-        address,
-        isConnected,
-      );
+      const nextSnapshot = await getUserSnapshotAction(address, isConnected);
       if (!cancelled) {
         setSnapshot(nextSnapshot);
         setOpen(

@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { isAdminAddress } from "@/lib/auth/admin";
+import { getUserSnapshotAction } from "@/app/actions/users";
 import type { AuthorProfile } from "@/lib/authors/types";
+import type { UserSnapshot } from "@/lib/users/types";
 import { AuthorPageContent } from "./AuthorPageContent";
 
 export type AuthorPageClientProps = {
@@ -11,14 +13,29 @@ export type AuthorPageClientProps = {
 
 export function AuthorPageClient({ profile }: AuthorPageClientProps) {
   const { address, isConnected } = useAccount();
-  const isAdmin = isConnected && isAdminAddress(address);
+  const [snapshot, setSnapshot] = useState<UserSnapshot | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getUserSnapshotAction(address, isConnected).then((next) => {
+      if (!cancelled) {
+        setSnapshot(next);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [address, isConnected]);
 
   return (
     <AuthorPageContent
       profile={profile}
       viewerAddress={address}
       isConnected={isConnected}
-      isAdmin={isAdmin}
+      isAdmin={snapshot?.role === "admin"}
+      viewerRole={snapshot?.role}
     />
   );
 }
