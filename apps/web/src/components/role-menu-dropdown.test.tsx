@@ -18,10 +18,10 @@ describe("RoleMenuDropdown", () => {
     await user.click(screen.getByText("Author"));
 
     expect(
-      screen.getByRole("menuitem", { name: "Impostazioni profilo" }),
+      screen.getByRole("menuitem", { name: "Profile settings" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("menuitem", { name: "Cambia lingua" }),
+      screen.getByRole("menuitem", { name: "Change language" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Logout" })).toBeInTheDocument();
   });
@@ -34,14 +34,14 @@ describe("RoleMenuDropdown", () => {
     );
     await user.click(screen.getByText("Reader"));
     expect(
-      screen.getByRole("menuitem", { name: "Diventa autore" }),
+      screen.getByRole("menuitem", { name: "Become author" }),
     ).toBeInTheDocument();
     unmount();
 
     render(<RoleMenuDropdown role="author" onLogout={vi.fn()} />);
     await user.click(screen.getByText("Author"));
     expect(
-      screen.queryByRole("menuitem", { name: "Diventa autore" }),
+      screen.queryByRole("menuitem", { name: "Become author" }),
     ).not.toBeInTheDocument();
   });
 

@@ -13,17 +13,17 @@ export const ROLE_MENU_LABELS: Record<UserRole, string> = {
 
 export const PROFILE_SETTINGS_MENU_ITEM: RoleMenuItem = {
   id: "profile-settings",
-  label: "Impostazioni profilo",
+  label: "Profile settings",
 };
 
 export const CHANGE_LANGUAGE_MENU_ITEM: RoleMenuItem = {
   id: "change-language",
-  label: "Cambia lingua",
+  label: "Change language",
 };
 
 export const BECOME_AUTHOR_MENU_ITEM: RoleMenuItem = {
   id: "become-author",
-  label: "Diventa autore",
+  label: "Become author",
 };
 
 export function shouldShowBecomeAuthorMenuItem(role: UserRole): boolean {

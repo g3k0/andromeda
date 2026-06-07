@@ -37,12 +37,11 @@ export function CreateAuthorPrompt({
             id="create-author-prompt-title"
             className="text-xl font-semibold tracking-tight"
           >
-            Vuoi creare la tua pagina autore?
+            Do you want to create your author page?
           </h2>
           <p className="text-sm text-white/60">
-            Puoi pubblicare il tuo profilo su Andromeda, continuare come lettore
-            senza una pagina autore, oppure annullare per uscire senza
-            accedere.
+            You can publish your profile on Andromeda, continue as a reader
+            without an author page, or cancel to leave without signing in.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -53,7 +52,7 @@ export function CreateAuthorPrompt({
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? <LoadingSpinner size="sm" label="Creating author page" /> : null}
-            Sì, crea la pagina
+            Yes, create page
           </button>
           <button
             type="button"
@@ -61,7 +60,7 @@ export function CreateAuthorPrompt({
             disabled={disabled || loading}
             className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            No, resto lettore
+            No, stay as reader
           </button>
         </div>
         <div className="text-center">
@@ -71,7 +70,7 @@ export function CreateAuthorPrompt({
             disabled={disabled || loading}
             className="text-sm text-white/50 underline-offset-4 hover:text-white/70 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Annulla
+            Cancel
           </button>
         </div>
       </div>

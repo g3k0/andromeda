@@ -70,7 +70,7 @@ export function AuthorProfileEditorView({
         </label>
 
         <div className="space-y-1 text-left">
-          <span className="text-sm text-white/60">Indirizzo pubblico</span>
+          <span className="text-sm text-white/60">Public address</span>
           <p className="break-all font-mono text-sm text-white/60">
             {profile.address}
           </p>

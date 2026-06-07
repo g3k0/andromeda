@@ -71,7 +71,7 @@ describe("route guard", () => {
     expect(adminLinks.map((link) => link.href)).toEqual(["/", "/admin", "/author"]);
   });
 
-  it("requires an author profile before showing La mia pagina", () => {
+  it("requires an author profile before showing My page", () => {
     expect(
       canShowRouteInNav(MY_AUTHOR_PAGE_ROUTE, {
         user: buildUser("author"),

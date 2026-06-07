@@ -43,7 +43,7 @@ export const ADMIN_ROUTE: RouteDefinition = {
 export const MY_AUTHOR_PAGE_ROUTE: RouteDefinition = {
   id: "my-author-page",
   href: "/author",
-  label: "La mia pagina",
+  label: "My page",
   pagePermission: "pages:read",
   showInNav: ({ user, hasAuthorProfile }) => {
     if (!hasAuthorProfile) {

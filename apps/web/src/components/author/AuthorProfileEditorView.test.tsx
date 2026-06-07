@@ -113,7 +113,7 @@ describe("AuthorProfileEditorView", () => {
       />,
     );
 
-    expect(screen.getByText("Indirizzo pubblico")).toBeInTheDocument();
+    expect(screen.getByText("Public address")).toBeInTheDocument();
     expect(screen.getByText(profile.address)).toBeInTheDocument();
   });
 

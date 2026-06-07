@@ -29,10 +29,10 @@ export function AuthorOnboardingEditor({
             id="author-onboarding-editor-title"
             className="text-xl font-semibold tracking-tight"
           >
-            Crea la tua pagina autore
+            Create your author page
           </h2>
           <p className="text-sm text-white/60">
-            Personalizza il tuo profilo prima di pubblicarlo su Andromeda.
+            Customize your profile before publishing it on Andromeda.
           </p>
         </div>
 
@@ -41,7 +41,7 @@ export function AuthorOnboardingEditor({
           isAdminEditingOther={false}
           onSave={onSave}
           onCancel={onBack}
-          cancelLabel="Indietro"
+          cancelLabel="Back"
         />
       </div>
     </div>
