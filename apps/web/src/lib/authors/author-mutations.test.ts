@@ -37,9 +37,9 @@ describe("author mutations", () => {
     vi.clearAllMocks();
   });
 
-  function mockService() {
-    const service = createAuthorService(createInMemoryAuthorRepositories());
-    mockedGetAuthorService.mockResolvedValue(service);
+  function mockUserService(
+    getByAddress: () => Promise<unknown> = async () => null,
+  ) {
     mockedGetUserService.mockResolvedValue({
       promoteToAuthor: vi.fn(async (address: string) => ({
         address,
@@ -47,8 +47,17 @@ describe("author mutations", () => {
       })),
       findOrCreateByWallet: vi.fn(),
       setPreferences: vi.fn(),
-      getByAddress: vi.fn(async () => null),
+      assertActive: vi.fn(),
+      getByAddress: vi.fn(getByAddress),
     } as never);
+  }
+
+  function mockService(
+    getByAddress: () => Promise<unknown> = async () => null,
+  ) {
+    const service = createAuthorService(createInMemoryAuthorRepositories());
+    mockedGetAuthorService.mockResolvedValue(service);
+    mockUserService(getByAddress);
     return service;
   }
 
@@ -65,6 +74,29 @@ describe("author mutations", () => {
 
     expect(profile.displayName).toBe("Writer");
     expect(profile.address).toBe(ADDRESS);
+  });
+
+  it("allows a reader to create their first author profile", async () => {
+    mockService(async () => ({
+      address: ADDRESS,
+      role: "reader",
+      status: "active",
+      permissions: [],
+      preferences: { declinedAuthorPage: false, onboardingCompletedAt: null },
+      metadata: {},
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }));
+
+    const profile = await runCreateAuthorMutation({
+      address: ADDRESS,
+      message: "msg",
+      signature: "0x00",
+      displayName: "New author",
+      avatarUrl: null,
+    });
+
+    expect(profile.displayName).toBe("New author");
   });
 
   it("updates an existing author profile", async () => {

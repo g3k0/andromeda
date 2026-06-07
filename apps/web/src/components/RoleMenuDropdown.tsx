@@ -1,11 +1,12 @@
 "use client";
 
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
-import {
-  ROLE_MENU_PLACEHOLDER_ITEMS,
-  getRoleMenuLabel,
-} from "@/lib/navigation/role-menu";
+import { getRoleMenuItems, getRoleMenuLabel } from "@/lib/navigation/role-menu";
 import type { UserRole } from "@/lib/users/types";
+import {
+  bindOutsideClose,
+  closeParentDetails,
+} from "./role-menu-dropdown-behavior";
 
 export type RoleMenuDropdownProps = {
   role: UserRole;
@@ -21,14 +22,23 @@ export function RoleMenuDropdown({
   const menuId = `role-menu-${role}`;
 
   return (
-    <details className="group relative">
+    <details
+      ref={(node) => {
+        if (!node) {
+          return;
+        }
+
+        return bindOutsideClose(node);
+      }}
+      className="group relative"
+    >
       <summary
         aria-haspopup="menu"
         aria-controls={menuId}
-        className="inline-flex cursor-pointer list-none items-center gap-2 rounded-lg border border-white/15 px-3 py-2 text-sm font-medium text-white/80 marker:content-none hover:bg-white/5 hover:text-white [&::-webkit-details-marker]:hidden"
+        className="inline-flex cursor-pointer list-none items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white marker:content-none hover:bg-andromeda-dark [&::-webkit-details-marker]:hidden"
       >
         {getRoleMenuLabel(role)}
-        <span aria-hidden className="text-xs text-white/50">
+        <span aria-hidden className="text-xs text-white/80">
           ▾
         </span>
       </summary>
@@ -39,11 +49,12 @@ export function RoleMenuDropdown({
         aria-label={`${getRoleMenuLabel(role)} menu`}
         className="absolute right-0 z-20 mt-2 min-w-40 overflow-hidden rounded-lg border border-white/10 bg-[#0b1020] py-1 shadow-lg"
       >
-        {ROLE_MENU_PLACEHOLDER_ITEMS.map((item) => (
+        {getRoleMenuItems(role).map((item) => (
           <button
             key={item.id}
             type="button"
             role="menuitem"
+            onClick={(event) => closeParentDetails(event.currentTarget)}
             className="block w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white"
           >
             {item.label}
@@ -57,7 +68,10 @@ export function RoleMenuDropdown({
           role="menuitem"
           disabled={isLoggingOut}
           className="inline-flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
-          onClick={onLogout}
+          onClick={(event) => {
+            closeParentDetails(event.currentTarget);
+            onLogout();
+          }}
         >
           {isLoggingOut ? (
             <LoadingSpinner size="sm" label="Logging out" />

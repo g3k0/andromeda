@@ -30,6 +30,23 @@ export function canAccessAdmin(user: User): boolean {
   return hasPermission(user, "admin:access");
 }
 
+export function canCreateOwnAuthorProfile(
+  signer: User,
+  targetAddress: string,
+  hasAuthorProfile: boolean,
+): boolean {
+  const owner = normalizeAddress(targetAddress);
+  if (!owner || signer.address !== owner) {
+    return false;
+  }
+
+  if (hasPermission(signer, "authors:write:own")) {
+    return true;
+  }
+
+  return signer.role === "reader" && !hasAuthorProfile;
+}
+
 export function canEditAuthorProfile(
   signer: User,
   profileOwnerAddress: string,
@@ -74,6 +91,16 @@ export function assertCanDeleteUser(signer: User): void {
 
 export function assertCanAccessAdmin(user: User): void {
   if (!canAccessAdmin(user)) {
+    throw new WalletAuthorizationError();
+  }
+}
+
+export function assertCanCreateOwnAuthorProfile(
+  signer: User,
+  targetAddress: string,
+  hasAuthorProfile: boolean,
+): void {
+  if (!canCreateOwnAuthorProfile(signer, targetAddress, hasAuthorProfile)) {
     throw new WalletAuthorizationError();
   }
 }

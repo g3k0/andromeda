@@ -91,11 +91,38 @@ describe("authors API", () => {
     expect(getResponse.status).toBe(200);
   });
 
-  it("POST rejects readers without author write permission", async () => {
+  it("POST allows readers to create their own author profile during onboarding", async () => {
     await UserModel.create({
       address: OWNER_ADDRESS,
       role: "reader",
       status: "active",
+    });
+
+    const body = await signedPayload(OWNER, { displayName: "Writer" });
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+    );
+
+    expect(response.status).toBe(201);
+    const json = await response.json();
+    expect(json.displayName).toBe("Writer");
+  });
+
+  it("POST rejects readers when an author profile already exists", async () => {
+    await UserModel.create({
+      address: OWNER_ADDRESS,
+      role: "reader",
+      status: "active",
+    });
+    await AuthorModel.create({
+      address: OWNER_ADDRESS,
+      displayName: "Existing",
+      avatarUrl: null,
+      createdAt: new Date(),
     });
 
     const body = await signedPayload(OWNER, { displayName: "Writer" });

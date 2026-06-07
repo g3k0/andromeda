@@ -1,9 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSignMessage } from "wagmi";
+import { useDisconnect, useSignMessage } from "wagmi";
 import { createAuthorAction, setWalletPreferencesAction } from "@/app/actions/authors";
 import { useLoading } from "@/components/loading/LoadingProvider";
+import { useNotifications } from "@/components/notifications/NotificationProvider";
+import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
 import { getUserSnapshotAction } from "@/app/actions/users";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 import type { UserSnapshot } from "@/lib/users/types";
@@ -22,10 +25,23 @@ export function AuthorOnboardingDialog({
   isConnected,
   onNavigate,
 }: AuthorOnboardingDialogProps) {
+  const router = useRouter();
+  const { notify } = useNotifications();
   const { signMessageAsync } = useSignMessage();
   const [snapshot, setSnapshot] = useState<UserSnapshot | null>(null);
   const [open, setOpen] = useState(false);
   const { isLoading, runWithLoading } = useLoading();
+  const { disconnect } = useDisconnect({
+    mutation: {
+      onSuccess: () => {
+        notify({
+          variant: "info",
+          message: WALLET_DISCONNECTED_MESSAGE,
+        });
+        router.push("/");
+      },
+    },
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -75,11 +91,17 @@ export function AuthorOnboardingDialog({
       );
     }, "Saving your preference…");
 
+  const handleCancel = () => {
+    setOpen(false);
+    disconnect();
+  };
+
   return (
     <CreateAuthorPrompt
       open={open}
       onAccept={handleAccept}
       onDecline={handleDecline}
+      onCancel={handleCancel}
       loading={isLoading}
     />
   );

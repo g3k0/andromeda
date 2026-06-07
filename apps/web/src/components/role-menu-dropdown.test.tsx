@@ -17,9 +17,51 @@ describe("RoleMenuDropdown", () => {
 
     await user.click(screen.getByText("Author"));
 
-    expect(screen.getByRole("menuitem", { name: "item-1" })).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: "item-2" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "Impostazioni profilo" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "Cambia lingua" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Logout" })).toBeInTheDocument();
+  });
+
+  it("shows become-author only for readers", async () => {
+    const user = userEvent.setup();
+
+    const { unmount } = render(
+      <RoleMenuDropdown role="reader" onLogout={vi.fn()} />,
+    );
+    await user.click(screen.getByText("Reader"));
+    expect(
+      screen.getByRole("menuitem", { name: "Diventa autore" }),
+    ).toBeInTheDocument();
+    unmount();
+
+    render(<RoleMenuDropdown role="author" onLogout={vi.fn()} />);
+    await user.click(screen.getByText("Author"));
+    expect(
+      screen.queryByRole("menuitem", { name: "Diventa autore" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("closes when clicking outside the dropdown", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <div>
+        <button type="button">Outside</button>
+        <RoleMenuDropdown role="author" onLogout={vi.fn()} />
+      </div>,
+    );
+
+    const menu = screen.getByRole("group");
+
+    await user.click(screen.getByText("Author"));
+    expect(menu).toHaveAttribute("open");
+
+    await user.click(screen.getByRole("button", { name: "Outside" }));
+    expect(menu).not.toHaveAttribute("open");
   });
 
   it("calls onLogout when the user selects logout", async () => {

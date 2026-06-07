@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { WalletAuthorizationError } from "@/lib/auth/errors";
 import {
   assertCanAccessAdmin,
+  canCreateOwnAuthorProfile,
   canEditAuthorProfile,
   canReadUser,
   canWriteUser,
@@ -41,8 +42,16 @@ describe("user authorize", () => {
     expect(canWriteUser(reader)).toBe(false);
   });
 
+  it("allows readers to create their first author profile during onboarding", () => {
+    const reader = buildUser(READER, "reader");
+    expect(canCreateOwnAuthorProfile(reader, READER, false)).toBe(true);
+    expect(canCreateOwnAuthorProfile(reader, READER, true)).toBe(false);
+    expect(canCreateOwnAuthorProfile(reader, AUTHOR, false)).toBe(false);
+  });
+
   it("allows authors to edit only their own profile", () => {
     const author = buildUser(AUTHOR, "author");
+    expect(canCreateOwnAuthorProfile(author, AUTHOR, false)).toBe(true);
     expect(canEditAuthorProfile(author, AUTHOR)).toBe(true);
     expect(canEditAuthorProfile(author, READER)).toBe(false);
   });

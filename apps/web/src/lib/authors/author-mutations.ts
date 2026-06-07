@@ -1,7 +1,9 @@
 import "server-only";
 
-import { assertRouteApiAccess } from "@/lib/navigation/route-guard";
-import { assertCanEditAuthorProfile } from "@/lib/users/authorize";
+import {
+  assertCanCreateOwnAuthorProfile,
+  assertCanEditAuthorProfile,
+} from "@/lib/users/authorize";
 import {
   assertCanCreateAuthorProfile,
   assertCanManageWalletPreferences,
@@ -25,13 +27,18 @@ export async function runCreateAuthorMutation(
   assertCanCreateAuthorProfile(signer, body.address);
 
   const userService = await getUserService();
+  const service = await getAuthorService();
   const signerUser = await userService.getByAddress(signer);
   if (signerUser) {
     userService.assertActive(signerUser);
-    assertRouteApiAccess(signerUser, "POST", "/api/authors");
+    const hasAuthorProfile = await service.hasAuthorProfile(body.address);
+    assertCanCreateOwnAuthorProfile(
+      signerUser,
+      body.address,
+      hasAuthorProfile,
+    );
   }
 
-  const service = await getAuthorService();
   const profile = await service.createAuthorProfile(body.address, {
     displayName: body.displayName,
     avatarUrl: body.avatarUrl ?? null,
@@ -52,11 +59,6 @@ export async function runUpdateAuthorMutation(
   const signerUser = await userService.getByAddress(signer);
   if (signerUser) {
     userService.assertActive(signerUser);
-    assertRouteApiAccess(
-      signerUser,
-      "PATCH",
-      `/api/authors/${targetAddress}`,
-    );
     assertCanEditAuthorProfile(signerUser, targetAddress);
   } else {
     assertCanUpdateAuthorProfile(signer, targetAddress);

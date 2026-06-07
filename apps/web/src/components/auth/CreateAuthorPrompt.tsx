@@ -4,6 +4,7 @@ export type CreateAuthorPromptProps = {
   open: boolean;
   onAccept: () => void;
   onDecline: () => void;
+  onCancel: () => void;
   disabled?: boolean;
   loading?: boolean;
 };
@@ -12,6 +13,7 @@ export function CreateAuthorPrompt({
   open,
   onAccept,
   onDecline,
+  onCancel,
   disabled = false,
   loading = false,
 }: CreateAuthorPromptProps) {
@@ -38,8 +40,9 @@ export function CreateAuthorPrompt({
             Vuoi creare la tua pagina autore?
           </h2>
           <p className="text-sm text-white/60">
-            Puoi pubblicare il tuo profilo su Andromeda oppure continuare come
-            lettore senza una pagina autore.
+            Puoi pubblicare il tuo profilo su Andromeda, continuare come lettore
+            senza una pagina autore, oppure annullare per uscire senza
+            accedere.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -59,6 +62,16 @@ export function CreateAuthorPrompt({
             className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
           >
             No, resto lettore
+          </button>
+        </div>
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={disabled || loading}
+            className="text-sm text-white/50 underline-offset-4 hover:text-white/70 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            Annulla
           </button>
         </div>
       </div>
