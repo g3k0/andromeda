@@ -8,6 +8,7 @@ import { getUserSnapshotAction } from "@/app/actions/users";
 import { useNotifications } from "@/components/notifications/NotificationProvider";
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
 import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
+import { USER_SNAPSHOT_REFRESH_EVENT } from "@/lib/users/user-snapshot-sync";
 import type { UserSnapshot } from "@/lib/users/types";
 import { RoleMenuDropdown } from "@/components/RoleMenuDropdown";
 
@@ -31,14 +32,27 @@ export function SiteHeaderNav() {
   useEffect(() => {
     let cancelled = false;
 
-    void getUserSnapshotAction(address, isConnected).then((next) => {
+    async function loadSnapshot() {
+      const next = await getUserSnapshotAction(address, isConnected);
       if (!cancelled) {
         setSnapshot(next);
       }
-    });
+    }
+
+    void loadSnapshot();
+
+    function handleSnapshotRefresh() {
+      void loadSnapshot();
+    }
+
+    window.addEventListener(USER_SNAPSHOT_REFRESH_EVENT, handleSnapshotRefresh);
 
     return () => {
       cancelled = true;
+      window.removeEventListener(
+        USER_SNAPSHOT_REFRESH_EVENT,
+        handleSnapshotRefresh,
+      );
     };
   }, [address, isConnected]);
 

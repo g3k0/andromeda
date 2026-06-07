@@ -3,6 +3,7 @@ import { createAuthorService } from "./author-service";
 import {
   authorPagePath,
   buildAuthorOnboardingSnapshotFromService,
+  buildDraftAuthorProfile,
   shouldPromptAuthorPageCreation,
 } from "./onboarding";
 import { createInMemoryAuthorRepositories } from "./testing/in-memory-repositories";
@@ -94,6 +95,17 @@ describe("author onboarding", () => {
           declinedAuthorPage: false,
         }),
       ).toBe(true);
+    });
+  });
+
+  describe("buildDraftAuthorProfile", () => {
+    it("builds a draft profile for onboarding editing", () => {
+      const profile = buildDraftAuthorProfile(ADDRESS.toUpperCase());
+
+      expect(profile.address).toBe(ADDRESS);
+      expect(profile.displayName).toBe("0xabcd…ef01");
+      expect(profile.avatarUrl).toBeNull();
+      expect(profile.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     });
   });
 

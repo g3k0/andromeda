@@ -11,6 +11,7 @@ export type AuthorProfileEditorViewProps = {
   onAvatarFileSelect: (file: File | undefined) => void;
   onSubmit: () => void;
   onCancel: () => void;
+  cancelLabel?: string;
 };
 
 export function AuthorProfileEditorView({
@@ -21,6 +22,7 @@ export function AuthorProfileEditorView({
   onAvatarFileSelect,
   onSubmit,
   onCancel,
+  cancelLabel = "Cancel",
 }: AuthorProfileEditorViewProps) {
   return (
     <form
@@ -67,9 +69,12 @@ export function AuthorProfileEditorView({
           />
         </label>
 
-        <p className="break-all font-mono text-sm text-white/60">
-          {profile.address}
-        </p>
+        <div className="space-y-1 text-left">
+          <span className="text-sm text-white/60">Indirizzo pubblico</span>
+          <p className="break-all font-mono text-sm text-white/60">
+            {profile.address}
+          </p>
+        </div>
 
         {form.errorMessage ? (
           <p className="text-sm text-red-400" role="alert">
@@ -94,7 +99,7 @@ export function AuthorProfileEditorView({
             disabled={form.isSaving}
             className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5 disabled:opacity-50"
           >
-            Cancel
+            {cancelLabel}
           </button>
         </div>
       </div>

@@ -1,6 +1,7 @@
-import { normalizeAddress } from "./address";
+import { defaultDisplayName, normalizeAddress } from "./address";
 import { InvalidAddressError } from "./errors";
 import type { AuthorService } from "./author-service";
+import type { AuthorProfile } from "./types";
 
 export type AuthorOnboardingSnapshot = {
   normalizedAddress: string;
@@ -46,6 +47,20 @@ export function shouldPromptAuthorPageCreation(
     return false;
   }
   return true;
+}
+
+export function buildDraftAuthorProfile(address: string): AuthorProfile {
+  const normalizedAddress = normalizeAddress(address);
+  if (!normalizedAddress) {
+    throw new InvalidAddressError(address);
+  }
+
+  return {
+    address: normalizedAddress,
+    displayName: defaultDisplayName(normalizedAddress),
+    avatarUrl: null,
+    createdAt: new Date().toISOString(),
+  };
 }
 
 export function authorPagePath(address: string): string {
