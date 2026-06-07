@@ -13,7 +13,9 @@ export function getAdminAddresses(): string[] {
   if (adminAddressesOverride) {
     return adminAddressesOverride;
   }
-  return parseAdminAddresses(process.env.NEXT_PUBLIC_ADMIN_ADDRESSES);
+  return parseAdminAddresses(
+    process.env.ADMIN_ADDRESSES ?? process.env.NEXT_PUBLIC_ADMIN_ADDRESSES,
+  );
 }
 
 /** @internal Test helper — resets to env-based list when called with null. */
