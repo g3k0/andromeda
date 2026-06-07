@@ -14,6 +14,10 @@ export function canReadUser(signer: User, targetAddress: string): boolean {
   return hasPermission(signer, "users:read");
 }
 
+export function canListUsers(signer: User): boolean {
+  return hasPermission(signer, "users:read");
+}
+
 export function canWriteUser(signer: User): boolean {
   return hasPermission(signer, "users:write");
 }
@@ -46,6 +50,12 @@ export function canEditAuthorProfile(
 
 export function assertCanReadUser(signer: User, targetAddress: string): void {
   if (!canReadUser(signer, targetAddress)) {
+    throw new WalletAuthorizationError();
+  }
+}
+
+export function assertCanListUsers(signer: User): void {
+  if (!canListUsers(signer)) {
     throw new WalletAuthorizationError();
   }
 }
