@@ -12,6 +12,7 @@ export default defineConfig({
       provider: "v8",
       include: [
         "src/lib/authors/**/*.ts",
+        "src/lib/users/**/*.ts",
         "src/lib/auth/**/*.ts",
         "src/lib/db/**/*.ts",
         "src/lib/navigation/**/*.ts",
@@ -29,6 +30,8 @@ export default defineConfig({
         "src/**/*.test.ts",
         "src/**/*.test.tsx",
         "src/lib/authors/types.ts",
+        "src/lib/users/types.ts",
+        "src/lib/users/server.ts",
         "src/components/author/constants.ts",
         "src/components/author/AuthorProfileEditor.tsx",
         "src/components/author/AuthorPageContent.tsx",
