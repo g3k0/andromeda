@@ -1,5 +1,6 @@
 import "server-only";
 
+import { assertCanEditAuthorProfile } from "@/lib/users/authorize";
 import {
   assertCanCreateAuthorProfile,
   assertCanManageWalletPreferences,
@@ -12,6 +13,7 @@ import type {
   UpdateAuthorMutation,
   WalletPreferencesBody,
 } from "./schemas";
+import { getUserService } from "@/lib/users/server";
 import { getAuthorService } from "./server";
 import type { AuthorProfile, WalletPreferences } from "./types";
 
@@ -22,10 +24,16 @@ export async function runCreateAuthorMutation(
   assertCanCreateAuthorProfile(signer, body.address);
 
   const service = await getAuthorService();
-  return service.createAuthorProfile(body.address, {
+  const profile = await service.createAuthorProfile(body.address, {
     displayName: body.displayName,
     avatarUrl: body.avatarUrl ?? null,
   });
+
+  const userService = await getUserService();
+  await userService.findOrCreateByWallet(body.address);
+  await userService.promoteToAuthor(body.address);
+
+  return profile;
 }
 
 export async function runUpdateAuthorMutation(
@@ -33,7 +41,13 @@ export async function runUpdateAuthorMutation(
   body: UpdateAuthorMutation,
 ): Promise<AuthorProfile> {
   const signer = await verifySignedMutation(body);
-  assertCanUpdateAuthorProfile(signer, targetAddress);
+  const userService = await getUserService();
+  const signerUser = await userService.getByAddress(signer);
+  if (signerUser) {
+    assertCanEditAuthorProfile(signerUser, targetAddress);
+  } else {
+    assertCanUpdateAuthorProfile(signer, targetAddress);
+  }
 
   const service = await getAuthorService();
   const existing = await service.getAuthorByAddress(targetAddress);
@@ -55,8 +69,13 @@ export async function runSetWalletPreferencesMutation(
   const signer = await verifySignedMutation(body);
   assertCanManageWalletPreferences(signer, targetAddress);
 
-  const service = await getAuthorService();
-  return service.setWalletPreferences(targetAddress, {
+  const userService = await getUserService();
+  await userService.findOrCreateByWallet(targetAddress);
+  await userService.setPreferences(targetAddress, {
     declinedAuthorPage: body.declinedAuthorPage,
   });
+
+  return {
+    declinedAuthorPage: body.declinedAuthorPage,
+  };
 }

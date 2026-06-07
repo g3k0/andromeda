@@ -5,8 +5,10 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createWalletAuthMessage } from "@/lib/auth/verify-wallet";
 import { resetMongoConnectionForTests } from "@/lib/db/mongodb";
 import { AuthorModel } from "@/lib/db/models/author.model";
+import { UserModel } from "@/lib/db/models/user.model";
 import { WalletPreferencesModel } from "@/lib/db/models/wallet-preferences.model";
 import { resetAuthorServiceForTests } from "@/lib/authors/server";
+import { resetUserServiceForTests } from "@/lib/users/server";
 import { setAdminAddressesForTests } from "@/lib/auth/admin";
 import { resetRateLimitsForTests } from "@/lib/auth/rate-limit";
 import { resetWalletAuthStoreForTests } from "@/lib/auth/verify-wallet";
@@ -40,15 +42,18 @@ describe("authors API", () => {
     process.env.MONGODB_URI = memoryServer.getUri();
     resetMongoConnectionForTests();
     resetAuthorServiceForTests();
+    resetUserServiceForTests();
   });
 
   afterEach(async () => {
     await AuthorModel.deleteMany({});
+    await UserModel.deleteMany({});
     await WalletPreferencesModel.deleteMany({});
     resetWalletAuthStoreForTests();
     resetRateLimitsForTests();
     setAdminAddressesForTests(null);
     resetAuthorServiceForTests();
+    resetUserServiceForTests();
     resetMongoConnectionForTests();
     process.env.MONGODB_URI = memoryServer.getUri();
   });

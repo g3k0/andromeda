@@ -22,9 +22,15 @@ vi.mock("./server", () => ({
   getAuthorService: vi.fn(),
 }));
 
+vi.mock("@/lib/users/server", () => ({
+  getUserService: vi.fn(),
+}));
+
+import { getUserService } from "@/lib/users/server";
 import { getAuthorService } from "./server";
 
 const mockedGetAuthorService = vi.mocked(getAuthorService);
+const mockedGetUserService = vi.mocked(getUserService);
 
 describe("author mutations", () => {
   afterEach(() => {
@@ -34,6 +40,15 @@ describe("author mutations", () => {
   function mockService() {
     const service = createAuthorService(createInMemoryAuthorRepositories());
     mockedGetAuthorService.mockResolvedValue(service);
+    mockedGetUserService.mockResolvedValue({
+      promoteToAuthor: vi.fn(async (address: string) => ({
+        address,
+        role: "author",
+      })),
+      findOrCreateByWallet: vi.fn(),
+      setPreferences: vi.fn(),
+      getByAddress: vi.fn(async () => null),
+    } as never);
     return service;
   }
 
