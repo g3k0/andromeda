@@ -53,8 +53,9 @@ automaticamente; i comandi sotto servono per preparare manualmente schema, indic
 
 | Collection (Mongoose) | Modello | Uso |
 | --- | --- | --- |
+| `users` | `User` | Identità piattaforma, ruolo, permessi, preferenze |
 | `authors` | `Author` | Profili autore pubblici |
-| `walletpreferences` | `WalletPreferences` | Preferenze onboarding (es. `declinedAuthorPage`) |
+| `walletpreferences` | `WalletPreferences` | **Deprecata** — preferenze migrate in `users.preferences` |
 
 **Non usare** la collection `author` (singolare): è un residuo da setup manuali errati.
 L'app persiste solo su `authors` (vedi `AUTHOR_COLLECTION_NAME` in `author.model.ts`).
@@ -75,6 +76,21 @@ db.author.drop()
 
 Riferimento schema autore: `apps/web/src/lib/db/models/author.model.ts`
 (`displayName` max 64 caratteri, `avatarUrl` max 700 000 caratteri).
+
+### Collection `users`
+
+Ruoli: `admin`, `author`, `reader`. Migrazione una tantum da env admin, `authors` e
+`walletpreferences`:
+
+```bash
+pnpm --filter @andromeda/web exec tsx scripts/migrate-users.ts
+```
+
+```javascript
+use andromeda
+db.users.find().pretty()
+db.users.getIndexes()
+```
 
 ### Collection `authors`
 
