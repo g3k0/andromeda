@@ -1,20 +1,29 @@
-import { afterEach, describe, expect, it } from "vitest";
-import { checkRateLimit, resetRateLimitsForTests } from "./rate-limit";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  checkRateLimit,
+  resetRateLimitsForTests,
+  useInMemoryRateLimitsForTests,
+} from "./rate-limit";
 
 describe("checkRateLimit", () => {
-  afterEach(() => {
+  beforeEach(() => {
     resetRateLimitsForTests();
+    useInMemoryRateLimitsForTests();
   });
 
-  it("allows requests under the limit", () => {
-    const now = 1_000;
-    expect(checkRateLimit("ip:1", 2, 60_000, now)).toBe(true);
-    expect(checkRateLimit("ip:1", 2, 60_000, now + 1)).toBe(true);
+  it("allows requests until the limit is reached", async () => {
+    const now = Date.now();
+    await expect(checkRateLimit("ip:1", 2, 60_000, now)).resolves.toBe(true);
+    await expect(checkRateLimit("ip:1", 2, 60_000, now + 1)).resolves.toBe(
+      true,
+    );
   });
 
-  it("blocks requests above the limit", () => {
-    const now = 1_000;
-    expect(checkRateLimit("ip:2", 1, 60_000, now)).toBe(true);
-    expect(checkRateLimit("ip:2", 1, 60_000, now + 1)).toBe(false);
+  it("blocks requests after the limit is reached", async () => {
+    const now = Date.now();
+    await expect(checkRateLimit("ip:2", 1, 60_000, now)).resolves.toBe(true);
+    await expect(checkRateLimit("ip:2", 1, 60_000, now + 1)).resolves.toBe(
+      false,
+    );
   });
 });

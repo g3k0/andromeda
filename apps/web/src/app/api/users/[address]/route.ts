@@ -26,7 +26,7 @@ export async function GET(
       return jsonResponse({ error: "Invalid Ethereum address." }, 400);
     }
 
-    const limited = enforceRateLimit(request, `get-user:${normalized}`);
+    const limited = await enforceRateLimit(request, `get-user:${normalized}`);
     if (limited) {
       return limited;
     }
@@ -49,7 +49,7 @@ export async function PATCH(
       return jsonResponse({ error: "Invalid Ethereum address." }, 400);
     }
 
-    const limited = enforceRateLimit(request, `patch-user:${normalized}`);
+    const limited = await enforceRateLimit(request, `patch-user:${normalized}`);
     if (limited) {
       return limited;
     }
@@ -73,7 +73,7 @@ export async function DELETE(
       return jsonResponse({ error: "Invalid Ethereum address." }, 400);
     }
 
-    const limited = enforceRateLimit(request, `delete-user:${normalized}`);
+    const limited = await enforceRateLimit(request, `delete-user:${normalized}`);
     if (limited) {
       return limited;
     }

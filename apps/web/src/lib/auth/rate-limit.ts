@@ -1,34 +1,28 @@
-type Bucket = {
-  count: number;
-  resetAt: number;
-};
-
-const buckets = new Map<string, Bucket>();
+import {
+  getRateLimitStore,
+  resetRateLimitStoreForTests,
+  useInMemoryRateLimitStoreForTests,
+} from "./rate-limit-server";
 
 export const DEFAULT_RATE_LIMIT = 30;
 export const DEFAULT_RATE_WINDOW_MS = 60_000;
 
-export function checkRateLimit(
+export async function checkRateLimit(
   key: string,
   limit = DEFAULT_RATE_LIMIT,
   windowMs = DEFAULT_RATE_WINDOW_MS,
   now = Date.now(),
-): boolean {
-  const bucket = buckets.get(key);
-  if (!bucket || bucket.resetAt <= now) {
-    buckets.set(key, { count: 1, resetAt: now + windowMs });
-    return true;
-  }
-
-  if (bucket.count >= limit) {
-    return false;
-  }
-
-  bucket.count += 1;
-  return true;
+): Promise<boolean> {
+  const store = await getRateLimitStore();
+  return store.increment(key, limit, windowMs, new Date(now));
 }
 
 /** @internal */
 export function resetRateLimitsForTests(): void {
-  buckets.clear();
+  resetRateLimitStoreForTests();
+}
+
+/** @internal */
+export function useInMemoryRateLimitsForTests(): void {
+  useInMemoryRateLimitStoreForTests();
 }

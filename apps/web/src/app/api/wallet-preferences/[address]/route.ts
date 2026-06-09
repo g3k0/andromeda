@@ -22,13 +22,17 @@ export async function PUT(
       return jsonResponse({ error: "Invalid Ethereum address." }, 400);
     }
 
-    const limited = enforceRateLimit(
+    const limited = await enforceRateLimit(
       request,
       `wallet-preferences:${normalized}`,
     );
     if (limited) {
       return limited;
     }
+
+    console.warn(
+      "Deprecated API: PUT /api/wallet-preferences writes to users.preferences only.",
+    );
 
     const body = walletPreferencesBodySchema.parse(await request.json());
     const preferences = await runSetWalletPreferencesMutation(normalized, body);

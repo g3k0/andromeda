@@ -11,7 +11,11 @@ export async function GET(request: Request) {
       return jsonResponse({ error: "Invalid Ethereum address." }, 400);
     }
 
-    const limited = enforceRateLimit(request, `auth-message:${normalized}`);
+    const limited = await enforceRateLimit(
+      request,
+      `auth-message:${normalized}`,
+      10,
+    );
     if (limited) {
       return limited;
     }

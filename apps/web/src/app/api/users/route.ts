@@ -8,7 +8,7 @@ import { createUserBodySchema } from "@/lib/users/schemas";
 
 export async function GET(request: Request): Promise<Response> {
   try {
-    const limited = enforceRateLimit(request, "list-users");
+    const limited = await enforceRateLimit(request, "list-users");
     if (limited) {
       return limited;
     }
@@ -23,7 +23,7 @@ export async function GET(request: Request): Promise<Response> {
 export async function POST(request: Request): Promise<Response> {
   try {
     const body = createUserBodySchema.parse(await request.json());
-    const limited = enforceRateLimit(request, `create-user:${body.targetAddress}`);
+    const limited = await enforceRateLimit(request, `create-user:${body.targetAddress}`);
     if (limited) {
       return limited;
     }

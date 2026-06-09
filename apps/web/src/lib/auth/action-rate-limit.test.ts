@@ -1,6 +1,9 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { RateLimitExceededError } from "./errors";
-import { resetRateLimitsForTests } from "./rate-limit";
+import {
+  resetRateLimitsForTests,
+  useInMemoryRateLimitsForTests,
+} from "./rate-limit";
 
 vi.mock("next/headers", () => ({
   headers: vi.fn(),
@@ -12,6 +15,11 @@ import { enforceActionRateLimit } from "./action-rate-limit";
 const mockedHeaders = vi.mocked(headers);
 
 describe("enforceActionRateLimit", () => {
+  beforeEach(() => {
+    resetRateLimitsForTests();
+    useInMemoryRateLimitsForTests();
+  });
+
   afterEach(() => {
     resetRateLimitsForTests();
     vi.clearAllMocks();

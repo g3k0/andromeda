@@ -11,7 +11,7 @@ import {
 
 export async function GET(request: Request): Promise<Response> {
   try {
-    const limited = enforceRateLimit(request, "list-roles");
+    const limited = await enforceRateLimit(request, "list-roles");
     if (limited) {
       return limited;
     }
@@ -26,7 +26,7 @@ export async function GET(request: Request): Promise<Response> {
 export async function POST(request: Request): Promise<Response> {
   try {
     const body = createRoleApiBodySchema.parse(await request.json());
-    const limited = enforceRateLimit(request, `create-role:${body.slug}`);
+    const limited = await enforceRateLimit(request, `create-role:${body.slug}`);
     if (limited) {
       return limited;
     }

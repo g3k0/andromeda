@@ -1,7 +1,15 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "vitest";
 import { createWalletAuthMessage } from "@/lib/auth/verify-wallet";
 import { connectMongo, resetMongoConnectionForTests } from "@/lib/db/mongodb";
 import { AuthorModel } from "@/lib/db/models/author.model";
@@ -9,11 +17,15 @@ import { RoleModel } from "@/lib/db/models/role.model";
 import { UserModel } from "@/lib/db/models/user.model";
 import { resetRoleServiceForTests } from "@/lib/roles/server";
 import { seedApiSystemRoles } from "@/lib/testing/seed-api-roles";
+import { RateLimitBucketModel } from "@/lib/db/models/rate-limit-bucket.model";
 import { WalletPreferencesModel } from "@/lib/db/models/wallet-preferences.model";
 import { resetAuthorServiceForTests } from "@/lib/authors/server";
 import { resetUserServiceForTests } from "@/lib/users/server";
 import { setAdminAddressesForTests } from "@/lib/auth/admin";
-import { resetRateLimitsForTests } from "@/lib/auth/rate-limit";
+import {
+  resetRateLimitsForTests,
+  useInMemoryRateLimitsForTests,
+} from "@/lib/auth/rate-limit";
 import { resetWalletAuthStoreForTests } from "@/lib/auth/verify-wallet";
 import { GET, PATCH } from "./[address]/route";
 import { POST } from "./route";
@@ -49,9 +61,16 @@ describe("authors API", () => {
     await seedApiSystemRoles();
   });
 
+  beforeEach(() => {
+    resetRateLimitsForTests();
+    useInMemoryRateLimitsForTests();
+  });
+
   afterEach(async () => {
     resetWalletAuthStoreForTests();
     resetRateLimitsForTests();
+    useInMemoryRateLimitsForTests();
+    await RateLimitBucketModel.deleteMany({});
     setAdminAddressesForTests(null);
     resetAuthorServiceForTests();
     resetUserServiceForTests();
@@ -212,6 +231,7 @@ describe("authors API", () => {
 
   it("returns 429 when mutation rate limit is exceeded", async () => {
     await seedApiSystemRoles();
+    process.env.TRUST_PROXY = "true";
     const request = async () => {
       const body = await signedPayload(OWNER, { displayName: "Writer" });
       return POST(
@@ -233,6 +253,7 @@ describe("authors API", () => {
 
     const limited = await request();
     expect(limited.status).toBe(429);
+    delete process.env.TRUST_PROXY;
   });
 
   it("PATCH allows verified admin signatures on another profile", async () => {
@@ -247,13 +268,14 @@ describe("authors API", () => {
     });
 
     const createBody = await signedPayload(OWNER, { displayName: "Writer" });
-    await POST(
+    const createResponse = await POST(
       new Request("http://localhost", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(createBody),
       }),
     );
+    expect([201, 409]).toContain(createResponse.status);
 
     const patchBody = await signedPayload(ADMIN, {
       displayName: "Curated by admin",

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/auth/rate-limit";
 import { buildRateLimitKey } from "@/lib/auth/rate-limit-key";
+import { getTrustedClientIp } from "@/lib/auth/trusted-client-ip";
 import { mapUserErrorToMessage, mapUserErrorToStatus } from "./api-errors";
 
 export function jsonResponse(
@@ -22,16 +23,14 @@ export function getRequestRateLimitKey(
   request: Request,
   scope?: string,
 ): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded?.split(",")[0]?.trim() ?? "unknown";
-  return buildRateLimitKey(ip, scope);
+  return buildRateLimitKey(getTrustedClientIp(request.headers), scope);
 }
 
-export function enforceRateLimit(
+export async function enforceRateLimit(
   request: Request,
   scope?: string,
-): NextResponse | null {
-  const allowed = checkRateLimit(getRequestRateLimitKey(request, scope));
+): Promise<NextResponse | null> {
+  const allowed = await checkRateLimit(getRequestRateLimitKey(request, scope));
   if (!allowed) {
     return jsonResponse({ error: "Too many requests." }, 429);
   }

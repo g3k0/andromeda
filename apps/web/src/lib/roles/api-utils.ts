@@ -17,9 +17,9 @@ export function errorResponse(error: unknown): NextResponse {
   return jsonResponse({ error: message }, status);
 }
 
-export function enforceRateLimit(
+export async function enforceRateLimit(
   request: Request,
   scope?: string,
-): NextResponse | null {
+): Promise<NextResponse | null> {
   return enforceUserRateLimit(request, scope);
 }

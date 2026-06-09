@@ -48,7 +48,7 @@ export async function PATCH(
       return jsonResponse({ error: "Invalid Ethereum address." }, 400);
     }
 
-    const limited = enforceRateLimit(request, `patch-author:${normalized}`);
+    const limited = await enforceRateLimit(request, `patch-author:${normalized}`);
     if (limited) {
       return limited;
     }
