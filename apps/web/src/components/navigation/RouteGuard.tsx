@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { getUserSnapshotAction } from "@/app/actions/users";
+import { useWalletBinding } from "@/lib/auth/use-wallet-binding";
 import {
   canAccessPage,
   getRouteById,
@@ -19,6 +20,7 @@ export type RouteGuardProps = {
 export function RouteGuard({ routeId, children }: RouteGuardProps) {
   const route = getRouteById(routeId);
   const { address, isConnected, isReconnecting } = useAccount();
+  const { bindWallet } = useWalletBinding();
   const [allowed, setAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -29,19 +31,24 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
 
     let cancelled = false;
 
-    void getUserSnapshotAction(address, isConnected).then((snapshot) => {
+    void (async () => {
+      if (isConnected && address) {
+        await bindWallet().catch(() => undefined);
+      }
+
+      const snapshot = await getUserSnapshotAction(address, isConnected);
       if (cancelled) {
         return;
       }
 
       const user = snapshot ? userFromSnapshot(snapshot) : null;
       setAllowed(canAccessPage(user, route, isConnected));
-    });
+    })();
 
     return () => {
       cancelled = true;
     };
-  }, [address, isConnected, route]);
+  }, [address, bindWallet, isConnected, route]);
 
   if (!route) {
     return (
