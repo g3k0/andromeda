@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildAuthenticatedUser } from "@/lib/users/testing/build-authenticated-user";
 import {
+  ABOUT_ROUTE,
   ADMIN_ROUTE,
   MY_AUTHOR_PAGE_ROUTE,
   RouteAccessDeniedError,
@@ -35,6 +36,7 @@ describe("route guard", () => {
 
   it("allows public read pages without a connected wallet", () => {
     expect(canAccessPage(null, MY_AUTHOR_PAGE_ROUTE, false)).toBe(true);
+    expect(canAccessPage(null, ABOUT_ROUTE, false)).toBe(true);
   });
 
   it("maps snapshot permissions for route checks", () => {
@@ -64,21 +66,29 @@ describe("route guard", () => {
       hasAuthorProfile: false,
       isConnected: true,
     });
-    expect(readerLinks.map((link) => link.href)).toEqual(["/"]);
+    expect(readerLinks.map((link) => link.href)).toEqual(["/", "/about"]);
 
     const authorLinks = buildAuthorizedNavLinks({
       user: buildNavUser("author"),
       hasAuthorProfile: true,
       isConnected: true,
     });
-    expect(authorLinks.map((link) => link.href)).toEqual(["/", "/author"]);
+    expect(authorLinks.map((link) => link.href)).toEqual([
+      "/",
+      "/about",
+      "/author",
+    ]);
 
     const adminLinks = buildAuthorizedNavLinks({
       user: buildNavUser("admin"),
       hasAuthorProfile: true,
       isConnected: true,
     });
-    expect(adminLinks.map((link) => link.href)).toEqual(["/", "/author"]);
+    expect(adminLinks.map((link) => link.href)).toEqual([
+      "/",
+      "/about",
+      "/author",
+    ]);
   });
 
   it("requires an author profile before showing My page", () => {

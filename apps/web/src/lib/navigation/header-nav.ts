@@ -1,5 +1,6 @@
 import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissions";
 import {
+  ABOUT_ROUTE,
   ADMIN_ROUTE,
   LIBRARY_ROUTE,
   MY_AUTHOR_PAGE_ROUTE,
@@ -24,6 +25,11 @@ export type HeaderNavInput = {
 export const LIBRARY_NAV_LINK = {
   href: LIBRARY_ROUTE.href,
   label: LIBRARY_ROUTE.label,
+};
+
+export const ABOUT_NAV_LINK = {
+  href: ABOUT_ROUTE.href,
+  label: ABOUT_ROUTE.label,
 };
 
 export const ADMIN_NAV_LINK = {
