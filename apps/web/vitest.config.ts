@@ -15,6 +15,7 @@ export default defineConfig({
         "src/lib/users/**/*.ts",
         "src/lib/roles/**/*.ts",
         "src/lib/auth/**/*.ts",
+        "src/lib/config/**/*.ts",
         "src/lib/db/**/*.ts",
         "src/lib/navigation/**/*.ts",
         "src/lib/notifications/**/*.ts",
@@ -28,6 +29,7 @@ export default defineConfig({
         "src/components/admin/**/*.tsx",
         "src/components/WalletButton.tsx",
         "src/components/notifications/**/*.tsx",
+        "src/lib/users/UserSnapshotProvider.tsx",
       ],
       exclude: [
         "src/**/*.test.ts",

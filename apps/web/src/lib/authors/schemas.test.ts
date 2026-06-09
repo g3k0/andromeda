@@ -48,7 +48,7 @@ describe("createAuthorBodySchema", () => {
     expect(() =>
       createAuthorBodySchema.parse({
         ...auth,
-        avatarUrl: `data:image/png;base64,${"a".repeat(700_001)}`,
+        avatarUrl: `data:image/png;base64,${"a".repeat(131_073)}`,
       }),
     ).toThrow();
   });

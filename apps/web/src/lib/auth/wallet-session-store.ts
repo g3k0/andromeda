@@ -32,4 +32,8 @@ export type WalletSessionStore = {
   deleteByAddress(address: string): Promise<void>;
   deleteByRoleSlug(roleSlug: string): Promise<void>;
   touch(sessionId: string, lastSeenAt: Date): Promise<void>;
+  refreshSnapshot(
+    sessionId: string,
+    snapshot: WalletSessionSnapshot,
+  ): Promise<void>;
 };

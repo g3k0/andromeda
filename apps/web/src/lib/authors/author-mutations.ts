@@ -4,10 +4,10 @@ import {
   assertCanCreateOwnAuthorProfile,
   assertCanEditAuthorProfile,
 } from "@/lib/users/authorize";
+import { WalletAuthorizationError } from "@/lib/auth/errors";
 import {
   assertCanCreateAuthorProfile,
   assertCanManageWalletPreferences,
-  assertCanUpdateAuthorProfile,
 } from "./authorize";
 import { AuthorProfileNotFoundError } from "./errors";
 import { verifySignedMutation } from "./mutation-handler";
@@ -57,12 +57,12 @@ export async function runUpdateAuthorMutation(
   const signer = await verifySignedMutation(body);
   const userService = await getUserService();
   const signerUser = await userService.getAuthenticatedByAddress(signer);
-  if (signerUser) {
-    userService.assertActive(signerUser);
-    assertCanEditAuthorProfile(signerUser, targetAddress);
-  } else {
-    assertCanUpdateAuthorProfile(signer, targetAddress);
+  if (!signerUser) {
+    throw new WalletAuthorizationError();
   }
+
+  userService.assertActive(signerUser);
+  assertCanEditAuthorProfile(signerUser, targetAddress);
 
   const service = await getAuthorService();
   const existing = await service.getAuthorByAddress(targetAddress);

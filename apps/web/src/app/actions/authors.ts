@@ -1,24 +1,76 @@
 "use server";
 
+import { unstable_noStore as noStore } from "next/cache";
+import { headers } from "next/headers";
 import { enforceActionRateLimit } from "@/lib/auth/action-rate-limit";
+import { refreshWalletSessionFromDb } from "@/lib/auth/refresh-wallet-session";
+import { setWalletBindingCookie } from "@/lib/auth/set-wallet-binding-cookie";
+import {
+  parseCookieHeader,
+  WALLET_SESSION_COOKIE_NAME,
+} from "@/lib/auth/wallet-session-cookies";
 import {
   runCreateAuthorMutation,
   runSetWalletPreferencesMutation,
   runUpdateAuthorMutation,
 } from "@/lib/authors/author-mutations";
+import { getAuthorService } from "@/lib/authors/server";
 import {
   createAuthorBodySchema,
   updateAuthorActionSchema,
   walletPreferencesBodySchema,
 } from "@/lib/authors/schemas";
 import type { AuthorProfile, WalletPreferences } from "@/lib/authors/types";
+import { getUserService } from "@/lib/users/server";
+import type { UserSnapshot } from "@/lib/users/types";
+
+export type CreateAuthorActionResult = {
+  profile: AuthorProfile;
+  snapshot: UserSnapshot;
+};
+
+async function refreshWalletSessionFromRequestCookies(): Promise<void> {
+  const headerList = await headers();
+  const sessionId = parseCookieHeader(
+    headerList.get("cookie"),
+    WALLET_SESSION_COOKIE_NAME,
+  );
+
+  if (sessionId) {
+    await refreshWalletSessionFromDb(sessionId);
+  }
+}
+
+async function buildAuthorCreationSnapshot(
+  address: string,
+): Promise<UserSnapshot> {
+  const userService = await getUserService();
+  const authorService = await getAuthorService();
+  const snapshot = await userService.getSnapshot(address, true, {
+    hasAuthorProfile: (normalized) =>
+      authorService.hasAuthorProfile(normalized),
+  });
+
+  if (!snapshot) {
+    throw new Error("Failed to build user snapshot after author creation.");
+  }
+
+  return snapshot;
+}
 
 export async function createAuthorAction(
   input: unknown,
-): Promise<AuthorProfile> {
+): Promise<CreateAuthorActionResult> {
+  noStore();
+
   const body = createAuthorBodySchema.parse(input);
   await enforceActionRateLimit(`create-author:${body.address}`);
-  return runCreateAuthorMutation(body);
+  const profile = await runCreateAuthorMutation(body);
+  await setWalletBindingCookie(body.address);
+  await refreshWalletSessionFromRequestCookies();
+  const snapshot = await buildAuthorCreationSnapshot(body.address);
+
+  return { profile, snapshot };
 }
 
 export async function updateAuthorAction(

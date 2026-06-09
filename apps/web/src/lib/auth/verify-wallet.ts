@@ -9,27 +9,15 @@ import {
   WalletAuthReplayError,
   WalletSignatureInvalidError,
 } from "./errors";
-
-const AUTH_MESSAGE_PREFIX = "Andromeda wants you to sign in with your wallet.";
-const DEFAULT_TTL_MS = 5 * 60 * 1000;
-
-type StoredNonce = {
-  address: string;
-  expiresAt: number;
-  used: boolean;
-};
-
-declare global {
-  // eslint-disable-next-line no-var
-  var walletAuthNonceStore: Map<string, StoredNonce> | undefined;
-}
-
-function getNonceStore(): Map<string, StoredNonce> {
-  if (!global.walletAuthNonceStore) {
-    global.walletAuthNonceStore = new Map();
-  }
-  return global.walletAuthNonceStore;
-}
+import {
+  AUTH_MESSAGE_PREFIX,
+  getWalletAuthNonceTtlMs,
+} from "@/lib/config/auth";
+import {
+  getWalletAuthNonceStore,
+  resetWalletAuthNonceStoreForTests,
+  useInMemoryWalletAuthNonceStoreForTests,
+} from "./wallet-auth-nonce-server";
 
 export type WalletSignatureInput = {
   address: string;
@@ -37,17 +25,17 @@ export type WalletSignatureInput = {
   signature: `0x${string}`;
 };
 
-export function createWalletAuthMessage(
+export async function createWalletAuthMessage(
   address: string,
   options?: { now?: number; ttlMs?: number },
-): { message: string; nonce: string; expiresAt: number } {
+): Promise<{ message: string; nonce: string; expiresAt: number }> {
   const normalized = normalizeAddress(address);
   if (!normalized) {
     throw new WalletAuthMessageInvalidError();
   }
 
   const now = options?.now ?? Date.now();
-  const ttlMs = options?.ttlMs ?? DEFAULT_TTL_MS;
+  const ttlMs = options?.ttlMs ?? getWalletAuthNonceTtlMs();
   const expiresAt = now + ttlMs;
   const nonce = randomUUID();
   const message = [
@@ -58,9 +46,11 @@ export function createWalletAuthMessage(
     `Expires: ${new Date(expiresAt).toISOString()}`,
   ].join("\n");
 
-  getNonceStore().set(nonce, {
+  const store = await getWalletAuthNonceStore();
+  await store.put({
+    nonce,
     address: normalized,
-    expiresAt,
+    expiresAt: new Date(expiresAt),
     used: false,
   });
 
@@ -98,7 +88,12 @@ function parseWalletAuthMessage(message: string): {
 
 /** @internal Resets nonce cache between tests. */
 export function resetWalletAuthStoreForTests(): void {
-  getNonceStore().clear();
+  resetWalletAuthNonceStoreForTests();
+}
+
+/** @internal Uses in-memory nonce store for unit tests. */
+export function useInMemoryWalletAuthStoreForTests(): void {
+  useInMemoryWalletAuthNonceStoreForTests();
 }
 
 export async function verifyWalletSignature(
@@ -117,11 +112,6 @@ export async function verifyWalletSignature(
     throw new WalletAuthExpiredError();
   }
 
-  const stored = getNonceStore().get(parsed.nonce);
-  if (!stored || stored.address !== parsed.address || stored.used) {
-    throw new WalletAuthReplayError();
-  }
-
   const valid = await verifyMessage({
     address: parsed.address as `0x${string}`,
     message: input.message,
@@ -132,6 +122,15 @@ export async function verifyWalletSignature(
     throw new WalletSignatureInvalidError();
   }
 
-  stored.used = true;
+  const store = await getWalletAuthNonceStore();
+  const consumed = await store.consumeIfValid(
+    parsed.nonce,
+    parsed.address,
+    new Date(now),
+  );
+  if (!consumed) {
+    throw new WalletAuthReplayError();
+  }
+
   return parsed.address;
 }

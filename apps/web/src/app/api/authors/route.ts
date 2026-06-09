@@ -5,7 +5,7 @@ import { createAuthorBodySchema } from "@/lib/authors/schemas";
 export async function POST(request: Request): Promise<Response> {
   try {
     const body = createAuthorBodySchema.parse(await request.json());
-    const limited = enforceRateLimit(request, `create-author:${body.address}`);
+    const limited = await enforceRateLimit(request, `create-author:${body.address}`);
     if (limited) {
       return limited;
     }

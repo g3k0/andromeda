@@ -3,6 +3,7 @@ import { buildAuthenticatedUser } from "@/lib/users/testing/build-authenticated-
 
 const {
   resolveWalletAuth,
+  refreshWalletSessionFromDb,
   getUserService,
   runListUsersMutation,
   runCreateUserMutation,
@@ -12,6 +13,7 @@ const {
   cookiesGet,
 } = vi.hoisted(() => ({
   resolveWalletAuth: vi.fn(),
+  refreshWalletSessionFromDb: vi.fn(),
   getUserService: vi.fn(),
   runListUsersMutation: vi.fn(),
   runCreateUserMutation: vi.fn(),
@@ -23,6 +25,10 @@ const {
 
 vi.mock("@/lib/auth/resolve-wallet-auth", () => ({
   resolveWalletAuth,
+}));
+
+vi.mock("@/lib/auth/refresh-wallet-session", () => ({
+  refreshWalletSessionFromDb,
 }));
 
 vi.mock("@/lib/users/server", () => ({
@@ -72,6 +78,7 @@ const signedPayload = {
 describe("users admin server actions", () => {
   beforeEach(() => {
     resolveWalletAuth.mockReset();
+    refreshWalletSessionFromDb.mockReset();
     getUserService.mockReset();
     runListUsersMutation.mockReset();
     runCreateUserMutation.mockReset();
@@ -80,6 +87,7 @@ describe("users admin server actions", () => {
     enforceActionRateLimit.mockReset();
     cookiesGet.mockReset();
     enforceActionRateLimit.mockResolvedValue(undefined);
+    refreshWalletSessionFromDb.mockResolvedValue(null);
     resolveWalletAuth.mockResolvedValue(adminUser);
     getUserService.mockResolvedValue({
       assertActive: vi.fn(),

@@ -25,6 +25,20 @@ describe("author onboarding dialog state", () => {
     });
   });
 
+  it("stays closed when the user already has an author profile", () => {
+    expect(
+      resolveAuthorOnboardingDialogState(ADDRESS, true, {
+        normalizedAddress: ADDRESS,
+        isConnected: true,
+        hasAuthorProfile: true,
+        declinedAuthorPage: false,
+      }),
+    ).toEqual({
+      open: false,
+      canInteract: true,
+    });
+  });
+
   it("stays closed when the user already declined", () => {
     expect(
       resolveAuthorOnboardingDialogState(ADDRESS, true, {

@@ -23,7 +23,7 @@ const READER = privateKeyToAccount(generatePrivateKey());
 const ADMIN_ADDRESS = ADMIN.address.toLowerCase();
 
 async function signedPayload(account: ReturnType<typeof privateKeyToAccount>) {
-  const { message } = createWalletAuthMessage(account.address);
+  const { message } = await createWalletAuthMessage(account.address);
   const signature = await account.signMessage({ message });
   return { address: account.address, message, signature };
 }

@@ -1,6 +1,11 @@
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
+import { AUTHOR_DISPLAY_NAME_MAX_LENGTH } from "@/lib/authors/field-limits";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { AuthorAvatar } from "./AuthorAvatar";
+import {
+  AUTHOR_AVATAR_ACCEPT_TYPES,
+  getAuthorAvatarUploadGuidance,
+} from "./author-avatar-upload-guidance";
 import type { EditorFormState } from "./author-profile-editor-state";
 
 export type AuthorProfileEditorViewProps = {
@@ -52,22 +57,53 @@ export function AuthorProfileEditorView({
           id="author-display-name"
           type="text"
           value={form.displayName}
-          maxLength={80}
+          maxLength={AUTHOR_DISPLAY_NAME_MAX_LENGTH}
+          aria-invalid={form.displayNameError ? true : undefined}
+          aria-describedby={
+            form.displayNameError ? "author-display-name-error" : undefined
+          }
           onChange={(event) => onDisplayNameChange(event.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-andromeda-light/50"
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-andromeda-light/50 aria-invalid:border-red-400/60"
         />
+        {form.displayNameError ? (
+          <p
+            id="author-display-name-error"
+            className="text-xs text-red-400"
+            role="alert"
+          >
+            {form.displayNameError}
+          </p>
+        ) : null}
       </label>
 
       <div className="w-full space-y-4">
-        <label className="block space-y-1 text-left">
-          <span className="text-sm text-white/60">Profile image</span>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(event) => onAvatarFileSelect(event.target.files?.[0])}
-            className="w-full text-sm text-white/70 file:mr-3 file:rounded-md file:border-0 file:bg-andromeda file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
-          />
-        </label>
+        <div className="space-y-1 text-left">
+          <label className="block space-y-1">
+            <span className="text-sm text-white/60">Profile image</span>
+            <input
+              type="file"
+              accept={AUTHOR_AVATAR_ACCEPT_TYPES}
+              aria-invalid={form.avatarError ? true : undefined}
+              aria-describedby={
+                form.avatarError ? "author-profile-image-error" : undefined
+              }
+              onChange={(event) => onAvatarFileSelect(event.target.files?.[0])}
+              className="w-full text-sm text-white/70 file:mr-3 file:rounded-md file:border-0 file:bg-andromeda file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white aria-invalid:outline aria-invalid:outline-1 aria-invalid:outline-red-400/60"
+            />
+          </label>
+          <p className="text-xs leading-relaxed text-white/50">
+            {getAuthorAvatarUploadGuidance()}
+          </p>
+          {form.avatarError ? (
+            <p
+              id="author-profile-image-error"
+              className="text-xs text-red-400"
+              role="alert"
+            >
+              {form.avatarError}
+            </p>
+          ) : null}
+        </div>
 
         <div className="space-y-1 text-left">
           <span className="text-sm text-white/60">Public address</span>

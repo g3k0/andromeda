@@ -42,5 +42,18 @@ export function createInMemoryWalletSessionStore(): WalletSessionStore {
       }
       sessions.set(sessionId, { ...session, lastSeenAt });
     },
+
+    async refreshSnapshot(sessionId, snapshot) {
+      const session = sessions.get(sessionId);
+      if (!session) {
+        return;
+      }
+      sessions.set(sessionId, {
+        ...session,
+        roleSlug: snapshot.roleSlug,
+        status: snapshot.status,
+        permissions: snapshot.permissions,
+      });
+    },
   };
 }

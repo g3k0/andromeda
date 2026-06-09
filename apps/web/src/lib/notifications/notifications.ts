@@ -1,6 +1,7 @@
+import { DEFAULT_NOTIFICATION_DURATION_MS } from "@/lib/config/app";
 import type { Notification, NotifyInput } from "./types";
 
-export const DEFAULT_NOTIFICATION_DURATION_MS = 4_000;
+export { DEFAULT_NOTIFICATION_DURATION_MS } from "@/lib/config/app";
 
 export function createNotification(
   input: NotifyInput,

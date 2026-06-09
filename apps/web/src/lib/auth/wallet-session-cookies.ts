@@ -26,7 +26,7 @@ export function buildWalletSessionCookie(
     `${WALLET_SESSION_COOKIE_NAME}=${encodeURIComponent(sessionId)}`,
     "Path=/",
     "HttpOnly",
-    "SameSite=Lax",
+    "SameSite=Strict",
     `Expires=${expiresAt.toUTCString()}`,
   ];
 
@@ -41,7 +41,7 @@ export function buildWalletSessionCookieOptions(expiresAt: Date) {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax" as const,
+    sameSite: "strict" as const,
     path: "/",
     expires: expiresAt,
   };
@@ -51,7 +51,7 @@ export function buildClearWalletSessionCookieOptions() {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax" as const,
+    sameSite: "strict" as const,
     path: "/",
     maxAge: 0,
   };
@@ -62,7 +62,7 @@ export function buildClearWalletSessionCookie(): string {
     `${WALLET_SESSION_COOKIE_NAME}=`,
     "Path=/",
     "HttpOnly",
-    "SameSite=Lax",
+    "SameSite=Strict",
     "Max-Age=0",
   ];
 

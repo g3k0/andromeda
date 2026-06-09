@@ -1,4 +1,5 @@
 import { runSetWalletPreferencesMutation } from "@/lib/authors/author-mutations";
+import { logWalletPreferencesDeprecation } from "@/lib/authors/wallet-preferences-deprecation";
 import {
   enforceRateLimit,
   errorResponse,
@@ -22,13 +23,15 @@ export async function PUT(
       return jsonResponse({ error: "Invalid Ethereum address." }, 400);
     }
 
-    const limited = enforceRateLimit(
+    const limited = await enforceRateLimit(
       request,
       `wallet-preferences:${normalized}`,
     );
     if (limited) {
       return limited;
     }
+
+    logWalletPreferencesDeprecation();
 
     const body = walletPreferencesBodySchema.parse(await request.json());
     const preferences = await runSetWalletPreferencesMutation(normalized, body);

@@ -3,12 +3,12 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { getUserSnapshotAction } from "@/app/actions/users";
 import {
   canAccessPage,
   getRouteById,
   userFromSnapshot,
 } from "@/lib/navigation/route-guard";
+import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
 import { WalletButton } from "@/components/WalletButton";
 
 export type RouteGuardProps = {
@@ -19,6 +19,7 @@ export type RouteGuardProps = {
 export function RouteGuard({ routeId, children }: RouteGuardProps) {
   const route = getRouteById(routeId);
   const { address, isConnected, isReconnecting } = useAccount();
+  const { snapshot } = useUserSnapshot();
   const [allowed, setAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -27,21 +28,14 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
       return;
     }
 
-    let cancelled = false;
+    if (isConnected && snapshot === null) {
+      setAllowed(null);
+      return;
+    }
 
-    void getUserSnapshotAction(address, isConnected).then((snapshot) => {
-      if (cancelled) {
-        return;
-      }
-
-      const user = snapshot ? userFromSnapshot(snapshot) : null;
-      setAllowed(canAccessPage(user, route, isConnected));
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [address, isConnected, route]);
+    const user = snapshot ? userFromSnapshot(snapshot) : null;
+    setAllowed(canAccessPage(user, route, isConnected));
+  }, [route, snapshot, isConnected]);
 
   if (!route) {
     return (

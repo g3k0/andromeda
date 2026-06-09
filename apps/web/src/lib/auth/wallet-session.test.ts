@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createWalletSessionService, WALLET_SESSION_TTL_MS } from "./wallet-session";
+import {
+  createWalletSessionService,
+  getWalletSessionTtlMs,
+} from "./wallet-session";
 import { createInMemoryWalletSessionStore } from "./testing/in-memory-wallet-session-store";
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
@@ -25,7 +28,7 @@ describe("wallet session service", () => {
     });
     await expect(service.getStatus(sessionId, { now: now + 1_000 })).resolves.toEqual({
       active: true,
-      expiresAt: new Date(now + WALLET_SESSION_TTL_MS).toISOString(),
+      expiresAt: new Date(now + getWalletSessionTtlMs()).toISOString(),
     });
   });
 
@@ -35,10 +38,10 @@ describe("wallet session service", () => {
     const { sessionId } = await service.establish(SESSION_INPUT, { now });
 
     await expect(
-      service.resolve(sessionId, { now: now + WALLET_SESSION_TTL_MS + 1 }),
+      service.resolve(sessionId, { now: now + getWalletSessionTtlMs() + 1 }),
     ).resolves.toBeNull();
     await expect(
-      service.getStatus(sessionId, { now: now + WALLET_SESSION_TTL_MS + 1 }),
+      service.getStatus(sessionId, { now: now + getWalletSessionTtlMs() + 1 }),
     ).resolves.toEqual({ active: false });
   });
 

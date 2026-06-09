@@ -1,3 +1,4 @@
+import { getAuthMessageRateLimit } from "@/lib/config/auth";
 import { createWalletAuthMessage } from "@/lib/auth/verify-wallet";
 import { normalizeAddress } from "@/lib/authors/address";
 import { enforceRateLimit, errorResponse, jsonResponse } from "@/lib/authors/api-utils";
@@ -11,12 +12,16 @@ export async function GET(request: Request) {
       return jsonResponse({ error: "Invalid Ethereum address." }, 400);
     }
 
-    const limited = enforceRateLimit(request, `auth-message:${normalized}`);
+    const limited = await enforceRateLimit(
+      request,
+      `auth-message:${normalized}`,
+      getAuthMessageRateLimit(),
+    );
     if (limited) {
       return limited;
     }
 
-    const challenge = createWalletAuthMessage(normalized);
+    const challenge = await createWalletAuthMessage(normalized);
     return jsonResponse(challenge);
   } catch (error) {
     return errorResponse(error);

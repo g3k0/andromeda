@@ -1,11 +1,15 @@
+import {
+  getPublicChainName,
+  getWalletConnectProjectId,
+} from "@/lib/config/public-env";
 import { http, createConfig } from "wagmi";
 import { polygon, polygonAmoy } from "wagmi/chains";
 import { injected, walletConnect } from "wagmi/connectors";
 
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
+const projectId = getWalletConnectProjectId();
 
 export const targetChain =
-  process.env.NEXT_PUBLIC_CHAIN === "polygon" ? polygon : polygonAmoy;
+  getPublicChainName() === "polygon" ? polygon : polygonAmoy;
 
 export const wagmiConfig = createConfig({
   chains: [targetChain],

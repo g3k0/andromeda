@@ -1,31 +1,36 @@
 "use server";
 
+import { unstable_noStore as noStore } from "next/cache";
+import { headers } from "next/headers";
+import { resolveAuthorizedSnapshotWallet } from "@/lib/auth/resolve-snapshot-wallet";
 import { getAuthorService } from "@/lib/authors/server";
 import { getUserService } from "@/lib/users/server";
-
-export async function findOrCreateUserOnConnectAction(
-  address: string | undefined,
-) {
-  if (!address) {
-    return null;
-  }
-
-  const service = await getUserService();
-  return service.findOrCreateByWallet(address);
-}
 
 export async function getUserSnapshotAction(
   address: string | undefined,
   isConnected: boolean,
 ) {
+  noStore();
+
+  if (!isConnected || !address) {
+    return null;
+  }
+
+  const headerList = await headers();
+  const authorizedAddress = await resolveAuthorizedSnapshotWallet(
+    address,
+    headerList.get("cookie"),
+  );
+  if (!authorizedAddress) {
+    return null;
+  }
+
   const userService = await getUserService();
   const authorService = await getAuthorService();
 
-  if (isConnected && address) {
-    await userService.findOrCreateByWallet(address);
-  }
+  await userService.findOrCreateByWallet(authorizedAddress);
 
-  return userService.getSnapshot(address, isConnected, {
+  return userService.getSnapshot(authorizedAddress, true, {
     hasAuthorProfile: (normalized) => authorService.hasAuthorProfile(normalized),
   });
 }

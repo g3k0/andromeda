@@ -20,7 +20,7 @@ export async function GET(
 ): Promise<Response> {
   try {
     const { slug } = await context.params;
-    const limited = enforceRateLimit(request, `get-role:${slug}`);
+    const limited = await enforceRateLimit(request, `get-role:${slug}`);
     if (limited) {
       return limited;
     }
@@ -38,7 +38,7 @@ export async function PATCH(
 ): Promise<Response> {
   try {
     const { slug } = await context.params;
-    const limited = enforceRateLimit(request, `patch-role:${slug}`);
+    const limited = await enforceRateLimit(request, `patch-role:${slug}`);
     if (limited) {
       return limited;
     }
@@ -57,7 +57,7 @@ export async function DELETE(
 ): Promise<Response> {
   try {
     const { slug } = await context.params;
-    const limited = enforceRateLimit(request, `delete-role:${slug}`);
+    const limited = await enforceRateLimit(request, `delete-role:${slug}`);
     if (limited) {
       return limited;
     }

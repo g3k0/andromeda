@@ -9,6 +9,8 @@ import {
   UserNotFoundError,
   UserSuspendedError,
 } from "./errors";
+import { assertValidPermissionOverrides } from "./permission-overrides-policy";
+import { userMetadataSchema } from "./user-metadata-schema";
 import { validateRoleTransition } from "./role-transitions";
 import type { UserRepository } from "./repository";
 import type {
@@ -63,23 +65,33 @@ async function assertRoleSlugExists(
   }
 }
 
-async function ensureRoleMatchesAuthorProfile(
+async function syncRoleWithAuthorProfile(
   users: UserRepository,
   user: User,
   hasAuthorProfile: boolean,
+  invalidateUserSessions: (address: string) => Promise<void>,
 ): Promise<User> {
-  if (
-    user.roleSlug === "admin" ||
-    !hasAuthorProfile ||
-    user.roleSlug === "author"
-  ) {
+  if (user.roleSlug === "admin") {
     return user;
   }
 
-  return users.update({
-    ...user,
-    roleSlug: "author",
-  });
+  if (hasAuthorProfile && user.roleSlug !== "author") {
+    return users.update({
+      ...user,
+      roleSlug: "author",
+    });
+  }
+
+  if (!hasAuthorProfile && user.roleSlug === "author") {
+    const updated = await users.update({
+      ...user,
+      roleSlug: "reader",
+    });
+    await invalidateUserSessions(user.address);
+    return updated;
+  }
+
+  return user;
 }
 
 export type UserServiceOptions = {
@@ -131,10 +143,11 @@ export function createUserService(
         : false;
       const existing = await users.getByAddress(normalized);
       if (existing) {
-        return ensureRoleMatchesAuthorProfile(
+        return syncRoleWithAuthorProfile(
           users,
           existing,
           hasAuthorProfile,
+          invalidateUserSessions,
         );
       }
 
@@ -171,12 +184,13 @@ export function createUserService(
       const lookup = authorLookupOverride ?? authorLookup;
       const hasAuthorProfile = lookup
         ? await lookup.hasAuthorProfile(normalized)
-        : user.roleSlug === "author";
+        : false;
 
-      user = await ensureRoleMatchesAuthorProfile(
+      user = await syncRoleWithAuthorProfile(
         users,
         user,
         hasAuthorProfile,
+        invalidateUserSessions,
       );
 
       const authenticated = await toAuthenticatedUser(user, roles);
@@ -200,12 +214,23 @@ export function createUserService(
       }
 
       const roleSlug = input.roleSlug ?? "reader";
-      await assertRoleSlugExists(roles, roleSlug);
+      const role = await roles.getBySlug(roleSlug);
+      if (!role) {
+        throw new InvalidUserRoleError(roleSlug);
+      }
+      assertValidPermissionOverrides(
+        roleSlug,
+        role.permissions,
+        input.permissionOverrides ?? [],
+      );
+
+      const metadata = userMetadataSchema.parse(input.metadata ?? {});
 
       return users.create({
         ...input,
         address: normalized,
         roleSlug,
+        metadata,
       });
     },
 
@@ -216,15 +241,28 @@ export function createUserService(
         throw new UserNotFoundError(user.address);
       }
 
-      if (user.roleSlug !== existing.roleSlug) {
-        const role = await roles.getBySlug(user.roleSlug);
-        if (!role) {
-          throw new InvalidUserRoleError(user.roleSlug);
-        }
-        await assertValidRoleTransition(user, user.roleSlug, authorLookup);
+      const nextRoleSlug = user.roleSlug;
+      const role = await roles.getBySlug(nextRoleSlug);
+      if (!role) {
+        throw new InvalidUserRoleError(nextRoleSlug);
       }
 
-      const updated = await users.update(user);
+      if (nextRoleSlug !== existing.roleSlug) {
+        await assertValidRoleTransition(user, nextRoleSlug, authorLookup);
+      }
+
+      assertValidPermissionOverrides(
+        nextRoleSlug,
+        role.permissions,
+        user.permissionOverrides,
+      );
+
+      const validatedUser = {
+        ...user,
+        metadata: userMetadataSchema.parse(user.metadata ?? {}),
+      };
+
+      const updated = await users.update(validatedUser);
       if (user.roleSlug !== existing.roleSlug) {
         await invalidateUserSessions(user.address);
       }
@@ -248,14 +286,16 @@ export function createUserService(
       }
       this.assertActive(user);
 
-      if (user.roleSlug === "admin") {
+      if (user.roleSlug === "admin" || user.roleSlug === "author") {
         return user;
       }
 
-      return users.update({
+      const updated = await users.update({
         ...user,
         roleSlug: "author",
       });
+      await invalidateUserSessions(normalized);
+      return updated;
     },
 
     async demoteToReader(address: string): Promise<User> {

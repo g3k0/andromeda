@@ -12,7 +12,7 @@ import { getWalletSessionService } from "@/lib/auth/wallet-session-server";
 export async function POST(request: Request): Promise<Response> {
   try {
     const body = walletAuthSchema.parse(await request.json());
-    const limited = enforceRateLimit(request, `auth-session:${body.address}`);
+    const limited = await enforceRateLimit(request, `auth-session:${body.address}`);
     if (limited) {
       return limited;
     }

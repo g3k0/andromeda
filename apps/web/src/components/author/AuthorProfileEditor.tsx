@@ -3,9 +3,11 @@
 import { useState } from "react";
 import type { AuthorProfile } from "@/lib/authors/types";
 import {
+  applyDisplayNameInput,
   buildSavePayload,
   createEditorFormState,
   resetEditorFormState,
+  validateDisplayName,
   type AuthorProfileEditorSaveInput,
   type EditorFormState,
 } from "./author-profile-editor-state";
@@ -46,23 +48,34 @@ export function AuthorProfileEditor({
       setForm((current) => ({
         ...current,
         avatarUrl: dataUrl,
+        avatarError: null,
         errorMessage: null,
       }));
     } catch (error) {
+      const avatarError =
+        error instanceof InvalidAvatarFileError
+          ? error.message
+          : "Failed to upload image.";
+
       setForm((current) => ({
         ...current,
-        errorMessage:
-          error instanceof InvalidAvatarFileError
-            ? error.message
-            : "Failed to upload image.",
+        avatarError,
+        errorMessage: null,
       }));
     }
   }
 
   async function handleSubmit() {
+    const displayNameError = validateDisplayName(form.displayName);
     const result = buildSavePayload(form);
     if (!result.payload) {
-      setForm((current) => ({ ...current, errorMessage: result.error }));
+      setForm((current) => ({
+        ...current,
+        displayNameError,
+        avatarError:
+          result.error !== displayNameError ? result.error : current.avatarError,
+        errorMessage: result.error,
+      }));
       return;
     }
 
@@ -93,9 +106,15 @@ export function AuthorProfileEditor({
       profile={profile}
       form={form}
       isAdminEditingOther={isAdminEditingOther}
-      onDisplayNameChange={(displayName) =>
-        setForm((current) => ({ ...current, displayName }))
-      }
+      onDisplayNameChange={(displayName) => {
+        const nextDisplayName = applyDisplayNameInput(displayName);
+        setForm((current) => ({
+          ...current,
+          displayName: nextDisplayName,
+          displayNameError: validateDisplayName(nextDisplayName),
+          errorMessage: null,
+        }));
+      }}
       onAvatarFileSelect={(file) => void handleAvatarFileSelect(file)}
       onSubmit={() => void handleSubmit()}
       onCancel={handleCancel}

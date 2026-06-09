@@ -1,7 +1,7 @@
+import { getContractAddress } from "@/lib/config/public-env";
 import type { Abi } from "viem";
 
-export const contractAddress = (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ??
-  "") as `0x${string}`;
+export const contractAddress = getContractAddress();
 
 // Minimal ABI for the Andromeda ERC-721 work registry.
 // Replace/extend with the full ABI generated from packages/contracts after deploy.

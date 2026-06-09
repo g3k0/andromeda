@@ -55,8 +55,31 @@ export function mapAuthorErrorToMessage(error: unknown): string {
   if (error instanceof ZodError) {
     return "Invalid request payload.";
   }
-  if (error instanceof Error) {
-    return error.message;
+  if (
+    error instanceof WalletSignatureInvalidError ||
+    error instanceof WalletAuthMessageInvalidError ||
+    error instanceof WalletAuthExpiredError ||
+    error instanceof WalletAuthReplayError
+  ) {
+    return "Wallet authentication failed.";
+  }
+  if (
+    error instanceof WalletAuthorizationError ||
+    error instanceof RouteAccessDeniedError
+  ) {
+    return "Not authorized.";
+  }
+  if (error instanceof RateLimitExceededError) {
+    return "Too many requests.";
+  }
+  if (error instanceof AuthorProfileExistsError) {
+    return "Author profile already exists.";
+  }
+  if (error instanceof AuthorProfileNotFoundError) {
+    return "Author profile not found.";
+  }
+  if (error instanceof InvalidAddressError) {
+    return "Invalid Ethereum address.";
   }
   return "Unexpected server error.";
 }
