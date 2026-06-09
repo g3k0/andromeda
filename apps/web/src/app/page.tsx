@@ -2,6 +2,9 @@ export default function HomePage() {
   return (
     <div className="space-y-8">
       <section className="space-y-4">
+        <p className="text-lg font-medium tracking-wide text-andromeda-light">
+          Your key, your book.
+        </p>
         <h1 className="text-4xl font-bold tracking-tight">
           Read, own and collect literary works on-chain.
         </h1>
