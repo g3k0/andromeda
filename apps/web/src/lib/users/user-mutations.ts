@@ -47,6 +47,21 @@ export function decodeWalletAuthHeaderMessage(raw: string): string {
   return Buffer.from(raw, "base64url").toString("utf8");
 }
 
+export function buildWalletAuthRequest(
+  auth: WalletAuthHeaders,
+  method: string,
+  pathname: string,
+): Request {
+  return new Request(`https://andromeda.local${pathname}`, {
+    method,
+    headers: {
+      "x-wallet-address": auth.address,
+      "x-wallet-message": encodeWalletAuthHeaderMessage(auth.message),
+      "x-wallet-signature": auth.signature,
+    },
+  });
+}
+
 export function parseWalletAuthHeaders(request: Request): WalletAuthHeaders {
   const rawMessage = request.headers.get("x-wallet-message") ?? "";
 

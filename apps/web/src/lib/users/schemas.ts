@@ -38,6 +38,21 @@ export const updateUserPreferencesBodySchema = walletAuthSchema.extend({
   declinedAuthorPage: z.boolean(),
 });
 
+export const listUsersActionSchema = walletAuthSchema;
+
+export const createUserActionSchema = createUserBodySchema;
+
+export const updateUserActionSchema = walletAuthSchema.extend({
+  targetAddress: ethereumAddressSchema,
+  role: userRoleSchema.optional(),
+  status: userStatusSchema.optional(),
+  permissions: z.array(userPermissionSchema).optional(),
+});
+
+export const deleteUserActionSchema = walletAuthSchema.extend({
+  targetAddress: ethereumAddressSchema,
+});
+
 export type CreateUserBody = z.infer<typeof createUserBodySchema>;
 export type UpdateUserBody = z.infer<typeof updateUserBodySchema>;
 export type UpdateUserPreferencesBody = z.infer<
