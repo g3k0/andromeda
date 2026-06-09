@@ -27,7 +27,7 @@ async function signedPayload(
   account: ReturnType<typeof privateKeyToAccount>,
   extra: Record<string, unknown> = {},
 ) {
-  const { message } = createWalletAuthMessage(account.address);
+  const { message } = await createWalletAuthMessage(account.address);
   const signature = await account.signMessage({ message });
   return {
     address: account.address,

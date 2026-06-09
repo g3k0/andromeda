@@ -1,14 +1,19 @@
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { GET } from "@/app/api/auth/message/route";
 import {
   resetWalletAuthStoreForTests,
+  useInMemoryWalletAuthStoreForTests,
   verifyWalletSignature,
 } from "./verify-wallet";
 
 const ACCOUNT = privateKeyToAccount(generatePrivateKey());
 
 describe("wallet auth flow", () => {
+  beforeEach(() => {
+    useInMemoryWalletAuthStoreForTests();
+  });
+
   afterEach(() => {
     resetWalletAuthStoreForTests();
   });

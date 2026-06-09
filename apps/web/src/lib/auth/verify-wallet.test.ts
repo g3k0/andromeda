@@ -1,5 +1,5 @@
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   WalletAuthExpiredError,
   WalletAuthReplayError,
@@ -8,6 +8,7 @@ import {
 import {
   createWalletAuthMessage,
   resetWalletAuthStoreForTests,
+  useInMemoryWalletAuthStoreForTests,
   verifyWalletSignature,
 } from "./verify-wallet";
 
@@ -15,12 +16,16 @@ const ACCOUNT = privateKeyToAccount(generatePrivateKey());
 const OTHER = privateKeyToAccount(generatePrivateKey());
 
 describe("verify-wallet", () => {
+  beforeEach(() => {
+    useInMemoryWalletAuthStoreForTests();
+  });
+
   afterEach(() => {
     resetWalletAuthStoreForTests();
   });
 
   it("verifies a valid wallet signature", async () => {
-    const { message } = createWalletAuthMessage(ACCOUNT.address);
+    const { message } = await createWalletAuthMessage(ACCOUNT.address);
     const signature = await ACCOUNT.signMessage({ message });
 
     await expect(
@@ -34,7 +39,7 @@ describe("verify-wallet", () => {
 
   it("rejects expired messages", async () => {
     const now = Date.now();
-    const { message } = createWalletAuthMessage(ACCOUNT.address, {
+    const { message } = await createWalletAuthMessage(ACCOUNT.address, {
       now,
       ttlMs: 1_000,
     });
@@ -49,7 +54,7 @@ describe("verify-wallet", () => {
   });
 
   it("rejects replayed nonces", async () => {
-    const { message } = createWalletAuthMessage(ACCOUNT.address);
+    const { message } = await createWalletAuthMessage(ACCOUNT.address);
     const signature = await ACCOUNT.signMessage({ message });
     const input = { address: ACCOUNT.address, message, signature };
 
@@ -60,7 +65,7 @@ describe("verify-wallet", () => {
   });
 
   it("rejects signatures from a different wallet", async () => {
-    const { message } = createWalletAuthMessage(ACCOUNT.address);
+    const { message } = await createWalletAuthMessage(ACCOUNT.address);
     const signature = await OTHER.signMessage({ message });
 
     await expect(

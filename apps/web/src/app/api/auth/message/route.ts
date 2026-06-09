@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       return limited;
     }
 
-    const challenge = createWalletAuthMessage(normalized);
+    const challenge = await createWalletAuthMessage(normalized);
     return jsonResponse(challenge);
   } catch (error) {
     return errorResponse(error);
