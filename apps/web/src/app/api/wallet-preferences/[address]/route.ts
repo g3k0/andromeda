@@ -1,4 +1,5 @@
 import { runSetWalletPreferencesMutation } from "@/lib/authors/author-mutations";
+import { logWalletPreferencesDeprecation } from "@/lib/authors/wallet-preferences-deprecation";
 import {
   enforceRateLimit,
   errorResponse,
@@ -30,9 +31,7 @@ export async function PUT(
       return limited;
     }
 
-    console.warn(
-      "Deprecated API: PUT /api/wallet-preferences writes to users.preferences only.",
-    );
+    logWalletPreferencesDeprecation();
 
     const body = walletPreferencesBodySchema.parse(await request.json());
     const preferences = await runSetWalletPreferencesMutation(normalized, body);
