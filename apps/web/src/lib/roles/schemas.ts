@@ -55,4 +55,10 @@ export const deleteRoleActionSchema = z.object({
   slug: roleSlugSchema,
 });
 
+export const signedUpdateRoleActionSchema =
+  updateRoleActionSchema.extend(walletAuthSchema.shape);
+
+export const signedDeleteRoleActionSchema =
+  deleteRoleActionSchema.extend(walletAuthSchema.shape);
+
 export const listRolesActionSchema = z.object({}).optional();
