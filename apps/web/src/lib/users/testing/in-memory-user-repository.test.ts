@@ -12,19 +12,20 @@ describe("in-memory user repository", () => {
 
     const created = await repository.create({
       address: ADDRESS,
-      role: "reader",
+      roleSlug: "reader",
     });
-    expect(created.role).toBe("reader");
+    expect(created.roleSlug).toBe("reader");
     expect(await repository.getByAddress(ADDRESS)).toEqual(created);
 
     const updated = await repository.update({
       ...created,
-      role: "admin",
+      roleSlug: "admin",
     });
-    expect(updated.role).toBe("admin");
+    expect(updated.roleSlug).toBe("admin");
 
-    await repository.create({ address: OTHER, role: "author" });
-    expect(await repository.list({ role: "admin" })).toEqual([updated]);
+    await repository.create({ address: OTHER, roleSlug: "author" });
+    expect(await repository.list({ roleSlug: "admin" })).toEqual([updated]);
+    expect(await repository.countByRoleSlug("admin")).toBe(1);
 
     await repository.delete(ADDRESS);
     expect(await repository.getByAddress(ADDRESS)).toBeNull();

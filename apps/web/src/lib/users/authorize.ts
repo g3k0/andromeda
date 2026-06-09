@@ -1,9 +1,12 @@
 import { WalletAuthorizationError } from "@/lib/auth/errors";
 import { normalizeAddress } from "@/lib/authors/address";
 import { hasPermission } from "./permissions";
-import type { User } from "./types";
+import type { AuthenticatedUser } from "./types";
 
-export function canReadUser(signer: User, targetAddress: string): boolean {
+export function canReadUser(
+  signer: AuthenticatedUser,
+  targetAddress: string,
+): boolean {
   const target = normalizeAddress(targetAddress);
   if (!target) {
     return false;
@@ -14,24 +17,36 @@ export function canReadUser(signer: User, targetAddress: string): boolean {
   return hasPermission(signer, "users:read");
 }
 
-export function canListUsers(signer: User): boolean {
+export function canListUsers(signer: AuthenticatedUser): boolean {
   return hasPermission(signer, "users:read");
 }
 
-export function canWriteUser(signer: User): boolean {
+export function canWriteUser(signer: AuthenticatedUser): boolean {
   return hasPermission(signer, "users:write");
 }
 
-export function canDeleteUser(signer: User): boolean {
+export function canDeleteUser(signer: AuthenticatedUser): boolean {
   return hasPermission(signer, "users:delete");
 }
 
-export function canAccessAdmin(user: User): boolean {
+export function canAccessAdmin(user: AuthenticatedUser): boolean {
   return hasPermission(user, "admin:access");
 }
 
+export function canListRoles(signer: AuthenticatedUser): boolean {
+  return hasPermission(signer, "roles:read");
+}
+
+export function canWriteRole(signer: AuthenticatedUser): boolean {
+  return hasPermission(signer, "roles:write");
+}
+
+export function canDeleteRole(signer: AuthenticatedUser): boolean {
+  return hasPermission(signer, "roles:delete");
+}
+
 export function canCreateOwnAuthorProfile(
-  signer: User,
+  signer: AuthenticatedUser,
   targetAddress: string,
   hasAuthorProfile: boolean,
 ): boolean {
@@ -44,11 +59,11 @@ export function canCreateOwnAuthorProfile(
     return true;
   }
 
-  return signer.role === "reader" && !hasAuthorProfile;
+  return signer.roleSlug === "reader" && !hasAuthorProfile;
 }
 
 export function canEditAuthorProfile(
-  signer: User,
+  signer: AuthenticatedUser,
   profileOwnerAddress: string,
 ): boolean {
   if (hasPermission(signer, "authors:write:any")) {
@@ -65,38 +80,59 @@ export function canEditAuthorProfile(
   );
 }
 
-export function assertCanReadUser(signer: User, targetAddress: string): void {
+export function assertCanReadUser(
+  signer: AuthenticatedUser,
+  targetAddress: string,
+): void {
   if (!canReadUser(signer, targetAddress)) {
     throw new WalletAuthorizationError();
   }
 }
 
-export function assertCanListUsers(signer: User): void {
+export function assertCanListUsers(signer: AuthenticatedUser): void {
   if (!canListUsers(signer)) {
     throw new WalletAuthorizationError();
   }
 }
 
-export function assertCanWriteUser(signer: User): void {
+export function assertCanWriteUser(signer: AuthenticatedUser): void {
   if (!canWriteUser(signer)) {
     throw new WalletAuthorizationError();
   }
 }
 
-export function assertCanDeleteUser(signer: User): void {
+export function assertCanDeleteUser(signer: AuthenticatedUser): void {
   if (!canDeleteUser(signer)) {
     throw new WalletAuthorizationError();
   }
 }
 
-export function assertCanAccessAdmin(user: User): void {
+export function assertCanAccessAdmin(user: AuthenticatedUser): void {
   if (!canAccessAdmin(user)) {
     throw new WalletAuthorizationError();
   }
 }
 
+export function assertCanListRoles(signer: AuthenticatedUser): void {
+  if (!canListRoles(signer)) {
+    throw new WalletAuthorizationError();
+  }
+}
+
+export function assertCanWriteRole(signer: AuthenticatedUser): void {
+  if (!canWriteRole(signer)) {
+    throw new WalletAuthorizationError();
+  }
+}
+
+export function assertCanDeleteRole(signer: AuthenticatedUser): void {
+  if (!canDeleteRole(signer)) {
+    throw new WalletAuthorizationError();
+  }
+}
+
 export function assertCanCreateOwnAuthorProfile(
-  signer: User,
+  signer: AuthenticatedUser,
   targetAddress: string,
   hasAuthorProfile: boolean,
 ): void {
@@ -106,7 +142,7 @@ export function assertCanCreateOwnAuthorProfile(
 }
 
 export function assertCanEditAuthorProfile(
-  signer: User,
+  signer: AuthenticatedUser,
   profileOwnerAddress: string,
 ): void {
   if (!canEditAuthorProfile(signer, profileOwnerAddress)) {

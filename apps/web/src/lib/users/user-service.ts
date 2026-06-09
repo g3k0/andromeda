@@ -1,20 +1,24 @@
 import { normalizeAddress } from "@/lib/authors/address";
 import { InvalidAddressError } from "@/lib/authors/errors";
+import type { RoleRepository } from "@/lib/roles/repository";
+import { toAuthenticatedUser } from "./authenticated-user";
 import {
   InvalidUserRoleError,
+  InvalidUserRoleTransitionError,
   UserExistsError,
   UserNotFoundError,
   UserSuspendedError,
 } from "./errors";
+import { validateRoleTransition } from "./role-transitions";
 import type { UserRepository } from "./repository";
 import type {
+  AuthenticatedUser,
   CreateUserInput,
   User,
   UserListFilter,
-  UserRole,
   UserSnapshot,
 } from "./types";
-import { defaultUserPreferences, isUserRole } from "./types";
+import { defaultUserPreferences } from "./types";
 
 export type AuthorProfileLookup = {
   hasAuthorProfile(address: string): Promise<boolean>;
@@ -28,25 +32,69 @@ function requireNormalizedAddress(address: string): string {
   return normalized;
 }
 
+async function resolveAuthorProfile(
+  address: string,
+  authorLookup?: AuthorProfileLookup,
+): Promise<boolean> {
+  return authorLookup ? authorLookup.hasAuthorProfile(address) : false;
+}
+
+async function assertValidRoleTransition(
+  user: User,
+  nextRoleSlug: string,
+  authorLookup?: AuthorProfileLookup,
+): Promise<void> {
+  const hasAuthorProfile = await resolveAuthorProfile(user.address, authorLookup);
+  const error = validateRoleTransition(user.roleSlug, nextRoleSlug, {
+    hasAuthorProfile,
+  });
+  if (error) {
+    throw new InvalidUserRoleTransitionError(error);
+  }
+}
+
+async function assertRoleSlugExists(
+  roles: RoleRepository,
+  roleSlug: string,
+): Promise<void> {
+  const role = await roles.getBySlug(roleSlug);
+  if (!role) {
+    throw new InvalidUserRoleError(roleSlug);
+  }
+}
+
 async function ensureRoleMatchesAuthorProfile(
   users: UserRepository,
   user: User,
   hasAuthorProfile: boolean,
 ): Promise<User> {
-  if (user.role === "admin" || !hasAuthorProfile || user.role === "author") {
+  if (
+    user.roleSlug === "admin" ||
+    !hasAuthorProfile ||
+    user.roleSlug === "author"
+  ) {
     return user;
   }
 
   return users.update({
     ...user,
-    role: "author",
+    roleSlug: "author",
   });
 }
 
+export type UserServiceOptions = {
+  authorLookup?: AuthorProfileLookup;
+  invalidateUserSessions?: (address: string) => Promise<void>;
+};
+
 export function createUserService(
   users: UserRepository,
-  authorLookup?: AuthorProfileLookup,
+  roles: RoleRepository,
+  options?: UserServiceOptions,
 ) {
+  const authorLookup = options?.authorLookup;
+  const invalidateUserSessions =
+    options?.invalidateUserSessions ?? (async () => undefined);
   return {
     async getByAddress(address: string): Promise<User | null> {
       const normalized = normalizeAddress(address);
@@ -54,6 +102,16 @@ export function createUserService(
         return null;
       }
       return users.getByAddress(normalized);
+    },
+
+    async getAuthenticatedByAddress(
+      address: string,
+    ): Promise<AuthenticatedUser | null> {
+      const user = await this.getByAddress(address);
+      if (!user) {
+        return null;
+      }
+      return toAuthenticatedUser(user, roles);
     },
 
     async list(filter?: UserListFilter): Promise<User[]> {
@@ -80,9 +138,12 @@ export function createUserService(
         );
       }
 
+      const roleSlug = hasAuthorProfile ? "author" : "reader";
+      await assertRoleSlugExists(roles, roleSlug);
+
       return users.create({
         address: normalized,
-        role: hasAuthorProfile ? "author" : "reader",
+        roleSlug,
         status: "active",
         preferences: defaultUserPreferences(),
       });
@@ -110,7 +171,7 @@ export function createUserService(
       const lookup = authorLookupOverride ?? authorLookup;
       const hasAuthorProfile = lookup
         ? await lookup.hasAuthorProfile(normalized)
-        : user.role === "author";
+        : user.roleSlug === "author";
 
       user = await ensureRoleMatchesAuthorProfile(
         users,
@@ -118,13 +179,17 @@ export function createUserService(
         hasAuthorProfile,
       );
 
+      const authenticated = await toAuthenticatedUser(user, roles);
+
       return {
         normalizedAddress: normalized,
         isConnected: true,
-        role: user.role,
-        status: user.status,
+        roleSlug: authenticated.roleSlug,
+        roleName: authenticated.role.name,
+        status: authenticated.status,
+        permissions: authenticated.permissions,
         hasAuthorProfile,
-        declinedAuthorPage: user.preferences.declinedAuthorPage,
+        declinedAuthorPage: authenticated.preferences.declinedAuthorPage,
       };
     },
 
@@ -134,9 +199,13 @@ export function createUserService(
         throw new UserExistsError(normalized);
       }
 
+      const roleSlug = input.roleSlug ?? "reader";
+      await assertRoleSlugExists(roles, roleSlug);
+
       return users.create({
         ...input,
         address: normalized,
+        roleSlug,
       });
     },
 
@@ -146,7 +215,20 @@ export function createUserService(
       if (!existing) {
         throw new UserNotFoundError(user.address);
       }
-      return users.update(user);
+
+      if (user.roleSlug !== existing.roleSlug) {
+        const role = await roles.getBySlug(user.roleSlug);
+        if (!role) {
+          throw new InvalidUserRoleError(user.roleSlug);
+        }
+        await assertValidRoleTransition(user, user.roleSlug, authorLookup);
+      }
+
+      const updated = await users.update(user);
+      if (user.roleSlug !== existing.roleSlug) {
+        await invalidateUserSessions(user.address);
+      }
+      return updated;
     },
 
     async deleteUser(address: string): Promise<void> {
@@ -166,13 +248,13 @@ export function createUserService(
       }
       this.assertActive(user);
 
-      if (user.role === "admin") {
+      if (user.roleSlug === "admin") {
         return user;
       }
 
       return users.update({
         ...user,
-        role: "author",
+        roleSlug: "author",
       });
     },
 
@@ -184,19 +266,20 @@ export function createUserService(
       }
       this.assertActive(user);
 
-      if (user.role === "admin") {
+      if (user.roleSlug === "admin") {
         return user;
       }
 
       return users.update({
         ...user,
-        role: "reader",
+        roleSlug: "reader",
       });
     },
 
-    async setRole(address: string, role: UserRole): Promise<User> {
-      if (!isUserRole(role)) {
-        throw new InvalidUserRoleError(role);
+    async setRoleSlug(address: string, roleSlug: string): Promise<User> {
+      const role = await roles.getBySlug(roleSlug);
+      if (!role) {
+        throw new InvalidUserRoleError(roleSlug);
       }
 
       const normalized = requireNormalizedAddress(address);
@@ -205,10 +288,11 @@ export function createUserService(
         throw new UserNotFoundError(normalized);
       }
       this.assertActive(user);
+      await assertValidRoleTransition(user, roleSlug, authorLookup);
 
       return users.update({
         ...user,
-        role,
+        roleSlug,
       });
     },
 

@@ -1,3 +1,5 @@
+import type { Role } from "@/lib/roles/types";
+
 export const USER_ROLES = ["admin", "author", "reader"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
@@ -13,6 +15,9 @@ export const USER_PERMISSIONS = [
   "users:write",
   "users:delete",
   "admin:access",
+  "roles:read",
+  "roles:write",
+  "roles:delete",
 ] as const;
 export type UserPermission = (typeof USER_PERMISSIONS)[number];
 
@@ -23,20 +28,25 @@ export type UserPreferences = {
 
 export type User = {
   address: string;
-  role: UserRole;
+  roleSlug: string;
   status: UserStatus;
-  permissions: UserPermission[];
+  permissionOverrides: UserPermission[];
   preferences: UserPreferences;
   metadata: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 };
 
+export type AuthenticatedUser = User & {
+  role: Role;
+  permissions: UserPermission[];
+};
+
 export type CreateUserInput = {
   address: string;
-  role?: UserRole;
+  roleSlug?: string;
   status?: UserStatus;
-  permissions?: UserPermission[];
+  permissionOverrides?: UserPermission[];
   preferences?: Partial<UserPreferences>;
   metadata?: Record<string, unknown>;
 };
@@ -44,14 +54,16 @@ export type CreateUserInput = {
 export type UserSnapshot = {
   normalizedAddress: string;
   isConnected: boolean;
-  role: UserRole;
+  roleSlug: string;
+  roleName: string;
   status: UserStatus;
+  permissions: UserPermission[];
   hasAuthorProfile: boolean;
   declinedAuthorPage: boolean;
 };
 
 export type UserListFilter = {
-  role?: UserRole;
+  roleSlug?: string;
   status?: UserStatus;
 };
 

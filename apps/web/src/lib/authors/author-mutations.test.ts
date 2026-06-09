@@ -1,5 +1,6 @@
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { buildAuthenticatedUser } from "@/lib/users/testing/build-authenticated-user";
 import { createAuthorService } from "./author-service";
 import {
   runCreateAuthorMutation,
@@ -38,26 +39,26 @@ describe("author mutations", () => {
   });
 
   function mockUserService(
-    getByAddress: () => Promise<unknown> = async () => null,
+    getAuthenticatedByAddress: () => Promise<unknown> = async () => null,
   ) {
     mockedGetUserService.mockResolvedValue({
       promoteToAuthor: vi.fn(async (address: string) => ({
         address,
-        role: "author",
+        roleSlug: "author",
       })),
       findOrCreateByWallet: vi.fn(),
       setPreferences: vi.fn(),
       assertActive: vi.fn(),
-      getByAddress: vi.fn(getByAddress),
+      getAuthenticatedByAddress: vi.fn(getAuthenticatedByAddress),
     } as never);
   }
 
   function mockService(
-    getByAddress: () => Promise<unknown> = async () => null,
+    getAuthenticatedByAddress: () => Promise<unknown> = async () => null,
   ) {
     const service = createAuthorService(createInMemoryAuthorRepositories());
     mockedGetAuthorService.mockResolvedValue(service);
-    mockUserService(getByAddress);
+    mockUserService(getAuthenticatedByAddress);
     return service;
   }
 
@@ -77,16 +78,7 @@ describe("author mutations", () => {
   });
 
   it("allows a reader to create their first author profile", async () => {
-    mockService(async () => ({
-      address: ADDRESS,
-      role: "reader",
-      status: "active",
-      permissions: [],
-      preferences: { declinedAuthorPage: false, onboardingCompletedAt: null },
-      metadata: {},
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }));
+    mockService(async () => buildAuthenticatedUser(ADDRESS, "reader"));
 
     const profile = await runCreateAuthorMutation({
       address: ADDRESS,
@@ -100,7 +92,7 @@ describe("author mutations", () => {
   });
 
   it("updates an existing author profile", async () => {
-    const service = mockService();
+    const service = mockService(async () => buildAuthenticatedUser(ADDRESS, "author"));
     await service.createAuthorProfile(ADDRESS, { displayName: "Before" });
 
     const updated = await runUpdateAuthorMutation(ADDRESS, {
@@ -115,7 +107,7 @@ describe("author mutations", () => {
   });
 
   it("throws when updating a missing profile", async () => {
-    mockService();
+    mockService(async () => buildAuthenticatedUser(ADDRESS, "author"));
 
     await expect(
       runUpdateAuthorMutation(ADDRESS, {

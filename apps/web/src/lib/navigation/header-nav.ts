@@ -1,4 +1,4 @@
-import type { UserRole } from "@/lib/auth/roles";
+import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissions";
 import {
   ADMIN_ROUTE,
   LIBRARY_ROUTE,
@@ -15,7 +15,7 @@ export type HeaderNavLink = {
 };
 
 export type HeaderNavInput = {
-  role: UserRole;
+  role: string;
   hasAuthorProfile: boolean;
   isConnected?: boolean;
   snapshot?: UserSnapshot | null;
@@ -55,14 +55,8 @@ function toRouteNavContext(input: HeaderNavInput): RouteNavContext {
 
   return {
     user: {
-      address: "0x0000000000000000000000000000000000000000",
-      role: input.role,
-      status: "active",
-      permissions: [],
-      preferences: { declinedAuthorPage: false, onboardingCompletedAt: null },
-      metadata: {},
-      createdAt: new Date(0).toISOString(),
-      updatedAt: new Date(0).toISOString(),
+      roleSlug: input.role,
+      permissions: defaultPermissionsForRoleSlug(input.role),
     },
     hasAuthorProfile: input.hasAuthorProfile,
     isConnected,

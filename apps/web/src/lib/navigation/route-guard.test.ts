@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { defaultUserPreferences } from "@/lib/users/types";
-import type { User } from "@/lib/users/types";
+import { buildAuthenticatedUser } from "@/lib/users/testing/build-authenticated-user";
 import {
   ADMIN_ROUTE,
   MY_AUTHOR_PAGE_ROUTE,
@@ -10,20 +9,16 @@ import {
   canAccessPage,
   canShowRouteInNav,
   matchApiRoute,
+  userFromSnapshot,
 } from "./route-guard";
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 
-function buildUser(role: User["role"]): User {
+function buildNavUser(roleSlug: string) {
+  const user = buildAuthenticatedUser(ADDRESS, roleSlug);
   return {
-    address: ADDRESS,
-    role,
-    status: "active",
-    permissions: [],
-    preferences: defaultUserPreferences(),
-    metadata: {},
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    roleSlug: user.roleSlug,
+    permissions: user.permissions,
   };
 }
 
@@ -42,39 +37,54 @@ describe("route guard", () => {
     expect(canAccessPage(null, MY_AUTHOR_PAGE_ROUTE, false)).toBe(true);
   });
 
+  it("maps snapshot permissions for route checks", () => {
+    const user = userFromSnapshot({
+      normalizedAddress: ADDRESS,
+      isConnected: true,
+      roleSlug: "ops",
+      roleName: "Ops",
+      status: "active",
+      permissions: ["pages:read", "admin:access"],
+      hasAuthorProfile: false,
+      declinedAuthorPage: false,
+    });
+
+    expect(canAccessPage(user, ADMIN_ROUTE, true)).toBe(true);
+  });
+
   it("blocks admin pages for non-admin users", () => {
-    const reader = buildUser("reader");
+    const reader = buildNavUser("reader");
     expect(canAccessPage(reader, ADMIN_ROUTE, true)).toBe(false);
-    expect(canAccessPage(buildUser("admin"), ADMIN_ROUTE, true)).toBe(true);
+    expect(canAccessPage(buildNavUser("admin"), ADMIN_ROUTE, true)).toBe(true);
   });
 
   it("hides admin and author nav links based on role", () => {
     const readerLinks = buildAuthorizedNavLinks({
-      user: buildUser("reader"),
+      user: buildNavUser("reader"),
       hasAuthorProfile: false,
       isConnected: true,
     });
     expect(readerLinks.map((link) => link.href)).toEqual(["/"]);
 
     const authorLinks = buildAuthorizedNavLinks({
-      user: buildUser("author"),
+      user: buildNavUser("author"),
       hasAuthorProfile: true,
       isConnected: true,
     });
     expect(authorLinks.map((link) => link.href)).toEqual(["/", "/author"]);
 
     const adminLinks = buildAuthorizedNavLinks({
-      user: buildUser("admin"),
+      user: buildNavUser("admin"),
       hasAuthorProfile: true,
       isConnected: true,
     });
-    expect(adminLinks.map((link) => link.href)).toEqual(["/", "/admin", "/author"]);
+    expect(adminLinks.map((link) => link.href)).toEqual(["/", "/author"]);
   });
 
   it("requires an author profile before showing My page", () => {
     expect(
       canShowRouteInNav(MY_AUTHOR_PAGE_ROUTE, {
-        user: buildUser("author"),
+        user: buildNavUser("author"),
         hasAuthorProfile: false,
         isConnected: true,
       }),
@@ -82,8 +92,8 @@ describe("route guard", () => {
   });
 
   it("asserts API permissions for protected REST endpoints", () => {
-    const reader = buildUser("reader");
-    const admin = buildUser("admin");
+    const reader = buildNavUser("reader");
+    const admin = buildNavUser("admin");
 
     expect(() =>
       assertRouteApiAccess(reader, "GET", "/api/users"),

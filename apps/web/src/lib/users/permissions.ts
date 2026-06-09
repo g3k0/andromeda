@@ -1,30 +1,24 @@
-import type { User, UserPermission, UserRole } from "./types";
+import type { Role } from "@/lib/roles/types";
+import type { User, UserPermission } from "./types";
 
-export const ROLE_PERMISSIONS: Record<UserRole, UserPermission[]> = {
-  reader: ["pages:read"],
-  author: ["pages:read", "authors:write:own"],
-  admin: [
-    "pages:read",
-    "authors:write:own",
-    "authors:write:any",
-    "authors:delete:any",
-    "users:read",
-    "users:write",
-    "users:delete",
-    "admin:access",
-  ],
+export type PermissionSubject = {
+  permissions: UserPermission[];
 };
 
-export function getEffectivePermissions(user: User): UserPermission[] {
-  if (user.permissions.length > 0) {
-    return [...user.permissions];
+export function getEffectivePermissions(
+  user: User,
+  role: Role,
+): UserPermission[] {
+  const effective = new Set<UserPermission>(role.permissions);
+  for (const grant of user.permissionOverrides) {
+    effective.add(grant);
   }
-  return [...ROLE_PERMISSIONS[user.role]];
+  return [...effective];
 }
 
 export function hasPermission(
-  user: User,
+  subject: PermissionSubject,
   permission: UserPermission,
 ): boolean {
-  return getEffectivePermissions(user).includes(permission);
+  return subject.permissions.includes(permission);
 }

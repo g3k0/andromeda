@@ -1,14 +1,14 @@
-import type { UserRole } from "@/lib/users/types";
+import type { UserPermission } from "@/lib/users/types";
 
 export type RoleMenuItem = {
   id: string;
   label: string;
 };
 
-export const ROLE_MENU_LABELS: Record<UserRole, string> = {
-  admin: "Admin",
-  author: "Author",
-  reader: "Reader",
+export type RoleMenuContext = {
+  roleSlug: string;
+  roleName: string;
+  permissions: readonly UserPermission[];
 };
 
 export const PROFILE_SETTINGS_MENU_ITEM: RoleMenuItem = {
@@ -26,20 +26,35 @@ export const BECOME_AUTHOR_MENU_ITEM: RoleMenuItem = {
   label: "Become author",
 };
 
-export function shouldShowBecomeAuthorMenuItem(role: UserRole): boolean {
-  return role === "reader";
+export const MANAGE_USERS_MENU_ITEM: RoleMenuItem = {
+  id: "manage-users",
+  label: "Manage users and roles",
+};
+
+export const MANAGE_USERS_PATH = "/admin/users";
+
+export function shouldShowBecomeAuthorMenuItem(context: RoleMenuContext): boolean {
+  return context.roleSlug === "reader";
 }
 
-export function getRoleMenuItems(role: UserRole): RoleMenuItem[] {
+export function shouldShowManageUsersMenuItem(context: RoleMenuContext): boolean {
+  return context.permissions.includes("admin:access");
+}
+
+export function getRoleMenuItems(context: RoleMenuContext): RoleMenuItem[] {
   const items = [PROFILE_SETTINGS_MENU_ITEM, CHANGE_LANGUAGE_MENU_ITEM];
 
-  if (shouldShowBecomeAuthorMenuItem(role)) {
+  if (shouldShowManageUsersMenuItem(context)) {
+    items.push(MANAGE_USERS_MENU_ITEM);
+  }
+
+  if (shouldShowBecomeAuthorMenuItem(context)) {
     items.push(BECOME_AUTHOR_MENU_ITEM);
   }
 
   return items;
 }
 
-export function getRoleMenuLabel(role: UserRole): string {
-  return ROLE_MENU_LABELS[role];
+export function getRoleMenuLabel(context: RoleMenuContext): string {
+  return context.roleName;
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { getUserSnapshotAction } from "@/app/actions/users";
 import type { AuthorProfile } from "@/lib/authors/types";
-import type { UserSnapshot } from "@/lib/users/types";
+import { isUserRole, type UserSnapshot } from "@/lib/users/types";
 import { AuthorPageContent } from "./AuthorPageContent";
 
 export type AuthorPageClientProps = {
@@ -34,8 +34,10 @@ export function AuthorPageClient({ profile }: AuthorPageClientProps) {
       profile={profile}
       viewerAddress={address}
       isConnected={isConnected}
-      isAdmin={snapshot?.role === "admin"}
-      viewerRole={snapshot?.role}
+      isAdmin={snapshot?.permissions.includes("admin:access") ?? false}
+      viewerRole={
+        snapshot && isUserRole(snapshot.roleSlug) ? snapshot.roleSlug : null
+      }
     />
   );
 }

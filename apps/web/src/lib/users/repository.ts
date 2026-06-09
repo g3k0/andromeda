@@ -7,4 +7,5 @@ export type UserRepository = {
   update(user: User): Promise<User>;
   delete(address: string): Promise<void>;
   list(filter?: UserListFilter): Promise<User[]>;
+  countByRoleSlug(roleSlug: string): Promise<number>;
 };

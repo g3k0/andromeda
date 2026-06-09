@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  ADMIN_NAV_LINK,
   LIBRARY_NAV_LINK,
   MY_AUTHOR_PAGE_NAV_LINK,
   buildHeaderNavLinks,
@@ -40,9 +39,9 @@ describe("buildHeaderNavLinks", () => {
     );
   });
 
-  it("includes Admin only for admins", () => {
+  it("does not include Admin in the header nav for any role", () => {
     expect(buildHeaderNavLinks({ role: "admin", hasAuthorProfile: false })).toEqual(
-      [LIBRARY_NAV_LINK, ADMIN_NAV_LINK],
+      [LIBRARY_NAV_LINK],
     );
     expect(buildHeaderNavLinks({ role: "author", hasAuthorProfile: true })).toEqual(
       [LIBRARY_NAV_LINK, MY_AUTHOR_PAGE_NAV_LINK],
@@ -61,8 +60,26 @@ describe("buildHeaderNavLinks", () => {
     );
     expect(buildHeaderNavLinks({ role: "admin", hasAuthorProfile: true })).toEqual([
       LIBRARY_NAV_LINK,
-      ADMIN_NAV_LINK,
       MY_AUTHOR_PAGE_NAV_LINK,
     ]);
+  });
+
+  it("uses snapshot permissions instead of static role defaults", () => {
+    const links = buildHeaderNavLinks({
+      role: "reader",
+      hasAuthorProfile: true,
+      snapshot: {
+        normalizedAddress: "0xabcdef0123456789abcdef0123456789abcdef01",
+        isConnected: true,
+        roleSlug: "reader",
+        roleName: "Reader",
+        status: "active",
+        permissions: ["pages:read"],
+        hasAuthorProfile: true,
+        declinedAuthorPage: false,
+      },
+    });
+
+    expect(links).toEqual([LIBRARY_NAV_LINK]);
   });
 });

@@ -1,0 +1,46 @@
+/** @vitest-environment jsdom */
+
+import type { ReactNode } from "react";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { AdminManageTabs } from "./AdminManageTabs";
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/admin/users",
+}));
+
+vi.mock("next/link", () => ({
+  default: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: ReactNode;
+    "aria-current"?: string;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
+describe("AdminManageTabs", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("renders management tabs with active users link", () => {
+    render(<AdminManageTabs />);
+
+    expect(screen.getByText("Manage users and roles")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Users" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(screen.getByRole("link", { name: "Roles" })).toHaveAttribute(
+      "href",
+      "/admin/roles",
+    );
+  });
+});

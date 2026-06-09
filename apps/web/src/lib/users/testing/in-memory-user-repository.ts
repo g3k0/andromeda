@@ -23,9 +23,9 @@ export function createInMemoryUserRepository(): UserRepository {
 
       const user: User = {
         address: input.address,
-        role: input.role ?? "reader",
+        roleSlug: input.roleSlug ?? "reader",
         status: input.status ?? "active",
-        permissions: input.permissions ?? [],
+        permissionOverrides: input.permissionOverrides ?? [],
         preferences,
         metadata: input.metadata ?? {},
         createdAt: now,
@@ -51,7 +51,7 @@ export function createInMemoryUserRepository(): UserRepository {
 
     async list(filter: UserListFilter = {}) {
       return [...users.values()].filter((user) => {
-        if (filter.role && user.role !== filter.role) {
+        if (filter.roleSlug && user.roleSlug !== filter.roleSlug) {
           return false;
         }
         if (filter.status && user.status !== filter.status) {
@@ -59,6 +59,11 @@ export function createInMemoryUserRepository(): UserRepository {
         }
         return true;
       });
+    },
+
+    async countByRoleSlug(roleSlug: string) {
+      return [...users.values()].filter((user) => user.roleSlug === roleSlug)
+        .length;
     },
   };
 }

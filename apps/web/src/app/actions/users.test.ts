@@ -48,8 +48,10 @@ describe("user server actions", () => {
     getSnapshot.mockResolvedValue({
       normalizedAddress: ADDRESS,
       isConnected: true,
-      role: "reader",
+      roleSlug: "reader",
+      roleName: "Reader",
       status: "active",
+      permissions: ["pages:read"],
       hasAuthorProfile: false,
       declinedAuthorPage: false,
     });
@@ -60,6 +62,7 @@ describe("user server actions", () => {
     expect(getSnapshot).toHaveBeenCalledWith(ADDRESS, true, {
       hasAuthorProfile: expect.any(Function),
     });
-    expect(snapshot?.role).toBe("reader");
+    expect(snapshot?.roleSlug).toBe("reader");
+    expect(snapshot?.permissions).toContain("pages:read");
   });
 });

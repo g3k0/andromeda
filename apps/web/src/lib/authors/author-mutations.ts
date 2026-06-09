@@ -28,7 +28,7 @@ export async function runCreateAuthorMutation(
 
   const userService = await getUserService();
   const service = await getAuthorService();
-  const signerUser = await userService.getByAddress(signer);
+  const signerUser = await userService.getAuthenticatedByAddress(signer);
   if (signerUser) {
     userService.assertActive(signerUser);
     const hasAuthorProfile = await service.hasAuthorProfile(body.address);
@@ -56,7 +56,7 @@ export async function runUpdateAuthorMutation(
 ): Promise<AuthorProfile> {
   const signer = await verifySignedMutation(body);
   const userService = await getUserService();
-  const signerUser = await userService.getByAddress(signer);
+  const signerUser = await userService.getAuthenticatedByAddress(signer);
   if (signerUser) {
     userService.assertActive(signerUser);
     assertCanEditAuthorProfile(signerUser, targetAddress);

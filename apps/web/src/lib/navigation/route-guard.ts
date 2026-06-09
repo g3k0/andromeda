@@ -1,5 +1,6 @@
 import { hasPermission } from "@/lib/users/permissions";
-import type { User, UserPermission, UserSnapshot } from "@/lib/users/types";
+import type { PermissionSubject } from "@/lib/users/permissions";
+import type { UserPermission, UserSnapshot } from "@/lib/users/types";
 import { defaultUserPreferences } from "@/lib/users/types";
 import type { HeaderNavLink } from "./header-nav";
 
@@ -21,7 +22,7 @@ export type ApiRouteDefinition = {
 };
 
 export type RouteNavContext = {
-  user: User | null;
+  user: PermissionSubject & { roleSlug?: string } | null;
   hasAuthorProfile: boolean;
   isConnected: boolean;
 };
@@ -38,6 +39,7 @@ export const ADMIN_ROUTE: RouteDefinition = {
   href: "/admin",
   label: "Admin",
   pagePermission: "admin:access",
+  showInNav: () => false,
 };
 
 export const MY_AUTHOR_PAGE_ROUTE: RouteDefinition = {
@@ -49,7 +51,7 @@ export const MY_AUTHOR_PAGE_ROUTE: RouteDefinition = {
     if (!hasAuthorProfile) {
       return false;
     }
-    return user?.role === "author" || user?.role === "admin";
+    return user?.roleSlug === "author" || user?.roleSlug === "admin";
   },
 };
 
@@ -101,6 +103,36 @@ export const API_ROUTES: ApiRouteDefinition[] = [
     methods: ["PATCH"],
     pathPattern: "/api/authors/:address",
     permission: "authors:write:own",
+  },
+  {
+    id: "roles-list",
+    methods: ["GET"],
+    pathPattern: "/api/roles",
+    permission: "roles:read",
+  },
+  {
+    id: "roles-create",
+    methods: ["POST"],
+    pathPattern: "/api/roles",
+    permission: "roles:write",
+  },
+  {
+    id: "roles-read",
+    methods: ["GET"],
+    pathPattern: "/api/roles/:slug",
+    permission: "roles:read",
+  },
+  {
+    id: "roles-update",
+    methods: ["PATCH"],
+    pathPattern: "/api/roles/:slug",
+    permission: "roles:write",
+  },
+  {
+    id: "roles-delete",
+    methods: ["DELETE"],
+    pathPattern: "/api/roles/:slug",
+    permission: "roles:delete",
   },
 ];
 
@@ -166,24 +198,26 @@ export function requiresAuthenticatedUser(
   return permission !== "pages:read";
 }
 
-export function userFromSnapshot(snapshot: UserSnapshot): User {
+export function userFromSnapshot(snapshot: UserSnapshot): PermissionSubject & {
+  roleSlug: string;
+  address: string;
+  status: UserSnapshot["status"];
+  preferences: ReturnType<typeof defaultUserPreferences>;
+} {
   return {
     address: snapshot.normalizedAddress,
-    role: snapshot.role,
+    roleSlug: snapshot.roleSlug,
     status: snapshot.status,
-    permissions: [],
+    permissions: snapshot.permissions,
     preferences: {
       ...defaultUserPreferences(),
       declinedAuthorPage: snapshot.declinedAuthorPage,
     },
-    metadata: {},
-    createdAt: new Date(0).toISOString(),
-    updatedAt: new Date(0).toISOString(),
   };
 }
 
 export function canAccessPage(
-  user: User | null,
+  user: PermissionSubject | null,
   route: RouteDefinition,
   isConnected: boolean,
 ): boolean {
@@ -225,7 +259,7 @@ export function buildAuthorizedNavLinks(
 }
 
 export function assertRouteApiAccess(
-  user: User,
+  user: PermissionSubject,
   method: string,
   pathname: string,
 ): void {

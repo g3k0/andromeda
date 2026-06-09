@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { getUserSnapshotAction } from "@/app/actions/users";
+import { revokeWalletSessionAction } from "@/app/actions/wallet-session";
 import { useNotifications } from "@/components/notifications/NotificationProvider";
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
 import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
@@ -57,7 +58,7 @@ export function SiteHeaderNav() {
   }, [address, isConnected]);
 
   const links = buildHeaderNavLinks({
-    role: snapshot?.role ?? "reader",
+    role: snapshot?.roleSlug ?? "reader",
     hasAuthorProfile: snapshot?.hasAuthorProfile ?? false,
     isConnected,
     snapshot,
@@ -77,8 +78,13 @@ export function SiteHeaderNav() {
 
       {isConnected && snapshot ? (
         <RoleMenuDropdown
-          role={snapshot.role}
-          onLogout={() => disconnect()}
+          roleSlug={snapshot.roleSlug}
+          roleName={snapshot.roleName}
+          permissions={snapshot.permissions}
+          onLogout={() => {
+            void revokeWalletSessionAction();
+            disconnect();
+          }}
           isLoggingOut={isLoggingOut}
         />
       ) : null}
