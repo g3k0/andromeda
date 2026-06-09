@@ -1,4 +1,3 @@
-import { isAdminAddress } from "@/lib/auth/admin";
 import { WalletAuthorizationError } from "@/lib/auth/errors";
 import { normalizeAddress } from "./address";
 
@@ -20,10 +19,7 @@ export function canUpdateAuthorProfile(
   if (!signer || !target) {
     return false;
   }
-  if (signer === target) {
-    return true;
-  }
-  return isAdminAddress(signer);
+  return signer === target;
 }
 
 export function canManageWalletPreferences(

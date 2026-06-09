@@ -237,7 +237,14 @@ describe("authors API", () => {
 
   it("PATCH allows verified admin signatures on another profile", async () => {
     const ADMIN = privateKeyToAccount(generatePrivateKey());
-    setAdminAddressesForTests([ADMIN.address.toLowerCase()]);
+
+    await UserModel.create({
+      address: ADMIN.address.toLowerCase(),
+      roleSlug: "admin",
+      status: "active",
+      permissionOverrides: [],
+      preferences: { declinedAuthorPage: false },
+    });
 
     const createBody = await signedPayload(OWNER, { displayName: "Writer" });
     await POST(

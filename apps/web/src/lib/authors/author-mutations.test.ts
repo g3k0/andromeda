@@ -7,6 +7,7 @@ import {
   runSetWalletPreferencesMutation,
   runUpdateAuthorMutation,
 } from "./author-mutations";
+import { WalletAuthorizationError } from "@/lib/auth/errors";
 import { AuthorProfileNotFoundError } from "./errors";
 import { createInMemoryAuthorRepositories } from "./testing/in-memory-repositories";
 
@@ -104,6 +105,20 @@ describe("author mutations", () => {
     });
 
     expect(updated.displayName).toBe("After");
+  });
+
+  it("rejects updates when the signer is not provisioned in the database", async () => {
+    mockService();
+
+    await expect(
+      runUpdateAuthorMutation(ADDRESS, {
+        address: ADDRESS,
+        message: "msg",
+        signature: "0x00",
+        displayName: "Ghost",
+        avatarUrl: null,
+      }),
+    ).rejects.toBeInstanceOf(WalletAuthorizationError);
   });
 
   it("throws when updating a missing profile", async () => {
