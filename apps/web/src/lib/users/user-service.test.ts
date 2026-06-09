@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { UserExistsError, UserNotFoundError, UserSuspendedError } from "./errors";
+import {
+  InvalidUserRoleTransitionError,
+  UserExistsError,
+  UserNotFoundError,
+  UserSuspendedError,
+} from "./errors";
 import { createInMemoryUserRepository } from "./testing/in-memory-user-repository";
 import { createUserService } from "./user-service";
 
@@ -99,5 +104,27 @@ describe("user service", () => {
     await expect(service.deleteUser(ADDRESS)).rejects.toBeInstanceOf(
       UserNotFoundError,
     );
+  });
+
+  it("blocks promoting to author without an author profile", async () => {
+    const repository = createInMemoryUserRepository();
+    const service = createUserService(repository, {
+      hasAuthorProfile: async () => false,
+    });
+    await repository.create({ address: ADDRESS, role: "reader" });
+
+    await expect(service.setRole(ADDRESS, "author")).rejects.toBeInstanceOf(
+      InvalidUserRoleTransitionError,
+    );
+  });
+
+  it("allows promoting to author when a profile exists", async () => {
+    const service = createUserService(createInMemoryUserRepository(), {
+      hasAuthorProfile: async () => true,
+    });
+    await service.findOrCreateByWallet(ADDRESS);
+
+    const author = await service.setRole(ADDRESS, "author");
+    expect(author.role).toBe("author");
   });
 });

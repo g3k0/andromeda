@@ -2,10 +2,12 @@ import { normalizeAddress } from "@/lib/authors/address";
 import { InvalidAddressError } from "@/lib/authors/errors";
 import {
   InvalidUserRoleError,
+  InvalidUserRoleTransitionError,
   UserExistsError,
   UserNotFoundError,
   UserSuspendedError,
 } from "./errors";
+import { validateRoleTransition } from "./role-transitions";
 import type { UserRepository } from "./repository";
 import type {
   CreateUserInput,
@@ -26,6 +28,25 @@ function requireNormalizedAddress(address: string): string {
     throw new InvalidAddressError(address);
   }
   return normalized;
+}
+
+async function resolveAuthorProfile(
+  address: string,
+  authorLookup?: AuthorProfileLookup,
+): Promise<boolean> {
+  return authorLookup ? authorLookup.hasAuthorProfile(address) : false;
+}
+
+async function assertValidRoleTransition(
+  user: User,
+  nextRole: UserRole,
+  authorLookup?: AuthorProfileLookup,
+): Promise<void> {
+  const hasAuthorProfile = await resolveAuthorProfile(user.address, authorLookup);
+  const error = validateRoleTransition(user.role, nextRole, { hasAuthorProfile });
+  if (error) {
+    throw new InvalidUserRoleTransitionError(error);
+  }
 }
 
 async function ensureRoleMatchesAuthorProfile(
@@ -146,6 +167,11 @@ export function createUserService(
       if (!existing) {
         throw new UserNotFoundError(user.address);
       }
+
+      if (user.role !== existing.role) {
+        await assertValidRoleTransition(user, user.role, authorLookup);
+      }
+
       return users.update(user);
     },
 
@@ -205,6 +231,7 @@ export function createUserService(
         throw new UserNotFoundError(normalized);
       }
       this.assertActive(user);
+      await assertValidRoleTransition(user, role, authorLookup);
 
       return users.update({
         ...user,
