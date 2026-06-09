@@ -91,7 +91,7 @@ describe("users API", () => {
   it("GET rejects unsigned list requests", async () => {
     await seedAdmin();
     const response = await GET(new Request("http://localhost"));
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(403);
   });
 
   it("GET lists users for an admin signer", async () => {

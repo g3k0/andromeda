@@ -18,7 +18,7 @@ export type RouteGuardProps = {
 
 export function RouteGuard({ routeId, children }: RouteGuardProps) {
   const route = getRouteById(routeId);
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, isReconnecting } = useAccount();
   const [allowed, setAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -47,6 +47,14 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
     return (
       <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-8 text-center">
         <h1 className="text-xl font-semibold">Route not found</h1>
+      </div>
+    );
+  }
+
+  if (isReconnecting) {
+    return (
+      <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center">
+        <p className="text-sm text-white/60">Reconnecting wallet…</p>
       </div>
     );
   }

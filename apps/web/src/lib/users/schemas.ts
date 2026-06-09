@@ -53,6 +53,24 @@ export const deleteUserActionSchema = walletAuthSchema.extend({
   targetAddress: ethereumAddressSchema,
 });
 
+export const createUserSessionBodySchema = z.object({
+  targetAddress: ethereumAddressSchema,
+  role: userRoleSchema.default("reader"),
+  status: userStatusSchema.default("active"),
+  permissions: z.array(userPermissionSchema).default([]),
+});
+
+export const updateUserSessionBodySchema = z.object({
+  targetAddress: ethereumAddressSchema,
+  role: userRoleSchema.optional(),
+  status: userStatusSchema.optional(),
+  permissions: z.array(userPermissionSchema).optional(),
+});
+
+export const deleteUserSessionBodySchema = z.object({
+  targetAddress: ethereumAddressSchema,
+});
+
 export type CreateUserBody = z.infer<typeof createUserBodySchema>;
 export type UpdateUserBody = z.infer<typeof updateUserBodySchema>;
 export type UpdateUserPreferencesBody = z.infer<

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { verifyWalletSignature } from "@/lib/auth/verify-wallet";
+import { resolveWalletAuth } from "@/lib/auth/resolve-wallet-auth";
 import { normalizeAddress } from "@/lib/authors/address";
 import { InvalidAddressError } from "@/lib/authors/errors";
 import { assertRouteApiAccess } from "@/lib/navigation/route-guard";
@@ -20,20 +20,32 @@ import { walletAuthHeadersSchema } from "./schemas";
 import { getUserService } from "./server";
 import type { User } from "./types";
 
-async function verifySignerForPath(
-  auth: WalletAuthHeaders,
-  method: string,
-  pathname: string,
+async function resolveSignerForPath(
+  options: {
+    request?: Request;
+    walletAuth?: WalletAuthHeaders | null;
+    method: string;
+    pathname: string;
+  },
 ): Promise<User> {
-  const signerAddress = await verifyWalletSignature(auth);
+  const signer = await resolveWalletAuth({
+    cookieHeader: options.request?.headers.get("cookie"),
+    walletAuth: options.walletAuth ?? tryParseWalletAuthHeaders(options.request),
+  });
   const service = await getUserService();
-  const signer = await service.getByAddress(signerAddress);
-  if (!signer) {
-    throw new UserNotFoundError(signerAddress);
-  }
   service.assertActive(signer);
-  assertRouteApiAccess(signer, method, pathname);
+  assertRouteApiAccess(signer, options.method, options.pathname);
   return signer;
+}
+
+function tryParseWalletAuthHeaders(
+  request: Request | undefined,
+): WalletAuthHeaders | null {
+  if (!request?.headers.get("x-wallet-address")) {
+    return null;
+  }
+
+  return parseWalletAuthHeaders(request);
 }
 
 export function encodeWalletAuthHeaderMessage(message: string): string {
@@ -76,11 +88,11 @@ export async function runListUsersMutation(
   request: Request,
 ): Promise<User[]> {
   const pathname = new URL(request.url).pathname;
-  const signer = await verifySignerForPath(
-    parseWalletAuthHeaders(request),
-    request.method,
+  const signer = await resolveSignerForPath({
+    request,
+    method: request.method,
     pathname,
-  );
+  });
   assertCanListUsers(signer);
 
   const service = await getUserService();
@@ -88,7 +100,11 @@ export async function runListUsersMutation(
 }
 
 export async function runCreateUserMutation(body: CreateUserBody): Promise<User> {
-  const signer = await verifySignerForPath(body, "POST", "/api/users");
+  const signer = await resolveSignerForPath({
+    walletAuth: body,
+    method: "POST",
+    pathname: "/api/users",
+  });
   assertCanWriteUser(signer);
 
   const service = await getUserService();
@@ -110,11 +126,11 @@ export async function runGetUserMutation(
   }
 
   const pathname = new URL(request.url).pathname;
-  const signer = await verifySignerForPath(
-    parseWalletAuthHeaders(request),
-    request.method,
+  const signer = await resolveSignerForPath({
+    request,
+    method: request.method,
     pathname,
-  );
+  });
   assertCanReadUser(signer, normalized);
 
   const service = await getUserService();
@@ -135,11 +151,11 @@ export async function runUpdateUserMutation(
     throw new InvalidAddressError(targetAddress);
   }
 
-  const signer = await verifySignerForPath(
-    body,
-    "PATCH",
-    `/api/users/${normalized}`,
-  );
+  const signer = await resolveSignerForPath({
+    walletAuth: body,
+    method: "PATCH",
+    pathname: `/api/users/${normalized}`,
+  });
   assertCanWriteUser(signer);
 
   const service = await getUserService();
@@ -166,11 +182,11 @@ export async function runDeleteUserMutation(
   }
 
   const pathname = new URL(request.url).pathname;
-  const signer = await verifySignerForPath(
-    parseWalletAuthHeaders(request),
-    request.method,
+  const signer = await resolveSignerForPath({
+    request,
+    method: request.method,
     pathname,
-  );
+  });
   assertCanDeleteUser(signer);
 
   const service = await getUserService();

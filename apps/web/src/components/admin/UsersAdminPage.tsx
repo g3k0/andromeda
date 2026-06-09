@@ -8,6 +8,10 @@ import {
   listUsersAction,
   updateUserAction,
 } from "@/app/actions/users-admin";
+import {
+  establishWalletSessionAction,
+  getWalletSessionStatusAction,
+} from "@/app/actions/wallet-session";
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { useNotifications } from "@/components/notifications/NotificationProvider";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
@@ -27,6 +31,10 @@ import {
   type CreateUserFormState,
 } from "@/lib/users/admin-users-state";
 import type { UserRole, UserStatus } from "@/lib/users/types";
+import {
+  adminSessionErrorMessage,
+  ensureAdminSession,
+} from "./admin-users-session";
 import { UsersAdminTableView } from "./UsersAdminTableView";
 
 export function UsersAdminPage() {
@@ -52,6 +60,22 @@ export function UsersAdminPage() {
     [rows],
   );
 
+  const sessionDeps = useMemo(
+    () => ({
+      getStatus: getWalletSessionStatusAction,
+      sign: createSignedWalletPayload,
+      establish: establishWalletSessionAction,
+    }),
+    [],
+  );
+
+  const authorizeAdminSession = useCallback(async () => {
+    if (!address) {
+      return;
+    }
+    await ensureAdminSession(address, signMessageAsync, sessionDeps);
+  }, [address, sessionDeps, signMessageAsync]);
+
   const loadUsers = useCallback(async () => {
     if (!address || !isConnected) {
       setRows([]);
@@ -64,17 +88,17 @@ export function UsersAdminPage() {
     setErrorMessage(null);
 
     try {
-      const signed = await createSignedWalletPayload(address, signMessageAsync);
-      const users = await listUsersAction(signed);
+      await authorizeAdminSession();
+      const users = await listUsersAction();
       const synced = syncAdminRowsFromUsers(users);
       setRows(synced.rows);
       setDrafts(synced.drafts);
-    } catch {
-      setErrorMessage("Failed to load users.");
+    } catch (error) {
+      setErrorMessage(adminSessionErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
-  }, [address, isConnected, signMessageAsync]);
+  }, [address, authorizeAdminSession, isConnected]);
 
   useEffect(() => {
     void loadUsers();
@@ -95,10 +119,6 @@ export function UsersAdminPage() {
   }
 
   async function handleSaveRow(rowAddress: string) {
-    if (!address) {
-      return;
-    }
-
     const rowIndex = rows.findIndex((row) => row.address === rowAddress);
     const draft = drafts[rowIndex];
     if (!draft || !isAdminUserRowDirty(rows[rowIndex], draft)) {
@@ -110,11 +130,7 @@ export function UsersAdminPage() {
 
     try {
       await runWithLoading(async () => {
-        const signed = await createSignedWalletPayload(address, signMessageAsync);
-        const updated = await updateUserAction({
-          ...signed,
-          ...buildUpdateUserPayload(draft),
-        });
+        const updated = await updateUserAction(buildUpdateUserPayload(draft));
         const updatedRow = userToAdminRow(updated);
         setRows((current) =>
           current.map((row) =>
@@ -138,7 +154,7 @@ export function UsersAdminPage() {
   }
 
   async function handleDeleteRow(rowAddress: string) {
-    if (!address || !window.confirm(`Delete user ${rowAddress}? This cannot be undone.`)) {
+    if (!window.confirm(`Delete user ${rowAddress}? This cannot be undone.`)) {
       return;
     }
 
@@ -147,11 +163,7 @@ export function UsersAdminPage() {
 
     try {
       await runWithLoading(async () => {
-        const signed = await createSignedWalletPayload(address, signMessageAsync);
-        await deleteUserAction({
-          ...signed,
-          targetAddress: rowAddress,
-        });
+        await deleteUserAction({ targetAddress: rowAddress });
         setRows((current) => current.filter((row) => row.address !== rowAddress));
         setDrafts((current) =>
           current.filter((draft) => draft.address !== rowAddress),
@@ -166,10 +178,6 @@ export function UsersAdminPage() {
   }
 
   async function handleCreateSubmit() {
-    if (!address) {
-      return;
-    }
-
     const validationError = validateCreateUserForm(createForm, existingAddresses);
     if (validationError) {
       setCreateForm((current) => ({
@@ -185,9 +193,7 @@ export function UsersAdminPage() {
 
     try {
       await runWithLoading(async () => {
-        const signed = await createSignedWalletPayload(address, signMessageAsync);
         const created = await createUserAction({
-          ...signed,
           targetAddress: createForm.targetAddress.trim(),
           role: createForm.role,
           status: createForm.status,
