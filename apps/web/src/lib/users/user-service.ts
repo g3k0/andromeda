@@ -10,6 +10,7 @@ import {
   UserSuspendedError,
 } from "./errors";
 import { assertValidPermissionOverrides } from "./permission-overrides-policy";
+import { userMetadataSchema } from "./user-metadata-schema";
 import { validateRoleTransition } from "./role-transitions";
 import type { UserRepository } from "./repository";
 import type {
@@ -211,10 +212,13 @@ export function createUserService(
         input.permissionOverrides ?? [],
       );
 
+      const metadata = userMetadataSchema.parse(input.metadata ?? {});
+
       return users.create({
         ...input,
         address: normalized,
         roleSlug,
+        metadata,
       });
     },
 
@@ -241,7 +245,12 @@ export function createUserService(
         user.permissionOverrides,
       );
 
-      const updated = await users.update(user);
+      const validatedUser = {
+        ...user,
+        metadata: userMetadataSchema.parse(user.metadata ?? {}),
+      };
+
+      const updated = await users.update(validatedUser);
       if (user.roleSlug !== existing.roleSlug) {
         await invalidateUserSessions(user.address);
       }
