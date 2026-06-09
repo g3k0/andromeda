@@ -13,9 +13,13 @@ export function getAdminAddresses(): string[] {
   if (adminAddressesOverride) {
     return adminAddressesOverride;
   }
-  return parseAdminAddresses(
-    process.env.ADMIN_ADDRESSES ?? process.env.NEXT_PUBLIC_ADMIN_ADDRESSES,
-  );
+  if (process.env.NEXT_PUBLIC_ADMIN_ADDRESSES) {
+    console.warn(
+      "NEXT_PUBLIC_ADMIN_ADDRESSES is deprecated; use ADMIN_ADDRESSES server-side only.",
+    );
+  }
+
+  return parseAdminAddresses(process.env.ADMIN_ADDRESSES);
 }
 
 /** @internal Test helper — resets to env-based list when called with null. */
