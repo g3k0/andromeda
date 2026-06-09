@@ -34,6 +34,13 @@ export const LIBRARY_ROUTE: RouteDefinition = {
   pagePermission: "pages:read",
 };
 
+export const ABOUT_ROUTE: RouteDefinition = {
+  id: "about",
+  href: "/about",
+  label: "About",
+  pagePermission: "pages:read",
+};
+
 export const ADMIN_ROUTE: RouteDefinition = {
   id: "admin",
   href: "/admin",
@@ -57,6 +64,7 @@ export const MY_AUTHOR_PAGE_ROUTE: RouteDefinition = {
 
 export const APP_ROUTES: RouteDefinition[] = [
   LIBRARY_ROUTE,
+  ABOUT_ROUTE,
   ADMIN_ROUTE,
   MY_AUTHOR_PAGE_ROUTE,
 ];
