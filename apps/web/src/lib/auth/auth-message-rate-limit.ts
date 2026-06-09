@@ -1,0 +1,1 @@
+export const AUTH_MESSAGE_RATE_LIMIT = 10;

@@ -1,3 +1,4 @@
+import { AUTH_MESSAGE_RATE_LIMIT } from "@/lib/auth/auth-message-rate-limit";
 import { createWalletAuthMessage } from "@/lib/auth/verify-wallet";
 import { normalizeAddress } from "@/lib/authors/address";
 import { enforceRateLimit, errorResponse, jsonResponse } from "@/lib/authors/api-utils";
@@ -14,7 +15,7 @@ export async function GET(request: Request) {
     const limited = await enforceRateLimit(
       request,
       `auth-message:${normalized}`,
-      10,
+      AUTH_MESSAGE_RATE_LIMIT,
     );
     if (limited) {
       return limited;
