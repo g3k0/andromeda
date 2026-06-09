@@ -1,7 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
-import { getRoleMenuItems, getRoleMenuLabel } from "@/lib/navigation/role-menu";
+import {
+  MANAGE_USERS_MENU_ITEM,
+  MANAGE_USERS_PATH,
+  getRoleMenuItems,
+  getRoleMenuLabel,
+} from "@/lib/navigation/role-menu";
 import type { UserRole } from "@/lib/users/types";
 import {
   bindOutsideClose,
@@ -49,17 +55,29 @@ export function RoleMenuDropdown({
         aria-label={`${getRoleMenuLabel(role)} menu`}
         className="absolute right-0 z-20 mt-2 min-w-40 overflow-hidden rounded-lg border border-white/10 bg-[#0b1020] py-1 shadow-lg"
       >
-        {getRoleMenuItems(role).map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            role="menuitem"
-            onClick={(event) => closeParentDetails(event.currentTarget)}
-            className="block w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white"
-          >
-            {item.label}
-          </button>
-        ))}
+        {getRoleMenuItems(role).map((item) =>
+          item.id === MANAGE_USERS_MENU_ITEM.id ? (
+            <Link
+              key={item.id}
+              href={MANAGE_USERS_PATH}
+              role="menuitem"
+              onClick={(event) => closeParentDetails(event.currentTarget)}
+              className="block w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white"
+            >
+              {item.label}
+            </Link>
+          ) : (
+            <button
+              key={item.id}
+              type="button"
+              role="menuitem"
+              onClick={(event) => closeParentDetails(event.currentTarget)}
+              className="block w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white"
+            >
+              {item.label}
+            </button>
+          ),
+        )}
 
         <div className="my-1 border-t border-white/10" />
 

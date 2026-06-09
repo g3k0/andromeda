@@ -3,6 +3,22 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("next/link", () => ({
+  default: ({
+    children,
+    href,
+    ...props
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
 import { RoleMenuDropdown } from "./RoleMenuDropdown";
 
 describe("RoleMenuDropdown", () => {
@@ -62,6 +78,17 @@ describe("RoleMenuDropdown", () => {
 
     await user.click(screen.getByRole("button", { name: "Outside" }));
     expect(menu).not.toHaveAttribute("open");
+  });
+
+  it("shows manage-users link for admins", async () => {
+    const user = userEvent.setup();
+    render(<RoleMenuDropdown role="admin" onLogout={vi.fn()} />);
+
+    await user.click(screen.getByText("Admin"));
+
+    expect(
+      screen.getByRole("menuitem", { name: "Manage users" }),
+    ).toHaveAttribute("href", "/admin/users");
   });
 
   it("calls onLogout when the user selects logout", async () => {
