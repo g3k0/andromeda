@@ -1,3 +1,5 @@
+import { createInitialRowDrafts } from "./admin-users-state";
+import type { AdminUserRowDraft } from "./admin-users-state";
 import type { User, UserRole, UserStatus } from "./types";
 
 export type AdminUserRow = {
@@ -41,4 +43,15 @@ export function sortAdminRowsByCreatedAtDesc(rows: AdminUserRow[]): AdminUserRow
   return [...rows].sort((left, right) =>
     right.createdAt.localeCompare(left.createdAt),
   );
+}
+
+export function syncAdminRowsFromUsers(users: User[]): {
+  rows: AdminUserRow[];
+  drafts: AdminUserRowDraft[];
+} {
+  const rows = sortAdminRowsByCreatedAtDesc(usersToAdminRows(users));
+  return {
+    rows,
+    drafts: createInitialRowDrafts(rows),
+  };
 }

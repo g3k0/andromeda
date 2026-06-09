@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatAdminUserCreatedAt,
   sortAdminRowsByCreatedAtDesc,
+  syncAdminRowsFromUsers,
   truncateAddress,
   userToAdminRow,
   usersToAdminRows,
@@ -57,5 +58,14 @@ describe("admin users mappers", () => {
     expect(sortAdminRowsByCreatedAtDesc(rows).map((row) => row.createdAt)).toEqual(
       ["2026-03-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z"],
     );
+  });
+
+  it("syncs rows and editable drafts from domain users", () => {
+    const synced = syncAdminRowsFromUsers([
+      buildUser({ createdAt: "2026-02-01T00:00:00.000Z" }),
+    ]);
+
+    expect(synced.rows).toHaveLength(1);
+    expect(synced.drafts[0]).toEqual(synced.rows[0]);
   });
 });
