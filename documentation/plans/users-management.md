@@ -4,7 +4,8 @@ Implementazione incrementale del modello utenti persistente per `apps/web`, con
 centralizzazione di ruoli e autorizzazioni nella collection MongoDB `users`.
 Ogni punto corrisponde a **un commit** (o a una PR piccola).
 
-Riferimenti: [author-page.md](./author-page.md), [db-integration.md](./db-integration.md).
+Riferimenti: [author-page.md](./author-page.md), [db-integration.md](./db-integration.md),
+[roles.md](./roles.md) (ruoli persistiti in MongoDB e permessi da snapshot).
 
 ## Obiettivo
 
@@ -44,6 +45,12 @@ multi-wallet per lo stesso utente.
 ---
 
 ## Ruoli e permessi
+
+I ruoli di sistema (`reader`, `author`, `admin`) sono documenti nella collection
+`roles`; gli utenti referenziano `users.roleSlug`. I permessi effettivi sono la
+unione del subset del ruolo e di `users.permissionOverrides`. L’autorizzazione
+runtime usa lo snapshot in `wallet_sessions` o `UserSnapshot` lato client — vedi
+[roles.md](./roles.md).
 
 ### Matrice funzionale
 

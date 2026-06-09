@@ -22,10 +22,10 @@ async function upsertUser(
   },
 ) {
   const existing = await UserModel.findOne({ address }).lean();
-  const nextRole =
-    existing?.role === "admin" || role === "admin"
+  const nextRoleSlug =
+    existing?.roleSlug === "admin" || role === "admin"
       ? "admin"
-      : existing?.role === "author" || role === "author"
+      : existing?.roleSlug === "author" || role === "author"
         ? "author"
         : "reader";
 
@@ -33,7 +33,7 @@ async function upsertUser(
     { address },
     {
       $set: {
-        role: nextRole,
+        roleSlug: nextRoleSlug,
         status: "active",
         ...(preferences
           ? {
@@ -45,7 +45,7 @@ async function upsertUser(
           : {}),
       },
       $setOnInsert: {
-        permissions: [],
+        permissionOverrides: [],
         metadata: { migratedAt: new Date().toISOString() },
       },
     },

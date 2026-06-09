@@ -14,9 +14,11 @@ export async function getUserService(): Promise<UserService> {
     const roleRepository = await createMongoRoleRepository();
     const sessionService = await getWalletSessionService();
     cachedService = createUserService(repository, roleRepository, {
-      hasAuthorProfile: async (address) => {
-        const authorService = await getAuthorService();
-        return authorService.hasAuthorProfile(address);
+      authorLookup: {
+        hasAuthorProfile: async (address) => {
+          const authorService = await getAuthorService();
+          return authorService.hasAuthorProfile(address);
+        },
       },
       invalidateUserSessions: (address) =>
         sessionService.invalidateByAddress(address),

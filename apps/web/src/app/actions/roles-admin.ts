@@ -104,7 +104,7 @@ export async function updateRoleAction(input: unknown): Promise<RoleWithUserCoun
 
   const body = signedUpdateRoleActionSchema.parse(input);
   await enforceActionRateLimit(`update-role:${body.address}:${body.slug}`);
-  const { slug, address: _a, message: _m, signature: _s, ...updateBody } = body;
+  const { slug, ...updateBody } = body;
   await runUpdateRoleMutation(slug, updateBody);
   const service = await getRoleService();
   const withCount = await service.getBySlug(slug);

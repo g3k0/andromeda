@@ -20,7 +20,7 @@ import {
   updateUserSessionBodySchema,
 } from "@/lib/users/schemas";
 import { getUserService } from "@/lib/users/server";
-import type { User } from "@/lib/users/types";
+import type { AuthenticatedUser, User } from "@/lib/users/types";
 import { UserNotFoundError } from "@/lib/users/errors";
 import {
   runCreateUserMutation,
@@ -35,7 +35,7 @@ async function getSessionIdFromCookies(): Promise<string | undefined> {
   return cookieStore.get(WALLET_SESSION_COOKIE_NAME)?.value;
 }
 
-async function resolveAdminSignerFromSession(): Promise<User> {
+async function resolveAdminSignerFromSession(): Promise<AuthenticatedUser> {
   const sessionId = await getSessionIdFromCookies();
   const signer = await resolveWalletAuth({ sessionId, walletAuth: null });
   const service = await getUserService();
