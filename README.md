@@ -162,10 +162,11 @@ as a dedicated IPFS file per token or via a dynamic metadata endpoint keyed by
 ```
 andromeda/
 ├── apps/
-│   └── web/          # Next.js app (public site + protected /admin)
+│   └── web/              # Next.js app (public site + protected /admin)
 ├── packages/
-│   └── contracts/    # Hardhat project with the ERC-721 contract
-├── package.json      # workspace root scripts
+│   └── contracts/        # Hardhat project with the ERC-721 contract
+├── documentation/        # Plans, DB commands, architecture notes
+├── package.json          # workspace root scripts
 └── pnpm-workspace.yaml
 ```
 
@@ -220,17 +221,50 @@ See [Build](#build) for compile, test, and deploy commands. Before deploying,
 copy `packages/contracts/.env.example` to `packages/contracts/.env` and fill in
 your RPC URL, deployer private key, and Polygonscan API key.
 
-### Web app
+### Run locally
+
+**Prerequisites:** Node.js 20, pnpm 10, [MongoDB](https://www.mongodb.com/) running locally
+(`sudo systemctl start mongod` on Linux — see
+[documentation/database/mongodb-commands.md](documentation/database/mongodb-commands.md)).
 
 ```bash
-# Copy and configure local secrets (required for MongoDB and other credentials)
-cp apps/web/.env.example apps/web/.env.local
-# Or only database credentials:
-# cp apps/web/.env.development.local.example apps/web/.env.development.local
+pnpm install
 
-# Start the dev server (http://localhost:3000)
-pnpm dev
+# Local secrets (gitignored)
+cp apps/web/.env.example apps/web/.env.local
+# or database only:
+# cp apps/web/.env.development.local.example apps/web/.env.development.local
 ```
+
+Set at least:
+
+| Variable | Purpose |
+| --- | --- |
+| `MONGODB_URI` | MongoDB connection string (server-only) |
+| `ADMIN_ADDRESSES` | Comma-separated admin wallets (user bootstrap) |
+| `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | WalletConnect (optional in dev) |
+
+First-time database setup:
+
+```bash
+# See mongodb-commands.md for mongosh: createUser, indexes, etc.
+
+# System roles (reader, author, admin) — required before using the app
+pnpm --filter @andromeda/web exec tsx scripts/seed-roles.ts
+
+# Bootstrap users from ADMIN_ADDRESSES, authors, and legacy preferences
+pnpm --filter @andromeda/web exec tsx scripts/migrate-users.ts
+```
+
+Start the app:
+
+```bash
+pnpm dev    # http://localhost:3000
+```
+
+**Local admin:** connect a wallet listed in `ADMIN_ADDRESSES`, open `/admin` →
+*Manage users and roles* (`/admin/users`, `/admin/roles`). Admin mutations use a
+server-side wallet session (signature only on first access).
 
 #### Environment configuration
 
@@ -250,8 +284,9 @@ in `apps/web/`. Next.js sets `NODE_ENV` automatically; you do not need to export
 - **Production secrets**: set in Vercel **Settings → Environment Variables** (never in the repo).
 - **Personal reference**: optional `secrets.md` at the repo root (also gitignored).
 
-Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address and add the
-authorized admin wallet(s) to `NEXT_PUBLIC_ADMIN_ADDRESSES`.
+Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address when testing on-chain
+features. Prefer `ADMIN_ADDRESSES` (server-only) for platform admins; `NEXT_PUBLIC_ADMIN_ADDRESSES`
+is legacy.
 
 #### Unit tests
 
@@ -280,48 +315,35 @@ Pull requests and pushes to `develop` and `main` run the [CI workflow](.github/w
 (GitHub Actions). It currently runs web unit tests with coverage. More steps (lint, build,
 contract tests, and so on) can be added to that workflow over time.
 
-#### Author pages (MongoDB)
+#### MongoDB & platform data
 
-Author profiles and wallet preferences are persisted in **MongoDB** via Mongoose adapters
-(`apps/web/src/lib/db/*`). Mutations require an **EIP-191 wallet signature** verified server-side;
-UI role checks are UX-only — the API and Server Actions enforce authorization.
+Persistence via Mongoose (`apps/web/src/lib/db/*`). Mutations require a **wallet signature**
+(EIP-191) or an **admin session** cookie; authorization is always enforced server-side.
 
-**Routes**
+| Collection | Content |
+| --- | --- |
+| `roles` | System/custom roles and permission subsets |
+| `users` | Wallet identity, `roleSlug`, status, preferences |
+| `authors` | Public author profiles |
+| `wallet_sessions` | Admin sessions with permission snapshots |
+
+**Main routes**
 
 | Route | Purpose |
 | --- | --- |
-| `/author` | Resolves the connected wallet to `/author/[address]`, onboarding, or reader mode |
-| `/author/[address]` | Public profile view; edit mode for the profile owner or platform admin |
+| `/author`, `/author/[address]` | Author profile and onboarding |
+| `/admin` | Admin dashboard (wallet + `admin:access` permission) |
+| `/admin/users`, `/admin/roles` | User and role management |
 
-**API** (server-only auth on mutations)
+**Roles:** stored in `roles`; each user references one via `users.roleSlug`. Seed roles are
+`reader`, `author`, `admin`. Effective permissions come from the role document (+ optional overrides).
 
-| Method | Path | Auth |
-| --- | --- | --- |
-| `GET` | `/api/authors/[address]` | Public read |
-| `POST` | `/api/authors` | Owner signature |
-| `PATCH` | `/api/authors/[address]` | Owner or server-verified admin signature |
-| `PUT` | `/api/wallet-preferences/[address]` | Owner signature (no public `GET`) |
+**Further reading**
 
-**User roles** (cumulative capabilities)
-
-| Role | How it is determined |
-| --- | --- |
-| **Reader** | Connected wallet without an author profile, or the user declined page creation |
-| **Author** | Connected wallet with a created author profile |
-| **Admin** | Wallet listed in `NEXT_PUBLIC_ADMIN_ADDRESSES` (full reader + author + edit any profile + `/admin`) |
-
-On first connect, users without a profile are prompted to create an author page. If they decline,
-`declinedAuthorPage` is stored in MongoDB and they remain in reader mode.
-
-**Configuration**
-
-- Set `MONGODB_URI` in `apps/web/.env.development.local` (gitignored). See
-  [documentation/database/mongodb-commands.md](documentation/database/mongodb-commands.md).
-- Mutation endpoints are rate-limited (30 requests/min per IP and scope).
-- Avatar uploads are validated data URLs until IPFS integration.
-
-See [documentation/plans/author-page.md](documentation/plans/author-page.md) and
-[documentation/plans/db-integration.md](documentation/plans/db-integration.md) for architecture and security notes.
+- [documentation/database/mongodb-commands.md](documentation/database/mongodb-commands.md) — DB setup, role seed, referential integrity
+- [documentation/plans/author-page.md](documentation/plans/author-page.md) — author pages
+- [documentation/plans/roles.md](documentation/plans/roles.md) — roles and permissions
+- [documentation/plans/db-integration.md](documentation/plans/db-integration.md) — DB architecture
 
 ### Deployment (Vercel)
 
