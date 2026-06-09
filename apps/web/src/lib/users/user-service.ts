@@ -9,6 +9,7 @@ import {
   UserNotFoundError,
   UserSuspendedError,
 } from "./errors";
+import { assertValidPermissionOverrides } from "./permission-overrides-policy";
 import { validateRoleTransition } from "./role-transitions";
 import type { UserRepository } from "./repository";
 import type {
@@ -200,7 +201,15 @@ export function createUserService(
       }
 
       const roleSlug = input.roleSlug ?? "reader";
-      await assertRoleSlugExists(roles, roleSlug);
+      const role = await roles.getBySlug(roleSlug);
+      if (!role) {
+        throw new InvalidUserRoleError(roleSlug);
+      }
+      assertValidPermissionOverrides(
+        roleSlug,
+        role.permissions,
+        input.permissionOverrides ?? [],
+      );
 
       return users.create({
         ...input,
@@ -216,13 +225,21 @@ export function createUserService(
         throw new UserNotFoundError(user.address);
       }
 
-      if (user.roleSlug !== existing.roleSlug) {
-        const role = await roles.getBySlug(user.roleSlug);
-        if (!role) {
-          throw new InvalidUserRoleError(user.roleSlug);
-        }
-        await assertValidRoleTransition(user, user.roleSlug, authorLookup);
+      const nextRoleSlug = user.roleSlug;
+      const role = await roles.getBySlug(nextRoleSlug);
+      if (!role) {
+        throw new InvalidUserRoleError(nextRoleSlug);
       }
+
+      if (nextRoleSlug !== existing.roleSlug) {
+        await assertValidRoleTransition(user, nextRoleSlug, authorLookup);
+      }
+
+      assertValidPermissionOverrides(
+        nextRoleSlug,
+        role.permissions,
+        user.permissionOverrides,
+      );
 
       const updated = await users.update(user);
       if (user.roleSlug !== existing.roleSlug) {

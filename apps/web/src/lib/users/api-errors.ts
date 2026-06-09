@@ -6,6 +6,7 @@ import {
 } from "@/lib/authors/api-errors";
 import { RouteAccessDeniedError } from "@/lib/navigation/route-guard";
 import {
+  InvalidPermissionOverridesError,
   UserExistsError,
   UserNotFoundError,
   UserSuspendedError,
@@ -23,6 +24,9 @@ export function mapUserErrorToStatus(error: unknown): number {
   }
   if (error instanceof UserSuspendedError) {
     return 403;
+  }
+  if (error instanceof InvalidPermissionOverridesError) {
+    return 422;
   }
   if (error instanceof RouteAccessDeniedError) {
     return 403;

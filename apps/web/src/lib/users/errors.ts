@@ -32,3 +32,10 @@ export class InvalidUserRoleTransitionError extends Error {
     this.name = "InvalidUserRoleTransitionError";
   }
 }
+
+export class InvalidPermissionOverridesError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidPermissionOverridesError";
+  }
+}
