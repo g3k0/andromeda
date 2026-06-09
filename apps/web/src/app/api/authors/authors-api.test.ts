@@ -5,7 +5,10 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createWalletAuthMessage } from "@/lib/auth/verify-wallet";
 import { resetMongoConnectionForTests } from "@/lib/db/mongodb";
 import { AuthorModel } from "@/lib/db/models/author.model";
+import { RoleModel } from "@/lib/db/models/role.model";
 import { UserModel } from "@/lib/db/models/user.model";
+import { resetRoleServiceForTests } from "@/lib/roles/server";
+import { seedApiSystemRoles } from "@/lib/testing/seed-api-roles";
 import { WalletPreferencesModel } from "@/lib/db/models/wallet-preferences.model";
 import { resetAuthorServiceForTests } from "@/lib/authors/server";
 import { resetUserServiceForTests } from "@/lib/users/server";
@@ -43,17 +46,20 @@ describe("authors API", () => {
     resetMongoConnectionForTests();
     resetAuthorServiceForTests();
     resetUserServiceForTests();
+    await seedApiSystemRoles();
   });
 
   afterEach(async () => {
     await AuthorModel.deleteMany({});
     await UserModel.deleteMany({});
+    await RoleModel.deleteMany({});
     await WalletPreferencesModel.deleteMany({});
     resetWalletAuthStoreForTests();
     resetRateLimitsForTests();
     setAdminAddressesForTests(null);
     resetAuthorServiceForTests();
     resetUserServiceForTests();
+    resetRoleServiceForTests();
     resetMongoConnectionForTests();
     process.env.MONGODB_URI = memoryServer.getUri();
   });
@@ -92,9 +98,10 @@ describe("authors API", () => {
   });
 
   it("POST allows readers to create their own author profile during onboarding", async () => {
+    await seedApiSystemRoles();
     await UserModel.create({
       address: OWNER_ADDRESS,
-      role: "reader",
+      roleSlug: "reader",
       status: "active",
     });
 
@@ -113,9 +120,10 @@ describe("authors API", () => {
   });
 
   it("POST rejects readers when an author profile already exists", async () => {
+    await seedApiSystemRoles();
     await UserModel.create({
       address: OWNER_ADDRESS,
-      role: "reader",
+      roleSlug: "reader",
       status: "active",
     });
     await AuthorModel.create({
@@ -201,6 +209,7 @@ describe("authors API", () => {
   });
 
   it("returns 429 when mutation rate limit is exceeded", async () => {
+    await seedApiSystemRoles();
     const request = async () => {
       const body = await signedPayload(OWNER, { displayName: "Writer" });
       return POST(

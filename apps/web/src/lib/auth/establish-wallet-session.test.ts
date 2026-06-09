@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { WalletAuthorizationError } from "./errors";
 import { UserNotFoundError } from "@/lib/users/errors";
+import { buildAuthenticatedUser } from "@/lib/users/testing/build-authenticated-user";
 
-const { verifyWalletSignature, getByAddress, assertActive, establish } = vi.hoisted(
-  () => ({
+const { verifyWalletSignature, getAuthenticatedByAddress, assertActive, establish } =
+  vi.hoisted(() => ({
     verifyWalletSignature: vi.fn(),
-    getByAddress: vi.fn(),
+    getAuthenticatedByAddress: vi.fn(),
     assertActive: vi.fn(),
     establish: vi.fn(),
-  }),
-);
+  }));
 
 vi.mock("./verify-wallet", () => ({
   verifyWalletSignature,
@@ -17,7 +17,7 @@ vi.mock("./verify-wallet", () => ({
 
 vi.mock("@/lib/users/server", () => ({
   getUserService: vi.fn(async () => ({
-    getByAddress,
+    getAuthenticatedByAddress,
     assertActive,
   })),
 }));
@@ -31,29 +31,19 @@ vi.mock("./wallet-session-server", () => ({
 import { establishWalletSession } from "./establish-wallet-session";
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
-
-const adminUser = {
-  address: ADDRESS,
-  role: "admin" as const,
-  status: "active" as const,
-  permissions: [],
-  preferences: { declinedAuthorPage: false, onboardingCompletedAt: null },
-  metadata: {},
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-};
+const adminUser = buildAuthenticatedUser(ADDRESS, "admin");
 
 describe("establishWalletSession", () => {
   beforeEach(() => {
     verifyWalletSignature.mockReset();
-    getByAddress.mockReset();
+    getAuthenticatedByAddress.mockReset();
     assertActive.mockReset();
     establish.mockReset();
   });
 
   it("creates a session for active admin users", async () => {
     verifyWalletSignature.mockResolvedValue(ADDRESS);
-    getByAddress.mockResolvedValue(adminUser);
+    getAuthenticatedByAddress.mockResolvedValue(adminUser);
     assertActive.mockImplementation(() => undefined);
     establish.mockResolvedValue({
       sessionId: "session-1",
@@ -74,7 +64,9 @@ describe("establishWalletSession", () => {
 
   it("rejects readers", async () => {
     verifyWalletSignature.mockResolvedValue(ADDRESS);
-    getByAddress.mockResolvedValue({ ...adminUser, role: "reader" });
+    getAuthenticatedByAddress.mockResolvedValue(
+      buildAuthenticatedUser(ADDRESS, "reader"),
+    );
     assertActive.mockImplementation(() => undefined);
 
     await expect(
@@ -88,7 +80,7 @@ describe("establishWalletSession", () => {
 
   it("rejects unknown users", async () => {
     verifyWalletSignature.mockResolvedValue(ADDRESS);
-    getByAddress.mockResolvedValue(null);
+    getAuthenticatedByAddress.mockResolvedValue(null);
 
     await expect(
       establishWalletSession({

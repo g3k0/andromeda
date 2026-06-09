@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getAuthorService } from "@/lib/authors/server";
+import { createMongoRoleRepository } from "@/lib/roles/adapters/create-role-repository";
 import { createMongoUserRepository } from "./adapters/create-user-repository";
 import { createUserService, type UserService } from "./user-service";
 
@@ -9,7 +10,8 @@ let cachedService: UserService | null = null;
 export async function getUserService(): Promise<UserService> {
   if (!cachedService) {
     const repository = await createMongoUserRepository();
-    cachedService = createUserService(repository, {
+    const roleRepository = await createMongoRoleRepository();
+    cachedService = createUserService(repository, roleRepository, {
       hasAuthorProfile: async (address) => {
         const authorService = await getAuthorService();
         return authorService.hasAuthorProfile(address);

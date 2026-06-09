@@ -5,7 +5,7 @@ import { WalletAuthorizationError } from "./errors";
 import { getWalletSessionService } from "./wallet-session-server";
 import { getUserService } from "@/lib/users/server";
 import { UserNotFoundError, UserSuspendedError } from "@/lib/users/errors";
-import type { User } from "@/lib/users/types";
+import type { AuthenticatedUser } from "@/lib/users/types";
 import {
   parseCookieHeader,
   WALLET_SESSION_COOKIE_NAME,
@@ -19,7 +19,7 @@ export type ResolveWalletAuthInput = {
 
 export async function resolveWalletAuth(
   input: ResolveWalletAuthInput,
-): Promise<User> {
+): Promise<AuthenticatedUser> {
   const sessionId =
     input.sessionId ??
     parseCookieHeader(input.cookieHeader, WALLET_SESSION_COOKIE_NAME) ??
@@ -30,7 +30,7 @@ export async function resolveWalletAuth(
   if (sessionId) {
     const address = await sessionService.resolve(sessionId);
     if (address) {
-      const user = await userService.getByAddress(address);
+      const user = await userService.getAuthenticatedByAddress(address);
       if (!user) {
         await sessionService.revoke(sessionId);
         throw new UserNotFoundError(address);
@@ -50,7 +50,7 @@ export async function resolveWalletAuth(
 
   if (input.walletAuth) {
     const address = await verifyWalletSignature(input.walletAuth);
-    const user = await userService.getByAddress(address);
+    const user = await userService.getAuthenticatedByAddress(address);
     if (!user) {
       throw new UserNotFoundError(address);
     }

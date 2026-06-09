@@ -13,10 +13,9 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
-    role: {
+    roleSlug: {
       type: String,
       required: true,
-      enum: ["admin", "author", "reader"],
       default: "reader",
       index: true,
     },
@@ -26,7 +25,7 @@ const userSchema = new Schema(
       enum: ["active", "suspended", "pending"],
       default: "active",
     },
-    permissions: {
+    permissionOverrides: {
       type: [String],
       default: [],
     },

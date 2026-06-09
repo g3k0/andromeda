@@ -6,7 +6,10 @@ import { createWalletAuthMessage } from "@/lib/auth/verify-wallet";
 import { WALLET_SESSION_COOKIE_NAME } from "@/lib/auth/wallet-session-cookies";
 import { resetWalletSessionServiceForTests } from "@/lib/auth/wallet-session-server";
 import { connectMongo, resetMongoConnectionForTests } from "@/lib/db/mongodb";
+import { RoleModel } from "@/lib/db/models/role.model";
 import { UserModel } from "@/lib/db/models/user.model";
+import { resetRoleServiceForTests } from "@/lib/roles/server";
+import { seedApiSystemRoles } from "@/lib/testing/seed-api-roles";
 import { WalletSessionModel } from "@/lib/db/models/wallet-session.model";
 import { resetRateLimitsForTests } from "@/lib/auth/rate-limit";
 import { resetWalletAuthStoreForTests } from "@/lib/auth/verify-wallet";
@@ -41,11 +44,13 @@ describe("wallet session API", () => {
     resetWalletAuthStoreForTests();
     resetRateLimitsForTests();
     resetUserServiceForTests();
+    resetRoleServiceForTests();
     resetWalletSessionServiceForTests();
     resetMongoConnectionForTests();
     process.env.MONGODB_URI = memoryServer.getUri();
     await connectMongo();
     await UserModel.deleteMany({});
+    await RoleModel.deleteMany({});
     await WalletSessionModel.deleteMany({});
   });
 
@@ -56,17 +61,19 @@ describe("wallet session API", () => {
   });
 
   async function seedAdmin() {
+    await seedApiSystemRoles();
     await UserModel.create({
       address: ADMIN_ADDRESS,
-      role: "admin",
+      roleSlug: "admin",
       status: "active",
     });
   }
 
   async function seedReader() {
+    await seedApiSystemRoles();
     await UserModel.create({
       address: READER.address.toLowerCase(),
-      role: "reader",
+      roleSlug: "reader",
       status: "active",
     });
   }

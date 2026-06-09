@@ -6,7 +6,7 @@ import {
   createInitialRowDrafts,
   hasDirtyAdminUserRows,
   isAdminUserRowDirty,
-  isUserRoleValue,
+  isRoleSlugValue,
   isUserStatusValue,
   updateRowDraftField,
   validateCreateUserForm,
@@ -19,7 +19,7 @@ const OTHER = "0x1111111111111111111111111111111111111111";
 function buildRow(overrides: Partial<AdminUserRow> = {}): AdminUserRow {
   return {
     address: ADDRESS,
-    role: "reader",
+    roleSlug: "reader",
     status: "active",
     createdAt: "2026-01-01T00:00:00.000Z",
     ...overrides,
@@ -28,13 +28,13 @@ function buildRow(overrides: Partial<AdminUserRow> = {}): AdminUserRow {
 
 describe("admin users state", () => {
   it("tracks dirty rows when role or status changes", () => {
-    const rows = [buildRow(), buildRow({ address: OTHER, role: "admin" })];
+    const rows = [buildRow(), buildRow({ address: OTHER, roleSlug: "admin" })];
     const drafts = createInitialRowDrafts(rows);
 
     expect(isAdminUserRowDirty(rows[0], drafts[0])).toBe(false);
     expect(hasDirtyAdminUserRows(rows, drafts)).toBe(false);
 
-    const updatedDraft = updateRowDraftField(drafts[0], "role", "author");
+    const updatedDraft = updateRowDraftField(drafts[0], "roleSlug", "author");
     expect(isAdminUserRowDirty(rows[0], updatedDraft)).toBe(true);
     expect(hasDirtyAdminUserRows(rows, [updatedDraft, drafts[1]])).toBe(true);
   });
@@ -59,19 +59,19 @@ describe("admin users state", () => {
 
   it("builds update payloads from row drafts", () => {
     const draft = createAdminUserRowDraft(
-      buildRow({ role: "author", status: "suspended" }),
+      buildRow({ roleSlug: "author", status: "suspended" }),
     );
 
     expect(buildUpdateUserPayload(draft)).toEqual({
       targetAddress: ADDRESS,
-      role: "author",
+      roleSlug: "author",
       status: "suspended",
     });
   });
 
-  it("recognizes role and status enum values", () => {
-    expect(isUserRoleValue("admin")).toBe(true);
-    expect(isUserRoleValue("moderator")).toBe(false);
+  it("recognizes role slug and status enum values", () => {
+    expect(isRoleSlugValue("admin")).toBe(true);
+    expect(isRoleSlugValue(" ")).toBe(false);
     expect(isUserStatusValue("pending")).toBe(true);
     expect(isUserStatusValue("banned")).toBe(false);
   });

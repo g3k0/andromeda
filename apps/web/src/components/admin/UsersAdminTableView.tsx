@@ -30,8 +30,8 @@ export type UsersAdminTableViewProps = {
   onCreateSubmit: () => void;
   onDraftFieldChange: (
     address: string,
-    field: "role" | "status",
-    value: UserRole | UserStatus,
+    field: "roleSlug" | "status",
+    value: string | UserStatus,
   ) => void;
   onSaveRow: (address: string) => void;
   onDeleteRow: (address: string) => void;
@@ -111,9 +111,9 @@ export function UsersAdminTableView({
           <label className="space-y-1">
             <span className="text-sm text-white/60">Role</span>
             <select
-              value={createForm.role}
+              value={createForm.roleSlug}
               onChange={(event) =>
-                onCreateFieldChange("role", event.target.value as UserRole)
+                onCreateFieldChange("roleSlug", event.target.value)
               }
               className="w-full rounded-lg border border-white/10 bg-[#0b1020] px-3 py-2 text-sm outline-none focus:border-andromeda-light/50"
             >
@@ -202,12 +202,12 @@ export function UsersAdminTableView({
                     </td>
                     <td className="px-4 py-3">
                       <select
-                        value={draft?.role ?? row.role}
+                        value={draft?.roleSlug ?? row.roleSlug}
                         onChange={(event) =>
                           onDraftFieldChange(
                             row.address,
-                            "role",
-                            event.target.value as UserRole,
+                            "roleSlug",
+                            event.target.value,
                           )
                         }
                         className="rounded-lg border border-white/10 bg-[#0b1020] px-2 py-1 text-sm outline-none focus:border-andromeda-light/50"

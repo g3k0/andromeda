@@ -10,7 +10,7 @@ import { useNotifications } from "@/components/notifications/NotificationProvide
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
 import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
 import { USER_SNAPSHOT_REFRESH_EVENT } from "@/lib/users/user-snapshot-sync";
-import type { UserSnapshot } from "@/lib/users/types";
+import type { UserRole, UserSnapshot } from "@/lib/users/types";
 import { RoleMenuDropdown } from "@/components/RoleMenuDropdown";
 
 export function SiteHeaderNav() {
@@ -58,7 +58,7 @@ export function SiteHeaderNav() {
   }, [address, isConnected]);
 
   const links = buildHeaderNavLinks({
-    role: snapshot?.role ?? "reader",
+    role: (snapshot?.roleSlug ?? "reader") as UserRole,
     hasAuthorProfile: snapshot?.hasAuthorProfile ?? false,
     isConnected,
     snapshot,
@@ -78,7 +78,7 @@ export function SiteHeaderNav() {
 
       {isConnected && snapshot ? (
         <RoleMenuDropdown
-          role={snapshot.role}
+          role={snapshot.roleSlug as UserRole}
           onLogout={() => {
             void revokeWalletSessionAction();
             disconnect();

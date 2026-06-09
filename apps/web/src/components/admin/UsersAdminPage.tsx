@@ -106,8 +106,8 @@ export function UsersAdminPage() {
 
   function handleDraftFieldChange(
     rowAddress: string,
-    field: "role" | "status",
-    value: UserRole | UserStatus,
+    field: "roleSlug" | "status",
+    value: string | UserStatus,
   ) {
     setDrafts((current) =>
       current.map((draft) =>
@@ -195,7 +195,7 @@ export function UsersAdminPage() {
       await runWithLoading(async () => {
         const created = await createUserAction({
           targetAddress: createForm.targetAddress.trim(),
-          role: createForm.role,
+          roleSlug: createForm.roleSlug,
           status: createForm.status,
         });
         const createdRow = userToAdminRow(created);

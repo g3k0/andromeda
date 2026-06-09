@@ -3,7 +3,6 @@ import type {
   User,
   UserPermission,
   UserPreferences,
-  UserRole,
   UserStatus,
 } from "@/lib/users/types";
 import { defaultUserPreferences, isUserPermission } from "@/lib/users/types";
@@ -39,8 +38,10 @@ export function toWalletPreferences(
 
 export type UserDocumentLike = {
   address: string;
-  role: UserRole;
+  roleSlug?: string | null;
+  role?: string | null;
   status: UserStatus;
+  permissionOverrides?: string[] | null;
   permissions?: string[] | null;
   preferences?: {
     declinedAuthorPage?: boolean;
@@ -64,16 +65,23 @@ function toUserPreferences(
   };
 }
 
-function toUserPermissions(permissions: string[] | null | undefined): UserPermission[] {
-  return (permissions ?? []).filter(isUserPermission);
+function toUserPermissionOverrides(
+  permissionOverrides: string[] | null | undefined,
+  legacyPermissions: string[] | null | undefined,
+): UserPermission[] {
+  const source = permissionOverrides ?? legacyPermissions ?? [];
+  return source.filter(isUserPermission);
 }
 
 export function toUser(doc: UserDocumentLike): User {
   return {
     address: doc.address,
-    role: doc.role,
+    roleSlug: doc.roleSlug ?? doc.role ?? "reader",
     status: doc.status,
-    permissions: toUserPermissions(doc.permissions),
+    permissionOverrides: toUserPermissionOverrides(
+      doc.permissionOverrides,
+      doc.permissions,
+    ),
     preferences: toUserPreferences(doc.preferences),
     metadata: doc.metadata ?? {},
     createdAt: doc.createdAt.toISOString(),

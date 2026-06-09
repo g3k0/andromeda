@@ -15,9 +15,9 @@ const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 function buildUser(overrides: Partial<User> = {}): User {
   return {
     address: ADDRESS,
-    role: "reader",
+    roleSlug: "reader",
     status: "active",
-    permissions: [],
+    permissionOverrides: [],
     preferences: defaultUserPreferences(),
     metadata: {},
     createdAt: "2026-01-15T10:00:00.000Z",
@@ -43,14 +43,14 @@ describe("admin users mappers", () => {
       buildUser({ createdAt: "2026-01-01T00:00:00.000Z" }),
       buildUser({
         address: "0x1111111111111111111111111111111111111111",
-        role: "admin",
+        roleSlug: "admin",
         createdAt: "2026-03-01T00:00:00.000Z",
       }),
     ]);
 
     expect(userToAdminRow(rows[0])).toEqual({
       address: ADDRESS,
-      role: "reader",
+      roleSlug: "reader",
       status: "active",
       createdAt: "2026-01-01T00:00:00.000Z",
     });

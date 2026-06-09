@@ -12,7 +12,7 @@ export async function establishWalletSession(
 ): Promise<EstablishedWalletSession> {
   const address = await verifyWalletSignature(auth);
   const userService = await getUserService();
-  const user = await userService.getByAddress(address);
+  const user = await userService.getAuthenticatedByAddress(address);
   if (!user) {
     throw new UserNotFoundError(address);
   }

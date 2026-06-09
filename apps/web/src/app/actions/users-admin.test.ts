@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { buildAuthenticatedUser } from "@/lib/users/testing/build-authenticated-user";
 
 const {
   resolveWalletAuth,
@@ -60,16 +61,7 @@ import {
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 const TARGET = "0x1111111111111111111111111111111111111111";
 
-const adminUser = {
-  address: ADDRESS,
-  role: "admin" as const,
-  status: "active" as const,
-  permissions: [],
-  preferences: { declinedAuthorPage: false, onboardingCompletedAt: null },
-  metadata: {},
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-};
+const adminUser = buildAuthenticatedUser(ADDRESS, "admin");
 
 const signedPayload = {
   address: ADDRESS,
@@ -93,8 +85,12 @@ describe("users admin server actions", () => {
       assertActive: vi.fn(),
       list: vi.fn().mockResolvedValue([{ address: TARGET }]),
       getByAddress: vi.fn().mockResolvedValue({ ...adminUser, address: TARGET }),
-      createUser: vi.fn().mockResolvedValue({ address: TARGET, role: "reader" }),
-      updateUser: vi.fn().mockResolvedValue({ address: TARGET, role: "author" }),
+      createUser: vi
+        .fn()
+        .mockResolvedValue({ address: TARGET, roleSlug: "reader" }),
+      updateUser: vi
+        .fn()
+        .mockResolvedValue({ address: TARGET, roleSlug: "author" }),
       deleteUser: vi.fn().mockResolvedValue(undefined),
     });
   });
@@ -126,7 +122,7 @@ describe("users admin server actions", () => {
 
     const user = await createUserAction({
       targetAddress: TARGET,
-      role: "reader",
+      roleSlug: "reader",
       status: "active",
     });
 
@@ -139,10 +135,10 @@ describe("users admin server actions", () => {
 
     const user = await updateUserAction({
       targetAddress: TARGET,
-      role: "author",
+      roleSlug: "author",
     });
 
-    expect(user.role).toBe("author");
+    expect(user.roleSlug).toBe("author");
     expect(runUpdateUserMutation).not.toHaveBeenCalled();
   });
 

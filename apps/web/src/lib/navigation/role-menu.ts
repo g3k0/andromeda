@@ -28,7 +28,7 @@ export const BECOME_AUTHOR_MENU_ITEM: RoleMenuItem = {
 
 export const MANAGE_USERS_MENU_ITEM: RoleMenuItem = {
   id: "manage-users",
-  label: "Manage users",
+  label: "Manage users and roles",
 };
 
 export const MANAGE_USERS_PATH = "/admin/users";

@@ -18,7 +18,7 @@ import type {
 } from "./schemas";
 import { walletAuthHeadersSchema } from "./schemas";
 import { getUserService } from "./server";
-import type { User } from "./types";
+import type { AuthenticatedUser, User } from "./types";
 
 async function resolveSignerForPath(
   options: {
@@ -27,7 +27,7 @@ async function resolveSignerForPath(
     method: string;
     pathname: string;
   },
-): Promise<User> {
+): Promise<AuthenticatedUser> {
   const signer = await resolveWalletAuth({
     cookieHeader: options.request?.headers.get("cookie"),
     walletAuth: options.walletAuth ?? tryParseWalletAuthHeaders(options.request),
@@ -110,9 +110,9 @@ export async function runCreateUserMutation(body: CreateUserBody): Promise<User>
   const service = await getUserService();
   return service.createUser({
     address: body.targetAddress,
-    role: body.role,
+    roleSlug: body.roleSlug,
     status: body.status,
-    permissions: body.permissions,
+    permissionOverrides: body.permissionOverrides,
   });
 }
 
@@ -166,9 +166,10 @@ export async function runUpdateUserMutation(
 
   return service.updateUser({
     ...existing,
-    role: body.role ?? existing.role,
+    roleSlug: body.roleSlug ?? existing.roleSlug,
     status: body.status ?? existing.status,
-    permissions: body.permissions ?? existing.permissions,
+    permissionOverrides:
+      body.permissionOverrides ?? existing.permissionOverrides,
   });
 }
 

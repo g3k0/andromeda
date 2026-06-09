@@ -1,18 +1,18 @@
 import { normalizeAddress } from "@/lib/authors/address";
 import type { AdminUserRow } from "./admin-users-mappers";
-import type { UserRole, UserStatus } from "./types";
-import { USER_ROLES, USER_STATUSES } from "./types";
+import type { UserStatus } from "./types";
+import { USER_STATUSES } from "./types";
 
 export type AdminUserRowDraft = {
   address: string;
-  role: UserRole;
+  roleSlug: string;
   status: UserStatus;
   createdAt: string;
 };
 
 export type CreateUserFormState = {
   targetAddress: string;
-  role: UserRole;
+  roleSlug: string;
   status: UserStatus;
   errorMessage: string | null;
 };
@@ -20,7 +20,7 @@ export type CreateUserFormState = {
 export function createAdminUserRowDraft(row: AdminUserRow): AdminUserRowDraft {
   return {
     address: row.address,
-    role: row.role,
+    roleSlug: row.roleSlug,
     status: row.status,
     createdAt: row.createdAt,
   };
@@ -34,7 +34,9 @@ export function isAdminUserRowDirty(
   original: AdminUserRow,
   draft: AdminUserRowDraft,
 ): boolean {
-  return original.role !== draft.role || original.status !== draft.status;
+  return (
+    original.roleSlug !== draft.roleSlug || original.status !== draft.status
+  );
 }
 
 export function hasDirtyAdminUserRows(
@@ -49,7 +51,7 @@ export function hasDirtyAdminUserRows(
 export function createDefaultCreateUserFormState(): CreateUserFormState {
   return {
     targetAddress: "",
-    role: "reader",
+    roleSlug: "reader",
     status: "active",
     errorMessage: null,
   };
@@ -87,18 +89,18 @@ export function validateCreateUserForm(
 
 export function buildUpdateUserPayload(draft: AdminUserRowDraft): {
   targetAddress: string;
-  role: UserRole;
+  roleSlug: string;
   status: UserStatus;
 } {
   return {
     targetAddress: draft.address,
-    role: draft.role,
+    roleSlug: draft.roleSlug,
     status: draft.status,
   };
 }
 
-export function isUserRoleValue(value: string): value is UserRole {
-  return (USER_ROLES as readonly string[]).includes(value);
+export function isRoleSlugValue(value: string): boolean {
+  return value.trim().length > 0;
 }
 
 export function isUserStatusValue(value: string): value is UserStatus {

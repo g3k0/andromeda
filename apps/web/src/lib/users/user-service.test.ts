@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { createInMemoryRoleRepository } from "@/lib/roles/testing/in-memory-role-repository";
+import { seedSystemRoles } from "@/lib/roles/testing/seed-system-roles";
 import {
   InvalidUserRoleTransitionError,
   UserExistsError,
@@ -10,77 +12,93 @@ import { createUserService } from "./user-service";
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 
+async function createTestUserService(
+  options?: Parameters<typeof createUserService>[2],
+) {
+  const roles = createInMemoryRoleRepository();
+  await seedSystemRoles(roles);
+  return createUserService(createInMemoryUserRepository(), roles, options);
+}
+
 describe("user service", () => {
   it("finds or creates a reader on first wallet connect", async () => {
-    const service = createUserService(createInMemoryUserRepository());
+    const service = await createTestUserService();
 
     const created = await service.findOrCreateByWallet(ADDRESS);
-    expect(created.role).toBe("reader");
+    expect(created.roleSlug).toBe("reader");
 
     const again = await service.findOrCreateByWallet(ADDRESS);
     expect(again.address).toBe(created.address);
   });
 
   it("creates an author when the wallet already has an author profile", async () => {
-    const service = createUserService(createInMemoryUserRepository(), {
+    const service = await createTestUserService({
       hasAuthorProfile: async () => true,
     });
 
     const created = await service.findOrCreateByWallet(ADDRESS);
-    expect(created.role).toBe("author");
+    expect(created.roleSlug).toBe("author");
   });
 
   it("syncs an existing reader to author when an author profile exists", async () => {
+    const roles = createInMemoryRoleRepository();
+    await seedSystemRoles(roles);
     const repository = createInMemoryUserRepository();
-    const service = createUserService(repository, {
+    const service = createUserService(repository, roles, {
       hasAuthorProfile: async () => true,
     });
 
-    await repository.create({ address: ADDRESS, role: "reader" });
+    await repository.create({ address: ADDRESS, roleSlug: "reader" });
 
     const snapshot = await service.getSnapshot(ADDRESS, true);
-    expect(snapshot?.role).toBe("author");
+    expect(snapshot?.roleSlug).toBe("author");
 
     const stored = await repository.getByAddress(ADDRESS);
-    expect(stored?.role).toBe("author");
+    expect(stored?.roleSlug).toBe("author");
   });
 
   it("builds a connected snapshot with author profile lookup", async () => {
+    const roles = createInMemoryRoleRepository();
+    await seedSystemRoles(roles);
     const repository = createInMemoryUserRepository();
-    const service = createUserService(repository, {
+    const service = createUserService(repository, roles, {
       hasAuthorProfile: async () => true,
     });
 
-    await repository.create({ address: ADDRESS, role: "author" });
+    await repository.create({ address: ADDRESS, roleSlug: "author" });
 
     const snapshot = await service.getSnapshot(ADDRESS, true);
     expect(snapshot).toEqual({
       normalizedAddress: ADDRESS,
       isConnected: true,
-      role: "author",
+      roleSlug: "author",
+      roleName: "Author",
       status: "active",
+      permissions: ["pages:read", "authors:write:own"],
       hasAuthorProfile: true,
       declinedAuthorPage: false,
     });
   });
 
   it("promotes and demotes non-admin roles", async () => {
-    const service = createUserService(createInMemoryUserRepository());
+    const service = await createTestUserService();
     await service.findOrCreateByWallet(ADDRESS);
 
     const author = await service.promoteToAuthor(ADDRESS);
-    expect(author.role).toBe("author");
+    expect(author.roleSlug).toBe("author");
 
     const reader = await service.demoteToReader(ADDRESS);
-    expect(reader.role).toBe("reader");
+    expect(reader.roleSlug).toBe("reader");
   });
 
   it("blocks mutations for suspended users", async () => {
+    const roles = createInMemoryRoleRepository();
+    await seedSystemRoles(roles);
     const repository = createInMemoryUserRepository();
-    const service = createUserService(repository);
+    const service = createUserService(repository, roles);
     const user = await repository.create({
       address: ADDRESS,
-      role: "reader",
+      roleSlug: "reader",
       status: "suspended",
     });
 
@@ -91,7 +109,7 @@ describe("user service", () => {
   });
 
   it("rejects duplicate user creation", async () => {
-    const service = createUserService(createInMemoryUserRepository());
+    const service = await createTestUserService();
     await service.findOrCreateByWallet(ADDRESS);
 
     await expect(
@@ -100,31 +118,33 @@ describe("user service", () => {
   });
 
   it("throws when updating a missing user", async () => {
-    const service = createUserService(createInMemoryUserRepository());
+    const service = await createTestUserService();
     await expect(service.deleteUser(ADDRESS)).rejects.toBeInstanceOf(
       UserNotFoundError,
     );
   });
 
   it("blocks promoting to author without an author profile", async () => {
+    const roles = createInMemoryRoleRepository();
+    await seedSystemRoles(roles);
     const repository = createInMemoryUserRepository();
-    const service = createUserService(repository, {
+    const service = createUserService(repository, roles, {
       hasAuthorProfile: async () => false,
     });
-    await repository.create({ address: ADDRESS, role: "reader" });
+    await repository.create({ address: ADDRESS, roleSlug: "reader" });
 
-    await expect(service.setRole(ADDRESS, "author")).rejects.toBeInstanceOf(
+    await expect(service.setRoleSlug(ADDRESS, "author")).rejects.toBeInstanceOf(
       InvalidUserRoleTransitionError,
     );
   });
 
   it("allows promoting to author when a profile exists", async () => {
-    const service = createUserService(createInMemoryUserRepository(), {
+    const service = await createTestUserService({
       hasAuthorProfile: async () => true,
     });
     await service.findOrCreateByWallet(ADDRESS);
 
-    const author = await service.setRole(ADDRESS, "author");
-    expect(author.role).toBe("author");
+    const author = await service.setRoleSlug(ADDRESS, "author");
+    expect(author.roleSlug).toBe("author");
   });
 });

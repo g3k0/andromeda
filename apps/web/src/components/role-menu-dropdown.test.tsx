@@ -87,7 +87,7 @@ describe("RoleMenuDropdown", () => {
     await user.click(screen.getByText("Admin"));
 
     expect(
-      screen.getByRole("menuitem", { name: "Manage users" }),
+      screen.getByRole("menuitem", { name: "Manage users and roles" }),
     ).toHaveAttribute("href", "/admin/users");
   });
 

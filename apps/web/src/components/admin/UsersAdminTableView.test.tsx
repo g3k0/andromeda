@@ -16,7 +16,7 @@ const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 function buildRow(): AdminUserRow {
   return {
     address: ADDRESS,
-    role: "reader",
+    roleSlug: "reader",
     status: "active",
     createdAt: "2026-01-15T10:00:00.000Z",
   };

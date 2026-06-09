@@ -33,20 +33,20 @@ describe("mongo user repository", () => {
 
     const created = await repository.create({
       address: ADDRESS,
-      role: "author",
+      roleSlug: "author",
       preferences: { declinedAuthorPage: true },
       metadata: { source: "test" },
     });
 
-    expect(created.role).toBe("author");
+    expect(created.roleSlug).toBe("author");
     expect(created.preferences.declinedAuthorPage).toBe(true);
     expect(created.metadata).toEqual({ source: "test" });
 
     const updated = await repository.update({
       ...created,
-      role: "admin",
+      roleSlug: "admin",
     });
-    expect(updated.role).toBe("admin");
-    expect(await repository.list({ role: "admin" })).toEqual([updated]);
+    expect(updated.roleSlug).toBe("admin");
+    expect(await repository.list({ roleSlug: "admin" })).toEqual([updated]);
   });
 });

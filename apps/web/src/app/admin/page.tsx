@@ -3,7 +3,7 @@ import { MANAGE_USERS_PATH } from "@/lib/navigation/role-menu";
 
 const ADMIN_CARDS = [
   {
-    title: "Users",
+    title: "Manage users and roles",
     body: "Manage platform accounts, roles and status.",
     href: MANAGE_USERS_PATH,
   },

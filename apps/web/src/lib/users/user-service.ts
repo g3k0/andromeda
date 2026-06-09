@@ -1,5 +1,7 @@
 import { normalizeAddress } from "@/lib/authors/address";
 import { InvalidAddressError } from "@/lib/authors/errors";
+import type { RoleRepository } from "@/lib/roles/repository";
+import { toAuthenticatedUser } from "./authenticated-user";
 import {
   InvalidUserRoleError,
   InvalidUserRoleTransitionError,
@@ -10,13 +12,13 @@ import {
 import { validateRoleTransition } from "./role-transitions";
 import type { UserRepository } from "./repository";
 import type {
+  AuthenticatedUser,
   CreateUserInput,
   User,
   UserListFilter,
-  UserRole,
   UserSnapshot,
 } from "./types";
-import { defaultUserPreferences, isUserRole } from "./types";
+import { defaultUserPreferences } from "./types";
 
 export type AuthorProfileLookup = {
   hasAuthorProfile(address: string): Promise<boolean>;
@@ -39,11 +41,13 @@ async function resolveAuthorProfile(
 
 async function assertValidRoleTransition(
   user: User,
-  nextRole: UserRole,
+  nextRoleSlug: string,
   authorLookup?: AuthorProfileLookup,
 ): Promise<void> {
   const hasAuthorProfile = await resolveAuthorProfile(user.address, authorLookup);
-  const error = validateRoleTransition(user.role, nextRole, { hasAuthorProfile });
+  const error = validateRoleTransition(user.roleSlug, nextRoleSlug, {
+    hasAuthorProfile,
+  });
   if (error) {
     throw new InvalidUserRoleTransitionError(error);
   }
@@ -54,18 +58,23 @@ async function ensureRoleMatchesAuthorProfile(
   user: User,
   hasAuthorProfile: boolean,
 ): Promise<User> {
-  if (user.role === "admin" || !hasAuthorProfile || user.role === "author") {
+  if (
+    user.roleSlug === "admin" ||
+    !hasAuthorProfile ||
+    user.roleSlug === "author"
+  ) {
     return user;
   }
 
   return users.update({
     ...user,
-    role: "author",
+    roleSlug: "author",
   });
 }
 
 export function createUserService(
   users: UserRepository,
+  roles: RoleRepository,
   authorLookup?: AuthorProfileLookup,
 ) {
   return {
@@ -75,6 +84,16 @@ export function createUserService(
         return null;
       }
       return users.getByAddress(normalized);
+    },
+
+    async getAuthenticatedByAddress(
+      address: string,
+    ): Promise<AuthenticatedUser | null> {
+      const user = await this.getByAddress(address);
+      if (!user) {
+        return null;
+      }
+      return toAuthenticatedUser(user, roles);
     },
 
     async list(filter?: UserListFilter): Promise<User[]> {
@@ -103,7 +122,7 @@ export function createUserService(
 
       return users.create({
         address: normalized,
-        role: hasAuthorProfile ? "author" : "reader",
+        roleSlug: hasAuthorProfile ? "author" : "reader",
         status: "active",
         preferences: defaultUserPreferences(),
       });
@@ -131,7 +150,7 @@ export function createUserService(
       const lookup = authorLookupOverride ?? authorLookup;
       const hasAuthorProfile = lookup
         ? await lookup.hasAuthorProfile(normalized)
-        : user.role === "author";
+        : user.roleSlug === "author";
 
       user = await ensureRoleMatchesAuthorProfile(
         users,
@@ -139,13 +158,17 @@ export function createUserService(
         hasAuthorProfile,
       );
 
+      const authenticated = await toAuthenticatedUser(user, roles);
+
       return {
         normalizedAddress: normalized,
         isConnected: true,
-        role: user.role,
-        status: user.status,
+        roleSlug: authenticated.roleSlug,
+        roleName: authenticated.role.name,
+        status: authenticated.status,
+        permissions: authenticated.permissions,
         hasAuthorProfile,
-        declinedAuthorPage: user.preferences.declinedAuthorPage,
+        declinedAuthorPage: authenticated.preferences.declinedAuthorPage,
       };
     },
 
@@ -153,6 +176,13 @@ export function createUserService(
       const normalized = requireNormalizedAddress(input.address);
       if (await users.exists(normalized)) {
         throw new UserExistsError(normalized);
+      }
+
+      if (input.roleSlug) {
+        const role = await roles.getBySlug(input.roleSlug);
+        if (!role) {
+          throw new InvalidUserRoleError(input.roleSlug);
+        }
       }
 
       return users.create({
@@ -168,8 +198,12 @@ export function createUserService(
         throw new UserNotFoundError(user.address);
       }
 
-      if (user.role !== existing.role) {
-        await assertValidRoleTransition(user, user.role, authorLookup);
+      if (user.roleSlug !== existing.roleSlug) {
+        const role = await roles.getBySlug(user.roleSlug);
+        if (!role) {
+          throw new InvalidUserRoleError(user.roleSlug);
+        }
+        await assertValidRoleTransition(user, user.roleSlug, authorLookup);
       }
 
       return users.update(user);
@@ -192,13 +226,13 @@ export function createUserService(
       }
       this.assertActive(user);
 
-      if (user.role === "admin") {
+      if (user.roleSlug === "admin") {
         return user;
       }
 
       return users.update({
         ...user,
-        role: "author",
+        roleSlug: "author",
       });
     },
 
@@ -210,19 +244,20 @@ export function createUserService(
       }
       this.assertActive(user);
 
-      if (user.role === "admin") {
+      if (user.roleSlug === "admin") {
         return user;
       }
 
       return users.update({
         ...user,
-        role: "reader",
+        roleSlug: "reader",
       });
     },
 
-    async setRole(address: string, role: UserRole): Promise<User> {
-      if (!isUserRole(role)) {
-        throw new InvalidUserRoleError(role);
+    async setRoleSlug(address: string, roleSlug: string): Promise<User> {
+      const role = await roles.getBySlug(roleSlug);
+      if (!role) {
+        throw new InvalidUserRoleError(roleSlug);
       }
 
       const normalized = requireNormalizedAddress(address);
@@ -231,11 +266,11 @@ export function createUserService(
         throw new UserNotFoundError(normalized);
       }
       this.assertActive(user);
-      await assertValidRoleTransition(user, role, authorLookup);
+      await assertValidRoleTransition(user, roleSlug, authorLookup);
 
       return users.update({
         ...user,
-        role,
+        roleSlug,
       });
     },
 

@@ -14,12 +14,12 @@ describe("user schemas", () => {
       targetAddress: ADDRESS,
       message: "Sign in to Andromeda",
       signature: "0x01",
-      role: "admin",
-      permissions: ["admin:access"],
+      roleSlug: "admin",
+      permissionOverrides: ["admin:access"],
     });
 
     expect(parsed.targetAddress).toBe(ADDRESS.toLowerCase());
-    expect(parsed.role).toBe("admin");
+    expect(parsed.roleSlug).toBe("admin");
   });
 
   it("rejects unknown permissions", () => {
@@ -29,7 +29,7 @@ describe("user schemas", () => {
         targetAddress: ADDRESS,
         message: "Sign in to Andromeda",
         signature: "0x01",
-        permissions: ["unknown:permission"],
+        permissionOverrides: ["unknown:permission"],
       }),
     ).toThrow();
   });
@@ -43,7 +43,7 @@ describe("user schemas", () => {
     });
 
     expect(parsed.status).toBe("suspended");
-    expect(parsed.role).toBeUndefined();
+    expect(parsed.roleSlug).toBeUndefined();
   });
 
   it("validates permission enum values", () => {

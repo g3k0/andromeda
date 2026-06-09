@@ -4,9 +4,12 @@ import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createWalletAuthMessage } from "@/lib/auth/verify-wallet";
 import { connectMongo, resetMongoConnectionForTests } from "@/lib/db/mongodb";
+import { RoleModel } from "@/lib/db/models/role.model";
 import { UserModel } from "@/lib/db/models/user.model";
 import { resetRateLimitsForTests } from "@/lib/auth/rate-limit";
 import { resetWalletAuthStoreForTests } from "@/lib/auth/verify-wallet";
+import { resetRoleServiceForTests } from "@/lib/roles/server";
+import { seedApiSystemRoles } from "@/lib/testing/seed-api-roles";
 import { resetUserServiceForTests } from "@/lib/users/server";
 import { encodeWalletAuthHeaderMessage } from "@/lib/users/user-mutations";
 import { GET, POST } from "./route";
@@ -60,10 +63,12 @@ describe("users API", () => {
     resetWalletAuthStoreForTests();
     resetRateLimitsForTests();
     resetUserServiceForTests();
+    resetRoleServiceForTests();
     resetMongoConnectionForTests();
     process.env.MONGODB_URI = memoryServer.getUri();
     await connectMongo();
     await UserModel.deleteMany({});
+    await RoleModel.deleteMany({});
   });
 
   afterAll(async () => {
@@ -73,17 +78,19 @@ describe("users API", () => {
   });
 
   async function seedAdmin() {
+    await seedApiSystemRoles();
     await UserModel.create({
       address: ADMIN_ADDRESS,
-      role: "admin",
+      roleSlug: "admin",
       status: "active",
     });
   }
 
   async function seedReader() {
+    await seedApiSystemRoles();
     await UserModel.create({
       address: READER_ADDRESS,
-      role: "reader",
+      roleSlug: "reader",
       status: "active",
     });
   }
@@ -112,7 +119,7 @@ describe("users API", () => {
     await seedAdmin();
     const body = await signedPayload(ADMIN, {
       targetAddress: READER_ADDRESS,
-      role: "author",
+      roleSlug: "author",
     });
 
     const response = await POST(
@@ -125,7 +132,7 @@ describe("users API", () => {
 
     expect(response.status).toBe(201);
     const json = await response.json();
-    expect(json.role).toBe("author");
+    expect(json.roleSlug).toBe("author");
   });
 
   it("GET user allows self-read with signature", async () => {
@@ -144,7 +151,7 @@ describe("users API", () => {
 
   it("PATCH rejects non-admin updates", async () => {
     await seedReader();
-    const body = await signedPayload(READER, { role: "admin" });
+    const body = await signedPayload(READER, { roleSlug: "admin" });
 
     const response = await PATCH(
       new Request("http://localhost", {

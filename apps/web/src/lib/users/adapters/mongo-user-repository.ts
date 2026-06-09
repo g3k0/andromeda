@@ -12,9 +12,9 @@ export class MongoUserRepository implements UserRepository {
     }
     return toUser({
       address: doc.address,
-      role: doc.role,
+      roleSlug: doc.roleSlug,
       status: doc.status,
-      permissions: doc.permissions,
+      permissionOverrides: doc.permissionOverrides,
       preferences: doc.preferences,
       metadata: doc.metadata as Record<string, unknown> | null,
       createdAt: doc.createdAt,
@@ -35,9 +35,9 @@ export class MongoUserRepository implements UserRepository {
 
     const doc = await UserModel.create({
       address: input.address,
-      role: input.role ?? "reader",
+      roleSlug: input.roleSlug ?? "reader",
       status: input.status ?? "active",
-      permissions: input.permissions ?? [],
+      permissionOverrides: input.permissionOverrides ?? [],
       preferences: {
         declinedAuthorPage: preferences.declinedAuthorPage,
         onboardingCompletedAt: preferences.onboardingCompletedAt
@@ -49,9 +49,9 @@ export class MongoUserRepository implements UserRepository {
 
     return toUser({
       address: doc.address,
-      role: doc.role,
+      roleSlug: doc.roleSlug,
       status: doc.status,
-      permissions: doc.permissions,
+      permissionOverrides: doc.permissionOverrides,
       preferences: doc.preferences,
       metadata: doc.metadata as Record<string, unknown> | null,
       createdAt: doc.createdAt,
@@ -63,9 +63,9 @@ export class MongoUserRepository implements UserRepository {
     const doc = await UserModel.findOneAndUpdate(
       { address: user.address },
       {
-        role: user.role,
+        roleSlug: user.roleSlug,
         status: user.status,
-        permissions: user.permissions,
+        permissionOverrides: user.permissionOverrides,
         preferences: {
           declinedAuthorPage: user.preferences.declinedAuthorPage,
           onboardingCompletedAt: user.preferences.onboardingCompletedAt
@@ -83,9 +83,9 @@ export class MongoUserRepository implements UserRepository {
 
     return toUser({
       address: doc.address,
-      role: doc.role,
+      roleSlug: doc.roleSlug,
       status: doc.status,
-      permissions: doc.permissions,
+      permissionOverrides: doc.permissionOverrides,
       preferences: doc.preferences,
       metadata: doc.metadata as Record<string, unknown> | null,
       createdAt: doc.createdAt,
@@ -99,8 +99,8 @@ export class MongoUserRepository implements UserRepository {
 
   async list(filter: UserListFilter = {}): Promise<User[]> {
     const query: Record<string, string> = {};
-    if (filter.role) {
-      query.role = filter.role;
+    if (filter.roleSlug) {
+      query.roleSlug = filter.roleSlug;
     }
     if (filter.status) {
       query.status = filter.status;
@@ -110,14 +110,18 @@ export class MongoUserRepository implements UserRepository {
     return docs.map((doc) =>
       toUser({
         address: doc.address,
-        role: doc.role,
+        roleSlug: doc.roleSlug,
         status: doc.status,
-        permissions: doc.permissions,
+        permissionOverrides: doc.permissionOverrides,
         preferences: doc.preferences,
         metadata: doc.metadata as Record<string, unknown> | null,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
       }),
     );
+  }
+
+  async countByRoleSlug(roleSlug: string): Promise<number> {
+    return UserModel.countDocuments({ roleSlug });
   }
 }

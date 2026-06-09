@@ -1,10 +1,10 @@
 import { createInitialRowDrafts } from "./admin-users-state";
 import type { AdminUserRowDraft } from "./admin-users-state";
-import type { User, UserRole, UserStatus } from "./types";
+import type { User, UserStatus } from "./types";
 
 export type AdminUserRow = {
   address: string;
-  role: UserRole;
+  roleSlug: string;
   status: UserStatus;
   createdAt: string;
 };
@@ -29,7 +29,7 @@ export function formatAdminUserCreatedAt(iso: string): string {
 export function userToAdminRow(user: User): AdminUserRow {
   return {
     address: user.address,
-    role: user.role,
+    roleSlug: user.roleSlug,
     status: user.status,
     createdAt: user.createdAt,
   };

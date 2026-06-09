@@ -80,9 +80,9 @@ export async function createUserAction(input: unknown): Promise<User> {
     const service = await getUserService();
     return service.createUser({
       address: body.targetAddress,
-      role: body.role,
+      roleSlug: body.roleSlug,
       status: body.status,
-      permissions: body.permissions,
+      permissionOverrides: body.permissionOverrides,
     });
   }
 
@@ -109,9 +109,10 @@ export async function updateUserAction(input: unknown): Promise<User> {
     }
     return service.updateUser({
       ...existing,
-      role: body.role ?? existing.role,
+      roleSlug: body.roleSlug ?? existing.roleSlug,
       status: body.status ?? existing.status,
-      permissions: body.permissions ?? existing.permissions,
+      permissionOverrides:
+        body.permissionOverrides ?? existing.permissionOverrides,
     });
   }
 
