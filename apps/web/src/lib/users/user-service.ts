@@ -72,11 +72,19 @@ async function ensureRoleMatchesAuthorProfile(
   });
 }
 
+export type UserServiceOptions = {
+  authorLookup?: AuthorProfileLookup;
+  invalidateUserSessions?: (address: string) => Promise<void>;
+};
+
 export function createUserService(
   users: UserRepository,
   roles: RoleRepository,
-  authorLookup?: AuthorProfileLookup,
+  options?: UserServiceOptions,
 ) {
+  const authorLookup = options?.authorLookup;
+  const invalidateUserSessions =
+    options?.invalidateUserSessions ?? (async () => undefined);
   return {
     async getByAddress(address: string): Promise<User | null> {
       const normalized = normalizeAddress(address);
@@ -206,7 +214,11 @@ export function createUserService(
         await assertValidRoleTransition(user, user.roleSlug, authorLookup);
       }
 
-      return users.update(user);
+      const updated = await users.update(user);
+      if (user.roleSlug !== existing.roleSlug) {
+        await invalidateUserSessions(user.address);
+      }
+      return updated;
     },
 
     async deleteUser(address: string): Promise<void> {

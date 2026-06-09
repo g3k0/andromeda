@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getAuthorService } from "@/lib/authors/server";
+import { getWalletSessionService } from "@/lib/auth/wallet-session-server";
 import { createMongoRoleRepository } from "@/lib/roles/adapters/create-role-repository";
 import { createMongoUserRepository } from "./adapters/create-user-repository";
 import { createUserService, type UserService } from "./user-service";
@@ -11,11 +12,14 @@ export async function getUserService(): Promise<UserService> {
   if (!cachedService) {
     const repository = await createMongoUserRepository();
     const roleRepository = await createMongoRoleRepository();
+    const sessionService = await getWalletSessionService();
     cachedService = createUserService(repository, roleRepository, {
       hasAuthorProfile: async (address) => {
         const authorService = await getAuthorService();
         return authorService.hasAuthorProfile(address);
       },
+      invalidateUserSessions: (address) =>
+        sessionService.invalidateByAddress(address),
     });
   }
   return cachedService;

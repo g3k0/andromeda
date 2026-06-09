@@ -21,5 +21,10 @@ export async function establishWalletSession(
   assertCanAccessAdmin(user);
 
   const sessionService = await getWalletSessionService();
-  return sessionService.establish(address);
+  return sessionService.establish({
+    address: user.address,
+    roleSlug: user.roleSlug,
+    status: user.status,
+    permissions: user.permissions,
+  });
 }

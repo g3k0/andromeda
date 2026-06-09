@@ -17,6 +17,21 @@ const walletSessionSchema = new Schema(
       trim: true,
       index: true,
     },
+    roleSlug: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ["active", "suspended", "pending"],
+    },
+    permissions: {
+      type: [String],
+      required: true,
+      default: [],
+    },
     expiresAt: {
       type: Date,
       required: true,

@@ -1,5 +1,9 @@
 import { randomUUID } from "node:crypto";
-import type { WalletSessionStore } from "./wallet-session-store";
+import type {
+  EstablishWalletSessionInput,
+  WalletSessionSnapshot,
+  WalletSessionStore,
+} from "./wallet-session-store";
 
 export const WALLET_SESSION_TTL_MS = 30 * 60 * 1000;
 
@@ -16,11 +20,11 @@ export type EstablishedWalletSession = {
 export function createWalletSessionService(store: WalletSessionStore) {
   return {
     async establish(
-      address: string,
+      input: EstablishWalletSessionInput,
       options?: { now?: number },
     ): Promise<EstablishedWalletSession> {
       const now = options?.now ?? Date.now();
-      await store.deleteByAddress(address);
+      await store.deleteByAddress(input.address);
 
       const sessionId = randomUUID();
       const expiresAt = new Date(now + WALLET_SESSION_TTL_MS);
@@ -28,7 +32,10 @@ export function createWalletSessionService(store: WalletSessionStore) {
 
       await store.create({
         sessionId,
-        address,
+        address: input.address,
+        roleSlug: input.roleSlug,
+        status: input.status,
+        permissions: input.permissions,
         createdAt: timestamp,
         expiresAt,
         lastSeenAt: timestamp,
@@ -40,7 +47,7 @@ export function createWalletSessionService(store: WalletSessionStore) {
     async resolve(
       sessionId: string,
       options?: { now?: number },
-    ): Promise<string | null> {
+    ): Promise<WalletSessionSnapshot | null> {
       const now = options?.now ?? Date.now();
       const session = await store.getById(sessionId);
       if (!session || session.expiresAt.getTime() < now) {
@@ -51,11 +58,24 @@ export function createWalletSessionService(store: WalletSessionStore) {
       }
 
       await store.touch(sessionId, new Date(now));
-      return session.address;
+      return {
+        address: session.address,
+        roleSlug: session.roleSlug,
+        status: session.status,
+        permissions: session.permissions,
+      };
     },
 
     async revoke(sessionId: string): Promise<void> {
       await store.deleteById(sessionId);
+    },
+
+    async invalidateByAddress(address: string): Promise<void> {
+      await store.deleteByAddress(address);
+    },
+
+    async invalidateByRoleSlug(roleSlug: string): Promise<void> {
+      await store.deleteByRoleSlug(roleSlug);
     },
 
     async getStatus(

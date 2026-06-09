@@ -1,4 +1,5 @@
 import { WalletSessionModel } from "@/lib/db/models/wallet-session.model";
+import { isUserPermission } from "@/lib/users/types";
 import type {
   WalletSessionRecord,
   WalletSessionStore,
@@ -9,6 +10,9 @@ export class MongoWalletSessionStore implements WalletSessionStore {
     await WalletSessionModel.create({
       sessionId: session.sessionId,
       address: session.address,
+      roleSlug: session.roleSlug,
+      status: session.status,
+      permissions: session.permissions,
       expiresAt: session.expiresAt,
       lastSeenAt: session.lastSeenAt,
       createdAt: session.createdAt,
@@ -24,6 +28,9 @@ export class MongoWalletSessionStore implements WalletSessionStore {
     return {
       sessionId: doc.sessionId,
       address: doc.address,
+      roleSlug: doc.roleSlug,
+      status: doc.status,
+      permissions: doc.permissions.filter(isUserPermission),
       createdAt: doc.createdAt,
       expiresAt: doc.expiresAt,
       lastSeenAt: doc.lastSeenAt,
@@ -36,6 +43,10 @@ export class MongoWalletSessionStore implements WalletSessionStore {
 
   async deleteByAddress(address: string): Promise<void> {
     await WalletSessionModel.deleteMany({ address });
+  }
+
+  async deleteByRoleSlug(roleSlug: string): Promise<void> {
+    await WalletSessionModel.deleteMany({ roleSlug });
   }
 
   async touch(sessionId: string, lastSeenAt: Date): Promise<void> {

@@ -44,14 +44,20 @@ describe("resolveWalletAuth", () => {
     );
   });
 
-  it("resolves an active wallet session", async () => {
+  it("resolves an active wallet session without hitting the user repository", async () => {
     const service = createWalletSessionService(createInMemoryWalletSessionStore());
-    const { sessionId } = await service.establish(ADDRESS);
+    const { sessionId } = await service.establish({
+      address: ADDRESS,
+      roleSlug: "admin",
+      status: "active",
+      permissions: adminUser.permissions,
+    });
     vi.mocked(getWalletSessionService).mockResolvedValue(service);
-    getAuthenticatedByAddress.mockResolvedValue(adminUser);
     assertActive.mockImplementation(() => undefined);
 
-    await expect(resolveWalletAuth({ sessionId })).resolves.toEqual(adminUser);
+    const resolved = await resolveWalletAuth({ sessionId });
+    expect(resolved.permissions).toEqual(adminUser.permissions);
+    expect(getAuthenticatedByAddress).not.toHaveBeenCalled();
   });
 
   it("falls back to wallet signature when session is missing", async () => {
@@ -79,30 +85,19 @@ describe("resolveWalletAuth", () => {
   it("revokes suspended session users", async () => {
     const store = createInMemoryWalletSessionStore();
     const service = createWalletSessionService(store);
-    const { sessionId } = await service.establish(ADDRESS);
-    vi.mocked(getWalletSessionService).mockResolvedValue(service);
-    getAuthenticatedByAddress.mockResolvedValue({
-      ...adminUser,
+    const { sessionId } = await service.establish({
+      address: ADDRESS,
+      roleSlug: "admin",
       status: "suspended",
+      permissions: adminUser.permissions,
     });
+    vi.mocked(getWalletSessionService).mockResolvedValue(service);
     assertActive.mockImplementation(() => {
       throw new UserSuspendedError(ADDRESS);
     });
 
     await expect(resolveWalletAuth({ sessionId })).rejects.toBeInstanceOf(
       UserSuspendedError,
-    );
-    await expect(service.resolve(sessionId)).resolves.toBeNull();
-  });
-
-  it("rejects unknown session users", async () => {
-    const service = createWalletSessionService(createInMemoryWalletSessionStore());
-    const { sessionId } = await service.establish(ADDRESS);
-    vi.mocked(getWalletSessionService).mockResolvedValue(service);
-    getAuthenticatedByAddress.mockResolvedValue(null);
-
-    await expect(resolveWalletAuth({ sessionId })).rejects.toBeInstanceOf(
-      UserNotFoundError,
     );
     await expect(service.resolve(sessionId)).resolves.toBeNull();
   });
@@ -114,5 +109,20 @@ describe("resolveWalletAuth", () => {
     await expect(
       resolveWalletAuth({ sessionId: SESSION_ID }),
     ).rejects.toBeInstanceOf(WalletAuthorizationError);
+  });
+
+  it("rejects unknown users on signature fallback", async () => {
+    verifyWalletSignature.mockResolvedValue(ADDRESS);
+    getAuthenticatedByAddress.mockResolvedValue(null);
+
+    await expect(
+      resolveWalletAuth({
+        walletAuth: {
+          address: ADDRESS,
+          message: "message",
+          signature: "0x1234",
+        },
+      }),
+    ).rejects.toBeInstanceOf(UserNotFoundError);
   });
 });

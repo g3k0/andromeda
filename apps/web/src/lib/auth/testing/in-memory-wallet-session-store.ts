@@ -27,6 +27,14 @@ export function createInMemoryWalletSessionStore(): WalletSessionStore {
       }
     },
 
+    async deleteByRoleSlug(roleSlug) {
+      for (const [sessionId, session] of sessions.entries()) {
+        if (session.roleSlug === roleSlug) {
+          sessions.delete(sessionId);
+        }
+      }
+    },
+
     async touch(sessionId, lastSeenAt) {
       const session = sessions.get(sessionId);
       if (!session) {

@@ -10,6 +10,7 @@ import {
   parseCookieHeader,
   WALLET_SESSION_COOKIE_NAME,
 } from "./wallet-session-cookies";
+import { authenticatedUserFromSessionSnapshot } from "./session-authenticated-user";
 
 export type ResolveWalletAuthInput = {
   sessionId?: string | null;
@@ -28,13 +29,9 @@ export async function resolveWalletAuth(
   const userService = await getUserService();
 
   if (sessionId) {
-    const address = await sessionService.resolve(sessionId);
-    if (address) {
-      const user = await userService.getAuthenticatedByAddress(address);
-      if (!user) {
-        await sessionService.revoke(sessionId);
-        throw new UserNotFoundError(address);
-      }
+    const snapshot = await sessionService.resolve(sessionId);
+    if (snapshot) {
+      const user = authenticatedUserFromSessionSnapshot(snapshot);
 
       try {
         userService.assertActive(user);

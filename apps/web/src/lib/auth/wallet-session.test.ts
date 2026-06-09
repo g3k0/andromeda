@@ -4,15 +4,25 @@ import { createInMemoryWalletSessionStore } from "./testing/in-memory-wallet-ses
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 
+const SESSION_INPUT = {
+  address: ADDRESS,
+  roleSlug: "admin",
+  status: "active" as const,
+  permissions: ["admin:access", "users:read"] as const,
+};
+
 describe("wallet session service", () => {
-  it("establishes and resolves a session", async () => {
+  it("establishes and resolves a session snapshot", async () => {
     const service = createWalletSessionService(createInMemoryWalletSessionStore());
     const now = Date.now();
-    const { sessionId } = await service.establish(ADDRESS, { now });
+    const { sessionId } = await service.establish(SESSION_INPUT, { now });
 
-    await expect(service.resolve(sessionId, { now: now + 1_000 })).resolves.toBe(
-      ADDRESS,
-    );
+    await expect(service.resolve(sessionId, { now: now + 1_000 })).resolves.toEqual({
+      address: ADDRESS,
+      roleSlug: "admin",
+      status: "active",
+      permissions: ["admin:access", "users:read"],
+    });
     await expect(service.getStatus(sessionId, { now: now + 1_000 })).resolves.toEqual({
       active: true,
       expiresAt: new Date(now + WALLET_SESSION_TTL_MS).toISOString(),
@@ -22,7 +32,7 @@ describe("wallet session service", () => {
   it("revokes expired sessions on resolve", async () => {
     const service = createWalletSessionService(createInMemoryWalletSessionStore());
     const now = Date.now();
-    const { sessionId } = await service.establish(ADDRESS, { now });
+    const { sessionId } = await service.establish(SESSION_INPUT, { now });
 
     await expect(
       service.resolve(sessionId, { now: now + WALLET_SESSION_TTL_MS + 1 }),
@@ -35,11 +45,20 @@ describe("wallet session service", () => {
   it("replaces existing sessions for the same address", async () => {
     const store = createInMemoryWalletSessionStore();
     const service = createWalletSessionService(store);
-    const first = await service.establish(ADDRESS);
-    const second = await service.establish(ADDRESS);
+    const first = await service.establish(SESSION_INPUT);
+    const second = await service.establish(SESSION_INPUT);
 
     expect(first.sessionId).not.toBe(second.sessionId);
     await expect(service.resolve(first.sessionId)).resolves.toBeNull();
-    await expect(service.resolve(second.sessionId)).resolves.toBe(ADDRESS);
+    await expect(service.resolve(second.sessionId)).resolves.not.toBeNull();
+  });
+
+  it("invalidates sessions by role slug", async () => {
+    const store = createInMemoryWalletSessionStore();
+    const service = createWalletSessionService(store);
+    const { sessionId } = await service.establish(SESSION_INPUT);
+
+    await service.invalidateByRoleSlug("admin");
+    await expect(service.resolve(sessionId)).resolves.toBeNull();
   });
 });
