@@ -7,8 +7,17 @@ import { InMemoryRateLimitStore } from "./testing/in-memory-rate-limit-store";
 let cachedStore: RateLimitStore | null = null;
 let testStore: RateLimitStore | null = null;
 
+function shouldUseInMemoryStore(): boolean {
+  return process.env.VITEST === "true" && !process.env.MONGODB_URI;
+}
+
 export async function getRateLimitStore(): Promise<RateLimitStore> {
   if (testStore) {
+    return testStore;
+  }
+
+  if (shouldUseInMemoryStore()) {
+    testStore = new InMemoryRateLimitStore();
     return testStore;
   }
 

@@ -2,6 +2,10 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { GET } from "@/app/api/auth/message/route";
 import {
+  resetRateLimitsForTests,
+  useInMemoryRateLimitsForTests,
+} from "./rate-limit";
+import {
   resetWalletAuthStoreForTests,
   useInMemoryWalletAuthStoreForTests,
   verifyWalletSignature,
@@ -11,10 +15,13 @@ const ACCOUNT = privateKeyToAccount(generatePrivateKey());
 
 describe("wallet auth flow", () => {
   beforeEach(() => {
+    resetRateLimitsForTests();
+    useInMemoryRateLimitsForTests();
     useInMemoryWalletAuthStoreForTests();
   });
 
   afterEach(() => {
+    resetRateLimitsForTests();
     resetWalletAuthStoreForTests();
   });
 

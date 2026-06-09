@@ -7,8 +7,17 @@ import { InMemoryWalletAuthNonceStore } from "./testing/in-memory-wallet-auth-no
 let cachedStore: WalletAuthNonceStore | null = null;
 let testStore: WalletAuthNonceStore | null = null;
 
+function shouldUseInMemoryStore(): boolean {
+  return process.env.VITEST === "true" && !process.env.MONGODB_URI;
+}
+
 export async function getWalletAuthNonceStore(): Promise<WalletAuthNonceStore> {
   if (testStore) {
+    return testStore;
+  }
+
+  if (shouldUseInMemoryStore()) {
+    testStore = new InMemoryWalletAuthNonceStore();
     return testStore;
   }
 

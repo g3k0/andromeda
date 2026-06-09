@@ -45,9 +45,6 @@ jobs:
 
       - name: Unit tests (web, with coverage)
         run: pnpm web:test:coverage
-        env:
-          # authors-api.test.ts uses mongodb-memory-server (ephemeral, no external DB).
-          MONGODB_URI: mongodb://127.0.0.1:27017/andromeda-ci
 
       - name: Build web app
         run: pnpm build
