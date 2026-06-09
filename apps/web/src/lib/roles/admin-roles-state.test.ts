@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   buildCreateRolePayload,
   buildUpdateRolePayload,
+  canDeleteRole,
   createDefaultCreateRoleFormState,
+  roleDeleteBlockedReason,
   isAdminRoleRowDirty,
   syncAdminRowsFromRoles,
   toggleRoleDraftPermission,
@@ -55,6 +57,16 @@ describe("admin roles state", () => {
       "A role with this slug already exists.",
     );
     expect(validateCreateRoleForm(form, [])).toBeNull();
+  });
+
+  it("blocks delete for system roles and roles assigned to users", () => {
+    const synced = syncAdminRowsFromRoles([role]);
+    expect(canDeleteRole(synced.rows[0]!)).toBe(false);
+    expect(roleDeleteBlockedReason(synced.rows[0]!)).toContain("assigned to 2 user");
+
+    const unused = syncAdminRowsFromRoles([{ ...role, userCount: 0 }]);
+    expect(canDeleteRole(unused.rows[0]!)).toBe(true);
+    expect(roleDeleteBlockedReason(unused.rows[0]!)).toBeNull();
   });
 
   it("builds create and update payloads", () => {

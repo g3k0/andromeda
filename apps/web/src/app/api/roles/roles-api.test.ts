@@ -169,6 +169,40 @@ describe("roles API", () => {
     expect(deleteResponse.status).toBe(200);
   });
 
+  it("DELETE returns 409 when the role is assigned to users", async () => {
+    await seedAdmin();
+    const createBody = await signedPayload(ADMIN, {
+      slug: "moderator",
+      name: "Moderator",
+      permissions: ["pages:read"],
+    });
+    await POST(
+      new Request("http://localhost/api/roles", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(createBody),
+      }),
+    );
+
+    await UserModel.create({
+      address: READER.address.toLowerCase(),
+      roleSlug: "moderator",
+      status: "active",
+    });
+
+    const deleteResponse = await DELETE(
+      new Request("http://localhost/api/roles/moderator", {
+        headers: await authHeaders(ADMIN)(),
+      }),
+      { params: Promise.resolve({ slug: "moderator" }) },
+    );
+
+    expect(deleteResponse.status).toBe(409);
+    const json = await deleteResponse.json();
+    expect(json.error).toContain("assigned to 1 user");
+    expect(await RoleModel.exists({ slug: "moderator" })).not.toBeNull();
+  });
+
   it("rejects role mutations for readers", async () => {
     await seedApiSystemRoles();
     await UserModel.create({

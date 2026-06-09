@@ -134,6 +134,20 @@ export function buildUpdateRolePayload(draft: AdminRoleRowDraft) {
   };
 }
 
+export function canDeleteRole(row: AdminRoleRow): boolean {
+  return !row.isSystem && row.userCount === 0;
+}
+
+export function roleDeleteBlockedReason(row: AdminRoleRow): string | null {
+  if (row.isSystem) {
+    return "System roles cannot be deleted.";
+  }
+  if (row.userCount > 0) {
+    return `Role is assigned to ${row.userCount} user(s). Reassign them before deleting.`;
+  }
+  return null;
+}
+
 export function buildCreateRolePayload(form: CreateRoleFormState) {
   const description = form.description.trim();
   return {

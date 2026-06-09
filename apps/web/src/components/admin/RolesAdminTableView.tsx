@@ -1,8 +1,10 @@
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
-import type {
-  AdminRoleRow,
-  AdminRoleRowDraft,
-  CreateRoleFormState,
+import {
+  canDeleteRole,
+  roleDeleteBlockedReason,
+  type AdminRoleRow,
+  type AdminRoleRowDraft,
+  type CreateRoleFormState,
 } from "@/lib/roles/admin-roles-state";
 import { USER_PERMISSIONS } from "@/lib/users/types";
 import type { UserPermission } from "@/lib/users/types";
@@ -242,7 +244,7 @@ export function RolesAdminTableView({
                     >
                       {savingSlug === row.slug ? "Saving…" : "Save"}
                     </button>
-                    {!row.isSystem ? (
+                    {canDeleteRole(row) ? (
                       <button
                         type="button"
                         disabled={deletingSlug === row.slug}
@@ -251,6 +253,13 @@ export function RolesAdminTableView({
                       >
                         {deletingSlug === row.slug ? "Deleting…" : "Delete"}
                       </button>
+                    ) : roleDeleteBlockedReason(row) ? (
+                      <span
+                        className="rounded-md border border-white/10 px-3 py-1 text-xs text-white/50"
+                        title={roleDeleteBlockedReason(row) ?? undefined}
+                      >
+                        Delete unavailable
+                      </span>
                     ) : null}
                   </div>
                 </div>

@@ -53,6 +53,16 @@ async function assertValidRoleTransition(
   }
 }
 
+async function assertRoleSlugExists(
+  roles: RoleRepository,
+  roleSlug: string,
+): Promise<void> {
+  const role = await roles.getBySlug(roleSlug);
+  if (!role) {
+    throw new InvalidUserRoleError(roleSlug);
+  }
+}
+
 async function ensureRoleMatchesAuthorProfile(
   users: UserRepository,
   user: User,
@@ -128,9 +138,12 @@ export function createUserService(
         );
       }
 
+      const roleSlug = hasAuthorProfile ? "author" : "reader";
+      await assertRoleSlugExists(roles, roleSlug);
+
       return users.create({
         address: normalized,
-        roleSlug: hasAuthorProfile ? "author" : "reader",
+        roleSlug,
         status: "active",
         preferences: defaultUserPreferences(),
       });
@@ -186,16 +199,13 @@ export function createUserService(
         throw new UserExistsError(normalized);
       }
 
-      if (input.roleSlug) {
-        const role = await roles.getBySlug(input.roleSlug);
-        if (!role) {
-          throw new InvalidUserRoleError(input.roleSlug);
-        }
-      }
+      const roleSlug = input.roleSlug ?? "reader";
+      await assertRoleSlugExists(roles, roleSlug);
 
       return users.create({
         ...input,
         address: normalized,
+        roleSlug,
       });
     },
 

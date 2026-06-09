@@ -53,7 +53,8 @@ automaticamente; i comandi sotto servono per preparare manualmente schema, indic
 
 | Collection (Mongoose) | Modello | Uso |
 | --- | --- | --- |
-| `users` | `User` | Identità piattaforma, ruolo, permessi, preferenze |
+| `roles` | `Role` | Ruoli di sistema e custom; subset di permessi dal catalogo in codice |
+| `users` | `User` | Identità piattaforma, `roleSlug`, override permessi, preferenze |
 | `authors` | `Author` | Profili autore pubblici |
 | `walletpreferences` | `WalletPreferences` | **Deprecata** — preferenze migrate in `users.preferences` |
 
@@ -77,10 +78,155 @@ db.author.drop()
 Riferimento schema autore: `apps/web/src/lib/db/models/author.model.ts`
 (`displayName` max 64 caratteri, `avatarUrl` max 700 000 caratteri).
 
+### Collection `roles`
+
+I documenti ruolo definiscono quali permessi del catalogo applicativo (`USER_PERMISSIONS`
+in `apps/web/src/lib/users/types.ts`) sono assegnati a ciascun ruolo. Gli utenti referenziano
+un ruolo tramite `users.roleSlug` (es. `"reader"`, `"author"`, `"admin"`).
+
+Campi principali (`apps/web/src/lib/db/models/role.model.ts`):
+
+| Campo | Tipo | Vincoli |
+| --- | --- | --- |
+| `slug` | `string` | obbligatorio, lowercase, univoco (`reader`, `author`, `admin`, …) |
+| `name` | `string` | obbligatorio, etichetta UI |
+| `description` | `string` \| `null` | opzionale |
+| `permissions` | `string[]` | obbligatorio, valori ⊆ catalogo permessi |
+| `isSystem` | `boolean` | `true` per i tre ruoli seed (non eliminabili dall'app) |
+| `createdAt` / `updatedAt` | `date` | gestiti da `timestamps: true` |
+
+#### Seed automatico (consigliato)
+
+```bash
+pnpm --filter @andromeda/web exec tsx scripts/seed-roles.ts
+```
+
+Lo script è idempotente: inserisce i tre ruoli di sistema solo se la collection è vuota.
+
+#### Inserire manualmente i tre ruoli di sistema (mongosh)
+
+Usa questi comandi se preferisci preparare il database a mano prima del deploy dell'app.
+Gli slug devono coincidere con quelli attesi da `users.roleSlug` e dallo script di migrazione.
+
+```javascript
+use andromeda
+
+const now = new Date()
+
+db.roles.insertMany([
+  {
+    slug: "reader",
+    name: "Reader",
+    description: "Default platform reader",
+    permissions: [
+      "pages:read",
+    ],
+    isSystem: true,
+    createdAt: now,
+    updatedAt: now,
+  },
+  {
+    slug: "author",
+    name: "Author",
+    description: "Author with own profile editing",
+    permissions: [
+      "pages:read",
+      "authors:write:own",
+    ],
+    isSystem: true,
+    createdAt: now,
+    updatedAt: now,
+  },
+  {
+    slug: "admin",
+    name: "Admin",
+    description: "Full platform administration",
+    permissions: [
+      "pages:read",
+      "authors:write:own",
+      "authors:write:any",
+      "authors:delete:any",
+      "users:read",
+      "users:write",
+      "users:delete",
+      "admin:access",
+      "roles:read",
+      "roles:write",
+      "roles:delete",
+    ],
+    isSystem: true,
+    createdAt: now,
+    updatedAt: now,
+  },
+])
+```
+
+Verifica:
+
+```javascript
+db.roles.find({}, { _id: 0, slug: 1, name: 1, permissions: 1, isSystem: 1 }).sort({ slug: 1 })
+db.roles.getIndexes()
+```
+
+**Ordine deploy consigliato:** seed `roles` → migrazione `users` (`roleSlug`) → avvio app.
+Vedi anche [roles.md](../plans/roles.md).
+
+#### Integrità referenziale `users.roleSlug` → `roles.slug`
+
+L'app applica questi vincoli lato server (non esiste FK nativo in MongoDB):
+
+| Operazione | Regola |
+| --- | --- |
+| Creazione / aggiornamento utente | `roleSlug` deve corrispondere a un documento esistente in `roles` |
+| Eliminazione ruolo custom | Bloccata se almeno un utente ha quel `roleSlug` (`409 Conflict`) |
+| Eliminazione ruolo system | Sempre bloccata (`isSystem: true`) |
+
+Prima di eliminare un ruolo custom in mongosh, riassegna gli utenti collegati:
+
+```javascript
+db.users.countDocuments({ roleSlug: "moderator" })
+
+db.users.updateMany(
+  { roleSlug: "moderator" },
+  { $set: { roleSlug: "reader", updatedAt: new Date() } },
+)
+
+db.roles.deleteOne({ slug: "moderator", isSystem: false })
+```
+
+In produzione usa le API admin (`DELETE /api/roles/:slug`) o il pannello *Roles*: il
+controllo sul conteggio utenti è centralizzato in `role-service.deleteRole`.
+
+Se la collection esiste già e vuoi solo aggiornare i permessi di un ruolo (sviluppo):
+
+```javascript
+db.roles.updateOne(
+  { slug: "admin" },
+  {
+    $set: {
+      permissions: [
+        "pages:read",
+        "authors:write:own",
+        "authors:write:any",
+        "authors:delete:any",
+        "users:read",
+        "users:write",
+        "users:delete",
+        "admin:access",
+        "roles:read",
+        "roles:write",
+        "roles:delete",
+      ],
+      updatedAt: new Date(),
+    },
+  },
+)
+```
+
 ### Collection `users`
 
-Ruoli: `admin`, `author`, `reader`. Migrazione una tantum da env admin, `authors` e
-`walletpreferences`:
+Gli utenti referenziano un ruolo con `roleSlug` (non più un campo `role` inline). Migrazione
+una tantum da env admin, `authors` e `walletpreferences`:
 
 ```bash
 pnpm --filter @andromeda/web exec tsx scripts/migrate-users.ts

@@ -64,7 +64,7 @@ describe("RolesAdminTableView", () => {
     expect(screen.getByLabelText("Loading roles")).toBeInTheDocument();
   });
 
-  it("renders roles with system badge and delete action", () => {
+  it("renders roles with system badge and without delete action", () => {
     renderView({
       rows: [{ ...buildRow(), isSystem: true }],
     });
@@ -72,6 +72,15 @@ describe("RolesAdminTableView", () => {
     expect(screen.getByText("moderator")).toBeInTheDocument();
     expect(screen.getByText("System")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument();
+  });
+
+  it("hides delete when the role is assigned to users", () => {
+    renderView({
+      rows: [{ ...buildRow(), userCount: 2 }],
+    });
+
+    expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument();
+    expect(screen.getByText("Delete unavailable")).toBeInTheDocument();
   });
 
   it("shows the create-role form when requested", async () => {

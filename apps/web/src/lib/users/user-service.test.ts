@@ -5,6 +5,7 @@ import {
   InvalidUserRoleTransitionError,
   UserExistsError,
   UserNotFoundError,
+  InvalidUserRoleError,
   UserSuspendedError,
 } from "./errors";
 import { createInMemoryUserRepository } from "./testing/in-memory-user-repository";
@@ -107,6 +108,14 @@ describe("user service", () => {
     await expect(service.promoteToAuthor(ADDRESS)).rejects.toBeInstanceOf(
       UserSuspendedError,
     );
+  });
+
+  it("rejects user creation when roleSlug does not exist", async () => {
+    const service = await createTestUserService();
+
+    await expect(
+      service.createUser({ address: ADDRESS, roleSlug: "missing" }),
+    ).rejects.toBeInstanceOf(InvalidUserRoleError);
   });
 
   it("rejects duplicate user creation", async () => {
