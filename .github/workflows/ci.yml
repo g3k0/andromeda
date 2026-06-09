@@ -40,10 +40,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Lint
+        run: pnpm lint
+
       - name: Unit tests (web, with coverage)
         run: pnpm web:test:coverage
         env:
           # authors-api.test.ts uses mongodb-memory-server (ephemeral, no external DB).
           MONGODB_URI: mongodb://127.0.0.1:27017/andromeda-ci
 
-      # Future steps: pnpm lint, pnpm build, pnpm contracts:test, deploy previews, etc.
+      - name: Build web app
+        run: pnpm build
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level high
+        continue-on-error: true
+
+      - name: Contract build
+        run: pnpm contracts:build
