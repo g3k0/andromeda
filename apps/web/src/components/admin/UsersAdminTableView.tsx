@@ -9,10 +9,16 @@ import type {
   CreateUserFormState,
 } from "@/lib/users/admin-users-state";
 import type { AdminUserRow } from "@/lib/users/admin-users-mappers";
-import type { UserRole, UserStatus } from "@/lib/users/types";
-import { USER_ROLES, USER_STATUSES } from "@/lib/users/types";
+import type { UserStatus } from "@/lib/users/types";
+import { USER_STATUSES } from "@/lib/users/types";
+
+export type AdminRoleOption = {
+  slug: string;
+  name: string;
+};
 
 export type UsersAdminTableViewProps = {
+  roleOptions: readonly AdminRoleOption[];
   rows: AdminUserRow[];
   drafts: AdminUserRowDraft[];
   createForm: CreateUserFormState;
@@ -39,6 +45,7 @@ export type UsersAdminTableViewProps = {
 };
 
 export function UsersAdminTableView({
+  roleOptions,
   rows,
   drafts,
   createForm,
@@ -68,7 +75,7 @@ export function UsersAdminTableView({
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Users administration</h1>
+          <h2 className="text-xl font-semibold tracking-tight">Users administration</h2>
           <p className="text-sm text-white/60">
             Manage platform accounts, roles and status.
           </p>
@@ -117,9 +124,9 @@ export function UsersAdminTableView({
               }
               className="w-full rounded-lg border border-white/10 bg-[#0b1020] px-3 py-2 text-sm outline-none focus:border-andromeda-light/50"
             >
-              {USER_ROLES.map((role) => (
-                <option key={role} value={role}>
-                  {role}
+              {roleOptions.map((role) => (
+                <option key={role.slug} value={role.slug}>
+                  {role.name}
                 </option>
               ))}
             </select>
@@ -212,9 +219,9 @@ export function UsersAdminTableView({
                         }
                         className="rounded-lg border border-white/10 bg-[#0b1020] px-2 py-1 text-sm outline-none focus:border-andromeda-light/50"
                       >
-                        {USER_ROLES.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
+                        {roleOptions.map((role) => (
+                          <option key={role.slug} value={role.slug}>
+                            {role.name}
                           </option>
                         ))}
                       </select>

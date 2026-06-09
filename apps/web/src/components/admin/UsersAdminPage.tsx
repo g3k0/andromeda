@@ -8,6 +8,7 @@ import {
   listUsersAction,
   updateUserAction,
 } from "@/app/actions/users-admin";
+import { listRolesAction } from "@/app/actions/roles-admin";
 import {
   establishWalletSessionAction,
   getWalletSessionStatusAction,
@@ -35,6 +36,7 @@ import {
   adminSessionErrorMessage,
   ensureAdminSession,
 } from "./admin-users-session";
+import type { AdminRoleOption } from "./UsersAdminTableView";
 import { UsersAdminTableView } from "./UsersAdminTableView";
 
 export function UsersAdminPage() {
@@ -54,6 +56,7 @@ export function UsersAdminPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [savingAddress, setSavingAddress] = useState<string | null>(null);
   const [deletingAddress, setDeletingAddress] = useState<string | null>(null);
+  const [roleOptions, setRoleOptions] = useState<AdminRoleOption[]>([]);
 
   const existingAddresses = useMemo(
     () => rows.map((row) => row.address),
@@ -89,10 +92,16 @@ export function UsersAdminPage() {
 
     try {
       await authorizeAdminSession();
-      const users = await listUsersAction();
+      const [users, roles] = await Promise.all([
+        listUsersAction(),
+        listRolesAction(),
+      ]);
       const synced = syncAdminRowsFromUsers(users);
       setRows(synced.rows);
       setDrafts(synced.drafts);
+      setRoleOptions(
+        roles.map((role) => ({ slug: role.slug, name: role.name })),
+      );
     } catch (error) {
       setErrorMessage(adminSessionErrorMessage(error));
     } finally {
@@ -221,6 +230,7 @@ export function UsersAdminPage() {
 
   return (
     <UsersAdminTableView
+      roleOptions={roleOptions}
       rows={rows}
       drafts={drafts}
       createForm={createForm}

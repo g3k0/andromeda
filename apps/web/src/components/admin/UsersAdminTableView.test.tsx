@@ -22,12 +22,19 @@ function buildRow(): AdminUserRow {
   };
 }
 
+const ROLE_OPTIONS = [
+  { slug: "reader", name: "Reader" },
+  { slug: "author", name: "Author" },
+  { slug: "admin", name: "Admin" },
+] as const;
+
 function renderView(overrides: Partial<Parameters<typeof UsersAdminTableView>[0]> = {}) {
   const rows = overrides.rows ?? [buildRow()];
   const drafts = overrides.drafts ?? rows.map(createAdminUserRowDraft);
 
   return render(
     <UsersAdminTableView
+      roleOptions={ROLE_OPTIONS}
       rows={rows}
       drafts={drafts}
       createForm={createDefaultCreateUserFormState()}

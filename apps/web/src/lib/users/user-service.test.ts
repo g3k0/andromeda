@@ -8,16 +8,23 @@ import {
   UserSuspendedError,
 } from "./errors";
 import { createInMemoryUserRepository } from "./testing/in-memory-user-repository";
-import { createUserService } from "./user-service";
+import { createUserService, type UserServiceOptions } from "./user-service";
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 
-async function createTestUserService(
-  options?: Parameters<typeof createUserService>[2],
-) {
+async function createTestUserService(options?: UserServiceOptions) {
   const roles = createInMemoryRoleRepository();
   await seedSystemRoles(roles);
   return createUserService(createInMemoryUserRepository(), roles, options);
+}
+
+async function createSeededUserService(
+  users = createInMemoryUserRepository(),
+  options?: UserServiceOptions,
+) {
+  const roles = createInMemoryRoleRepository();
+  await seedSystemRoles(roles);
+  return createUserService(users, roles, options);
 }
 
 describe("user service", () => {
@@ -33,7 +40,7 @@ describe("user service", () => {
 
   it("creates an author when the wallet already has an author profile", async () => {
     const service = await createTestUserService({
-      hasAuthorProfile: async () => true,
+      authorLookup: { hasAuthorProfile: async () => true },
     });
 
     const created = await service.findOrCreateByWallet(ADDRESS);
@@ -41,11 +48,9 @@ describe("user service", () => {
   });
 
   it("syncs an existing reader to author when an author profile exists", async () => {
-    const roles = createInMemoryRoleRepository();
-    await seedSystemRoles(roles);
     const repository = createInMemoryUserRepository();
-    const service = createUserService(repository, roles, {
-      hasAuthorProfile: async () => true,
+    const service = await createSeededUserService(repository, {
+      authorLookup: { hasAuthorProfile: async () => true },
     });
 
     await repository.create({ address: ADDRESS, roleSlug: "reader" });
@@ -58,11 +63,9 @@ describe("user service", () => {
   });
 
   it("builds a connected snapshot with author profile lookup", async () => {
-    const roles = createInMemoryRoleRepository();
-    await seedSystemRoles(roles);
     const repository = createInMemoryUserRepository();
-    const service = createUserService(repository, roles, {
-      hasAuthorProfile: async () => true,
+    const service = await createSeededUserService(repository, {
+      authorLookup: { hasAuthorProfile: async () => true },
     });
 
     await repository.create({ address: ADDRESS, roleSlug: "author" });
@@ -92,10 +95,8 @@ describe("user service", () => {
   });
 
   it("blocks mutations for suspended users", async () => {
-    const roles = createInMemoryRoleRepository();
-    await seedSystemRoles(roles);
     const repository = createInMemoryUserRepository();
-    const service = createUserService(repository, roles);
+    const service = await createSeededUserService(repository);
     const user = await repository.create({
       address: ADDRESS,
       roleSlug: "reader",
@@ -125,11 +126,9 @@ describe("user service", () => {
   });
 
   it("blocks promoting to author without an author profile", async () => {
-    const roles = createInMemoryRoleRepository();
-    await seedSystemRoles(roles);
     const repository = createInMemoryUserRepository();
-    const service = createUserService(repository, roles, {
-      hasAuthorProfile: async () => false,
+    const service = await createSeededUserService(repository, {
+      authorLookup: { hasAuthorProfile: async () => false },
     });
     await repository.create({ address: ADDRESS, roleSlug: "reader" });
 
@@ -140,7 +139,7 @@ describe("user service", () => {
 
   it("allows promoting to author when a profile exists", async () => {
     const service = await createTestUserService({
-      hasAuthorProfile: async () => true,
+      authorLookup: { hasAuthorProfile: async () => true },
     });
     await service.findOrCreateByWallet(ADDRESS);
 
