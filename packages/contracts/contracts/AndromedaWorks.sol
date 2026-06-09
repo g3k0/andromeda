@@ -4,11 +4,12 @@ pragma solidity ^0.8.24;
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title AndromedaWorks
 /// @notice Registry of author-certified literary works. Each purchased copy is
 ///         minted as an ERC-721 token that readers can own and collect.
-contract AndromedaWorks is ERC721URIStorage, Ownable {
+contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
     struct Work {
         address author;
         string metadataURI;
@@ -80,6 +81,7 @@ contract AndromedaWorks is ERC721URIStorage, Ownable {
     function mintCopy(uint256 workId)
         external
         payable
+        nonReentrant
         returns (uint256 tokenId)
     {
         Work storage work = _getWork(workId);
