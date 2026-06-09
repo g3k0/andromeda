@@ -68,7 +68,7 @@ describe("route guard", () => {
       hasAuthorProfile: true,
       isConnected: true,
     });
-    expect(adminLinks.map((link) => link.href)).toEqual(["/", "/admin", "/author"]);
+    expect(adminLinks.map((link) => link.href)).toEqual(["/", "/author"]);
   });
 
   it("requires an author profile before showing My page", () => {

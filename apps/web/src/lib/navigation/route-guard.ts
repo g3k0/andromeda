@@ -38,6 +38,7 @@ export const ADMIN_ROUTE: RouteDefinition = {
   href: "/admin",
   label: "Admin",
   pagePermission: "admin:access",
+  showInNav: () => false,
 };
 
 export const MY_AUTHOR_PAGE_ROUTE: RouteDefinition = {
