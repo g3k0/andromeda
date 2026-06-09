@@ -4,12 +4,13 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { getUserSnapshotAction } from "@/app/actions/users";
-import { useWalletBinding } from "@/lib/auth/use-wallet-binding";
+import { whenWalletBound } from "@/lib/auth/wallet-binding-client";
 import {
   canAccessPage,
   getRouteById,
   userFromSnapshot,
 } from "@/lib/navigation/route-guard";
+import { USER_SNAPSHOT_REFRESH_EVENT } from "@/lib/users/user-snapshot-sync";
 import { WalletButton } from "@/components/WalletButton";
 
 export type RouteGuardProps = {
@@ -20,7 +21,6 @@ export type RouteGuardProps = {
 export function RouteGuard({ routeId, children }: RouteGuardProps) {
   const route = getRouteById(routeId);
   const { address, isConnected, isReconnecting } = useAccount();
-  const { bindWallet } = useWalletBinding();
   const [allowed, setAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -31,9 +31,9 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
 
     let cancelled = false;
 
-    void (async () => {
+    async function evaluateAccess() {
       if (isConnected && address) {
-        await bindWallet().catch(() => undefined);
+        await whenWalletBound(address);
       }
 
       const snapshot = await getUserSnapshotAction(address, isConnected);
@@ -43,12 +43,24 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
 
       const user = snapshot ? userFromSnapshot(snapshot) : null;
       setAllowed(canAccessPage(user, route, isConnected));
-    })();
+    }
+
+    void evaluateAccess();
+
+    function handleSnapshotRefresh() {
+      void evaluateAccess();
+    }
+
+    window.addEventListener(USER_SNAPSHOT_REFRESH_EVENT, handleSnapshotRefresh);
 
     return () => {
       cancelled = true;
+      window.removeEventListener(
+        USER_SNAPSHOT_REFRESH_EVENT,
+        handleSnapshotRefresh,
+      );
     };
-  }, [address, bindWallet, isConnected, route]);
+  }, [address, isConnected, route]);
 
   if (!route) {
     return (

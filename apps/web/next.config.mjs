@@ -11,6 +11,10 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   async headers() {
+    if (process.env.NODE_ENV !== "production") {
+      return [];
+    }
+
     return [
       {
         source: "/(.*)",

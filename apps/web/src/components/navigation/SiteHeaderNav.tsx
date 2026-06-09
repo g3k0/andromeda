@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 import { getUserSnapshotAction } from "@/app/actions/users";
-import { useWalletBinding } from "@/lib/auth/use-wallet-binding";
+import { whenWalletBound } from "@/lib/auth/wallet-binding-client";
 import { revokeWalletSessionAction } from "@/app/actions/wallet-session";
 import { useNotifications } from "@/components/notifications/NotificationProvider";
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
@@ -18,7 +18,6 @@ export function SiteHeaderNav() {
   const router = useRouter();
   const { notify } = useNotifications();
   const { address, isConnected } = useAccount();
-  const { bindWallet } = useWalletBinding();
   const [snapshot, setSnapshot] = useState<UserSnapshot | null>(null);
   const { disconnect, isPending: isLoggingOut } = useDisconnect({
     mutation: {
@@ -37,7 +36,7 @@ export function SiteHeaderNav() {
 
     async function loadSnapshot() {
       if (isConnected && address) {
-        await bindWallet().catch(() => undefined);
+        await whenWalletBound(address);
       }
 
       const next = await getUserSnapshotAction(address, isConnected);
@@ -61,7 +60,7 @@ export function SiteHeaderNav() {
         handleSnapshotRefresh,
       );
     };
-  }, [address, bindWallet, isConnected]);
+  }, [address, isConnected]);
 
   const links = buildHeaderNavLinks({
     role: snapshot?.roleSlug ?? "reader",
