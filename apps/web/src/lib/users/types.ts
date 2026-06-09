@@ -13,6 +13,9 @@ export const USER_PERMISSIONS = [
   "users:write",
   "users:delete",
   "admin:access",
+  "roles:read",
+  "roles:write",
+  "roles:delete",
 ] as const;
 export type UserPermission = (typeof USER_PERMISSIONS)[number];
 
