@@ -3,7 +3,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createWalletAuthMessage } from "@/lib/auth/verify-wallet";
-import { resetMongoConnectionForTests } from "@/lib/db/mongodb";
+import { connectMongo, resetMongoConnectionForTests } from "@/lib/db/mongodb";
 import { AuthorModel } from "@/lib/db/models/author.model";
 import { RoleModel } from "@/lib/db/models/role.model";
 import { UserModel } from "@/lib/db/models/user.model";
@@ -50,10 +50,6 @@ describe("authors API", () => {
   });
 
   afterEach(async () => {
-    await AuthorModel.deleteMany({});
-    await UserModel.deleteMany({});
-    await RoleModel.deleteMany({});
-    await WalletPreferencesModel.deleteMany({});
     resetWalletAuthStoreForTests();
     resetRateLimitsForTests();
     setAdminAddressesForTests(null);
@@ -62,6 +58,12 @@ describe("authors API", () => {
     resetRoleServiceForTests();
     resetMongoConnectionForTests();
     process.env.MONGODB_URI = memoryServer.getUri();
+    await connectMongo();
+    await AuthorModel.deleteMany({});
+    await UserModel.deleteMany({});
+    await RoleModel.deleteMany({});
+    await WalletPreferencesModel.deleteMany({});
+    await seedApiSystemRoles();
   });
 
   afterAll(async () => {
