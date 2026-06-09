@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { enforceActionRateLimit } from "@/lib/auth/action-rate-limit";
+import { refreshWalletSessionFromDb } from "@/lib/auth/refresh-wallet-session";
 import { resolveWalletAuth } from "@/lib/auth/resolve-wallet-auth";
 import { WALLET_SESSION_COOKIE_NAME } from "@/lib/auth/wallet-session-cookies";
 import { assertRouteApiAccess } from "@/lib/navigation/route-guard";
@@ -34,8 +35,11 @@ async function getSessionIdFromCookies(): Promise<string | undefined> {
   return cookieStore.get(WALLET_SESSION_COOKIE_NAME)?.value;
 }
 
-async function resolveAdminSignerFromSession() {
+async function resolveAdminSignerFromSession(options?: { refresh?: boolean }) {
   const sessionId = await getSessionIdFromCookies();
+  if (options?.refresh && sessionId) {
+    await refreshWalletSessionFromDb(sessionId);
+  }
   return resolveWalletAuth({ sessionId, walletAuth: null });
 }
 
@@ -65,7 +69,7 @@ export async function createRoleAction(input: unknown): Promise<RoleWithUserCoun
 
   if (sessionId) {
     const body = createRoleActionSchema.parse(input);
-    const signer = await resolveAdminSignerFromSession();
+    const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "POST", "/api/roles");
     assertCanWriteRole(signer);
     await enforceActionRateLimit(`create-role:${signer.address}:${body.slug}`);
@@ -85,7 +89,7 @@ export async function updateRoleAction(input: unknown): Promise<RoleWithUserCoun
 
   if (sessionId) {
     const body = updateRoleActionSchema.parse(input);
-    const signer = await resolveAdminSignerFromSession();
+    const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "PATCH", `/api/roles/${body.slug}`);
     assertCanWriteRole(signer);
     await enforceActionRateLimit(`update-role:${signer.address}:${body.slug}`);
@@ -119,7 +123,7 @@ export async function deleteRoleAction(input: unknown): Promise<void> {
 
   if (sessionId) {
     const body = deleteRoleActionSchema.parse(input);
-    const signer = await resolveAdminSignerFromSession();
+    const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "DELETE", `/api/roles/${body.slug}`);
     assertCanDeleteRole(signer);
     await enforceActionRateLimit(`delete-role:${signer.address}:${body.slug}`);

@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { enforceActionRateLimit } from "@/lib/auth/action-rate-limit";
+import { refreshWalletSessionFromDb } from "@/lib/auth/refresh-wallet-session";
 import { resolveWalletAuth } from "@/lib/auth/resolve-wallet-auth";
 import { WALLET_SESSION_COOKIE_NAME } from "@/lib/auth/wallet-session-cookies";
 import { assertRouteApiAccess } from "@/lib/navigation/route-guard";
@@ -35,8 +36,13 @@ async function getSessionIdFromCookies(): Promise<string | undefined> {
   return cookieStore.get(WALLET_SESSION_COOKIE_NAME)?.value;
 }
 
-async function resolveAdminSignerFromSession(): Promise<AuthenticatedUser> {
+async function resolveAdminSignerFromSession(
+  options?: { refresh?: boolean },
+): Promise<AuthenticatedUser> {
   const sessionId = await getSessionIdFromCookies();
+  if (options?.refresh && sessionId) {
+    await refreshWalletSessionFromDb(sessionId);
+  }
   const signer = await resolveWalletAuth({ sessionId, walletAuth: null });
   const service = await getUserService();
   service.assertActive(signer);
@@ -71,7 +77,7 @@ export async function createUserAction(input: unknown): Promise<User> {
 
   if (sessionId) {
     const body = createUserSessionBodySchema.parse(input);
-    const signer = await resolveAdminSignerFromSession();
+    const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "POST", "/api/users");
     assertCanWriteUser(signer);
     await enforceActionRateLimit(
@@ -96,7 +102,7 @@ export async function updateUserAction(input: unknown): Promise<User> {
 
   if (sessionId) {
     const body = updateUserSessionBodySchema.parse(input);
-    const signer = await resolveAdminSignerFromSession();
+    const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "PATCH", `/api/users/${body.targetAddress}`);
     assertCanWriteUser(signer);
     await enforceActionRateLimit(
@@ -127,7 +133,7 @@ export async function deleteUserAction(input: unknown): Promise<void> {
 
   if (sessionId) {
     const body = deleteUserSessionBodySchema.parse(input);
-    const signer = await resolveAdminSignerFromSession();
+    const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "DELETE", `/api/users/${body.targetAddress}`);
     assertCanDeleteUser(signer);
     await enforceActionRateLimit(

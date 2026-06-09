@@ -1,11 +1,18 @@
 import { randomUUID } from "node:crypto";
+import type { AuthenticatedUser } from "@/lib/users/types";
 import type {
   EstablishWalletSessionInput,
   WalletSessionSnapshot,
   WalletSessionStore,
 } from "./wallet-session-store";
 
-export const WALLET_SESSION_TTL_MS = 30 * 60 * 1000;
+export function getWalletSessionTtlMs(): number {
+  const minutes = Number(process.env.WALLET_SESSION_TTL_MINUTES ?? 15);
+  if (!Number.isFinite(minutes) || minutes <= 0) {
+    return 15 * 60 * 1000;
+  }
+  return minutes * 60 * 1000;
+}
 
 export type WalletSessionStatus = {
   active: boolean;
@@ -27,7 +34,7 @@ export function createWalletSessionService(store: WalletSessionStore) {
       await store.deleteByAddress(input.address);
 
       const sessionId = randomUUID();
-      const expiresAt = new Date(now + WALLET_SESSION_TTL_MS);
+      const expiresAt = new Date(now + getWalletSessionTtlMs());
       const timestamp = new Date(now);
 
       await store.create({
@@ -76,6 +83,30 @@ export function createWalletSessionService(store: WalletSessionStore) {
 
     async invalidateByRoleSlug(roleSlug: string): Promise<void> {
       await store.deleteByRoleSlug(roleSlug);
+    },
+
+    async refreshFromAuthenticatedUser(
+      sessionId: string,
+      user: AuthenticatedUser,
+      options?: { now?: number },
+    ): Promise<WalletSessionSnapshot | null> {
+      const now = options?.now ?? Date.now();
+      const session = await store.getById(sessionId);
+      if (!session || session.expiresAt.getTime() < now) {
+        if (session) {
+          await store.deleteById(sessionId);
+        }
+        return null;
+      }
+
+      const snapshot: WalletSessionSnapshot = {
+        address: user.address,
+        roleSlug: user.roleSlug,
+        status: user.status,
+        permissions: user.permissions,
+      };
+      await store.refreshSnapshot(sessionId, snapshot);
+      return snapshot;
     },
 
     async getStatus(

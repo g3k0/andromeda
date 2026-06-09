@@ -2,6 +2,7 @@ import { WalletSessionModel } from "@/lib/db/models/wallet-session.model";
 import { isUserPermission } from "@/lib/users/types";
 import type {
   WalletSessionRecord,
+  WalletSessionSnapshot,
   WalletSessionStore,
 } from "../wallet-session-store";
 
@@ -51,5 +52,21 @@ export class MongoWalletSessionStore implements WalletSessionStore {
 
   async touch(sessionId: string, lastSeenAt: Date): Promise<void> {
     await WalletSessionModel.updateOne({ sessionId }, { $set: { lastSeenAt } });
+  }
+
+  async refreshSnapshot(
+    sessionId: string,
+    snapshot: WalletSessionSnapshot,
+  ): Promise<void> {
+    await WalletSessionModel.updateOne(
+      { sessionId },
+      {
+        $set: {
+          roleSlug: snapshot.roleSlug,
+          status: snapshot.status,
+          permissions: snapshot.permissions,
+        },
+      },
+    );
   }
 }
