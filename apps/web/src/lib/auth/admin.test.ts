@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { resetServerEnvForTests } from "@/lib/config/env";
 import {
   getAdminAddresses,
   isAdminAddress,
@@ -47,11 +48,13 @@ describe("isAdminAddress", () => {
   it("reads from ADMIN_ADDRESSES when no override is set", () => {
     const previous = process.env.ADMIN_ADDRESSES;
     process.env.ADMIN_ADDRESSES = ADMIN;
+    resetServerEnvForTests();
     setAdminAddressesForTests(null);
 
     expect(getAdminAddresses()).toEqual([ADMIN]);
     expect(isAdminAddress(ADMIN)).toBe(true);
 
     process.env.ADMIN_ADDRESSES = previous;
+    resetServerEnvForTests();
   });
 });

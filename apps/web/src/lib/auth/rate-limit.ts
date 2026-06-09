@@ -1,16 +1,17 @@
 import {
+  getRateLimitMaxRequests,
+  getRateLimitWindowMs,
+} from "@/lib/config/auth";
+import {
   getRateLimitStore,
   resetRateLimitStoreForTests,
   useInMemoryRateLimitStoreForTests,
 } from "./rate-limit-server";
 
-export const DEFAULT_RATE_LIMIT = 30;
-export const DEFAULT_RATE_WINDOW_MS = 60_000;
-
 export async function checkRateLimit(
   key: string,
-  limit = DEFAULT_RATE_LIMIT,
-  windowMs = DEFAULT_RATE_WINDOW_MS,
+  limit = getRateLimitMaxRequests(),
+  windowMs = getRateLimitWindowMs(),
   now = Date.now(),
 ): Promise<boolean> {
   const store = await getRateLimitStore();

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createInMemoryRoleRepository } from "@/lib/roles/testing/in-memory-role-repository";
 import { seedSystemRoles } from "@/lib/roles/testing/seed-system-roles";
 import {
@@ -63,6 +63,29 @@ describe("user service", () => {
     expect(stored?.roleSlug).toBe("author");
   });
 
+  it("syncs an existing author back to reader when the author profile is missing", async () => {
+    const invalidateUserSessions = vi.fn();
+    const repository = createInMemoryUserRepository();
+    const authorLookup = {
+      hasAuthorProfile: vi.fn(async () => false),
+    };
+    const service = await createSeededUserService(repository, {
+      authorLookup,
+      invalidateUserSessions,
+    });
+
+    await repository.create({ address: ADDRESS, roleSlug: "author" });
+
+    const snapshot = await service.getSnapshot(ADDRESS, true, authorLookup);
+
+    expect(snapshot?.roleSlug).toBe("reader");
+    expect(snapshot?.hasAuthorProfile).toBe(false);
+    expect(invalidateUserSessions).toHaveBeenCalledWith(ADDRESS);
+
+    const stored = await repository.getByAddress(ADDRESS);
+    expect(stored?.roleSlug).toBe("reader");
+  });
+
   it("builds a connected snapshot with author profile lookup", async () => {
     const repository = createInMemoryUserRepository();
     const service = await createSeededUserService(repository, {
@@ -85,14 +108,32 @@ describe("user service", () => {
   });
 
   it("promotes and demotes non-admin roles", async () => {
-    const service = await createTestUserService();
+    const invalidateUserSessions = vi.fn();
+    const service = await createTestUserService({ invalidateUserSessions });
     await service.findOrCreateByWallet(ADDRESS);
 
     const author = await service.promoteToAuthor(ADDRESS);
     expect(author.roleSlug).toBe("author");
+    expect(invalidateUserSessions).toHaveBeenCalledWith(ADDRESS);
 
     const reader = await service.demoteToReader(ADDRESS);
     expect(reader.roleSlug).toBe("reader");
+  });
+
+  it("returns an author snapshot after profile creation and promotion", async () => {
+    const repository = createInMemoryUserRepository();
+    const authorLookup = {
+      hasAuthorProfile: vi.fn(async () => true),
+    };
+    const service = await createSeededUserService(repository, { authorLookup });
+    await service.findOrCreateByWallet(ADDRESS);
+    await service.promoteToAuthor(ADDRESS);
+
+    const snapshot = await service.getSnapshot(ADDRESS, true, authorLookup);
+
+    expect(snapshot?.roleSlug).toBe("author");
+    expect(snapshot?.hasAuthorProfile).toBe(true);
+    expect(snapshot?.permissions).toContain("authors:write:own");
   });
 
   it("blocks mutations for suspended users", async () => {

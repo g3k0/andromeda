@@ -21,6 +21,10 @@ export function isWalletBound(address: string): boolean {
   return boundAddress === address.toLowerCase();
 }
 
+export function markWalletBound(address: string): void {
+  boundAddress = address.toLowerCase();
+}
+
 export async function ensureWalletBound(
   address: string,
   signMessageAsync: SignMessageFn,

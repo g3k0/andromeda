@@ -1,3 +1,4 @@
+import { getAdminAddressesRaw } from "@/lib/config/env";
 import { normalizeAddress } from "@/lib/authors/address";
 
 let adminAddressesOverride: string[] | null = null;
@@ -19,7 +20,7 @@ export function getAdminAddresses(): string[] {
     );
   }
 
-  return parseAdminAddresses(process.env.ADMIN_ADDRESSES);
+  return parseAdminAddresses(getAdminAddressesRaw());
 }
 
 /** @internal Test helper — resets to env-based list when called with null. */

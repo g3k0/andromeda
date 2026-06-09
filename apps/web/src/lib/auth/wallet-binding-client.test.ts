@@ -20,6 +20,7 @@ vi.mock("@/lib/users/user-snapshot-sync", () => ({
 import {
   clearWalletBindingClient,
   ensureWalletBound,
+  markWalletBound,
   isWalletBound,
 } from "./wallet-binding-client";
 
@@ -62,6 +63,11 @@ describe("wallet-binding-client", () => {
 
     expect(createSignedWalletPayload).toHaveBeenCalledTimes(1);
     expect(bindWalletAction).toHaveBeenCalledTimes(1);
+    expect(isWalletBound(ADDRESS)).toBe(true);
+  });
+
+  it("marks a wallet as bound without requesting a new signature", () => {
+    markWalletBound(ADDRESS);
     expect(isWalletBound(ADDRESS)).toBe(true);
   });
 });

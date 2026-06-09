@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { resetServerEnvForTests } from "@/lib/config/env";
 import { getTrustedClientIp } from "./trusted-client-ip";
 
 describe("getTrustedClientIp", () => {
   afterEach(() => {
     delete process.env.TRUST_PROXY;
+    resetServerEnvForTests();
   });
 
   it("ignores forwarded headers unless TRUST_PROXY is enabled", () => {

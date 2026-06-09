@@ -53,7 +53,32 @@ describe("AuthorProfileEditorView", () => {
     expect(onSubmit).toHaveBeenCalled();
   });
 
-  it("shows validation errors from form state", () => {
+  it("shows field validation errors from form state", () => {
+    render(
+      <AuthorProfileEditorView
+        profile={profile}
+        form={{
+          ...createEditorFormState(profile),
+          displayNameError: "Display name contains invalid characters.",
+          avatarError: "Allowed formats: PNG, JPEG, WebP.",
+        }}
+        isAdminEditingOther={false}
+        onDisplayNameChange={vi.fn()}
+        onAvatarFileSelect={vi.fn()}
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText("Display name contains invalid characters."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Allowed formats: PNG, JPEG, WebP."),
+    ).toBeInTheDocument();
+  });
+
+  it("shows submit errors from form state", () => {
     render(
       <AuthorProfileEditorView
         profile={profile}
@@ -115,6 +140,24 @@ describe("AuthorProfileEditorView", () => {
 
     expect(screen.getByText("Public address")).toBeInTheDocument();
     expect(screen.getByText(profile.address)).toBeInTheDocument();
+  });
+
+  it("shows avatar upload guidance with size and format limits", () => {
+    render(
+      <AuthorProfileEditorView
+        profile={profile}
+        form={createEditorFormState(profile)}
+        isAdminEditingOther={false}
+        onDisplayNameChange={vi.fn()}
+        onAvatarFileSelect={vi.fn()}
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    const guidance = screen.getByText(/Allowed formats: PNG, JPEG, WebP/i);
+    expect(guidance.textContent).toContain("Maximum size: 128 KB");
+    expect(guidance.textContent).not.toContain("488");
   });
 
   it("forwards display name and file changes", () => {

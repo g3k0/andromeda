@@ -1,8 +1,9 @@
+import {
+  USER_METADATA_MAX_DEPTH,
+  USER_METADATA_MAX_JSON_LENGTH,
+  USER_METADATA_MAX_KEYS,
+} from "@/lib/config/users";
 import { z } from "zod";
-
-const MAX_METADATA_KEYS = 20;
-const MAX_METADATA_DEPTH = 3;
-const MAX_METADATA_JSON_LENGTH = 4_096;
 
 function measureDepth(value: unknown, depth = 0): number {
   if (value === null || typeof value !== "object") {
@@ -26,21 +27,21 @@ export const userMetadataSchema = z
   .record(z.string().max(64), z.unknown())
   .superRefine((metadata, context) => {
     const keys = Object.keys(metadata);
-    if (keys.length > MAX_METADATA_KEYS) {
+    if (keys.length > USER_METADATA_MAX_KEYS) {
       context.addIssue({
         code: "custom",
         message: "User metadata exceeds the maximum number of keys.",
       });
     }
 
-    if (measureDepth(metadata) > MAX_METADATA_DEPTH) {
+    if (measureDepth(metadata) > USER_METADATA_MAX_DEPTH) {
       context.addIssue({
         code: "custom",
         message: "User metadata exceeds the maximum nesting depth.",
       });
     }
 
-    if (JSON.stringify(metadata).length > MAX_METADATA_JSON_LENGTH) {
+    if (JSON.stringify(metadata).length > USER_METADATA_MAX_JSON_LENGTH) {
       context.addIssue({
         code: "custom",
         message: "User metadata exceeds the maximum serialized size.",

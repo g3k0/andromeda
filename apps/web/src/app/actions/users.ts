@@ -1,5 +1,6 @@
 "use server";
 
+import { unstable_noStore as noStore } from "next/cache";
 import { headers } from "next/headers";
 import { resolveAuthorizedSnapshotWallet } from "@/lib/auth/resolve-snapshot-wallet";
 import { getAuthorService } from "@/lib/authors/server";
@@ -9,6 +10,8 @@ export async function getUserSnapshotAction(
   address: string | undefined,
   isConnected: boolean,
 ) {
+  noStore();
+
   if (!isConnected || !address) {
     return null;
   }

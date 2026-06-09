@@ -1,7 +1,5 @@
 export const WALLET_BINDING_COOKIE_NAME = "andromeda_bound_wallet";
 
-export const WALLET_BINDING_TTL_MS = 24 * 60 * 60 * 1000;
-
 export function parseCookieHeader(
   cookieHeader: string | null | undefined,
   name: string,

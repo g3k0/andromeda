@@ -1,7 +1,9 @@
+import { isTrustProxyEnabled } from "@/lib/config/env";
+
 export function getTrustedClientIp(
   headers: Headers | { get(name: string): string | null },
 ): string {
-  const trustProxy = process.env.TRUST_PROXY === "true";
+  const trustProxy = isTrustProxyEnabled();
 
   if (trustProxy) {
     const forwarded = headers.get("x-forwarded-for");

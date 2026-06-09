@@ -1,18 +1,13 @@
 import { randomUUID } from "node:crypto";
 import type { AuthenticatedUser } from "@/lib/users/types";
+import { getWalletSessionTtlMs } from "@/lib/config/auth";
 import type {
   EstablishWalletSessionInput,
   WalletSessionSnapshot,
   WalletSessionStore,
 } from "./wallet-session-store";
 
-export function getWalletSessionTtlMs(): number {
-  const minutes = Number(process.env.WALLET_SESSION_TTL_MINUTES ?? 15);
-  if (!Number.isFinite(minutes) || minutes <= 0) {
-    return 15 * 60 * 1000;
-  }
-  return minutes * 60 * 1000;
-}
+export { getWalletSessionTtlMs } from "@/lib/config/auth";
 
 export type WalletSessionStatus = {
   active: boolean;

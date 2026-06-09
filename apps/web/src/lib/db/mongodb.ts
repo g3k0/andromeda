@@ -1,7 +1,10 @@
 import "server-only";
 
+import { getMongoDbUri } from "@/lib/config/env";
 import mongoose from "mongoose";
 import { MongoDbUriMissingError } from "./errors";
+
+export { getMongoDbUri } from "@/lib/config/env";
 
 type MongooseCache = {
   conn: typeof mongoose | null;
@@ -18,10 +21,6 @@ function getMongooseCache(): MongooseCache {
     global.mongooseCache = { conn: null, promise: null };
   }
   return global.mongooseCache;
-}
-
-export function getMongoDbUri(): string | undefined {
-  return process.env.MONGODB_URI;
 }
 
 export async function connectMongo(): Promise<typeof mongoose> {

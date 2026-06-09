@@ -1,3 +1,4 @@
+import { resetServerEnvForTests } from "@/lib/config/env";
 import mongoose from "mongoose";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MongoDbUriMissingError } from "./errors";
@@ -20,15 +21,18 @@ describe("getMongoDbUri", () => {
 
   afterEach(() => {
     process.env.MONGODB_URI = previous;
+    resetServerEnvForTests();
   });
 
   it("returns the configured URI at call time", () => {
     process.env.MONGODB_URI = "mongodb://example.test/andromeda";
+    resetServerEnvForTests();
     expect(getMongoDbUri()).toBe("mongodb://example.test/andromeda");
   });
 
   it("returns undefined when MONGODB_URI is unset", () => {
     delete process.env.MONGODB_URI;
+    resetServerEnvForTests();
     expect(getMongoDbUri()).toBeUndefined();
   });
 });
@@ -38,6 +42,7 @@ describe("connectMongo", () => {
 
   beforeEach(() => {
     resetMongoConnectionForTests();
+    resetServerEnvForTests();
     mockedConnect.mockReset();
     mockedConnect.mockResolvedValue(mongoose);
     process.env.MONGODB_URI = "mongodb://example.test/andromeda";
@@ -46,10 +51,12 @@ describe("connectMongo", () => {
   afterEach(() => {
     resetMongoConnectionForTests();
     process.env.MONGODB_URI = previous;
+    resetServerEnvForTests();
   });
 
   it("throws MongoDbUriMissingError when MONGODB_URI is unset", async () => {
     delete process.env.MONGODB_URI;
+    resetServerEnvForTests();
 
     await expect(connectMongo()).rejects.toBeInstanceOf(MongoDbUriMissingError);
     expect(mockedConnect).not.toHaveBeenCalled();

@@ -1,34 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAccount } from "wagmi";
-import { getUserSnapshotAction } from "@/app/actions/users";
 import { LoadingPanel } from "@/components/loading/LoadingPanel";
 import { WalletButton } from "@/components/WalletButton";
-import type { UserSnapshot } from "@/lib/users/types";
+import { toAuthorOnboardingSnapshot } from "@/lib/authors/onboarding-snapshot";
 import { resolveAuthorIndexPage } from "@/lib/authors/author-index";
+import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
 import { AuthorPageStatusMessage } from "./AuthorPageStatusMessage";
 
 export function AuthorIndexPage() {
-  const { address, isConnected } = useAccount();
   const router = useRouter();
-  const [snapshot, setSnapshot] = useState<UserSnapshot | null>(null);
-  const resolved = resolveAuthorIndexPage(snapshot);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void getUserSnapshotAction(address, isConnected).then((next) => {
-      if (!cancelled) {
-        setSnapshot(next);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [address, isConnected]);
+  const { snapshot } = useUserSnapshot();
+  const resolved = resolveAuthorIndexPage(
+    snapshot ? toAuthorOnboardingSnapshot(snapshot) : null,
+  );
 
   useEffect(() => {
     if (resolved.status === "redirect") {

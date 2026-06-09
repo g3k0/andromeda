@@ -10,13 +10,14 @@ import {
   WalletSignatureInvalidError,
 } from "./errors";
 import {
+  AUTH_MESSAGE_PREFIX,
+  getWalletAuthNonceTtlMs,
+} from "@/lib/config/auth";
+import {
   getWalletAuthNonceStore,
   resetWalletAuthNonceStoreForTests,
   useInMemoryWalletAuthNonceStoreForTests,
 } from "./wallet-auth-nonce-server";
-
-const AUTH_MESSAGE_PREFIX = "Andromeda wants you to sign in with your wallet.";
-const DEFAULT_TTL_MS = 5 * 60 * 1000;
 
 export type WalletSignatureInput = {
   address: string;
@@ -34,7 +35,7 @@ export async function createWalletAuthMessage(
   }
 
   const now = options?.now ?? Date.now();
-  const ttlMs = options?.ttlMs ?? DEFAULT_TTL_MS;
+  const ttlMs = options?.ttlMs ?? getWalletAuthNonceTtlMs();
   const expiresAt = now + ttlMs;
   const nonce = randomUUID();
   const message = [
