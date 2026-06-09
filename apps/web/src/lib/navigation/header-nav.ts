@@ -1,4 +1,3 @@
-import type { UserRole } from "@/lib/auth/roles";
 import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissions";
 import {
   ADMIN_ROUTE,
@@ -16,7 +15,7 @@ export type HeaderNavLink = {
 };
 
 export type HeaderNavInput = {
-  role: UserRole;
+  role: string;
   hasAuthorProfile: boolean;
   isConnected?: boolean;
   snapshot?: UserSnapshot | null;

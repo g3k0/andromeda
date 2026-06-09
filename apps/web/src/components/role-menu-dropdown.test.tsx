@@ -3,6 +3,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissions";
 
 vi.mock("next/link", () => ({
   default: ({
@@ -21,6 +22,23 @@ vi.mock("next/link", () => ({
 
 import { RoleMenuDropdown } from "./RoleMenuDropdown";
 
+function renderMenu(roleSlug: "admin" | "author" | "reader") {
+  const labels = {
+    admin: "Admin",
+    author: "Author",
+    reader: "Reader",
+  } as const;
+
+  return render(
+    <RoleMenuDropdown
+      roleSlug={roleSlug}
+      roleName={labels[roleSlug]}
+      permissions={defaultPermissionsForRoleSlug(roleSlug)}
+      onLogout={vi.fn()}
+    />,
+  );
+}
+
 describe("RoleMenuDropdown", () => {
   afterEach(() => {
     cleanup();
@@ -29,7 +47,7 @@ describe("RoleMenuDropdown", () => {
 
   it("renders a role-specific dropdown trigger", async () => {
     const user = userEvent.setup();
-    render(<RoleMenuDropdown role="author" onLogout={vi.fn()} />);
+    renderMenu("author");
 
     await user.click(screen.getByText("Author"));
 
@@ -45,16 +63,14 @@ describe("RoleMenuDropdown", () => {
   it("shows become-author only for readers", async () => {
     const user = userEvent.setup();
 
-    const { unmount } = render(
-      <RoleMenuDropdown role="reader" onLogout={vi.fn()} />,
-    );
+    const { unmount } = renderMenu("reader");
     await user.click(screen.getByText("Reader"));
     expect(
       screen.getByRole("menuitem", { name: "Become author" }),
     ).toBeInTheDocument();
     unmount();
 
-    render(<RoleMenuDropdown role="author" onLogout={vi.fn()} />);
+    renderMenu("author");
     await user.click(screen.getByText("Author"));
     expect(
       screen.queryByRole("menuitem", { name: "Become author" }),
@@ -67,7 +83,12 @@ describe("RoleMenuDropdown", () => {
     render(
       <div>
         <button type="button">Outside</button>
-        <RoleMenuDropdown role="author" onLogout={vi.fn()} />
+        <RoleMenuDropdown
+          roleSlug="author"
+          roleName="Author"
+          permissions={defaultPermissionsForRoleSlug("author")}
+          onLogout={vi.fn()}
+        />
       </div>,
     );
 
@@ -80,9 +101,9 @@ describe("RoleMenuDropdown", () => {
     expect(menu).not.toHaveAttribute("open");
   });
 
-  it("shows manage-users link for admins", async () => {
+  it("shows manage-users link when snapshot permissions include admin access", async () => {
     const user = userEvent.setup();
-    render(<RoleMenuDropdown role="admin" onLogout={vi.fn()} />);
+    renderMenu("admin");
 
     await user.click(screen.getByText("Admin"));
 
@@ -95,7 +116,14 @@ describe("RoleMenuDropdown", () => {
     const user = userEvent.setup();
     const onLogout = vi.fn();
 
-    render(<RoleMenuDropdown role="admin" onLogout={onLogout} />);
+    render(
+      <RoleMenuDropdown
+        roleSlug="admin"
+        roleName="Admin"
+        permissions={defaultPermissionsForRoleSlug("admin")}
+        onLogout={onLogout}
+      />,
+    );
 
     await user.click(screen.getByText("Admin"));
     await user.click(screen.getByRole("menuitem", { name: "Logout" }));

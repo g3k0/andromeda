@@ -63,4 +63,23 @@ describe("buildHeaderNavLinks", () => {
       MY_AUTHOR_PAGE_NAV_LINK,
     ]);
   });
+
+  it("uses snapshot permissions instead of static role defaults", () => {
+    const links = buildHeaderNavLinks({
+      role: "reader",
+      hasAuthorProfile: true,
+      snapshot: {
+        normalizedAddress: "0xabcdef0123456789abcdef0123456789abcdef01",
+        isConnected: true,
+        roleSlug: "reader",
+        roleName: "Reader",
+        status: "active",
+        permissions: ["pages:read"],
+        hasAuthorProfile: true,
+        declinedAuthorPage: false,
+      },
+    });
+
+    expect(links).toEqual([LIBRARY_NAV_LINK]);
+  });
 });

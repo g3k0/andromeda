@@ -9,6 +9,7 @@ import {
   canAccessPage,
   canShowRouteInNav,
   matchApiRoute,
+  userFromSnapshot,
 } from "./route-guard";
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
@@ -34,6 +35,21 @@ describe("route guard", () => {
 
   it("allows public read pages without a connected wallet", () => {
     expect(canAccessPage(null, MY_AUTHOR_PAGE_ROUTE, false)).toBe(true);
+  });
+
+  it("maps snapshot permissions for route checks", () => {
+    const user = userFromSnapshot({
+      normalizedAddress: ADDRESS,
+      isConnected: true,
+      roleSlug: "ops",
+      roleName: "Ops",
+      status: "active",
+      permissions: ["pages:read", "admin:access"],
+      hasAuthorProfile: false,
+      declinedAuthorPage: false,
+    });
+
+    expect(canAccessPage(user, ADMIN_ROUTE, true)).toBe(true);
   });
 
   it("blocks admin pages for non-admin users", () => {

@@ -8,24 +8,30 @@ import {
   getRoleMenuItems,
   getRoleMenuLabel,
 } from "@/lib/navigation/role-menu";
-import type { UserRole } from "@/lib/users/types";
+import type { UserPermission } from "@/lib/users/types";
+import type { RoleMenuContext } from "@/lib/navigation/role-menu";
 import {
   bindOutsideClose,
   closeParentDetails,
 } from "./role-menu-dropdown-behavior";
 
 export type RoleMenuDropdownProps = {
-  role: UserRole;
+  roleSlug: string;
+  roleName: string;
+  permissions: readonly UserPermission[];
   onLogout: () => void;
   isLoggingOut?: boolean;
 };
 
 export function RoleMenuDropdown({
-  role,
+  roleSlug,
+  roleName,
+  permissions,
   onLogout,
   isLoggingOut = false,
 }: RoleMenuDropdownProps) {
-  const menuId = `role-menu-${role}`;
+  const menuContext: RoleMenuContext = { roleSlug, roleName, permissions };
+  const menuId = `role-menu-${roleSlug}`;
 
   return (
     <details
@@ -43,7 +49,7 @@ export function RoleMenuDropdown({
         aria-controls={menuId}
         className="inline-flex cursor-pointer list-none items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white marker:content-none hover:bg-andromeda-dark [&::-webkit-details-marker]:hidden"
       >
-        {getRoleMenuLabel(role)}
+        {getRoleMenuLabel(menuContext)}
         <span aria-hidden className="text-xs text-white/80">
           ▾
         </span>
@@ -52,10 +58,10 @@ export function RoleMenuDropdown({
       <div
         id={menuId}
         role="menu"
-        aria-label={`${getRoleMenuLabel(role)} menu`}
+        aria-label={`${getRoleMenuLabel(menuContext)} menu`}
         className="absolute right-0 z-20 mt-2 min-w-40 overflow-hidden rounded-lg border border-white/10 bg-[#0b1020] py-1 shadow-lg"
       >
-        {getRoleMenuItems(role).map((item) =>
+        {getRoleMenuItems(menuContext).map((item) =>
           item.id === MANAGE_USERS_MENU_ITEM.id ? (
             <Link
               key={item.id}

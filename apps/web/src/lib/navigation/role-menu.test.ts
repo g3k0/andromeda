@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissions";
 import {
   BECOME_AUTHOR_MENU_ITEM,
   CHANGE_LANGUAGE_MENU_ITEM,
@@ -8,38 +9,63 @@ import {
   getRoleMenuLabel,
   shouldShowBecomeAuthorMenuItem,
   shouldShowManageUsersMenuItem,
+  type RoleMenuContext,
 } from "./role-menu";
 
+function menuContext(
+  roleSlug: string,
+  roleName: string,
+  permissions?: RoleMenuContext["permissions"],
+): RoleMenuContext {
+  return {
+    roleSlug,
+    roleName,
+    permissions: permissions ?? defaultPermissionsForRoleSlug(roleSlug),
+  };
+}
+
 describe("role menu", () => {
-  it("maps each role to a menu label", () => {
-    expect(getRoleMenuLabel("admin")).toBe("Admin");
-    expect(getRoleMenuLabel("author")).toBe("Author");
-    expect(getRoleMenuLabel("reader")).toBe("Reader");
+  it("uses the role name from snapshot context", () => {
+    expect(getRoleMenuLabel(menuContext("admin", "Admin"))).toBe("Admin");
+    expect(getRoleMenuLabel(menuContext("moderator", "Moderator"))).toBe(
+      "Moderator",
+    );
   });
 
   it("shows become-author only for readers", () => {
-    expect(shouldShowBecomeAuthorMenuItem("reader")).toBe(true);
-    expect(shouldShowBecomeAuthorMenuItem("author")).toBe(false);
-    expect(shouldShowBecomeAuthorMenuItem("admin")).toBe(false);
+    expect(shouldShowBecomeAuthorMenuItem(menuContext("reader", "Reader"))).toBe(
+      true,
+    );
+    expect(shouldShowBecomeAuthorMenuItem(menuContext("author", "Author"))).toBe(
+      false,
+    );
   });
 
-  it("shows manage-users only for admins", () => {
-    expect(shouldShowManageUsersMenuItem("admin")).toBe(true);
-    expect(shouldShowManageUsersMenuItem("author")).toBe(false);
-    expect(shouldShowManageUsersMenuItem("reader")).toBe(false);
+  it("shows manage-users when snapshot permissions include admin access", () => {
+    expect(shouldShowManageUsersMenuItem(menuContext("admin", "Admin"))).toBe(
+      true,
+    );
+    expect(
+      shouldShowManageUsersMenuItem(
+        menuContext("ops", "Ops", ["admin:access", "pages:read"]),
+      ),
+    ).toBe(true);
+    expect(shouldShowManageUsersMenuItem(menuContext("author", "Author"))).toBe(
+      false,
+    );
   });
 
   it("builds role-specific menu items", () => {
-    expect(getRoleMenuItems("reader")).toEqual([
+    expect(getRoleMenuItems(menuContext("reader", "Reader"))).toEqual([
       PROFILE_SETTINGS_MENU_ITEM,
       CHANGE_LANGUAGE_MENU_ITEM,
       BECOME_AUTHOR_MENU_ITEM,
     ]);
-    expect(getRoleMenuItems("author")).toEqual([
+    expect(getRoleMenuItems(menuContext("author", "Author"))).toEqual([
       PROFILE_SETTINGS_MENU_ITEM,
       CHANGE_LANGUAGE_MENU_ITEM,
     ]);
-    expect(getRoleMenuItems("admin")).toEqual([
+    expect(getRoleMenuItems(menuContext("admin", "Admin"))).toEqual([
       PROFILE_SETTINGS_MENU_ITEM,
       CHANGE_LANGUAGE_MENU_ITEM,
       MANAGE_USERS_MENU_ITEM,
