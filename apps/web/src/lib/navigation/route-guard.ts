@@ -104,6 +104,36 @@ export const API_ROUTES: ApiRouteDefinition[] = [
     pathPattern: "/api/authors/:address",
     permission: "authors:write:own",
   },
+  {
+    id: "roles-list",
+    methods: ["GET"],
+    pathPattern: "/api/roles",
+    permission: "roles:read",
+  },
+  {
+    id: "roles-create",
+    methods: ["POST"],
+    pathPattern: "/api/roles",
+    permission: "roles:write",
+  },
+  {
+    id: "roles-read",
+    methods: ["GET"],
+    pathPattern: "/api/roles/:slug",
+    permission: "roles:read",
+  },
+  {
+    id: "roles-update",
+    methods: ["PATCH"],
+    pathPattern: "/api/roles/:slug",
+    permission: "roles:write",
+  },
+  {
+    id: "roles-delete",
+    methods: ["DELETE"],
+    pathPattern: "/api/roles/:slug",
+    permission: "roles:delete",
+  },
 ];
 
 export function getRouteById(routeId: string): RouteDefinition | undefined {
