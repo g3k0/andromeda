@@ -10,7 +10,7 @@
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --fix",
     "typecheck": "tsc --noEmit",
     "react-doctor:scan": "react-doctor . --no-score",
-    "react-doctor:ci": "react-doctor . --no-score --diff \"${REACT_DOCTOR_DIFF_BASE:-main}\" -y",
+    "react-doctor:ci": "react-doctor . --no-score --diff \"${REACT_DOCTOR_DIFF_BASE:-origin/main}\" -y",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
