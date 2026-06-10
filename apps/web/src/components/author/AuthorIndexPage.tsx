@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { LoadingPanel } from "@/components/loading/LoadingPanel";
 import { WalletButton } from "@/components/WalletButton";
@@ -11,18 +11,22 @@ import { AuthorPageStatusMessage } from "./AuthorPageStatusMessage";
 
 export function AuthorIndexPage() {
   const router = useRouter();
+  const redirectedToRef = useRef<string | null>(null);
   const { snapshot } = useUserSnapshot();
   const resolved = resolveAuthorIndexPage(
     snapshot ? toAuthorOnboardingSnapshot(snapshot) : null,
   );
 
-  useEffect(() => {
-    if (resolved.status === "redirect") {
+  if (resolved.status === "redirect") {
+    if (redirectedToRef.current !== resolved.path) {
+      redirectedToRef.current = resolved.path;
       router.replace(resolved.path);
     }
-  }, [resolved, router]);
 
-  if (!snapshot || resolved.status === "redirect") {
+    return <LoadingPanel label="Loading author page…" />;
+  }
+
+  if (!snapshot) {
     return <LoadingPanel label="Loading author page…" />;
   }
 

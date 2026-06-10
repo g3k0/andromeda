@@ -26,8 +26,10 @@ export async function runCreateAuthorMutation(
   const signer = await verifySignedMutation(body);
   assertCanCreateAuthorProfile(signer, body.address);
 
-  const userService = await getUserService();
-  const service = await getAuthorService();
+  const [userService, service] = await Promise.all([
+    getUserService(),
+    getAuthorService(),
+  ]);
   const signerUser = await userService.getAuthenticatedByAddress(signer);
   if (signerUser) {
     userService.assertActive(signerUser);

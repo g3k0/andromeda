@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { DEFAULT_AUTHOR_AVATAR_SIZE } from "./constants";
 import { resolveAuthorAvatarSrc } from "./avatar-src";
 
@@ -7,6 +8,14 @@ export type AuthorAvatarProps = {
   className?: string;
   size?: number;
 };
+
+function shouldLoadAvatarUnoptimized(src: string): boolean {
+  return (
+    src.startsWith("data:") ||
+    src.startsWith("blob:") ||
+    src.startsWith("https://ipfs.io/")
+  );
+}
 
 export function AuthorAvatar({
   avatarUrl,
@@ -20,12 +29,12 @@ export function AuthorAvatar({
     .join(" ");
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- placeholder and IPFS URLs vary; img keeps the component simple.
-    <img
+    <Image
       src={src}
       alt={alt}
       width={size}
       height={size}
+      unoptimized={shouldLoadAvatarUnoptimized(src)}
       className={classes}
     />
   );

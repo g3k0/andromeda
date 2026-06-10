@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import {
   canAccessPage,
@@ -16,26 +15,28 @@ export type RouteGuardProps = {
   children: ReactNode;
 };
 
+function resolveAllowed(
+  route: ReturnType<typeof getRouteById>,
+  snapshot: ReturnType<typeof useUserSnapshot>["snapshot"],
+  isConnected: boolean,
+): boolean | null {
+  if (!route) {
+    return false;
+  }
+
+  if (isConnected && snapshot === null) {
+    return null;
+  }
+
+  const user = snapshot ? userFromSnapshot(snapshot) : null;
+  return canAccessPage(user, route, isConnected);
+}
+
 export function RouteGuard({ routeId, children }: RouteGuardProps) {
   const route = getRouteById(routeId);
   const { isConnected, isReconnecting } = useAccount();
   const { snapshot } = useUserSnapshot();
-  const [allowed, setAllowed] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    if (!route) {
-      setAllowed(false);
-      return;
-    }
-
-    if (isConnected && snapshot === null) {
-      setAllowed(null);
-      return;
-    }
-
-    const user = snapshot ? userFromSnapshot(snapshot) : null;
-    setAllowed(canAccessPage(user, route, isConnected));
-  }, [route, snapshot, isConnected]);
+  const allowed = resolveAllowed(route, snapshot, isConnected);
 
   if (!route) {
     return (

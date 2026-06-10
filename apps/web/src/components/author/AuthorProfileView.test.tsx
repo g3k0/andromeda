@@ -57,7 +57,7 @@ describe("AuthorProfileView", () => {
 
     expect(screen.getByRole("img", { name: "Jane Doe" })).toHaveAttribute(
       "src",
-      "ipfs://author-avatar",
+      "https://ipfs.io/ipfs/author-avatar",
     );
   });
 

@@ -25,8 +25,10 @@ export async function resolveWalletAuth(
     input.sessionId ??
     parseCookieHeader(input.cookieHeader, WALLET_SESSION_COOKIE_NAME) ??
     null;
-  const sessionService = await getWalletSessionService();
-  const userService = await getUserService();
+  const [sessionService, userService] = await Promise.all([
+    getWalletSessionService(),
+    getUserService(),
+  ]);
 
   if (sessionId) {
     const snapshot = await sessionService.resolve(sessionId);

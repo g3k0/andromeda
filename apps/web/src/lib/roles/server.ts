@@ -9,9 +9,11 @@ let cachedService: RoleService | null = null;
 
 export async function getRoleService(): Promise<RoleService> {
   if (!cachedService) {
-    const repository = await createMongoRoleRepository();
-    const userRepository = await createMongoUserRepository();
-    const sessionService = await getWalletSessionService();
+    const [repository, userRepository, sessionService] = await Promise.all([
+      createMongoRoleRepository(),
+      createMongoUserRepository(),
+      getWalletSessionService(),
+    ]);
     cachedService = createRoleService(repository, {
       countUsersByRoleSlug: (slug) => userRepository.countByRoleSlug(slug),
       invalidateSessionsByRoleSlug: (slug) =>

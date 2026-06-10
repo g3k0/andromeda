@@ -1,8 +1,7 @@
 "use server";
 
 import { unstable_noStore as noStore } from "next/cache";
-import { headers } from "next/headers";
-import { resolveAuthorizedSnapshotWallet } from "@/lib/auth/resolve-snapshot-wallet";
+import { checkAuth } from "@/lib/auth/require-auth";
 import { getAuthorService } from "@/lib/authors/server";
 import { getUserService } from "@/lib/users/server";
 
@@ -16,17 +15,18 @@ export async function getUserSnapshotAction(
     return null;
   }
 
-  const headerList = await headers();
-  const authorizedAddress = await resolveAuthorizedSnapshotWallet(
-    address,
-    headerList.get("cookie"),
-  );
-  if (!authorizedAddress) {
+  try {
+    await checkAuth(address, isConnected);
+  } catch {
     return null;
   }
 
-  const userService = await getUserService();
-  const authorService = await getAuthorService();
+  const authorizedAddress = address;
+
+  const [userService, authorService] = await Promise.all([
+    getUserService(),
+    getAuthorService(),
+  ]);
 
   await userService.findOrCreateByWallet(authorizedAddress);
 

@@ -47,6 +47,8 @@
     "lint": "pnpm --filter @andromeda/web lint",
     "lint:fix": "pnpm --filter @andromeda/web lint:fix",
     "typecheck": "pnpm --filter @andromeda/web typecheck",
+    "react-doctor:scan": "pnpm --filter @andromeda/web react-doctor:scan",
+    "react-doctor:ci": "pnpm --filter @andromeda/web react-doctor:ci",
     "web:test": "pnpm --filter @andromeda/web test",
     "web:test:coverage": "pnpm --filter @andromeda/web test:coverage",
     "contracts:build": "pnpm --filter @andromeda/contracts build",

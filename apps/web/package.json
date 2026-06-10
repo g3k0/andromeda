@@ -9,6 +9,8 @@
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --max-warnings 0",
     "lint:fix": "ESLINT_USE_FLAT_CONFIG=false eslint . --fix",
     "typecheck": "tsc --noEmit",
+    "react-doctor:scan": "react-doctor . --no-score",
+    "react-doctor:ci": "react-doctor . --no-score --diff \"${REACT_DOCTOR_DIFF_BASE:-main}\" -y",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -20,7 +22,7 @@
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "server-only": "^0.0.1",
+    "server-only": "file:./vendor/server-only",
     "viem": "^2.21.0",
     "wagmi": "^2.14.0",
     "zod": "^4.4.3"
@@ -33,15 +35,16 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.0",
-    "@vitest/coverage-v8": "^3.0.0",
+    "@vitest/coverage-v8": "3.2.6",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.1.0",
     "jsdom": "^26.0.0",
     "mongodb-memory-server": "^11.2.0",
     "postcss": "^8.4.47",
+    "react-doctor": "^0.5.1",
     "tailwindcss": "^3.4.14",
     "typescript": "^5.6.0",
-    "vitest": "^3.0.0"
+    "vitest": "3.2.6"
   }
 }

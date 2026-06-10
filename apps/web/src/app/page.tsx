@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Andromeda — Read, own and collect literary works on-chain",
+  description:
+    "Andromeda turns every book into an author-certified NFT. Writers publish and sell directly to readers, and readers truly own the editions they buy.",
+};
+
 export default function HomePage() {
   return (
     <div className="space-y-8">

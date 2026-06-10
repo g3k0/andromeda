@@ -11,9 +11,15 @@ export default async function AdminLayout({
 }) {
   const cookieStore = await cookies();
 
+  let isAuthorized = false;
   try {
     await resolveAdminLayoutAuth(cookieStore.toString());
+    isAuthorized = true;
   } catch {
+    isAuthorized = false;
+  }
+
+  if (!isAuthorized) {
     redirect("/");
   }
 

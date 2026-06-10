@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { establishWalletSession } from "@/lib/auth/establish-wallet-session";
+import { getAuth, verifyAuth } from "@/lib/auth/require-auth";
 import { walletAuthSchema } from "@/lib/authors/schemas";
 import {
   WALLET_SESSION_COOKIE_NAME,
@@ -15,8 +16,11 @@ export async function establishWalletSessionAction(
   input: unknown,
 ): Promise<WalletSessionStatus> {
   const auth = walletAuthSchema.parse(input);
-  const session = await establishWalletSession(auth);
-  const cookieStore = await cookies();
+  await verifyAuth(auth);
+  const [session, cookieStore] = await Promise.all([
+    establishWalletSession(auth),
+    cookies(),
+  ]);
 
   cookieStore.set(
     WALLET_SESSION_COOKIE_NAME,
@@ -31,6 +35,7 @@ export async function establishWalletSessionAction(
 }
 
 export async function getWalletSessionStatusAction(): Promise<WalletSessionStatus> {
+  await getAuth().catch(() => null);
   const cookieStore = await cookies();
   const sessionId = cookieStore.get(WALLET_SESSION_COOKIE_NAME)?.value;
   const sessionService = await getWalletSessionService();
@@ -38,6 +43,7 @@ export async function getWalletSessionStatusAction(): Promise<WalletSessionStatu
 }
 
 export async function revokeWalletSessionAction(): Promise<void> {
+  await getAuth().catch(() => null);
   const cookieStore = await cookies();
   const sessionId = cookieStore.get(WALLET_SESSION_COOKIE_NAME)?.value;
   if (sessionId) {

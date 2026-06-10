@@ -1,5 +1,5 @@
 # Continuous integration for develop and main.
-# Lint, typecheck, tests, build, and dependency audit run on every push and pull request.
+# Lint, typecheck, React Doctor, tests, build, and dependency audit run on every push and pull request.
 name: CI
 
 on:
@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -45,6 +47,11 @@ jobs:
 
       - name: Typecheck
         run: pnpm typecheck
+
+      - name: React Doctor
+        run: pnpm react-doctor:ci
+        env:
+          REACT_DOCTOR_DIFF_BASE: ${{ github.event.pull_request.base.ref || 'main' }}
 
       - name: Unit tests (web, with coverage)
         run: pnpm web:test:coverage
