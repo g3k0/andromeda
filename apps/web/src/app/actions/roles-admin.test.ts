@@ -2,7 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { buildAuthenticatedUser } from "@/lib/users/testing/build-authenticated-user";
 
 const {
-  resolveWalletAuth,
+  getAuth,
+  requireAuth,
+  verifyAuth,
   refreshWalletSessionFromDb,
   getRoleService,
   runListRolesMutation,
@@ -12,7 +14,9 @@ const {
   enforceActionRateLimit,
   cookiesGet,
 } = vi.hoisted(() => ({
-  resolveWalletAuth: vi.fn(),
+  getAuth: vi.fn(),
+  requireAuth: vi.fn(),
+  verifyAuth: vi.fn(),
   refreshWalletSessionFromDb: vi.fn(),
   getRoleService: vi.fn(),
   runListRolesMutation: vi.fn(),
@@ -23,8 +27,11 @@ const {
   cookiesGet: vi.fn(),
 }));
 
-vi.mock("@/lib/auth/resolve-wallet-auth", () => ({
-  resolveWalletAuth,
+vi.mock("@/lib/auth/require-auth", () => ({
+  getAuth,
+  requireAuth,
+  verifyAuth,
+  checkAuth: vi.fn(),
 }));
 
 vi.mock("@/lib/auth/refresh-wallet-session", () => ({
@@ -75,7 +82,9 @@ const role = {
 
 describe("roles admin server actions", () => {
   beforeEach(() => {
-    resolveWalletAuth.mockReset();
+    getAuth.mockReset();
+    requireAuth.mockReset();
+    verifyAuth.mockReset();
     refreshWalletSessionFromDb.mockReset();
     getRoleService.mockReset();
     runListRolesMutation.mockReset();
@@ -86,7 +95,9 @@ describe("roles admin server actions", () => {
     cookiesGet.mockReset();
     enforceActionRateLimit.mockResolvedValue(undefined);
     refreshWalletSessionFromDb.mockResolvedValue(null);
-    resolveWalletAuth.mockResolvedValue(adminUser);
+    getAuth.mockResolvedValue(adminUser);
+    requireAuth.mockResolvedValue(adminUser);
+    verifyAuth.mockResolvedValue(ADDRESS);
     getRoleService.mockResolvedValue({
       list: vi.fn().mockResolvedValue([role]),
       createRole: vi.fn().mockResolvedValue(role),
