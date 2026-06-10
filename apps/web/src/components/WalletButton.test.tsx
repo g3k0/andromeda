@@ -24,12 +24,12 @@ describe("WalletButton", () => {
     mockedUseAccount.mockReturnValue({
       address: "0xabcdef0123456789abcdef0123456789abcdef01",
       isConnected: true,
-    } as ReturnType<typeof useAccount>);
+    } as unknown as ReturnType<typeof useAccount>);
     mockedUseConnect.mockReturnValue({
       connect: vi.fn(),
       connectors: [],
       isPending: false,
-    } as ReturnType<typeof useConnect>);
+    } as unknown as ReturnType<typeof useConnect>);
 
     const { container } = render(<WalletButton />);
 
@@ -40,12 +40,12 @@ describe("WalletButton", () => {
     mockedUseAccount.mockReturnValue({
       address: undefined,
       isConnected: false,
-    } as ReturnType<typeof useAccount>);
+    } as unknown as ReturnType<typeof useAccount>);
     mockedUseConnect.mockReturnValue({
       connect: vi.fn(),
       connectors: [{ id: "mock" }],
       isPending: false,
-    } as ReturnType<typeof useConnect>);
+    } as unknown as ReturnType<typeof useConnect>);
 
     render(<WalletButton />);
 

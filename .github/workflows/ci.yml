@@ -1,5 +1,5 @@
 # Continuous integration for develop and main.
-# Lint, tests, build, and dependency audit run on every push and pull request.
+# Lint, typecheck, tests, build, and dependency audit run on every push and pull request.
 name: CI
 
 on:
@@ -42,6 +42,9 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
 
       - name: Unit tests (web, with coverage)
         run: pnpm web:test:coverage

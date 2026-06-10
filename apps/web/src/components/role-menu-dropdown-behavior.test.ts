@@ -54,7 +54,7 @@ describe("role menu dropdown behavior", () => {
       event: PointerEvent,
     ) => void;
 
-    handler({ target: outside } as PointerEvent);
+    handler({ target: outside } as unknown as PointerEvent);
 
     expect(details.open).toBe(false);
 
@@ -87,7 +87,7 @@ describe("role menu dropdown behavior", () => {
       event: PointerEvent,
     ) => void;
 
-    handler({ target: inside } as PointerEvent);
+    handler({ target: inside } as unknown as PointerEvent);
 
     expect(details.open).toBe(true);
   });
