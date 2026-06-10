@@ -16,7 +16,7 @@ import { resetWalletAuthStoreForTests } from "@/lib/auth/verify-wallet";
 import { resetUserServiceForTests } from "@/lib/users/server";
 import { DELETE, POST } from "./route";
 import { GET as GET_STATUS } from "./status/route";
-import { GET, POST as POST_USERS } from "@/app/api/users/route";
+import { GET } from "@/app/api/users/route";
 
 const ADMIN = privateKeyToAccount(generatePrivateKey());
 const READER = privateKeyToAccount(generatePrivateKey());

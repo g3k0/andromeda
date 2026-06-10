@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useAccount, useDisconnect, useSignMessage } from "wagmi";
+import { useState } from "react";
+import { useDisconnect, useSignMessage } from "wagmi";
 import { createAuthorAction, setWalletPreferencesAction } from "@/app/actions/authors";
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { useNotifications } from "@/components/notifications/NotificationProvider";
@@ -29,15 +29,19 @@ export type AuthorOnboardingDialogProps = {
   onNavigate: (path: string) => void;
 };
 
-export function AuthorOnboardingDialog({
+type AuthorOnboardingDialogFlowProps = {
+  address: string;
+  onNavigate: (path: string) => void;
+};
+
+function AuthorOnboardingDialogFlow({
   address,
-  isConnected,
   onNavigate,
-}: AuthorOnboardingDialogProps) {
+}: AuthorOnboardingDialogFlowProps) {
   const router = useRouter();
   const { notify } = useNotifications();
   const { signMessageAsync } = useSignMessage();
-  const { snapshot, applySnapshot } = useUserSnapshot();
+  const { applySnapshot } = useUserSnapshot();
   const [step, setStep] = useState<AuthorOnboardingStep>("prompt");
   const { isLoading, runWithLoading } = useLoading();
   const { disconnect } = useDisconnect({
@@ -51,25 +55,6 @@ export function AuthorOnboardingDialog({
       },
     },
   });
-
-  const onboardingSnapshot = snapshot
-    ? toAuthorOnboardingSnapshot(snapshot)
-    : null;
-  const open = resolveAuthorOnboardingDialogState(
-    address,
-    isConnected,
-    onboardingSnapshot,
-  ).open;
-
-  useEffect(() => {
-    if (!open) {
-      setStep("prompt");
-    }
-  }, [open]);
-
-  if (!address) {
-    return null;
-  }
 
   const handleAccept = () => {
     setStep("editor");
@@ -104,10 +89,6 @@ export function AuthorOnboardingDialog({
     disconnect();
   };
 
-  if (!open) {
-    return null;
-  }
-
   if (step === "editor") {
     return (
       <AuthorOnboardingEditor
@@ -126,5 +107,30 @@ export function AuthorOnboardingDialog({
       onCancel={handleCancel}
       loading={isLoading}
     />
+  );
+}
+
+export function AuthorOnboardingDialog({
+  address,
+  isConnected,
+  onNavigate,
+}: AuthorOnboardingDialogProps) {
+  const { snapshot } = useUserSnapshot();
+
+  const onboardingSnapshot = snapshot
+    ? toAuthorOnboardingSnapshot(snapshot)
+    : null;
+  const open = resolveAuthorOnboardingDialogState(
+    address,
+    isConnected,
+    onboardingSnapshot,
+  ).open;
+
+  if (!address || !open) {
+    return null;
+  }
+
+  return (
+    <AuthorOnboardingDialogFlow address={address} onNavigate={onNavigate} />
   );
 }

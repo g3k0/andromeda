@@ -18,16 +18,15 @@ export function LoadingSpinner({
   className = "",
 }: LoadingSpinnerProps) {
   return (
-    <span
-      role="status"
+    <output
       aria-live="polite"
       aria-label={label}
-      className={`inline-flex items-center justify-center ${className}`.trim()}
+      className={`inline-flex items-center justify-center border-0 bg-transparent p-0 ${className}`.trim()}
     >
       <span
         aria-hidden="true"
         className={`animate-spin rounded-full border-white/20 border-t-andromeda-light ${SIZE_CLASSES[size]}`}
       />
-    </span>
+    </output>
   );
 }

@@ -1,17 +1,19 @@
 import { describe, expect, it } from "vitest";
+import type { UserPermission } from "@/lib/users/types";
 import {
   createWalletSessionService,
   getWalletSessionTtlMs,
 } from "./wallet-session";
+import type { EstablishWalletSessionInput } from "./wallet-session-store";
 import { createInMemoryWalletSessionStore } from "./testing/in-memory-wallet-session-store";
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 
-const SESSION_INPUT = {
+const SESSION_INPUT: EstablishWalletSessionInput = {
   address: ADDRESS,
   roleSlug: "admin",
-  status: "active" as const,
-  permissions: ["admin:access", "users:read"] as const,
+  status: "active",
+  permissions: ["admin:access", "users:read"] satisfies UserPermission[],
 };
 
 describe("wallet session service", () => {

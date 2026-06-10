@@ -3,6 +3,7 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { headers } from "next/headers";
 import { enforceActionRateLimit } from "@/lib/auth/action-rate-limit";
+import { verifyAuth } from "@/lib/auth/require-auth";
 import { refreshWalletSessionFromDb } from "@/lib/auth/refresh-wallet-session";
 import { setWalletBindingCookie } from "@/lib/auth/set-wallet-binding-cookie";
 import {
@@ -44,8 +45,10 @@ async function refreshWalletSessionFromRequestCookies(): Promise<void> {
 async function buildAuthorCreationSnapshot(
   address: string,
 ): Promise<UserSnapshot> {
-  const userService = await getUserService();
-  const authorService = await getAuthorService();
+  const [userService, authorService] = await Promise.all([
+    getUserService(),
+    getAuthorService(),
+  ]);
   const snapshot = await userService.getSnapshot(address, true, {
     hasAuthorProfile: (normalized) =>
       authorService.hasAuthorProfile(normalized),
@@ -64,10 +67,15 @@ export async function createAuthorAction(
   noStore();
 
   const body = createAuthorBodySchema.parse(input);
-  await enforceActionRateLimit(`create-author:${body.address}`);
+  await Promise.all([
+    verifyAuth(body),
+    enforceActionRateLimit(`create-author:${body.address}`),
+  ]);
   const profile = await runCreateAuthorMutation(body);
-  await setWalletBindingCookie(body.address);
-  await refreshWalletSessionFromRequestCookies();
+  await Promise.all([
+    setWalletBindingCookie(body.address),
+    refreshWalletSessionFromRequestCookies(),
+  ]);
   const snapshot = await buildAuthorCreationSnapshot(body.address);
 
   return { profile, snapshot };
@@ -77,7 +85,10 @@ export async function updateAuthorAction(
   input: unknown,
 ): Promise<AuthorProfile> {
   const body = updateAuthorActionSchema.parse(input);
-  await enforceActionRateLimit(`patch-author:${body.targetAddress}`);
+  await Promise.all([
+    verifyAuth(body),
+    enforceActionRateLimit(`patch-author:${body.targetAddress}`),
+  ]);
   return runUpdateAuthorMutation(body.targetAddress, body);
 }
 
@@ -85,6 +96,9 @@ export async function setWalletPreferencesAction(
   input: unknown,
 ): Promise<WalletPreferences> {
   const body = walletPreferencesBodySchema.parse(input);
-  await enforceActionRateLimit(`wallet-preferences:${body.address}`);
+  await Promise.all([
+    verifyAuth(body),
+    enforceActionRateLimit(`wallet-preferences:${body.address}`),
+  ]);
   return runSetWalletPreferencesMutation(body.address, body);
 }

@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { enforceActionRateLimit } from "@/lib/auth/action-rate-limit";
 import { refreshWalletSessionFromDb } from "@/lib/auth/refresh-wallet-session";
-import { resolveWalletAuth } from "@/lib/auth/resolve-wallet-auth";
+import { getAuth, requireAuth, verifyAuth } from "@/lib/auth/require-auth";
 import { WALLET_SESSION_COOKIE_NAME } from "@/lib/auth/wallet-session-cookies";
 import { assertRouteApiAccess } from "@/lib/navigation/route-guard";
 import {
@@ -43,20 +43,15 @@ async function resolveAdminSignerFromSession(
   if (options?.refresh && sessionId) {
     await refreshWalletSessionFromDb(sessionId);
   }
-  const signer = await resolveWalletAuth({ sessionId, walletAuth: null });
-  const service = await getUserService();
-  service.assertActive(signer);
-  return signer;
+  return requireAuth();
 }
 
 export async function listUsersAction(input?: unknown): Promise<User[]> {
-  const sessionId = await getSessionIdFromCookies();
   const walletAuth =
     input === undefined || input === null
       ? null
       : listUsersActionSchema.parse(input);
-
-  const signer = await resolveWalletAuth({ sessionId, walletAuth });
+  const signer = await requireAuth(walletAuth);
   assertRouteApiAccess(signer, "GET", "/api/users");
   assertCanListUsers(signer);
 
@@ -73,9 +68,9 @@ export async function listUsersAction(input?: unknown): Promise<User[]> {
 }
 
 export async function createUserAction(input: unknown): Promise<User> {
-  const sessionId = await getSessionIdFromCookies();
+  const sessionSigner = await getAuth().catch(() => null);
 
-  if (sessionId) {
+  if (sessionSigner) {
     const body = createUserSessionBodySchema.parse(input);
     const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "POST", "/api/users");
@@ -93,14 +88,17 @@ export async function createUserAction(input: unknown): Promise<User> {
   }
 
   const body = createUserActionSchema.parse(input);
-  await enforceActionRateLimit(`create-user:${body.address}:${body.targetAddress}`);
+  await Promise.all([
+    verifyAuth(body),
+    enforceActionRateLimit(`create-user:${body.address}:${body.targetAddress}`),
+  ]);
   return runCreateUserMutation(body);
 }
 
 export async function updateUserAction(input: unknown): Promise<User> {
-  const sessionId = await getSessionIdFromCookies();
+  const sessionSigner = await getAuth().catch(() => null);
 
-  if (sessionId) {
+  if (sessionSigner) {
     const body = updateUserSessionBodySchema.parse(input);
     const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "PATCH", `/api/users/${body.targetAddress}`);
@@ -123,15 +121,18 @@ export async function updateUserAction(input: unknown): Promise<User> {
   }
 
   const body = updateUserActionSchema.parse(input);
-  await enforceActionRateLimit(`update-user:${body.address}:${body.targetAddress}`);
+  await Promise.all([
+    verifyAuth(body),
+    enforceActionRateLimit(`update-user:${body.address}:${body.targetAddress}`),
+  ]);
   const { targetAddress, ...updateBody } = body;
   return runUpdateUserMutation(targetAddress, updateBody);
 }
 
 export async function deleteUserAction(input: unknown): Promise<void> {
-  const sessionId = await getSessionIdFromCookies();
+  const sessionSigner = await getAuth().catch(() => null);
 
-  if (sessionId) {
+  if (sessionSigner) {
     const body = deleteUserSessionBodySchema.parse(input);
     const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "DELETE", `/api/users/${body.targetAddress}`);
@@ -145,7 +146,10 @@ export async function deleteUserAction(input: unknown): Promise<void> {
   }
 
   const body = deleteUserActionSchema.parse(input);
-  await enforceActionRateLimit(`delete-user:${body.address}:${body.targetAddress}`);
+  await Promise.all([
+    verifyAuth(body),
+    enforceActionRateLimit(`delete-user:${body.address}:${body.targetAddress}`),
+  ]);
   const { targetAddress, ...auth } = body;
   await runDeleteUserMutation(
     buildWalletAuthRequest(auth, "DELETE", `/api/users/${targetAddress}`),

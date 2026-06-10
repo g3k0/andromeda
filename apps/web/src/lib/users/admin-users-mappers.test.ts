@@ -39,16 +39,17 @@ describe("admin users mappers", () => {
   });
 
   it("maps users to admin rows and sorts by createdAt desc", () => {
-    const rows = usersToAdminRows([
+    const users = [
       buildUser({ createdAt: "2026-01-01T00:00:00.000Z" }),
       buildUser({
         address: "0x1111111111111111111111111111111111111111",
         roleSlug: "admin",
         createdAt: "2026-03-01T00:00:00.000Z",
       }),
-    ]);
+    ];
+    const rows = usersToAdminRows(users);
 
-    expect(userToAdminRow(rows[0])).toEqual({
+    expect(userToAdminRow(users[0]!)).toEqual({
       address: ADDRESS,
       roleSlug: "reader",
       status: "active",

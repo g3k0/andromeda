@@ -3,7 +3,7 @@ import { AUTHOR_DISPLAY_NAME_MAX_LENGTH } from "@/lib/authors/field-limits";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { AuthorAvatar } from "./AuthorAvatar";
 import {
-  AUTHOR_AVATAR_ACCEPT_TYPES,
+  AVATAR_UPLOAD_MIME_ACCEPT,
   getAuthorAvatarUploadGuidance,
 } from "./author-avatar-upload-guidance";
 import type { EditorFormState } from "./author-profile-editor-state";
@@ -82,7 +82,7 @@ export function AuthorProfileEditorView({
             <span className="text-sm text-white/60">Profile image</span>
             <input
               type="file"
-              accept={AUTHOR_AVATAR_ACCEPT_TYPES}
+              accept={AVATAR_UPLOAD_MIME_ACCEPT}
               aria-invalid={form.avatarError ? true : undefined}
               aria-describedby={
                 form.avatarError ? "author-profile-image-error" : undefined

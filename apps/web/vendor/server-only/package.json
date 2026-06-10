@@ -1,0 +1,7 @@
+{
+  "name": "server-only",
+  "version": "0.0.1",
+  "description": "Vendored server-only guard (same API as the npm package).",
+  "main": "index.js",
+  "license": "MIT"
+}

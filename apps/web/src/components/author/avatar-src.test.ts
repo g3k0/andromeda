@@ -12,7 +12,15 @@ describe("resolveAuthorAvatarSrc", () => {
     expect(resolveAuthorAvatarSrc("   ")).toBe(AUTHOR_AVATAR_PLACEHOLDER_PATH);
   });
 
-  it("returns a trimmed custom avatar URL", () => {
-    expect(resolveAuthorAvatarSrc("  ipfs://avatar  ")).toBe("ipfs://avatar");
+  it("maps ipfs URLs to the public gateway", () => {
+    expect(resolveAuthorAvatarSrc("  ipfs://avatar  ")).toBe(
+      "https://ipfs.io/ipfs/avatar",
+    );
+  });
+
+  it("returns https URLs unchanged", () => {
+    expect(resolveAuthorAvatarSrc("https://cdn.example/avatar.png")).toBe(
+      "https://cdn.example/avatar.png",
+    );
   });
 });

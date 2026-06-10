@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { enforceActionRateLimit } from "@/lib/auth/action-rate-limit";
 import { refreshWalletSessionFromDb } from "@/lib/auth/refresh-wallet-session";
-import { resolveWalletAuth } from "@/lib/auth/resolve-wallet-auth";
+import { getAuth, requireAuth, verifyAuth } from "@/lib/auth/require-auth";
 import { WALLET_SESSION_COOKIE_NAME } from "@/lib/auth/wallet-session-cookies";
 import { assertRouteApiAccess } from "@/lib/navigation/route-guard";
 import {
@@ -40,15 +40,13 @@ async function resolveAdminSignerFromSession(options?: { refresh?: boolean }) {
   if (options?.refresh && sessionId) {
     await refreshWalletSessionFromDb(sessionId);
   }
-  return resolveWalletAuth({ sessionId, walletAuth: null });
+  return requireAuth();
 }
 
 export async function listRolesAction(input?: unknown): Promise<RoleWithUserCount[]> {
-  const sessionId = await getSessionIdFromCookies();
   const walletAuth =
     input === undefined || input === null ? null : walletAuthSchema.parse(input);
-
-  const signer = await resolveWalletAuth({ sessionId, walletAuth });
+  const signer = await requireAuth(walletAuth);
   assertRouteApiAccess(signer, "GET", "/api/roles");
   assertCanListRoles(signer);
 
@@ -65,9 +63,9 @@ export async function listRolesAction(input?: unknown): Promise<RoleWithUserCoun
 }
 
 export async function createRoleAction(input: unknown): Promise<RoleWithUserCount> {
-  const sessionId = await getSessionIdFromCookies();
+  const sessionSigner = await getAuth().catch(() => null);
 
-  if (sessionId) {
+  if (sessionSigner) {
     const body = createRoleActionSchema.parse(input);
     const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "POST", "/api/roles");
@@ -79,15 +77,18 @@ export async function createRoleAction(input: unknown): Promise<RoleWithUserCoun
   }
 
   const body = createRoleApiBodySchema.parse(input);
-  await enforceActionRateLimit(`create-role:${body.address}:${body.slug}`);
+  await Promise.all([
+    verifyAuth(body),
+    enforceActionRateLimit(`create-role:${body.address}:${body.slug}`),
+  ]);
   const role = await runCreateRoleMutation(body);
   return { ...role, userCount: 0 };
 }
 
 export async function updateRoleAction(input: unknown): Promise<RoleWithUserCount> {
-  const sessionId = await getSessionIdFromCookies();
+  const sessionSigner = await getAuth().catch(() => null);
 
-  if (sessionId) {
+  if (sessionSigner) {
     const body = updateRoleActionSchema.parse(input);
     const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "PATCH", `/api/roles/${body.slug}`);
@@ -107,7 +108,10 @@ export async function updateRoleAction(input: unknown): Promise<RoleWithUserCoun
   }
 
   const body = signedUpdateRoleActionSchema.parse(input);
-  await enforceActionRateLimit(`update-role:${body.address}:${body.slug}`);
+  await Promise.all([
+    verifyAuth(body),
+    enforceActionRateLimit(`update-role:${body.address}:${body.slug}`),
+  ]);
   const { slug, ...updateBody } = body;
   await runUpdateRoleMutation(slug, updateBody);
   const service = await getRoleService();
@@ -119,9 +123,9 @@ export async function updateRoleAction(input: unknown): Promise<RoleWithUserCoun
 }
 
 export async function deleteRoleAction(input: unknown): Promise<void> {
-  const sessionId = await getSessionIdFromCookies();
+  const sessionSigner = await getAuth().catch(() => null);
 
-  if (sessionId) {
+  if (sessionSigner) {
     const body = deleteRoleActionSchema.parse(input);
     const signer = await resolveAdminSignerFromSession({ refresh: true });
     assertRouteApiAccess(signer, "DELETE", `/api/roles/${body.slug}`);
@@ -133,7 +137,10 @@ export async function deleteRoleAction(input: unknown): Promise<void> {
   }
 
   const body = signedDeleteRoleActionSchema.parse(input);
-  await enforceActionRateLimit(`delete-role:${body.address}:${body.slug}`);
+  await Promise.all([
+    verifyAuth(body),
+    enforceActionRateLimit(`delete-role:${body.address}:${body.slug}`),
+  ]);
   const { slug, ...auth } = body;
   await runDeleteRoleMutation(
     buildWalletAuthRequest(auth, "DELETE", `/api/roles/${slug}`),

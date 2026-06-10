@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import type { UserPermission } from "./types";
+import type { UserSnapshot } from "./types";
 import {
   resolveSnapshotUpdate,
   shouldKeepCurrentSnapshot,
@@ -6,24 +8,24 @@ import {
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 
-const authorSnapshot = {
+const authorSnapshot: UserSnapshot = {
   normalizedAddress: ADDRESS,
   isConnected: true,
-  roleSlug: "author" as const,
+  roleSlug: "author",
   roleName: "Author",
-  status: "active" as const,
-  permissions: ["pages:read", "authors:write:own"] as const,
+  status: "active",
+  permissions: ["pages:read", "authors:write:own"] satisfies UserPermission[],
   hasAuthorProfile: true,
   declinedAuthorPage: false,
 };
 
-const readerSnapshot = {
+const readerSnapshot: UserSnapshot = {
   normalizedAddress: ADDRESS,
   isConnected: true,
-  roleSlug: "reader" as const,
+  roleSlug: "reader",
   roleName: "Reader",
-  status: "active" as const,
-  permissions: ["pages:read"] as const,
+  status: "active",
+  permissions: ["pages:read"] satisfies UserPermission[],
   hasAuthorProfile: false,
   declinedAuthorPage: false,
 };

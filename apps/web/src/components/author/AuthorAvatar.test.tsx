@@ -25,7 +25,7 @@ describe("AuthorAvatar", () => {
 
     expect(screen.getByRole("img", { name: "Author profile" })).toHaveAttribute(
       "src",
-      "ipfs://custom-avatar",
+      "https://ipfs.io/ipfs/custom-avatar",
     );
   });
 

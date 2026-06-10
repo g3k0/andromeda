@@ -10,9 +10,11 @@ let cachedService: UserService | null = null;
 
 export async function getUserService(): Promise<UserService> {
   if (!cachedService) {
-    const repository = await createMongoUserRepository();
-    const roleRepository = await createMongoRoleRepository();
-    const sessionService = await getWalletSessionService();
+    const [repository, roleRepository, sessionService] = await Promise.all([
+      createMongoUserRepository(),
+      createMongoRoleRepository(),
+      getWalletSessionService(),
+    ]);
     cachedService = createUserService(repository, roleRepository, {
       authorLookup: {
         hasAuthorProfile: async (address) => {

@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 
-import type { ReactNode } from "react";
+import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AdminManageTabs } from "./AdminManageTabs";
@@ -14,10 +14,9 @@ vi.mock("next/link", () => ({
     href,
     children,
     ...props
-  }: {
+  }: AnchorHTMLAttributes<HTMLAnchorElement> & {
     href: string;
     children: ReactNode;
-    "aria-current"?: string;
   }) => (
     <a href={href} {...props}>
       {children}

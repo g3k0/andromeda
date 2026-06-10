@@ -33,13 +33,12 @@ function NotificationToast({
   }, [notification.durationMs, notification.id, onDismiss]);
 
   return (
-    <div
-      role="status"
+    <output
       aria-live="polite"
-      className={`rounded-lg border px-4 py-3 text-sm text-white shadow-lg ${VARIANT_STYLES[notification.variant]}`}
+      className={`block rounded-lg border px-4 py-3 text-sm text-white shadow-lg ${VARIANT_STYLES[notification.variant]}`}
     >
       {notification.message}
-    </div>
+    </output>
   );
 }
 
