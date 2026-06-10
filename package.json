@@ -1,6 +1,6 @@
 {
   "name": "andromeda",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies.",
   "keywords": [
     "andromeda",
@@ -45,6 +45,7 @@
     "build": "pnpm --filter @andromeda/web build",
     "start": "pnpm --filter @andromeda/web start",
     "lint": "pnpm --filter @andromeda/web lint",
+    "lint:fix": "pnpm --filter @andromeda/web lint:fix",
     "web:test": "pnpm --filter @andromeda/web test",
     "web:test:coverage": "pnpm --filter @andromeda/web test:coverage",
     "contracts:build": "pnpm --filter @andromeda/contracts build",

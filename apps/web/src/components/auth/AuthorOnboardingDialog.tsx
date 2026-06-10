@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAccount, useDisconnect, useSignMessage } from "wagmi";
+import { useDisconnect, useSignMessage } from "wagmi";
 import { createAuthorAction, setWalletPreferencesAction } from "@/app/actions/authors";
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { useNotifications } from "@/components/notifications/NotificationProvider";

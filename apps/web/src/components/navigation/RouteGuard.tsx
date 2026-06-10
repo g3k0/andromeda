@@ -18,7 +18,7 @@ export type RouteGuardProps = {
 
 export function RouteGuard({ routeId, children }: RouteGuardProps) {
   const route = getRouteById(routeId);
-  const { address, isConnected, isReconnecting } = useAccount();
+  const { isConnected, isReconnecting } = useAccount();
   const { snapshot } = useUserSnapshot();
   const [allowed, setAllowed] = useState<boolean | null>(null);
 

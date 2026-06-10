@@ -31,7 +31,7 @@ import {
   type AdminUserRowDraft,
   type CreateUserFormState,
 } from "@/lib/users/admin-users-state";
-import type { UserRole, UserStatus } from "@/lib/users/types";
+import type { UserStatus } from "@/lib/users/types";
 import {
   adminSessionErrorMessage,
   ensureAdminSession,

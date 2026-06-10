@@ -1,5 +1,5 @@
 # Continuous integration for develop and main.
-# Add lint, build, deploy, and other jobs here as the project grows.
+# Lint, tests, build, and dependency audit run on every push and pull request.
 name: CI
 
 on:

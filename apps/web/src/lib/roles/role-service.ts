@@ -1,5 +1,4 @@
 import {
-  InvalidRolePermissionsError,
   InvalidRoleSlugError,
   RoleExistsError,
   RoleInUseError,
