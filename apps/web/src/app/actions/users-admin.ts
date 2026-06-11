@@ -51,6 +51,12 @@ export async function listUsersAction(input?: unknown): Promise<User[]> {
     input === undefined || input === null
       ? null
       : listUsersActionSchema.parse(input);
+  if (!walletAuth) {
+    const sessionId = await getSessionIdFromCookies();
+    if (sessionId) {
+      await refreshWalletSessionFromDb(sessionId);
+    }
+  }
   const signer = await requireAuth(walletAuth);
   assertRouteApiAccess(signer, "GET", "/api/users");
   assertCanListUsers(signer);

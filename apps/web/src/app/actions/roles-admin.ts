@@ -46,6 +46,12 @@ async function resolveAdminSignerFromSession(options?: { refresh?: boolean }) {
 export async function listRolesAction(input?: unknown): Promise<RoleWithUserCount[]> {
   const walletAuth =
     input === undefined || input === null ? null : walletAuthSchema.parse(input);
+  if (!walletAuth) {
+    const sessionId = await getSessionIdFromCookies();
+    if (sessionId) {
+      await refreshWalletSessionFromDb(sessionId);
+    }
+  }
   const signer = await requireAuth(walletAuth);
   assertRouteApiAccess(signer, "GET", "/api/roles");
   assertCanListRoles(signer);

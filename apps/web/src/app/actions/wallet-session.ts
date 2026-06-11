@@ -2,7 +2,9 @@
 
 import { cookies } from "next/headers";
 import { establishWalletSession } from "@/lib/auth/establish-wallet-session";
-import { getAuth, verifyAuth } from "@/lib/auth/require-auth";
+import { refreshWalletSessionFromDb } from "@/lib/auth/refresh-wallet-session";
+import { getAuth, requireAuth } from "@/lib/auth/require-auth";
+import { assertCanAccessAdmin } from "@/lib/users/authorize";
 import { walletAuthSchema } from "@/lib/authors/schemas";
 import {
   WALLET_SESSION_COOKIE_NAME,
@@ -16,7 +18,6 @@ export async function establishWalletSessionAction(
   input: unknown,
 ): Promise<WalletSessionStatus> {
   const auth = walletAuthSchema.parse(input);
-  await verifyAuth(auth);
   const [session, cookieStore] = await Promise.all([
     establishWalletSession(auth),
     cookies(),
@@ -40,6 +41,22 @@ export async function getWalletSessionStatusAction(): Promise<WalletSessionStatu
   const sessionId = cookieStore.get(WALLET_SESSION_COOKIE_NAME)?.value;
   const sessionService = await getWalletSessionService();
   return sessionService.getStatus(sessionId);
+}
+
+export async function isAdminWalletSessionReadyAction(): Promise<boolean> {
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get(WALLET_SESSION_COOKIE_NAME)?.value;
+  if (sessionId) {
+    await refreshWalletSessionFromDb(sessionId);
+  }
+
+  try {
+    const user = await requireAuth();
+    assertCanAccessAdmin(user);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function revokeWalletSessionAction(): Promise<void> {
