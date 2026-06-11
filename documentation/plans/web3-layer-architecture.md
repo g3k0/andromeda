@@ -651,7 +651,7 @@ flowchart LR
 - Validazione: errore esplicito se URL mancante quando invocato (non a import time).
 - Test unitari su parsing chain e fallback env.
 
-#### Commit 3 — Public client factory
+#### Commit 3 — Public client factory ✅
 
 `feat(web): add viem public client factory`
 
