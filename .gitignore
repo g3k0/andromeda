@@ -18,6 +18,8 @@ next-env.d.ts
 .env*.local
 .env.local
 # Covers .env.development.local, .env.production.local, etc.
+packages/contracts/.env
+apps/web/.env.local
 
 # Local secrets reference (never commit)
 secrets.md
@@ -41,4 +43,9 @@ pnpm-debug.log*
 
 # Vercel
 .vercel
-.env*
+# Broad match for other secret env files; templates below stay committable
+.env.*
+!.env.example
+!.env.development
+!.env.production
+!.env.test
