@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { DonationSection } from "@/components/about/DonationSection";
+
 export const metadata: Metadata = {
   title: "About — Andromeda",
   description:
@@ -162,6 +164,8 @@ export default function AboutPage() {
           wallet whether or not you ever visit Andromeda again.
         </p>
       </section>
+
+      <DonationSection />
 
       <section className="space-y-3 border-t border-white/10 pt-8">
         <h2 className="text-2xl font-semibold">Open to everyone</h2>
