@@ -633,7 +633,7 @@ flowchart LR
 
 **Obiettivo:** endpoint RPC affidabili per client e server; base per letture on-chain e wagmi.
 
-**Stato implementazione:** in corso su branch `web3-pr1-alchemy-rpc`.
+**Stato implementazione:** ✅ completata su branch `web3-pr1-alchemy-rpc`.
 
 #### Commit 1 — Variabili d'ambiente e documentazione locale ✅
 
@@ -659,7 +659,7 @@ flowchart LR
 - Modulo `server-only` dove appropriato.
 - Test con transport mockato o URL fixture.
 
-#### Commit 4 — Wagmi transport Alchemy
+#### Commit 4 — Wagmi transport Alchemy ✅
 
 `feat(web): wire wagmi transports to Alchemy RPC`
 
