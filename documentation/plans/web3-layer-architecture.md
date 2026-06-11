@@ -633,6 +633,8 @@ flowchart LR
 
 **Obiettivo:** endpoint RPC affidabili per client e server; base per letture on-chain e wagmi.
 
+**Stato implementazione:** in corso su branch `web3-pr1-alchemy-rpc`.
+
 #### Commit 1 — Variabili d'ambiente e documentazione locale
 
 `chore(web): add Alchemy RPC env vars to examples`
