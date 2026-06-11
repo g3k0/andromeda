@@ -635,7 +635,7 @@ flowchart LR
 
 **Stato implementazione:** in corso su branch `web3-pr1-alchemy-rpc`.
 
-#### Commit 1 — Variabili d'ambiente e documentazione locale
+#### Commit 1 — Variabili d'ambiente e documentazione locale ✅
 
 `chore(web): add Alchemy RPC env vars to examples`
 
@@ -643,7 +643,7 @@ flowchart LR
 - Aggiornare `.env.development` / `.env.production` con placeholder commentati (nessun secret).
 - Documentare in README (tabella env) le nuove variabili.
 
-#### Commit 2 — Configurazione RPC server-side
+#### Commit 2 — Configurazione RPC server-side ✅
 
 `feat(web): add chain RPC config for Alchemy`
 
