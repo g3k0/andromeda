@@ -243,6 +243,8 @@ Set at least:
 | `MONGODB_URI` | MongoDB connection string (server-only) |
 | `ADMIN_ADDRESSES` | Comma-separated admin wallets (user bootstrap) |
 | `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | WalletConnect (optional in dev) |
+| `ALCHEMY_RPC_URL` | Alchemy JSON-RPC for server-side chain reads (server-only) |
+| `NEXT_PUBLIC_ALCHEMY_RPC_URL` | Alchemy JSON-RPC for wagmi in the browser |
 
 First-time database setup:
 
@@ -287,6 +289,10 @@ in `apps/web/`. Next.js sets `NODE_ENV` automatically; you do not need to export
 Set `NEXT_PUBLIC_CONTRACT_ADDRESS` to the deployed contract address when testing on-chain
 features. Prefer `ADMIN_ADDRESSES` (server-only) for platform admins; `NEXT_PUBLIC_ADMIN_ADDRESSES`
 is legacy.
+
+For Web3 features, create [Alchemy](https://www.alchemy.com/) apps for Polygon Amoy (local dev) and
+Polygon mainnet (production), then set `ALCHEMY_RPC_URL` and `NEXT_PUBLIC_ALCHEMY_RPC_URL` in
+`.env.local` or Vercel. See [documentation/plans/web3-layer-architecture.md](documentation/plans/web3-layer-architecture.md).
 
 #### Unit tests
 

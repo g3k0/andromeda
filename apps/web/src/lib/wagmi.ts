@@ -1,15 +1,12 @@
-import {
-  getPublicChainName,
-  getWalletConnectProjectId,
-} from "@/lib/config/public-env";
-import { http, createConfig } from "wagmi";
-import { polygon, polygonAmoy } from "wagmi/chains";
+import { getWalletConnectProjectId } from "@/lib/config/public-env";
+import { createWagmiTransports } from "@/lib/chain/wagmi-transports";
+import { getTargetChain } from "@/lib/chain/rpc-config";
+import { createConfig } from "wagmi";
 import { injected, walletConnect } from "wagmi/connectors";
 
 const projectId = getWalletConnectProjectId();
 
-export const targetChain =
-  getPublicChainName() === "polygon" ? polygon : polygonAmoy;
+export const targetChain = getTargetChain();
 
 export const wagmiConfig = createConfig({
   chains: [targetChain],
@@ -17,10 +14,7 @@ export const wagmiConfig = createConfig({
     injected(),
     ...(projectId ? [walletConnect({ projectId })] : []),
   ],
-  transports: {
-    [polygon.id]: http(),
-    [polygonAmoy.id]: http(),
-  },
+  transports: createWagmiTransports(),
   ssr: true,
 });
 

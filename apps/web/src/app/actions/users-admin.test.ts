@@ -108,6 +108,7 @@ describe("users admin server actions", () => {
 
     const users = await listUsersAction();
 
+    expect(refreshWalletSessionFromDb).toHaveBeenCalledWith("session-1");
     expect(resolveWalletAuth).toHaveBeenCalledWith({
       sessionId: "session-1",
       walletAuth: null,

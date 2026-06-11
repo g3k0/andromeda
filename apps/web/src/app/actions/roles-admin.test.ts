@@ -110,6 +110,7 @@ describe("roles admin server actions", () => {
   it("lists roles via session without signed input", async () => {
     cookiesGet.mockReturnValue({ value: "session-1" });
     const roles = await listRolesAction();
+    expect(refreshWalletSessionFromDb).toHaveBeenCalledWith("session-1");
     expect(roles).toEqual([role]);
     expect(runListRolesMutation).not.toHaveBeenCalled();
   });

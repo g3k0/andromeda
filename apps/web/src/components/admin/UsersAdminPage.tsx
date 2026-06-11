@@ -12,6 +12,7 @@ import { listRolesAction } from "@/app/actions/roles-admin";
 import {
   establishWalletSessionAction,
   getWalletSessionStatusAction,
+  isAdminWalletSessionReadyAction,
 } from "@/app/actions/wallet-session";
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { useNotifications } from "@/components/notifications/NotificationProvider";
@@ -66,6 +67,7 @@ export function UsersAdminPage() {
   const sessionDeps = useMemo(
     () => ({
       getStatus: getWalletSessionStatusAction,
+      isReady: isAdminWalletSessionReadyAction,
       sign: createSignedWalletPayload,
       establish: establishWalletSessionAction,
     }),

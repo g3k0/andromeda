@@ -3,6 +3,7 @@ import type { WalletSessionStatus } from "@/lib/auth/wallet-session";
 
 export type EnsureAdminSessionDeps = {
   getStatus: () => Promise<WalletSessionStatus>;
+  isReady: () => Promise<boolean>;
   sign: (address: string, signMessage: SignMessageFn) => Promise<{
     address: string;
     message: string;
@@ -21,7 +22,7 @@ export async function ensureAdminSession(
   deps: EnsureAdminSessionDeps,
 ): Promise<void> {
   const status = await deps.getStatus();
-  if (status.active) {
+  if (status.active && (await deps.isReady())) {
     return;
   }
 

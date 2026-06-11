@@ -633,7 +633,9 @@ flowchart LR
 
 **Obiettivo:** endpoint RPC affidabili per client e server; base per letture on-chain e wagmi.
 
-#### Commit 1 — Variabili d'ambiente e documentazione locale
+**Stato implementazione:** ✅ completata su branch `web3-pr1-alchemy-rpc`.
+
+#### Commit 1 — Variabili d'ambiente e documentazione locale ✅
 
 `chore(web): add Alchemy RPC env vars to examples`
 
@@ -641,7 +643,7 @@ flowchart LR
 - Aggiornare `.env.development` / `.env.production` con placeholder commentati (nessun secret).
 - Documentare in README (tabella env) le nuove variabili.
 
-#### Commit 2 — Configurazione RPC server-side
+#### Commit 2 — Configurazione RPC server-side ✅
 
 `feat(web): add chain RPC config for Alchemy`
 
@@ -649,7 +651,7 @@ flowchart LR
 - Validazione: errore esplicito se URL mancante quando invocato (non a import time).
 - Test unitari su parsing chain e fallback env.
 
-#### Commit 3 — Public client factory
+#### Commit 3 — Public client factory ✅
 
 `feat(web): add viem public client factory`
 
@@ -657,7 +659,7 @@ flowchart LR
 - Modulo `server-only` dove appropriato.
 - Test con transport mockato o URL fixture.
 
-#### Commit 4 — Wagmi transport Alchemy
+#### Commit 4 — Wagmi transport Alchemy ✅
 
 `feat(web): wire wagmi transports to Alchemy RPC`
 
