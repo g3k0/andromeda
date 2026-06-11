@@ -50,7 +50,7 @@ async function signedPayload(
 }
 
 describe("authors API", () => {
-  let memoryServer: MongoMemoryServer;
+  let memoryServer: MongoMemoryServer | undefined;
 
   beforeAll(async () => {
     memoryServer = await MongoMemoryServer.create();
@@ -59,7 +59,7 @@ describe("authors API", () => {
     resetAuthorServiceForTests();
     resetUserServiceForTests();
     await seedApiSystemRoles();
-  });
+  }, 120_000);
 
   beforeEach(() => {
     resetRateLimitsForTests();
@@ -76,7 +76,7 @@ describe("authors API", () => {
     resetUserServiceForTests();
     resetRoleServiceForTests();
     resetMongoConnectionForTests();
-    process.env.MONGODB_URI = memoryServer.getUri();
+    process.env.MONGODB_URI = memoryServer!.getUri();
     await connectMongo();
     await AuthorModel.deleteMany({});
     await UserModel.deleteMany({});
@@ -88,7 +88,7 @@ describe("authors API", () => {
   afterAll(async () => {
     await mongoose.disconnect();
     resetMongoConnectionForTests();
-    await memoryServer.stop();
+    await memoryServer?.stop();
   });
 
   it("GET returns 404 when profile is missing", async () => {

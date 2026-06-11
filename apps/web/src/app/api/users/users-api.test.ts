@@ -49,7 +49,7 @@ function authHeaders(
 }
 
 describe("users API", () => {
-  let memoryServer: MongoMemoryServer;
+  let memoryServer: MongoMemoryServer | undefined;
 
   beforeAll(async () => {
     memoryServer = await MongoMemoryServer.create();
@@ -57,7 +57,7 @@ describe("users API", () => {
     resetMongoConnectionForTests();
     resetUserServiceForTests();
     await connectMongo();
-  });
+  }, 120_000);
 
   afterEach(async () => {
     resetWalletAuthStoreForTests();
@@ -65,7 +65,7 @@ describe("users API", () => {
     resetUserServiceForTests();
     resetRoleServiceForTests();
     resetMongoConnectionForTests();
-    process.env.MONGODB_URI = memoryServer.getUri();
+    process.env.MONGODB_URI = memoryServer!.getUri();
     await connectMongo();
     await UserModel.deleteMany({});
     await RoleModel.deleteMany({});
@@ -74,7 +74,7 @@ describe("users API", () => {
   afterAll(async () => {
     await mongoose.disconnect();
     resetMongoConnectionForTests();
-    await memoryServer.stop();
+    await memoryServer?.stop();
   });
 
   async function seedAdmin() {

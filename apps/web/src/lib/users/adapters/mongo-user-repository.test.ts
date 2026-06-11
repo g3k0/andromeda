@@ -8,24 +8,24 @@ import { createMongoUserRepository } from "./create-user-repository";
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 
 describe("mongo user repository", () => {
-  let memoryServer: MongoMemoryServer;
+  let memoryServer: MongoMemoryServer | undefined;
 
   beforeAll(async () => {
     memoryServer = await MongoMemoryServer.create();
     process.env.MONGODB_URI = memoryServer.getUri();
     resetMongoConnectionForTests();
-  });
+  }, 120_000);
 
   afterEach(async () => {
     await UserModel.deleteMany({});
     resetMongoConnectionForTests();
-    process.env.MONGODB_URI = memoryServer.getUri();
+    process.env.MONGODB_URI = memoryServer!.getUri();
   });
 
   afterAll(async () => {
     await mongoose.disconnect();
     resetMongoConnectionForTests();
-    await memoryServer.stop();
+    await memoryServer?.stop();
   });
 
   it("persists users with preferences and metadata", async () => {
