@@ -6,7 +6,7 @@ import { WalletAuthNonceModel } from "@/lib/db/models/wallet-auth-nonce.model";
 import { MongoWalletAuthNonceStore } from "./mongo-wallet-auth-nonce-store";
 
 describe("MongoWalletAuthNonceStore", () => {
-  let memoryServer: MongoMemoryServer;
+  let memoryServer: MongoMemoryServer | undefined;
   let store: MongoWalletAuthNonceStore;
 
   beforeAll(async () => {
@@ -15,7 +15,7 @@ describe("MongoWalletAuthNonceStore", () => {
     resetMongoConnectionForTests();
     await connectMongo();
     store = new MongoWalletAuthNonceStore();
-  });
+  }, 120_000);
 
   afterEach(async () => {
     await WalletAuthNonceModel.deleteMany({});
@@ -23,7 +23,8 @@ describe("MongoWalletAuthNonceStore", () => {
 
   afterAll(async () => {
     await mongoose.disconnect();
-    await memoryServer.stop();
+    resetMongoConnectionForTests();
+    await memoryServer?.stop();
   });
 
   it("rejects replayed nonces across separate store instances", async () => {

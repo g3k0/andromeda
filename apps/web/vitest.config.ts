@@ -6,8 +6,10 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: "node",
+    globalSetup: ["./vitest.global-setup.ts"],
     setupFiles: ["./vitest.setup.ts"],
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+    hookTimeout: 120_000,
     coverage: {
       provider: "v8",
       include: [

@@ -10,13 +10,13 @@ import { createMongoAuthorRepositories } from "./create-repositories";
 const VALID = "0xabcdef0123456789abcdef0123456789abcdef01";
 
 describe("mongo repository adapters", () => {
-  let memoryServer: MongoMemoryServer;
+  let memoryServer: MongoMemoryServer | undefined;
 
   beforeAll(async () => {
     memoryServer = await MongoMemoryServer.create();
     process.env.MONGODB_URI = memoryServer.getUri();
     resetMongoConnectionForTests();
-  });
+  }, 120_000);
 
   afterEach(async () => {
     await AuthorModel.deleteMany({});
@@ -26,7 +26,7 @@ describe("mongo repository adapters", () => {
   afterAll(async () => {
     await mongoose.disconnect();
     resetMongoConnectionForTests();
-    await memoryServer.stop();
+    await memoryServer?.stop();
   });
 
   it("persists author profiles and preferences", async () => {
