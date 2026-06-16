@@ -3,7 +3,6 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { headers } from "next/headers";
 import { enforceActionRateLimit } from "@/lib/auth/action-rate-limit";
-import { verifyAuth } from "@/lib/auth/require-auth";
 import { refreshWalletSessionFromDb } from "@/lib/auth/refresh-wallet-session";
 import { setWalletBindingCookie } from "@/lib/auth/set-wallet-binding-cookie";
 import {
@@ -30,6 +29,11 @@ export type CreateAuthorActionResult = {
   snapshot: UserSnapshot;
 };
 
+export type SetWalletPreferencesActionResult = {
+  preferences: WalletPreferences;
+  snapshot: UserSnapshot;
+};
+
 async function refreshWalletSessionFromRequestCookies(): Promise<void> {
   const headerList = await headers();
   const sessionId = parseCookieHeader(
@@ -42,8 +46,9 @@ async function refreshWalletSessionFromRequestCookies(): Promise<void> {
   }
 }
 
-async function buildAuthorCreationSnapshot(
+async function buildUserSnapshot(
   address: string,
+  failureMessage: string,
 ): Promise<UserSnapshot> {
   const [userService, authorService] = await Promise.all([
     getUserService(),
@@ -55,7 +60,7 @@ async function buildAuthorCreationSnapshot(
   });
 
   if (!snapshot) {
-    throw new Error("Failed to build user snapshot after author creation.");
+    throw new Error(failureMessage);
   }
 
   return snapshot;
@@ -67,16 +72,16 @@ export async function createAuthorAction(
   noStore();
 
   const body = createAuthorBodySchema.parse(input);
-  await Promise.all([
-    verifyAuth(body),
-    enforceActionRateLimit(`create-author:${body.address}`),
-  ]);
+  await enforceActionRateLimit(`create-author:${body.address}`);
   const profile = await runCreateAuthorMutation(body);
   await Promise.all([
     setWalletBindingCookie(body.address),
     refreshWalletSessionFromRequestCookies(),
   ]);
-  const snapshot = await buildAuthorCreationSnapshot(body.address);
+  const snapshot = await buildUserSnapshot(
+    body.address,
+    "Failed to build user snapshot after author creation.",
+  );
 
   return { profile, snapshot };
 }
@@ -85,20 +90,22 @@ export async function updateAuthorAction(
   input: unknown,
 ): Promise<AuthorProfile> {
   const body = updateAuthorActionSchema.parse(input);
-  await Promise.all([
-    verifyAuth(body),
-    enforceActionRateLimit(`patch-author:${body.targetAddress}`),
-  ]);
+  await enforceActionRateLimit(`patch-author:${body.targetAddress}`);
   return runUpdateAuthorMutation(body.targetAddress, body);
 }
 
 export async function setWalletPreferencesAction(
   input: unknown,
-): Promise<WalletPreferences> {
+): Promise<SetWalletPreferencesActionResult> {
+  noStore();
+
   const body = walletPreferencesBodySchema.parse(input);
-  await Promise.all([
-    verifyAuth(body),
-    enforceActionRateLimit(`wallet-preferences:${body.address}`),
-  ]);
-  return runSetWalletPreferencesMutation(body.address, body);
+  await enforceActionRateLimit(`wallet-preferences:${body.address}`);
+  const preferences = await runSetWalletPreferencesMutation(body.address, body);
+  const snapshot = await buildUserSnapshot(
+    body.address,
+    "Failed to build user snapshot after updating wallet preferences.",
+  );
+
+  return { preferences, snapshot };
 }
