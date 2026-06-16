@@ -30,11 +30,6 @@ export type CreateAuthorActionResult = {
   snapshot: UserSnapshot;
 };
 
-export type SetWalletPreferencesActionResult = {
-  preferences: WalletPreferences;
-  snapshot: UserSnapshot;
-};
-
 async function refreshWalletSessionFromRequestCookies(): Promise<void> {
   const headerList = await headers();
   const sessionId = parseCookieHeader(
@@ -47,9 +42,8 @@ async function refreshWalletSessionFromRequestCookies(): Promise<void> {
   }
 }
 
-async function buildUserSnapshot(
+async function buildAuthorCreationSnapshot(
   address: string,
-  failureMessage: string,
 ): Promise<UserSnapshot> {
   const [userService, authorService] = await Promise.all([
     getUserService(),
@@ -61,7 +55,7 @@ async function buildUserSnapshot(
   });
 
   if (!snapshot) {
-    throw new Error(failureMessage);
+    throw new Error("Failed to build user snapshot after author creation.");
   }
 
   return snapshot;
@@ -82,10 +76,7 @@ export async function createAuthorAction(
     setWalletBindingCookie(body.address),
     refreshWalletSessionFromRequestCookies(),
   ]);
-  const snapshot = await buildUserSnapshot(
-    body.address,
-    "Failed to build user snapshot after author creation.",
-  );
+  const snapshot = await buildAuthorCreationSnapshot(body.address);
 
   return { profile, snapshot };
 }
@@ -103,19 +94,11 @@ export async function updateAuthorAction(
 
 export async function setWalletPreferencesAction(
   input: unknown,
-): Promise<SetWalletPreferencesActionResult> {
-  noStore();
-
+): Promise<WalletPreferences> {
   const body = walletPreferencesBodySchema.parse(input);
   await Promise.all([
     verifyAuth(body),
     enforceActionRateLimit(`wallet-preferences:${body.address}`),
   ]);
-  const preferences = await runSetWalletPreferencesMutation(body.address, body);
-  const snapshot = await buildUserSnapshot(
-    body.address,
-    "Failed to build user snapshot after updating wallet preferences.",
-  );
-
-  return { preferences, snapshot };
+  return runSetWalletPreferencesMutation(body.address, body);
 }

@@ -78,12 +78,11 @@ function AuthorOnboardingDialogFlow({
   const handleDecline = () =>
     void runWithLoading(async () => {
       const signed = await createSignedWalletPayload(address, signMessageAsync);
-      const { snapshot: nextSnapshot } = await setWalletPreferencesAction({
+      await setWalletPreferencesAction({
         ...signed,
         declinedAuthorPage: true,
       });
-      applySnapshot(nextSnapshot);
-      requestUserSnapshotRefresh(nextSnapshot);
+      requestUserSnapshotRefresh();
     }, "Saving your preference…");
 
   const handleCancel = () => {

@@ -86,15 +86,9 @@ export async function runSetWalletPreferencesMutation(
   const signer = await verifySignedMutation(body);
   assertCanManageWalletPreferences(signer, targetAddress);
 
-  const [userService, authorService] = await Promise.all([
-    getUserService(),
-    getAuthorService(),
-  ]);
+  const userService = await getUserService();
   await userService.findOrCreateByWallet(targetAddress);
   await userService.setPreferences(targetAddress, {
-    declinedAuthorPage: body.declinedAuthorPage,
-  });
-  await authorService.setWalletPreferences(targetAddress, {
     declinedAuthorPage: body.declinedAuthorPage,
   });
 
