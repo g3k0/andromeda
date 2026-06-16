@@ -1,5 +1,6 @@
 import { normalizeAddress } from "@/lib/authors/address";
 import { InvalidAddressError } from "@/lib/authors/errors";
+import { isAdminAddress } from "@/lib/auth/admin";
 import type { RoleRepository } from "@/lib/roles/repository";
 import { toAuthenticatedUser } from "./authenticated-user";
 import {
@@ -63,6 +64,33 @@ async function assertRoleSlugExists(
   if (!role) {
     throw new InvalidUserRoleError(roleSlug);
   }
+}
+
+function resolveWalletRoleSlug(
+  normalized: string,
+  hasAuthorProfile: boolean,
+): "admin" | "author" | "reader" {
+  if (isAdminAddress(normalized)) {
+    return "admin";
+  }
+  if (hasAuthorProfile) {
+    return "author";
+  }
+  return "reader";
+}
+
+async function ensureAdminRoleFromEnv(
+  users: UserRepository,
+  user: User,
+): Promise<User> {
+  if (!isAdminAddress(user.address) || user.roleSlug === "admin") {
+    return user;
+  }
+
+  return users.update({
+    ...user,
+    roleSlug: "admin",
+  });
 }
 
 async function syncRoleWithAuthorProfile(
@@ -143,15 +171,16 @@ export function createUserService(
         : false;
       const existing = await users.getByAddress(normalized);
       if (existing) {
+        const adminSynced = await ensureAdminRoleFromEnv(users, existing);
         return syncRoleWithAuthorProfile(
           users,
-          existing,
+          adminSynced,
           hasAuthorProfile,
           invalidateUserSessions,
         );
       }
 
-      const roleSlug = hasAuthorProfile ? "author" : "reader";
+      const roleSlug = resolveWalletRoleSlug(normalized, hasAuthorProfile);
       await assertRoleSlugExists(roles, roleSlug);
 
       return users.create({

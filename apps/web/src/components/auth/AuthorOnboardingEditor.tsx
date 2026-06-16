@@ -23,7 +23,7 @@ export function AuthorOnboardingEditor({
     <dialog
       ref={openModalDialog}
       aria-labelledby="author-onboarding-editor-title"
-      className="w-[calc(100%-3rem)] max-w-lg space-y-6 rounded-xl border border-white/10 bg-[#0b0710] p-8 shadow-xl backdrop:bg-black/60"
+      className="w-[calc(100%-3rem)] max-w-lg space-y-6 rounded-xl border border-white/10 bg-[#0b0710] p-8 text-white shadow-xl backdrop:bg-black/60"
       onCancel={(event) => {
         event.preventDefault();
         onBack();
@@ -32,7 +32,7 @@ export function AuthorOnboardingEditor({
       <div className="space-y-2 text-center">
         <h2
           id="author-onboarding-editor-title"
-          className="text-xl font-semibold tracking-tight"
+          className="text-xl font-semibold tracking-tight text-white"
         >
           Create your author page
         </h2>

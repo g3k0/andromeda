@@ -63,7 +63,7 @@ export function AuthorProfileEditorView({
             form.displayNameError ? "author-display-name-error" : undefined
           }
           onChange={(event) => onDisplayNameChange(event.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-andromeda-light/50 aria-invalid:border-red-400/60"
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50 aria-invalid:border-red-400/60"
         />
         {form.displayNameError ? (
           <p

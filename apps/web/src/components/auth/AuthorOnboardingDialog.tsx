@@ -125,6 +125,7 @@ export function AuthorOnboardingDialog({
     address,
     isConnected,
     onboardingSnapshot,
+    snapshot?.roleSlug,
   ).open;
 
   if (!address || !open) {

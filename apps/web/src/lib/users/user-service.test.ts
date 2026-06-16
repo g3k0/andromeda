@@ -1,4 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
+import {
+  setAdminAddressesForTests,
+} from "@/lib/auth/admin";
 import { createInMemoryRoleRepository } from "@/lib/roles/testing/in-memory-role-repository";
 import { seedSystemRoles } from "@/lib/roles/testing/seed-system-roles";
 import {
@@ -46,6 +49,31 @@ describe("user service", () => {
 
     const created = await service.findOrCreateByWallet(ADDRESS);
     expect(created.roleSlug).toBe("author");
+  });
+
+  it("creates an admin when the wallet is listed in ADMIN_ADDRESSES", async () => {
+    setAdminAddressesForTests([ADDRESS]);
+    try {
+      const service = await createTestUserService();
+      const created = await service.findOrCreateByWallet(ADDRESS);
+      expect(created.roleSlug).toBe("admin");
+    } finally {
+      setAdminAddressesForTests(null);
+    }
+  });
+
+  it("promotes an existing reader to admin when the wallet is listed in ADMIN_ADDRESSES", async () => {
+    setAdminAddressesForTests([ADDRESS]);
+    try {
+      const repository = createInMemoryUserRepository();
+      const service = await createSeededUserService(repository);
+      await repository.create({ address: ADDRESS, roleSlug: "reader" });
+
+      const synced = await service.findOrCreateByWallet(ADDRESS);
+      expect(synced.roleSlug).toBe("admin");
+    } finally {
+      setAdminAddressesForTests(null);
+    }
   });
 
   it("syncs an existing reader to author when an author profile exists", async () => {

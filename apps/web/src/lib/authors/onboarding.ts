@@ -25,11 +25,12 @@ export async function buildAuthorOnboardingSnapshotFromService(
   }
 
   const preferences = await service.getWalletPreferences(normalizedAddress);
+  const hasAuthorProfile = await service.hasAuthorProfile(normalizedAddress);
 
   return {
     normalizedAddress,
     isConnected: true,
-    hasAuthorProfile: await service.hasAuthorProfile(normalizedAddress),
+    hasAuthorProfile,
     declinedAuthorPage: preferences?.declinedAuthorPage ?? false,
   };
 }
