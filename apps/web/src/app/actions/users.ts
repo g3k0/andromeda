@@ -30,7 +30,38 @@ export async function getUserSnapshotAction(
 
   await userService.findOrCreateByWallet(authorizedAddress);
 
-  return userService.getSnapshot(authorizedAddress, true, {
+  const snapshot = await userService.getSnapshot(authorizedAddress, true, {
     hasAuthorProfile: (normalized) => authorService.hasAuthorProfile(normalized),
   });
+  const walletPreferences =
+    await authorService.getWalletPreferences(authorizedAddress);
+
+  // #region agent log
+  fetch("http://127.0.0.1:7933/ingest/f893043c-5c97-4d7c-a866-e6f7fc139f26", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "4321f4",
+    },
+    body: JSON.stringify({
+      sessionId: "4321f4",
+      runId: "pre-fix",
+      hypothesisId: "H1-H3-H4",
+      location: "users.ts:getUserSnapshotAction",
+      message: "User snapshot built for onboarding",
+      data: snapshot
+        ? {
+            roleSlug: snapshot.roleSlug,
+            hasAuthorProfile: snapshot.hasAuthorProfile,
+            userPrefsDeclined: snapshot.declinedAuthorPage,
+            walletPrefsDeclined: walletPreferences?.declinedAuthorPage ?? null,
+            normalizedAddressPrefix: snapshot.normalizedAddress.slice(0, 10),
+          }
+        : { snapshot: null },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
+
+  return snapshot;
 }

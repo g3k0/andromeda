@@ -16,3 +16,21 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+@layer base {
+  dialog {
+    color: var(--foreground);
+  }
+
+  dialog :where(
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea
+  ) {
+    color: var(--foreground);
+  }
+
+  dialog :where(input, textarea)::placeholder {
+    color: rgb(245 243 255 / 0.5);
+  }
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDisconnect, useSignMessage } from "wagmi";
 import { createAuthorAction, setWalletPreferencesAction } from "@/app/actions/authors";
 import { useLoading } from "@/components/loading/LoadingProvider";
@@ -126,6 +126,36 @@ export function AuthorOnboardingDialog({
     isConnected,
     onboardingSnapshot,
   ).open;
+
+  useEffect(() => {
+    if (!isConnected || !address) {
+      return;
+    }
+    // #region agent log
+    fetch("http://127.0.0.1:7933/ingest/f893043c-5c97-4d7c-a866-e6f7fc139f26", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "4321f4",
+      },
+      body: JSON.stringify({
+        sessionId: "4321f4",
+        runId: "pre-fix",
+        hypothesisId: "H1-H2",
+        location: "AuthorOnboardingDialog.tsx:onboarding-state",
+        message: "Onboarding dialog evaluated",
+        data: {
+          host: window.location.host,
+          roleSlug: snapshot?.roleSlug ?? null,
+          hasAuthorProfile: onboardingSnapshot?.hasAuthorProfile ?? null,
+          declinedAuthorPage: onboardingSnapshot?.declinedAuthorPage ?? null,
+          open,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+  }, [address, isConnected, snapshot, onboardingSnapshot, open]);
 
   if (!address || !open) {
     return null;
