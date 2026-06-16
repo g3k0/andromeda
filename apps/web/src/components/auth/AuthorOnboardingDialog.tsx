@@ -20,6 +20,7 @@ import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
 import { AuthorOnboardingEditor } from "./AuthorOnboardingEditor";
 import { CreateAuthorPrompt } from "./CreateAuthorPrompt";
 import { resolveAuthorOnboardingDialogState } from "./author-onboarding-dialog-state";
+import { logDebugSession } from "@/lib/debug/session-log";
 
 export type AuthorOnboardingStep = "prompt" | "editor";
 
@@ -125,6 +126,7 @@ export function AuthorOnboardingDialog({
     address,
     isConnected,
     onboardingSnapshot,
+    snapshot?.roleSlug,
   ).open;
 
   useEffect(() => {
@@ -132,28 +134,19 @@ export function AuthorOnboardingDialog({
       return;
     }
     // #region agent log
-    fetch("http://127.0.0.1:7933/ingest/f893043c-5c97-4d7c-a866-e6f7fc139f26", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "4321f4",
+    logDebugSession({
+      runId: "post-fix",
+      hypothesisId: "H1-H2",
+      location: "AuthorOnboardingDialog.tsx:onboarding-state",
+      message: "Onboarding dialog evaluated",
+      data: {
+        host: window.location.host,
+        roleSlug: snapshot?.roleSlug ?? null,
+        hasAuthorProfile: onboardingSnapshot?.hasAuthorProfile ?? null,
+        declinedAuthorPage: onboardingSnapshot?.declinedAuthorPage ?? null,
+        open,
       },
-      body: JSON.stringify({
-        sessionId: "4321f4",
-        runId: "pre-fix",
-        hypothesisId: "H1-H2",
-        location: "AuthorOnboardingDialog.tsx:onboarding-state",
-        message: "Onboarding dialog evaluated",
-        data: {
-          host: window.location.host,
-          roleSlug: snapshot?.roleSlug ?? null,
-          hasAuthorProfile: onboardingSnapshot?.hasAuthorProfile ?? null,
-          declinedAuthorPage: onboardingSnapshot?.declinedAuthorPage ?? null,
-          open,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
+    });
     // #endregion
   }, [address, isConnected, snapshot, onboardingSnapshot, open]);
 

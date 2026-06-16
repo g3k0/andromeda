@@ -10,8 +10,15 @@ export function resolveAuthorOnboardingDialogState(
   address: string | undefined,
   isConnected: boolean,
   snapshot: AuthorOnboardingSnapshot | null,
+  roleSlug?: string | null,
 ): AuthorOnboardingDialogState {
   void isConnected;
+  if (roleSlug === "admin") {
+    return {
+      open: false,
+      canInteract: Boolean(address),
+    };
+  }
   return {
     open: shouldPromptAuthorPageCreation(snapshot),
     canInteract: Boolean(address),

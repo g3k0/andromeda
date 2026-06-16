@@ -52,4 +52,23 @@ describe("author onboarding dialog state", () => {
       canInteract: true,
     });
   });
+
+  it("stays closed for admin users without an author profile", () => {
+    expect(
+      resolveAuthorOnboardingDialogState(
+        ADDRESS,
+        true,
+        {
+          normalizedAddress: ADDRESS,
+          isConnected: true,
+          hasAuthorProfile: false,
+          declinedAuthorPage: false,
+        },
+        "admin",
+      ),
+    ).toEqual({
+      open: false,
+      canInteract: true,
+    });
+  });
 });

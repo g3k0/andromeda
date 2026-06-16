@@ -27,29 +27,6 @@ export async function buildAuthorOnboardingSnapshotFromService(
   const preferences = await service.getWalletPreferences(normalizedAddress);
   const hasAuthorProfile = await service.hasAuthorProfile(normalizedAddress);
 
-  // #region agent log
-  fetch("http://127.0.0.1:7933/ingest/f893043c-5c97-4d7c-a866-e6f7fc139f26", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "4321f4",
-    },
-    body: JSON.stringify({
-      sessionId: "4321f4",
-      runId: "pre-fix",
-      hypothesisId: "H3-H4",
-      location: "onboarding.ts:buildAuthorOnboardingSnapshotFromService",
-      message: "Wallet preferences vs author profile lookup",
-      data: {
-        normalizedAddressPrefix: normalizedAddress.slice(0, 10),
-        hasAuthorProfile,
-        walletPrefsDeclined: preferences?.declinedAuthorPage ?? null,
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
-
   return {
     normalizedAddress,
     isConnected: true,

@@ -18,6 +18,7 @@ import {
   type UserSnapshotRefreshDetail,
 } from "./user-snapshot-sync";
 import { resolveSnapshotUpdate } from "./user-snapshot-guard";
+import { logDebugSession } from "@/lib/debug/session-log";
 import type { UserSnapshot } from "./types";
 
 type UserSnapshotContextValue = {
@@ -76,32 +77,20 @@ export function UserSnapshotProvider({ children }: { children: ReactNode }) {
         setSnapshot((current) => {
           const resolved = resolveSnapshotUpdate(current, next);
           // #region agent log
-          fetch(
-            "http://127.0.0.1:7933/ingest/f893043c-5c97-4d7c-a866-e6f7fc139f26",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-Debug-Session-Id": "4321f4",
-              },
-              body: JSON.stringify({
-                sessionId: "4321f4",
-                runId: "pre-fix",
-                hypothesisId: "H5",
-                location: "UserSnapshotProvider.tsx:initial-load",
-                message: "Snapshot resolved after wallet connect",
-                data: {
-                  keptCurrent: resolved === current,
-                  currentRoleSlug: current?.roleSlug ?? null,
-                  nextRoleSlug: next?.roleSlug ?? null,
-                  nextHasAuthorProfile: next?.hasAuthorProfile ?? null,
-                  nextDeclinedAuthorPage: next?.declinedAuthorPage ?? null,
-                  resolvedRoleSlug: resolved?.roleSlug ?? null,
-                },
-                timestamp: Date.now(),
-              }),
+          logDebugSession({
+            runId: "post-fix",
+            hypothesisId: "H5",
+            location: "UserSnapshotProvider.tsx:initial-load",
+            message: "Snapshot resolved after wallet connect",
+            data: {
+              keptCurrent: resolved === current,
+              currentRoleSlug: current?.roleSlug ?? null,
+              nextRoleSlug: next?.roleSlug ?? null,
+              nextHasAuthorProfile: next?.hasAuthorProfile ?? null,
+              nextDeclinedAuthorPage: next?.declinedAuthorPage ?? null,
+              resolvedRoleSlug: resolved?.roleSlug ?? null,
             },
-          ).catch(() => {});
+          });
           // #endregion
           return resolved;
         });
