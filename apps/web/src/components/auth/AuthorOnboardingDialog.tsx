@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDisconnect, useSignMessage } from "wagmi";
 import { createAuthorAction, setWalletPreferencesAction } from "@/app/actions/authors";
 import { useLoading } from "@/components/loading/LoadingProvider";
@@ -20,7 +20,6 @@ import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
 import { AuthorOnboardingEditor } from "./AuthorOnboardingEditor";
 import { CreateAuthorPrompt } from "./CreateAuthorPrompt";
 import { resolveAuthorOnboardingDialogState } from "./author-onboarding-dialog-state";
-import { logDebugSession } from "@/lib/debug/session-log";
 
 export type AuthorOnboardingStep = "prompt" | "editor";
 
@@ -128,27 +127,6 @@ export function AuthorOnboardingDialog({
     onboardingSnapshot,
     snapshot?.roleSlug,
   ).open;
-
-  useEffect(() => {
-    if (!isConnected || !address) {
-      return;
-    }
-    // #region agent log
-    logDebugSession({
-      runId: "post-fix",
-      hypothesisId: "H1-H2",
-      location: "AuthorOnboardingDialog.tsx:onboarding-state",
-      message: "Onboarding dialog evaluated",
-      data: {
-        host: window.location.host,
-        roleSlug: snapshot?.roleSlug ?? null,
-        hasAuthorProfile: onboardingSnapshot?.hasAuthorProfile ?? null,
-        declinedAuthorPage: onboardingSnapshot?.declinedAuthorPage ?? null,
-        open,
-      },
-    });
-    // #endregion
-  }, [address, isConnected, snapshot, onboardingSnapshot, open]);
 
   if (!address || !open) {
     return null;

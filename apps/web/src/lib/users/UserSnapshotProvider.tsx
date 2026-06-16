@@ -18,7 +18,6 @@ import {
   type UserSnapshotRefreshDetail,
 } from "./user-snapshot-sync";
 import { resolveSnapshotUpdate } from "./user-snapshot-guard";
-import { logDebugSession } from "@/lib/debug/session-log";
 import type { UserSnapshot } from "./types";
 
 type UserSnapshotContextValue = {
@@ -74,26 +73,7 @@ export function UserSnapshotProvider({ children }: { children: ReactNode }) {
       await whenWalletBound(address);
       const next = await getUserSnapshotAction(address, isConnected);
       if (!cancelled && requestId === requestIdRef.current) {
-        setSnapshot((current) => {
-          const resolved = resolveSnapshotUpdate(current, next);
-          // #region agent log
-          logDebugSession({
-            runId: "post-fix",
-            hypothesisId: "H5",
-            location: "UserSnapshotProvider.tsx:initial-load",
-            message: "Snapshot resolved after wallet connect",
-            data: {
-              keptCurrent: resolved === current,
-              currentRoleSlug: current?.roleSlug ?? null,
-              nextRoleSlug: next?.roleSlug ?? null,
-              nextHasAuthorProfile: next?.hasAuthorProfile ?? null,
-              nextDeclinedAuthorPage: next?.declinedAuthorPage ?? null,
-              resolvedRoleSlug: resolved?.roleSlug ?? null,
-            },
-          });
-          // #endregion
-          return resolved;
-        });
+        setSnapshot((current) => resolveSnapshotUpdate(current, next));
       }
     })();
 

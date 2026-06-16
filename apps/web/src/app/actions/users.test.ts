@@ -4,13 +4,11 @@ const {
   findOrCreateByWallet,
   getSnapshot,
   hasAuthorProfile,
-  getWalletPreferences,
   resolveAuthorizedSnapshotWallet,
 } = vi.hoisted(() => ({
   findOrCreateByWallet: vi.fn(),
   getSnapshot: vi.fn(),
   hasAuthorProfile: vi.fn(),
-  getWalletPreferences: vi.fn(),
   resolveAuthorizedSnapshotWallet: vi.fn(),
 }));
 
@@ -24,7 +22,6 @@ vi.mock("@/lib/users/server", () => ({
 vi.mock("@/lib/authors/server", () => ({
   getAuthorService: vi.fn(async () => ({
     hasAuthorProfile,
-    getWalletPreferences,
   })),
 }));
 
@@ -47,8 +44,6 @@ describe("user server actions", () => {
     findOrCreateByWallet.mockReset();
     getSnapshot.mockReset();
     hasAuthorProfile.mockReset();
-    getWalletPreferences.mockReset();
-    getWalletPreferences.mockResolvedValue(null);
     resolveAuthorizedSnapshotWallet.mockReset();
   });
 

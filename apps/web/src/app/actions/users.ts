@@ -4,7 +4,6 @@ import { unstable_noStore as noStore } from "next/cache";
 import { checkAuth } from "@/lib/auth/require-auth";
 import { getAuthorService } from "@/lib/authors/server";
 import { getUserService } from "@/lib/users/server";
-import { logDebugSession } from "@/lib/debug/session-log";
 
 export async function getUserSnapshotAction(
   address: string | undefined,
@@ -31,29 +30,7 @@ export async function getUserSnapshotAction(
 
   await userService.findOrCreateByWallet(authorizedAddress);
 
-  const snapshot = await userService.getSnapshot(authorizedAddress, true, {
+  return userService.getSnapshot(authorizedAddress, true, {
     hasAuthorProfile: (normalized) => authorService.hasAuthorProfile(normalized),
   });
-  const walletPreferences =
-    await authorService.getWalletPreferences(authorizedAddress);
-
-  // #region agent log
-  logDebugSession({
-    runId: "post-fix",
-    hypothesisId: "H1-H3-H4",
-    location: "users.ts:getUserSnapshotAction",
-    message: "User snapshot built for onboarding",
-    data: snapshot
-      ? {
-          roleSlug: snapshot.roleSlug,
-          hasAuthorProfile: snapshot.hasAuthorProfile,
-          userPrefsDeclined: snapshot.declinedAuthorPage,
-          walletPrefsDeclined: walletPreferences?.declinedAuthorPage ?? null,
-          normalizedAddressPrefix: snapshot.normalizedAddress.slice(0, 10),
-        }
-      : { snapshot: null },
-  });
-  // #endregion
-
-  return snapshot;
 }
