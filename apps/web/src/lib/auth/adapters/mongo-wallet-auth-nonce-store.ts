@@ -27,7 +27,7 @@ export class MongoWalletAuthNonceStore implements WalletAuthNonceStore {
         expiresAt: { $gt: now },
       },
       { $set: { used: true } },
-      { new: true },
+      { returnDocument: "after" },
     ).lean();
 
     return Boolean(updated);
