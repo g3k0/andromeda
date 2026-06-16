@@ -135,8 +135,8 @@ describe("author mutations", () => {
     ).rejects.toBeInstanceOf(AuthorProfileNotFoundError);
   });
 
-  it("stores wallet preferences", async () => {
-    mockService();
+  it("stores wallet preferences in user and author repositories", async () => {
+    const service = mockService();
 
     const preferences = await runSetWalletPreferencesMutation(ADDRESS, {
       address: ADDRESS,
@@ -146,5 +146,8 @@ describe("author mutations", () => {
     });
 
     expect(preferences.declinedAuthorPage).toBe(true);
+    expect(await service.getWalletPreferences(ADDRESS)).toEqual({
+      declinedAuthorPage: true,
+    });
   });
 });
