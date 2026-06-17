@@ -8,3 +8,29 @@ export class AlchemyRpcUrlMissingError extends Error {
     this.name = "AlchemyRpcUrlMissingError";
   }
 }
+
+export class WorkNotFoundError extends Error {
+  constructor(public readonly workId: bigint) {
+    super(`Work not found for id ${workId.toString()}`);
+    this.name = "WorkNotFoundError";
+  }
+}
+
+export class TokenNotFoundError extends Error {
+  constructor(public readonly tokenId: bigint) {
+    super(`Token not found for id ${tokenId.toString()}`);
+    this.name = "TokenNotFoundError";
+  }
+}
+
+export class InvalidWorkIdError extends Error {
+  constructor(
+    public readonly workId: bigint,
+    public readonly totalWorks: bigint,
+  ) {
+    super(
+      `Invalid work id ${workId.toString()} (total works: ${totalWorks.toString()})`,
+    );
+    this.name = "InvalidWorkIdError";
+  }
+}

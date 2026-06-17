@@ -1,0 +1,238 @@
+# Comandi blockchain (Andromeda)
+
+Riferimento operativo per interagire con il layer Web3 del monorepo: contratto
+`AndromedaWorks` (Hardhat), RPC Alchemy (Polygon / Amoy), ABI e chain reader in
+`apps/web`.
+
+Per l’architettura completa vedi
+[documentation/plans/web3-layer-architecture.md](../plans/web3-layer-architecture.md).
+
+Esegui i comandi **dalla root del repository** (`andromeda/`), salvo dove indicato.
+
+---
+
+## Prerequisiti
+
+| Requisito | Note |
+| --- | --- |
+| Node.js 20, pnpm 10 | Vedi `package.json` |
+| Wallet con MATIC | Solo per deploy/testnet o mainnet (Amoy: faucet testnet) |
+| App Alchemy | RPC per Amoy (dev) e/o Polygon mainnet (prod) |
+| `.env` configurati | Segreti **mai** committati |
+
+---
+
+## Variabili d’ambiente
+
+### Web app (`apps/web`)
+
+Copia il template e compila i secret in un file gitignored:
+
+```bash
+cp apps/web/.env.example apps/web/.env.local
+```
+
+| Variabile | Scope | Uso |
+| --- | --- | --- |
+| `NEXT_PUBLIC_CHAIN` | Client | `amoy` (testnet) o `polygon` (mainnet) |
+| `ALCHEMY_RPC_URL` | Server | RPC Alchemy per `createAndromedaPublicClient()` e letture viem |
+| `NEXT_PUBLIC_ALCHEMY_RPC_URL` | Client | RPC Alchemy per wagmi nel browser |
+| `NEXT_PUBLIC_CONTRACT_ADDRESS` | Client | Indirizzo del contratto `AndromedaWorks` **deployato** sulla rete scelta |
+| `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | Client | WalletConnect (connessione wallet) |
+
+`NEXT_PUBLIC_CONTRACT_ADDRESS` serve solo **dopo** un deploy reale. Senza deploy,
+i test del chain reader funzionano ugualmente (fake in-memory / mock viem).
+
+### Hardhat (`packages/contracts`)
+
+```bash
+cp packages/contracts/.env.example packages/contracts/.env
+```
+
+| Variabile | Uso |
+| --- | --- |
+| `AMOY_RPC_URL` | RPC per deploy e script su Polygon Amoy |
+| `POLYGON_RPC_URL` | RPC per deploy su Polygon mainnet |
+| `PRIVATE_KEY` | Chiave del wallet deployer (**solo locale**, mai in git) |
+| `POLYGONSCAN_API_KEY` | Verifica contratto su Polygonscan (opzionale) |
+
+---
+
+## Contratti intelligenti (`packages/contracts`)
+
+Comandi esposti dalla root del monorepo:
+
+| Comando | Descrizione |
+| --- | --- |
+| `pnpm contracts:build` | Compila i contratti Solidity (`hardhat compile`). Genera `artifacts/` e `typechain-types/` (gitignored). |
+| `pnpm contracts:test` | Compila ed esegue la suite Hardhat (`AndromedaWorks.test.ts`, test reentrancy, …). |
+| `pnpm contracts:deploy:amoy` | Deploy di `AndromedaWorks` su **Polygon Amoy** (testnet). |
+
+Comandi aggiuntivi sul package (equivalenti o non aliasati in root):
+
+| Comando | Descrizione |
+| --- | --- |
+| `pnpm --filter @andromeda/contracts build` | Come `contracts:build` |
+| `pnpm --filter @andromeda/contracts test` | Come `contracts:test` |
+| `pnpm --filter @andromeda/contracts node` | Avvia un nodo Hardhat locale in memoria (chain `31337`, utile per prove rapide senza Amoy). |
+| `pnpm --filter @andromeda/contracts deploy:amoy` | Come `contracts:deploy:amoy` |
+| `pnpm --filter @andromeda/contracts deploy:polygon` | Deploy su **Polygon mainnet** — usare solo quando si è pronti per produzione. |
+
+### Deploy su Amoy (prima volta)
+
+1. Compila:
+
+   ```bash
+   pnpm contracts:build
+   ```
+
+2. Configura `packages/contracts/.env` (`PRIVATE_KEY`, `AMOY_RPC_URL`).
+
+3. Deploy:
+
+   ```bash
+   pnpm contracts:deploy:amoy
+   ```
+
+4. Copia l’indirizzo stampato (`AndromedaWorks deployed at: 0x…`) in
+   `apps/web/.env.local`:
+
+   ```env
+   NEXT_PUBLIC_CONTRACT_ADDRESS=0x...
+   NEXT_PUBLIC_CHAIN=amoy
+   ```
+
+5. Verifica su [Polygonscan Amoy](https://amoy.polygonscan.com/) che l’indirizzo
+   mostri bytecode e almeno la transazione di deploy.
+
+### Dopo modifiche al contratto Solidity
+
+```bash
+pnpm contracts:build
+pnpm contracts:test
+pnpm --filter @andromeda/web sync:contract-abi   # aggiorna ABI in apps/web
+pnpm contracts:deploy:amoy                         # nuovo deploy → nuovo indirizzo
+```
+
+Ogni redeploy produce un **nuovo** indirizzo: aggiorna `NEXT_PUBLIC_CONTRACT_ADDRESS`.
+
+---
+
+## Layer Web3 in `apps/web`
+
+Moduli principali: `apps/web/src/lib/chain/` (RPC, ABI, chain reader, adapter viem).
+
+| Comando | Descrizione |
+| --- | --- |
+| `pnpm --filter @andromeda/web sync:contract-abi` | Copia l’ABI da `packages/contracts/artifacts/.../AndromedaWorks.json` in `src/lib/chain/andromeda-works.abi.json`. Richiede `pnpm contracts:build` eseguito almeno una volta. |
+| `pnpm web:test` | Tutti i test Vitest del web (include il layer chain). |
+| `pnpm web:test:coverage` | Test con coverage (soglia ≥ 80% sulle aree incluse in `vitest.config.ts`). |
+| `pnpm --filter @andromeda/web test src/lib/chain/` | Solo test del layer blockchain (RPC, ABI, chain reader, fake in-memory, adapter viem). |
+| `pnpm typecheck` | Typecheck TypeScript del web (include `lib/chain`). |
+| `pnpm lint` | ESLint del web. |
+
+Da `apps/web`:
+
+| Comando | Descrizione |
+| --- | --- |
+| `pnpm test:watch` | Vitest in modalità watch |
+| `pnpm sync:contract-abi` | Come sopra, scoped al package web |
+
+### Verifica locale senza deploy
+
+Il chain reader (PR 2) **non richiede** un contratto on-chain per essere validato:
+
+```bash
+pnpm --filter @andromeda/web test src/lib/chain/
+```
+
+I test usano fake in-memory e mock di `readContract`; nessun RPC reale né MongoDB.
+
+### Verifica con chain reale (opzionale)
+
+Richiede:
+
+- `ALCHEMY_RPC_URL` e `NEXT_PUBLIC_ALCHEMY_RPC_URL` in `.env.local`
+- `NEXT_PUBLIC_CONTRACT_ADDRESS` = indirizzo del **tuo** deploy su Amoy
+- `NEXT_PUBLIC_CHAIN=amoy`
+
+Non esiste ancora uno script CLI dedicato nel repo; dopo il deploy puoi controllare
+manualmente su Polygonscan Amoy (`totalWorks`, transazioni `registerWork` / `mintCopy`)
+o integrare letture via `createViemChainReader` + `createAndromedaPublicClient()` nel
+codice applicativo (catalogo e indexer: PR successive del piano Web3).
+
+---
+
+## Flussi di lavoro tipici
+
+### Sviluppo app (auth, UI) senza blockchain live
+
+```bash
+pnpm dev
+```
+
+Alchemy e indirizzo contratto possono restare vuoti se non stai testando wagmi/chain.
+I test del dominio chain restano eseguibili offline.
+
+### Sviluppo layer Web3 (chain reader, RPC)
+
+```bash
+pnpm contracts:build
+pnpm --filter @andromeda/web sync:contract-abi
+pnpm --filter @andromeda/web test src/lib/chain/
+pnpm web:test:coverage
+```
+
+### Primo collegamento end-to-end a Amoy
+
+```bash
+# 1. Contratto
+pnpm contracts:build
+pnpm contracts:deploy:amoy
+
+# 2. Web env (indirizzo deploy + Alchemy)
+#    apps/web/.env.local
+
+# 3. ABI allineata
+pnpm --filter @andromeda/web sync:contract-abi
+
+# 4. Test
+pnpm --filter @andromeda/web test src/lib/chain/
+pnpm dev
+```
+
+---
+
+## Reti supportate
+
+| Rete | Chain ID | Env web | Deploy Hardhat |
+| --- | --- | --- | --- |
+| Polygon Amoy (testnet) | 80002 | `NEXT_PUBLIC_CHAIN=amoy` | `deploy:amoy` |
+| Polygon PoS (mainnet) | 137 | `NEXT_PUBLIC_CHAIN=polygon` | `deploy:polygon` |
+| Hardhat local | 31337 | Non usato da wagmi di default | `pnpm --filter @andromeda/contracts node` + deploy manuale verso localhost |
+
+L’indirizzo del contratto è **specifico per rete**: un deploy su Amoy non vale su mainnet.
+
+---
+
+## Explorer e risorse
+
+| Risorsa | URL |
+| --- | --- |
+| Polygonscan Amoy | https://amoy.polygonscan.com/ |
+| Polygonscan mainnet | https://polygonscan.com/ |
+| Alchemy dashboard | https://dashboard.alchemy.com/ |
+| Faucet Amoy | Cercare “Polygon Amoy faucet” per MATIC test |
+
+---
+
+## Cosa non copre ancora questo documento
+
+Funzionalità pianificate ma non ancora esposte come comandi CLI (vedi piano Web3):
+
+- publish autore → IPFS + `registerWork` (PR 6)
+- mint copia + envelope TBA (PR 7)
+- indexer eventi → MongoDB (PR 8)
+- webhook Alchemy Notify (PR 10)
+
+Quando verranno aggiunti script o comandi npm dedicati, vanno documentati in questa pagina.
