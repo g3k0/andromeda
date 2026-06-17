@@ -18,6 +18,7 @@ export default defineConfig({
         "src/lib/roles/**/*.ts",
         "src/lib/auth/**/*.ts",
         "src/lib/chain/**/*.ts",
+        "src/lib/content-crypto/**/*.ts",
         "src/lib/config/**/*.ts",
         "src/lib/db/**/*.ts",
         "src/lib/navigation/**/*.ts",
