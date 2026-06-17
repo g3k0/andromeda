@@ -13,7 +13,8 @@
     "react-doctor:ci": "react-doctor . --no-score --diff \"${REACT_DOCTOR_DIFF_BASE:-origin/main}\" -y",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "sync:contract-abi": "node ./scripts/sync-andromeda-works-abi.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.59.0",
