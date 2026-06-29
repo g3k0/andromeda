@@ -4,13 +4,13 @@ import { AuthorFramedAvatar } from "./AuthorAvatar";
 export type AuthorProfileIdentitySectionProps = {
   avatarUrl: string | null;
   avatarAlt: string;
-  identity: ReactNode;
+  children: ReactNode;
 };
 
 export function AuthorProfileIdentitySection({
   avatarUrl,
   avatarAlt,
-  identity,
+  children,
 }: AuthorProfileIdentitySectionProps) {
   return (
     <div
@@ -20,7 +20,7 @@ export function AuthorProfileIdentitySection({
       <div className="shrink-0">
         <AuthorFramedAvatar avatarUrl={avatarUrl} alt={avatarAlt} />
       </div>
-      <div className="min-w-0 flex-1 space-y-4">{identity}</div>
+      <div className="min-w-0 flex-1 space-y-4">{children}</div>
     </div>
   );
 }

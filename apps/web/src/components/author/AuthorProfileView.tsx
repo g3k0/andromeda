@@ -20,20 +20,17 @@ export function AuthorProfileView({
       <AuthorProfileIdentitySection
         avatarUrl={profile.avatarUrl}
         avatarAlt={profile.displayName}
-        identity={
-          <>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {profile.displayName}
-            </h1>
-            <div className="space-y-1">
-              <span className="text-sm text-white/60">Public address</span>
-              <p className="break-all font-mono text-sm text-white/60">
-                {profile.address}
-              </p>
-            </div>
-          </>
-        }
-      />
+      >
+        <h1 className="text-3xl font-bold tracking-tight">
+          {profile.displayName}
+        </h1>
+        <div className="space-y-1">
+          <span className="text-sm text-white/60">Public address</span>
+          <p className="break-all font-mono text-sm text-white/60">
+            {profile.address}
+          </p>
+        </div>
+      </AuthorProfileIdentitySection>
       {isOwnerView ? (
         <button
           type="button"
