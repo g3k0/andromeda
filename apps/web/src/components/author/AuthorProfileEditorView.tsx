@@ -13,6 +13,7 @@ export type AuthorProfileEditorViewProps = {
   profile: AuthorProfile;
   form: EditorFormState;
   isAdminEditingOther: boolean;
+  showPublishWorkLink?: boolean;
   onDisplayNameChange: (value: string) => void;
   onAvatarFileSelect: (file: File | undefined) => void;
   onSubmit: () => void;
@@ -24,6 +25,7 @@ export function AuthorProfileEditorView({
   profile,
   form,
   isAdminEditingOther,
+  showPublishWorkLink = false,
   onDisplayNameChange,
   onAvatarFileSelect,
   onSubmit,
@@ -120,7 +122,7 @@ export function AuthorProfileEditorView({
         ) : null}
 
         <div className="flex flex-wrap gap-3">
-          {!isAdminEditingOther ? (
+          {showPublishWorkLink && !isAdminEditingOther ? (
             <Link
               href={`/author/${profile.address}/publish`}
               className="inline-flex items-center justify-center rounded-lg border border-andromeda-light/40 px-4 py-2 text-sm font-medium text-andromeda-light hover:bg-andromeda/10"

@@ -24,6 +24,7 @@ export function AuthorPageContentView({
     <AuthorProfileEditor
       profile={profile}
       isAdminEditingOther={isAdminEditingOther}
+      showPublishWorkLink
       onSave={onSave}
     />
   );

@@ -175,6 +175,40 @@ describe("AuthorProfileEditorView", () => {
     expect(guidance.textContent).not.toContain("488");
   });
 
+  it("shows publish work link only on the author page editor", () => {
+    const { rerender } = render(
+      <AuthorProfileEditorView
+        profile={profile}
+        form={createEditorFormState(profile)}
+        isAdminEditingOther={false}
+        onDisplayNameChange={vi.fn()}
+        onAvatarFileSelect={vi.fn()}
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    expect(screen.queryByRole("link", { name: "Publish work" })).not.toBeInTheDocument();
+
+    rerender(
+      <AuthorProfileEditorView
+        profile={profile}
+        form={createEditorFormState(profile)}
+        isAdminEditingOther={false}
+        showPublishWorkLink
+        onDisplayNameChange={vi.fn()}
+        onAvatarFileSelect={vi.fn()}
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Publish work" })).toHaveAttribute(
+      "href",
+      `/author/${profile.address}/publish`,
+    );
+  });
+
   it("forwards display name and file changes", () => {
     const onDisplayNameChange = vi.fn();
     const onAvatarFileSelect = vi.fn();
