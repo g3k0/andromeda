@@ -99,7 +99,8 @@ export function AuthorPageContent({
     return (
       <AuthorPageContentView
         profile={profile}
-        viewState={viewState}
+        variant="edit"
+        audience={viewState.audience}
         onCancelEdit={() => setIsEditing(false)}
         onSave={handleSave}
       />
@@ -109,7 +110,8 @@ export function AuthorPageContent({
   return (
     <AuthorPageContentView
       profile={profile}
-      viewState={viewState}
+      variant="read-only"
+      audience={viewState.audience}
       onEditClick={() => setIsEditing(true)}
     />
   );

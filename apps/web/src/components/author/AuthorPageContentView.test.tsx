@@ -69,7 +69,8 @@ describe("AuthorPageContentView", () => {
     render(
       <AuthorPageContentView
         profile={profile}
-        viewState={{ variant: "read-only", audience: "visitor" }}
+        variant="read-only"
+        audience="visitor"
         onEditClick={vi.fn()}
       />,
     );
@@ -86,7 +87,8 @@ describe("AuthorPageContentView", () => {
     render(
       <AuthorPageContentView
         profile={profile}
-        viewState={{ variant: "read-only", audience: "owner" }}
+        variant="read-only"
+        audience="owner"
         onEditClick={vi.fn()}
       />,
     );
@@ -106,7 +108,8 @@ describe("AuthorPageContentView", () => {
     render(
       <AuthorPageContentView
         profile={profile}
-        viewState={{ variant: "read-only", audience: "owner" }}
+        variant="read-only"
+        audience="owner"
         onEditClick={onEditClick}
       />,
     );
@@ -119,7 +122,8 @@ describe("AuthorPageContentView", () => {
     render(
       <AuthorPageContentView
         profile={profile}
-        viewState={{ variant: "edit", audience: "owner" }}
+        variant="edit"
+        audience="owner"
         onCancelEdit={vi.fn()}
         onSave={vi.fn()}
       />,
@@ -135,7 +139,8 @@ describe("AuthorPageContentView", () => {
     render(
       <AuthorPageContentView
         profile={profile}
-        viewState={{ variant: "edit", audience: "admin" }}
+        variant="edit"
+        audience="admin"
         onCancelEdit={vi.fn()}
         onSave={vi.fn()}
       />,
@@ -152,7 +157,8 @@ describe("AuthorPageContentView", () => {
     render(
       <AuthorPageContentView
         profile={profile}
-        viewState={{ variant: "edit", audience: "owner" }}
+        variant="edit"
+        audience="owner"
         onCancelEdit={onCancelEdit}
         onSave={vi.fn()}
       />,
@@ -168,7 +174,8 @@ describe("AuthorPageContentView", () => {
     render(
       <AuthorPageContentView
         profile={profile}
-        viewState={{ variant: "edit", audience: "owner" }}
+        variant="edit"
+        audience="owner"
         onCancelEdit={vi.fn()}
         onSave={onSave}
       />,

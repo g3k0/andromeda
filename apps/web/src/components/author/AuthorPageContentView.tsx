@@ -1,34 +1,29 @@
 import type { AuthorProfile } from "@/lib/authors/types";
 import type { AuthorProfileEditorSaveInput } from "./author-profile-editor-state";
-import type { AuthorPageViewState } from "./author-page-content";
 import { AuthorProfileEditor } from "./AuthorProfileEditor";
 import { AuthorProfileView } from "./AuthorProfileView";
 
-type AuthorPageContentViewBaseProps = {
-  profile: AuthorProfile;
-};
-
-type AuthorPageContentReadOnlyProps = AuthorPageContentViewBaseProps & {
-  viewState: Extract<AuthorPageViewState, { variant: "read-only" }>;
-  onEditClick: () => void;
-};
-
-type AuthorPageContentEditProps = AuthorPageContentViewBaseProps & {
-  viewState: Extract<AuthorPageViewState, { variant: "edit" }>;
-  onCancelEdit: () => void;
-  onSave: (input: AuthorProfileEditorSaveInput) => void | Promise<void>;
-};
-
 export type AuthorPageContentViewProps =
-  | AuthorPageContentReadOnlyProps
-  | AuthorPageContentEditProps;
+  | {
+      profile: AuthorProfile;
+      variant: "read-only";
+      audience: "visitor" | "owner";
+      onEditClick: () => void;
+    }
+  | {
+      profile: AuthorProfile;
+      variant: "edit";
+      audience: "owner" | "admin";
+      onCancelEdit: () => void;
+      onSave: (input: AuthorProfileEditorSaveInput) => void | Promise<void>;
+    };
 
 export function AuthorPageContentView(props: AuthorPageContentViewProps) {
-  if (props.viewState.variant === "edit") {
+  if (props.variant === "edit") {
     return (
       <AuthorProfileEditor
         profile={props.profile}
-        isAdminEditingOther={props.viewState.audience === "admin"}
+        isAdminEditingOther={props.audience === "admin"}
         onSave={props.onSave}
         onCancel={props.onCancelEdit}
       />
@@ -38,7 +33,7 @@ export function AuthorPageContentView(props: AuthorPageContentViewProps) {
   return (
     <AuthorProfileView
       profile={props.profile}
-      audience={props.viewState.audience}
+      audience={props.audience}
       onEditClick={props.onEditClick}
     />
   );
