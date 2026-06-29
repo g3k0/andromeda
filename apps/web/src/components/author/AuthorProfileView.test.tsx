@@ -92,9 +92,8 @@ describe("AuthorProfileView", () => {
     render(
       <AuthorProfileView
         profile={buildProfile()}
-        showEditButton
+        audience="owner"
         onEditClick={onEditClick}
-        showPublishWorkLink
       />,
     );
 

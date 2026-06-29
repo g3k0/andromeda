@@ -10,6 +10,7 @@ import type { UserRole } from "@/lib/users/types";
 import {
   isAdminEditingOtherAuthorPage,
   isAuthorProfileOwner,
+  resolveAuthorPageViewState,
   resolveCanEditAuthorPage,
 } from "./author-page-content";
 import { AuthorPageContentView } from "./AuthorPageContentView";
@@ -61,6 +62,13 @@ export function AuthorPageContent({
 
   const [isEditing, setIsEditing] = useState(isAdminEditingOther);
 
+  const viewState = resolveAuthorPageViewState({
+    canEdit,
+    isAdminEditingOther,
+    isProfileOwner,
+    isEditing,
+  });
+
   async function handleSave(input: AuthorProfileEditorSaveInput): Promise<void> {
     if (!viewerAddress) {
       return;
@@ -87,16 +95,22 @@ export function AuthorPageContent({
     }
   }
 
+  if (viewState.variant === "edit") {
+    return (
+      <AuthorPageContentView
+        profile={profile}
+        viewState={viewState}
+        onCancelEdit={() => setIsEditing(false)}
+        onSave={handleSave}
+      />
+    );
+  }
+
   return (
     <AuthorPageContentView
       profile={profile}
-      canEdit={canEdit}
-      isAdminEditingOther={isAdminEditingOther}
-      isProfileOwner={isProfileOwner}
-      isEditing={isEditing}
+      viewState={viewState}
       onEditClick={() => setIsEditing(true)}
-      onCancelEdit={() => setIsEditing(false)}
-      onSave={handleSave}
     />
   );
 }

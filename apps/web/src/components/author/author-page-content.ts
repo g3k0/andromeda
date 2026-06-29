@@ -76,3 +76,43 @@ export function isAdminEditingOtherAuthorPage({
   const owner = normalizeAddress(profileOwnerAddress);
   return !!viewer && !!owner && viewer !== owner;
 }
+
+export type AuthorPageReadOnlyViewState = {
+  variant: "read-only";
+  audience: "visitor" | "owner";
+};
+
+export type AuthorPageEditViewState = {
+  variant: "edit";
+  audience: "owner" | "admin";
+};
+
+export type AuthorPageViewState =
+  | AuthorPageReadOnlyViewState
+  | AuthorPageEditViewState;
+
+export type AuthorPageViewContext = {
+  canEdit: boolean;
+  isAdminEditingOther: boolean;
+  isProfileOwner: boolean;
+  isEditing: boolean;
+};
+
+export function resolveAuthorPageViewState({
+  canEdit,
+  isAdminEditingOther,
+  isProfileOwner,
+  isEditing,
+}: AuthorPageViewContext): AuthorPageViewState {
+  if (isEditing && canEdit) {
+    return {
+      variant: "edit",
+      audience: isAdminEditingOther ? "admin" : "owner",
+    };
+  }
+
+  return {
+    variant: "read-only",
+    audience: isProfileOwner ? "owner" : "visitor",
+  };
+}

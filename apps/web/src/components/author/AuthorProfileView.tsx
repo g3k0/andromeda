@@ -4,17 +4,17 @@ import { AuthorAvatar } from "./AuthorAvatar";
 
 export type AuthorProfileViewProps = {
   profile: AuthorProfile;
-  showEditButton?: boolean;
+  audience?: "visitor" | "owner";
   onEditClick?: () => void;
-  showPublishWorkLink?: boolean;
 };
 
 export function AuthorProfileView({
   profile,
-  showEditButton = false,
+  audience = "visitor",
   onEditClick,
-  showPublishWorkLink = false,
 }: AuthorProfileViewProps) {
+  const isOwnerView = audience === "owner";
+
   return (
     <article className="flex max-w-lg flex-col items-center gap-4 text-center sm:items-start sm:text-left">
       <AuthorAvatar avatarUrl={profile.avatarUrl} alt={profile.displayName} />
@@ -28,7 +28,7 @@ export function AuthorProfileView({
             {profile.address}
           </p>
         </div>
-        {showEditButton ? (
+        {isOwnerView ? (
           <button
             type="button"
             onClick={onEditClick}
@@ -38,7 +38,7 @@ export function AuthorProfileView({
           </button>
         ) : null}
       </div>
-      {showPublishWorkLink ? (
+      {isOwnerView ? (
         <div className="flex w-full justify-center pt-2">
           <Link
             href={`/author/${profile.address}/publish`}

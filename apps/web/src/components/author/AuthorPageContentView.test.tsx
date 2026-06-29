@@ -60,24 +60,19 @@ const profile: AuthorProfile = {
   createdAt: "2026-06-03T12:00:00.000Z",
 };
 
-const baseProps = {
-  profile,
-  canEdit: false,
-  isAdminEditingOther: false,
-  isProfileOwner: false,
-  isEditing: false,
-  onEditClick: vi.fn(),
-  onCancelEdit: vi.fn(),
-  onSave: vi.fn(),
-};
-
 describe("AuthorPageContentView", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("renders read-only view when editing is not allowed", () => {
-    render(<AuthorPageContentView {...baseProps} />);
+  it("renders read-only view for visitors", () => {
+    render(
+      <AuthorPageContentView
+        profile={profile}
+        viewState={{ variant: "read-only", audience: "visitor" }}
+        onEditClick={vi.fn()}
+      />,
+    );
 
     expect(screen.getByRole("article")).toBeInTheDocument();
     expect(screen.queryByTestId("author-editor")).not.toBeInTheDocument();
@@ -90,9 +85,9 @@ describe("AuthorPageContentView", () => {
   it("renders read-only view with edit and publish for the profile owner", () => {
     render(
       <AuthorPageContentView
-        {...baseProps}
-        canEdit
-        isProfileOwner
+        profile={profile}
+        viewState={{ variant: "read-only", audience: "owner" }}
+        onEditClick={vi.fn()}
       />,
     );
 
@@ -110,9 +105,8 @@ describe("AuthorPageContentView", () => {
 
     render(
       <AuthorPageContentView
-        {...baseProps}
-        canEdit
-        isProfileOwner
+        profile={profile}
+        viewState={{ variant: "read-only", audience: "owner" }}
         onEditClick={onEditClick}
       />,
     );
@@ -121,13 +115,13 @@ describe("AuthorPageContentView", () => {
     expect(onEditClick).toHaveBeenCalled();
   });
 
-  it("renders the editor in edit mode without publish work", () => {
+  it("renders the owner editor without publish work", () => {
     render(
       <AuthorPageContentView
-        {...baseProps}
-        canEdit
-        isProfileOwner
-        isEditing
+        profile={profile}
+        viewState={{ variant: "edit", audience: "owner" }}
+        onCancelEdit={vi.fn()}
+        onSave={vi.fn()}
       />,
     );
 
@@ -137,13 +131,13 @@ describe("AuthorPageContentView", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("opens the editor immediately when an admin edits another author", () => {
+  it("renders the admin editor variant", () => {
     render(
       <AuthorPageContentView
-        {...baseProps}
-        canEdit
-        isAdminEditingOther
-        isEditing
+        profile={profile}
+        viewState={{ variant: "edit", audience: "admin" }}
+        onCancelEdit={vi.fn()}
+        onSave={vi.fn()}
       />,
     );
 
@@ -157,11 +151,10 @@ describe("AuthorPageContentView", () => {
 
     render(
       <AuthorPageContentView
-        {...baseProps}
-        canEdit
-        isProfileOwner
-        isEditing
+        profile={profile}
+        viewState={{ variant: "edit", audience: "owner" }}
         onCancelEdit={onCancelEdit}
+        onSave={vi.fn()}
       />,
     );
 
@@ -174,10 +167,9 @@ describe("AuthorPageContentView", () => {
 
     render(
       <AuthorPageContentView
-        {...baseProps}
-        canEdit
-        isProfileOwner
-        isEditing
+        profile={profile}
+        viewState={{ variant: "edit", audience: "owner" }}
+        onCancelEdit={vi.fn()}
         onSave={onSave}
       />,
     );

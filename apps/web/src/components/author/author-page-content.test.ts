@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   isAdminEditingOtherAuthorPage,
   isAuthorProfileOwner,
+  resolveAuthorPageViewState,
   resolveCanEditAuthorPage,
 } from "./author-page-content";
 
@@ -119,5 +120,51 @@ describe("isAuthorProfileOwner", () => {
         profileOwnerAddress: OWNER,
       }),
     ).toBe(false);
+  });
+});
+
+describe("resolveAuthorPageViewState", () => {
+  it("returns visitor read-only for disconnected viewers", () => {
+    expect(
+      resolveAuthorPageViewState({
+        canEdit: false,
+        isAdminEditingOther: false,
+        isProfileOwner: false,
+        isEditing: false,
+      }),
+    ).toEqual({ variant: "read-only", audience: "visitor" });
+  });
+
+  it("returns owner read-only when the profile owner is not editing", () => {
+    expect(
+      resolveAuthorPageViewState({
+        canEdit: true,
+        isAdminEditingOther: false,
+        isProfileOwner: true,
+        isEditing: false,
+      }),
+    ).toEqual({ variant: "read-only", audience: "owner" });
+  });
+
+  it("returns owner edit when the profile owner is editing", () => {
+    expect(
+      resolveAuthorPageViewState({
+        canEdit: true,
+        isAdminEditingOther: false,
+        isProfileOwner: true,
+        isEditing: true,
+      }),
+    ).toEqual({ variant: "edit", audience: "owner" });
+  });
+
+  it("returns admin edit when an admin edits another author", () => {
+    expect(
+      resolveAuthorPageViewState({
+        canEdit: true,
+        isAdminEditingOther: true,
+        isProfileOwner: false,
+        isEditing: true,
+      }),
+    ).toEqual({ variant: "edit", audience: "admin" });
   });
 });
