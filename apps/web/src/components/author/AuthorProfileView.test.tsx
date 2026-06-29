@@ -49,9 +49,26 @@ describe("AuthorProfileView", () => {
   it("renders the full blockchain address below the name", () => {
     render(<AuthorProfileView profile={buildProfile()} />);
 
+    const identity = screen.getByTestId("author-profile-identity");
+    const heading = screen.getByRole("heading", { level: 1, name: "Jane Doe" });
     const address = screen.getByText(ADDRESS);
+
+    expect(identity).toContainElement(heading);
+    expect(identity).toContainElement(address);
     expect(address.tagName).toBe("P");
     expect(address).toHaveClass("font-mono", "break-all", "text-white/60");
+  });
+
+  it("renders the profile image beside the identity details", () => {
+    render(<AuthorProfileView profile={buildProfile()} />);
+
+    const identity = screen.getByTestId("author-profile-identity");
+    expect(identity).toContainElement(
+      screen.getByRole("img", { name: "Jane Doe" }),
+    );
+    expect(identity).toContainElement(
+      screen.getByRole("heading", { level: 1, name: "Jane Doe" }),
+    );
   });
 
   it("renders the placeholder avatar when avatarUrl is null", () => {

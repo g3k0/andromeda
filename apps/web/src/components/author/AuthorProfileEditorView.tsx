@@ -1,7 +1,7 @@
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { AUTHOR_DISPLAY_NAME_MAX_LENGTH } from "@/lib/authors/field-limits";
 import type { AuthorProfile } from "@/lib/authors/types";
-import { AuthorAvatar } from "./AuthorAvatar";
+import { AuthorProfileIdentitySection } from "./AuthorProfileIdentitySection";
 import {
   AVATAR_UPLOAD_MIME_ACCEPT,
   getAuthorAvatarUploadGuidance,
@@ -43,38 +43,47 @@ export function AuthorProfileEditorView({
         </p>
       ) : null}
 
-      <AuthorAvatar
+      <AuthorProfileIdentitySection
         avatarUrl={form.avatarUrl}
-        alt={form.displayName || profile.displayName}
+        avatarAlt={form.displayName || profile.displayName}
+        identity={
+          <>
+            <label
+              htmlFor="author-display-name"
+              className="block space-y-1"
+            >
+              <span className="text-sm text-white/60">Author name</span>
+              <input
+                id="author-display-name"
+                type="text"
+                value={form.displayName}
+                maxLength={AUTHOR_DISPLAY_NAME_MAX_LENGTH}
+                aria-invalid={form.displayNameError ? true : undefined}
+                aria-describedby={
+                  form.displayNameError ? "author-display-name-error" : undefined
+                }
+                onChange={(event) => onDisplayNameChange(event.target.value)}
+                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50 aria-invalid:border-red-400/60"
+              />
+              {form.displayNameError ? (
+                <p
+                  id="author-display-name-error"
+                  className="text-xs text-red-400"
+                  role="alert"
+                >
+                  {form.displayNameError}
+                </p>
+              ) : null}
+            </label>
+            <div className="space-y-1">
+              <span className="text-sm text-white/60">Public address</span>
+              <p className="break-all font-mono text-sm text-white/60">
+                {profile.address}
+              </p>
+            </div>
+          </>
+        }
       />
-
-      <label
-        htmlFor="author-display-name"
-        className="w-full space-y-1 text-left"
-      >
-        <span className="text-sm text-white/60">Author name</span>
-        <input
-          id="author-display-name"
-          type="text"
-          value={form.displayName}
-          maxLength={AUTHOR_DISPLAY_NAME_MAX_LENGTH}
-          aria-invalid={form.displayNameError ? true : undefined}
-          aria-describedby={
-            form.displayNameError ? "author-display-name-error" : undefined
-          }
-          onChange={(event) => onDisplayNameChange(event.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50 aria-invalid:border-red-400/60"
-        />
-        {form.displayNameError ? (
-          <p
-            id="author-display-name-error"
-            className="text-xs text-red-400"
-            role="alert"
-          >
-            {form.displayNameError}
-          </p>
-        ) : null}
-      </label>
 
       <div className="w-full space-y-4">
         <div className="space-y-1 text-left">
@@ -103,13 +112,6 @@ export function AuthorProfileEditorView({
               {form.avatarError}
             </p>
           ) : null}
-        </div>
-
-        <div className="space-y-1 text-left">
-          <span className="text-sm text-white/60">Public address</span>
-          <p className="break-all font-mono text-sm text-white/60">
-            {profile.address}
-          </p>
         </div>
 
         {form.errorMessage ? (

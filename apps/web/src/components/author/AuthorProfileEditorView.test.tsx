@@ -114,7 +114,7 @@ describe("AuthorProfileEditorView", () => {
     );
   });
 
-  it("renders the author name field directly below the profile image", () => {
+  it("renders the author name beside the framed profile image", () => {
     render(
       <AuthorProfileEditorView
         profile={profile}
@@ -127,13 +127,13 @@ describe("AuthorProfileEditorView", () => {
       />,
     );
 
+    const identity = screen.getByTestId("author-profile-identity");
     const image = screen.getByRole("img", { name: "Jane Doe" });
     const nameInput = screen.getByLabelText("Author name");
     const fileInput = screen.getByLabelText("Profile image");
 
-    expect(
-      image.compareDocumentPosition(nameInput) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
+    expect(identity).toContainElement(nameInput);
+    expect(identity).toContainElement(image);
     expect(
       nameInput.compareDocumentPosition(fileInput) &
         Node.DOCUMENT_POSITION_FOLLOWING,
@@ -175,7 +175,7 @@ describe("AuthorProfileEditorView", () => {
     expect(guidance.textContent).not.toContain("488");
   });
 
-  it("shows the public address with a label", () => {
+  it("forwards display name and file changes", () => {
     const onDisplayNameChange = vi.fn();
     const onAvatarFileSelect = vi.fn();
 

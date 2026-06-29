@@ -1,6 +1,6 @@
 import type { AuthorProfile } from "@/lib/authors/types";
 import Link from "next/link";
-import { AuthorAvatar } from "./AuthorAvatar";
+import { AuthorProfileIdentitySection } from "./AuthorProfileIdentitySection";
 
 export type AuthorProfileViewProps = {
   profile: AuthorProfile;
@@ -17,27 +17,32 @@ export function AuthorProfileView({
 
   return (
     <article className="flex max-w-lg flex-col items-center gap-4 text-center sm:items-start sm:text-left">
-      <AuthorAvatar avatarUrl={profile.avatarUrl} alt={profile.displayName} />
-      <div className="w-full space-y-4">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {profile.displayName}
-        </h1>
-        <div className="space-y-1 text-left">
-          <span className="text-sm text-white/60">Public address</span>
-          <p className="break-all font-mono text-sm text-white/60">
-            {profile.address}
-          </p>
-        </div>
-        {isOwnerView ? (
-          <button
-            type="button"
-            onClick={onEditClick}
-            className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5"
-          >
-            Edit
-          </button>
-        ) : null}
-      </div>
+      <AuthorProfileIdentitySection
+        avatarUrl={profile.avatarUrl}
+        avatarAlt={profile.displayName}
+        identity={
+          <>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {profile.displayName}
+            </h1>
+            <div className="space-y-1">
+              <span className="text-sm text-white/60">Public address</span>
+              <p className="break-all font-mono text-sm text-white/60">
+                {profile.address}
+              </p>
+            </div>
+          </>
+        }
+      />
+      {isOwnerView ? (
+        <button
+          type="button"
+          onClick={onEditClick}
+          className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5"
+        >
+          Edit
+        </button>
+      ) : null}
       {isOwnerView ? (
         <div className="flex w-full justify-center pt-2">
           <Link

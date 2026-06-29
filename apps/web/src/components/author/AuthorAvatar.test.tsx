@@ -3,7 +3,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { AUTHOR_AVATAR_PLACEHOLDER_PATH } from "./constants";
-import { AuthorAvatar } from "./AuthorAvatar";
+import { AuthorAvatar, AuthorFramedAvatar } from "./AuthorAvatar";
 
 describe("AuthorAvatar", () => {
   afterEach(() => {
@@ -47,5 +47,19 @@ describe("AuthorAvatar", () => {
   it("uses the default alt text when alt is omitted", () => {
     render(<AuthorAvatar avatarUrl={null} />);
     expect(screen.getByRole("img", { name: "Author profile" })).toBeDefined();
+  });
+});
+
+describe("AuthorFramedAvatar", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("wraps the avatar in a primary border with spacing", () => {
+    const { container } = render(<AuthorFramedAvatar avatarUrl={null} alt="Jane Doe" />);
+
+    const frame = container.firstElementChild;
+    expect(frame).toHaveClass("rounded-full", "border-andromeda", "border-2", "p-1.5");
+    expect(screen.getByRole("img", { name: "Jane Doe" })).toBeInTheDocument();
   });
 });
