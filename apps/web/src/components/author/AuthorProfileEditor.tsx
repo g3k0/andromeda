@@ -22,7 +22,6 @@ export type { AuthorProfileEditorSaveInput } from "./author-profile-editor-state
 export type AuthorProfileEditorProps = {
   profile: AuthorProfile;
   isAdminEditingOther: boolean;
-  showPublishWorkLink?: boolean;
   onSave: (input: AuthorProfileEditorSaveInput) => void | Promise<void>;
   onCancel?: () => void;
   cancelLabel?: string;
@@ -31,7 +30,6 @@ export type AuthorProfileEditorProps = {
 export function AuthorProfileEditor({
   profile,
   isAdminEditingOther,
-  showPublishWorkLink = false,
   onSave,
   onCancel,
   cancelLabel,
@@ -108,7 +106,6 @@ export function AuthorProfileEditor({
       profile={profile}
       form={form}
       isAdminEditingOther={isAdminEditingOther}
-      showPublishWorkLink={showPublishWorkLink}
       onDisplayNameChange={(displayName) => {
         const nextDisplayName = applyDisplayNameInput(displayName);
         setForm((current) => ({

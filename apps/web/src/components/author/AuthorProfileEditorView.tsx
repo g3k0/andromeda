@@ -1,7 +1,6 @@
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { AUTHOR_DISPLAY_NAME_MAX_LENGTH } from "@/lib/authors/field-limits";
 import type { AuthorProfile } from "@/lib/authors/types";
-import Link from "next/link";
 import { AuthorAvatar } from "./AuthorAvatar";
 import {
   AVATAR_UPLOAD_MIME_ACCEPT,
@@ -13,7 +12,6 @@ export type AuthorProfileEditorViewProps = {
   profile: AuthorProfile;
   form: EditorFormState;
   isAdminEditingOther: boolean;
-  showPublishWorkLink?: boolean;
   onDisplayNameChange: (value: string) => void;
   onAvatarFileSelect: (file: File | undefined) => void;
   onSubmit: () => void;
@@ -25,7 +23,6 @@ export function AuthorProfileEditorView({
   profile,
   form,
   isAdminEditingOther,
-  showPublishWorkLink = false,
   onDisplayNameChange,
   onAvatarFileSelect,
   onSubmit,
@@ -142,17 +139,6 @@ export function AuthorProfileEditorView({
           </button>
         </div>
       </div>
-
-      {showPublishWorkLink && !isAdminEditingOther ? (
-        <div className="flex w-full justify-center pt-4">
-          <Link
-            href={`/author/${profile.address}/publish`}
-            className="inline-flex items-center justify-center rounded-lg bg-andromeda px-6 py-3 text-base font-semibold text-white shadow-lg shadow-andromeda/25 transition-colors hover:bg-andromeda-dark"
-          >
-            Publish work
-          </Link>
-        </div>
-      ) : null}
     </form>
   );
 }

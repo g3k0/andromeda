@@ -35,6 +35,30 @@ export function resolveCanEditAuthorPage({
   return canEditAuthorPage(viewerAddress, profileOwnerAddress, isAdmin);
 }
 
+export function isAuthorProfileOwner({
+  viewerAddress,
+  isConnected,
+  isAdmin,
+  viewerRole,
+  profileOwnerAddress,
+}: AuthorPageEditContext): boolean {
+  return (
+    resolveCanEditAuthorPage({
+      viewerAddress,
+      isConnected,
+      isAdmin,
+      viewerRole,
+      profileOwnerAddress,
+    }) &&
+    !isAdminEditingOtherAuthorPage({
+      viewerAddress,
+      isAdmin,
+      viewerRole,
+      profileOwnerAddress,
+    })
+  );
+}
+
 export function isAdminEditingOtherAuthorPage({
   viewerAddress,
   isAdmin,

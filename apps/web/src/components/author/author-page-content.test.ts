@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   isAdminEditingOtherAuthorPage,
+  isAuthorProfileOwner,
   resolveCanEditAuthorPage,
 } from "./author-page-content";
 
@@ -79,6 +80,41 @@ describe("isAdminEditingOtherAuthorPage", () => {
     expect(
       isAdminEditingOtherAuthorPage({
         viewerAddress: OWNER,
+        isAdmin: false,
+        profileOwnerAddress: OWNER,
+      }),
+    ).toBe(false);
+  });
+});
+
+describe("isAuthorProfileOwner", () => {
+  it("returns true when the profile owner views their page", () => {
+    expect(
+      isAuthorProfileOwner({
+        viewerAddress: OWNER,
+        isConnected: true,
+        isAdmin: false,
+        profileOwnerAddress: OWNER,
+      }),
+    ).toBe(true);
+  });
+
+  it("returns false for admins editing another author", () => {
+    expect(
+      isAuthorProfileOwner({
+        viewerAddress: ADMIN,
+        isConnected: true,
+        isAdmin: true,
+        profileOwnerAddress: OWNER,
+      }),
+    ).toBe(false);
+  });
+
+  it("returns false for disconnected viewers", () => {
+    expect(
+      isAuthorProfileOwner({
+        viewerAddress: OWNER,
+        isConnected: false,
         isAdmin: false,
         profileOwnerAddress: OWNER,
       }),

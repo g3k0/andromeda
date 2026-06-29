@@ -9,6 +9,7 @@ import type { AuthorProfile } from "@/lib/authors/types";
 import type { UserRole } from "@/lib/users/types";
 import {
   isAdminEditingOtherAuthorPage,
+  isAuthorProfileOwner,
   resolveCanEditAuthorPage,
 } from "./author-page-content";
 import { AuthorPageContentView } from "./AuthorPageContentView";
@@ -50,9 +51,21 @@ export function AuthorPageContent({
     profileOwnerAddress: profile.address,
   });
 
-  async function handleSave(input: AuthorProfileEditorSaveInput) {
+  const isProfileOwner = isAuthorProfileOwner({
+    viewerAddress,
+    isConnected,
+    isAdmin,
+    viewerRole,
+    profileOwnerAddress: profile.address,
+  });
+
+  const [isEditing, setIsEditing] = useState(isAdminEditingOther);
+
+  async function handleSave(
+    input: AuthorProfileEditorSaveInput,
+  ): Promise<boolean> {
     if (!viewerAddress) {
-      return;
+      return false;
     }
 
     try {
@@ -70,8 +83,11 @@ export function AuthorPageContent({
         setProfile(updated);
         onProfileSaved?.(updated);
       }, "Saving profile…");
+      setIsEditing(false);
+      return true;
     } catch {
       // Errors surface via server action validation/auth failures.
+      return false;
     }
   }
 
@@ -80,6 +96,10 @@ export function AuthorPageContent({
       profile={profile}
       canEdit={canEdit}
       isAdminEditingOther={isAdminEditingOther}
+      isProfileOwner={isProfileOwner}
+      isEditing={isEditing}
+      onEditClick={() => setIsEditing(true)}
+      onCancelEdit={() => setIsEditing(false)}
       onSave={handleSave}
     />
   );

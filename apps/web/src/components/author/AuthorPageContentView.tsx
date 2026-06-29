@@ -7,25 +7,40 @@ export type AuthorPageContentViewProps = {
   profile: AuthorProfile;
   canEdit: boolean;
   isAdminEditingOther: boolean;
-  onSave: (input: AuthorProfileEditorSaveInput) => void | Promise<void>;
+  isProfileOwner: boolean;
+  isEditing: boolean;
+  onEditClick: () => void;
+  onCancelEdit: () => void;
+  onSave: (input: AuthorProfileEditorSaveInput) => boolean | Promise<boolean>;
 };
 
 export function AuthorPageContentView({
   profile,
   canEdit,
   isAdminEditingOther,
+  isProfileOwner,
+  isEditing,
+  onEditClick,
+  onCancelEdit,
   onSave,
 }: AuthorPageContentViewProps) {
-  if (!canEdit) {
-    return <AuthorProfileView profile={profile} />;
+  if (isEditing && canEdit) {
+    return (
+      <AuthorProfileEditor
+        profile={profile}
+        isAdminEditingOther={isAdminEditingOther}
+        onSave={onSave}
+        onCancel={onCancelEdit}
+      />
+    );
   }
 
   return (
-    <AuthorProfileEditor
+    <AuthorProfileView
       profile={profile}
-      isAdminEditingOther={isAdminEditingOther}
-      showPublishWorkLink
-      onSave={onSave}
+      showEditButton={isProfileOwner}
+      onEditClick={onEditClick}
+      showPublishWorkLink={isProfileOwner}
     />
   );
 }
