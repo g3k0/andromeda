@@ -122,14 +122,6 @@ export function AuthorProfileEditorView({
         ) : null}
 
         <div className="flex flex-wrap gap-3">
-          {showPublishWorkLink && !isAdminEditingOther ? (
-            <Link
-              href={`/author/${profile.address}/publish`}
-              className="inline-flex items-center justify-center rounded-lg border border-andromeda-light/40 px-4 py-2 text-sm font-medium text-andromeda-light hover:bg-andromeda/10"
-            >
-              Publish work
-            </Link>
-          ) : null}
           <button
             type="submit"
             disabled={form.isSaving}
@@ -150,6 +142,17 @@ export function AuthorProfileEditorView({
           </button>
         </div>
       </div>
+
+      {showPublishWorkLink && !isAdminEditingOther ? (
+        <div className="flex w-full justify-center pt-4">
+          <Link
+            href={`/author/${profile.address}/publish`}
+            className="inline-flex items-center justify-center rounded-lg bg-andromeda px-6 py-3 text-base font-semibold text-white shadow-lg shadow-andromeda/25 transition-colors hover:bg-andromeda-dark"
+          >
+            Publish work
+          </Link>
+        </div>
+      ) : null}
     </form>
   );
 }
