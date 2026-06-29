@@ -6,6 +6,21 @@ import type { AuthorProfile } from "@/lib/authors/types";
 import { createEditorFormState } from "./author-profile-editor-state";
 import { AuthorProfileEditorView } from "./AuthorProfileEditorView";
 
+vi.mock("next/link", () => ({
+  default: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
 const profile: AuthorProfile = {
   address: "0xabcdef0123456789abcdef0123456789abcdef01",
   displayName: "Jane Doe",
