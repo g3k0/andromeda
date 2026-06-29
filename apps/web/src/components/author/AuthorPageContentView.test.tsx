@@ -33,7 +33,7 @@ vi.mock("./AuthorProfileEditor", () => ({
     onSave: (input: {
       displayName: string;
       avatarUrl: string | null;
-    }) => Promise<boolean>;
+    }) => Promise<void>;
   }) => (
     <div data-testid="author-editor">
       {isAdminEditingOther ? <span>Editing as administrator</span> : null}
@@ -170,7 +170,7 @@ describe("AuthorPageContentView", () => {
   });
 
   it("forwards save to the editor", async () => {
-    const onSave = vi.fn().mockResolvedValue(true);
+    const onSave = vi.fn().mockResolvedValue(undefined);
 
     render(
       <AuthorPageContentView

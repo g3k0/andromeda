@@ -61,11 +61,9 @@ export function AuthorPageContent({
 
   const [isEditing, setIsEditing] = useState(isAdminEditingOther);
 
-  async function handleSave(
-    input: AuthorProfileEditorSaveInput,
-  ): Promise<boolean> {
+  async function handleSave(input: AuthorProfileEditorSaveInput): Promise<void> {
     if (!viewerAddress) {
-      return false;
+      return;
     }
 
     try {
@@ -84,10 +82,8 @@ export function AuthorPageContent({
         onProfileSaved?.(updated);
       }, "Saving profile…");
       setIsEditing(false);
-      return true;
     } catch {
       // Errors surface via server action validation/auth failures.
-      return false;
     }
   }
 

@@ -11,7 +11,7 @@ export type AuthorPageContentViewProps = {
   isEditing: boolean;
   onEditClick: () => void;
   onCancelEdit: () => void;
-  onSave: (input: AuthorProfileEditorSaveInput) => boolean | Promise<boolean>;
+  onSave: (input: AuthorProfileEditorSaveInput) => void | Promise<void>;
 };
 
 export function AuthorPageContentView({
