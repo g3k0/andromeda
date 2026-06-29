@@ -40,17 +40,7 @@ export function WorkPublishView({
   const isBusy = step === "encrypting" || step === "uploading" || step === "registering";
 
   return (
-    <form
-      className="flex w-full max-w-2xl flex-col gap-4"
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (step === "ready") {
-          onRegister();
-          return;
-        }
-        onUpload();
-      }}
-    >
+    <div className="flex w-full max-w-2xl flex-col gap-4">
       <div>
         <h1 className="text-2xl font-semibold text-white">Publish a work</h1>
         <p className="mt-1 text-sm text-white/60">
@@ -185,8 +175,9 @@ export function WorkPublishView({
       <div className="flex items-center gap-3">
         {step === "ready" || step === "registering" || step === "success" ? (
           <button
-            type="submit"
+            type="button"
             disabled={isBusy || step === "success"}
+            onClick={onRegister}
             className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {step === "registering" ? <LoadingSpinner size="sm" /> : null}
@@ -194,8 +185,9 @@ export function WorkPublishView({
           </button>
         ) : (
           <button
-            type="submit"
+            type="button"
             disabled={isBusy}
+            onClick={onUpload}
             className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {step === "encrypting" || step === "uploading" ? (
@@ -209,6 +201,6 @@ export function WorkPublishView({
           </button>
         )}
       </div>
-    </form>
+    </div>
   );
 }
