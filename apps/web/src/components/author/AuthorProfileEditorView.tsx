@@ -1,6 +1,7 @@
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { AUTHOR_DISPLAY_NAME_MAX_LENGTH } from "@/lib/authors/field-limits";
 import type { AuthorProfile } from "@/lib/authors/types";
+import Link from "next/link";
 import { AuthorAvatar } from "./AuthorAvatar";
 import {
   AVATAR_UPLOAD_MIME_ACCEPT,
@@ -119,6 +120,14 @@ export function AuthorProfileEditorView({
         ) : null}
 
         <div className="flex flex-wrap gap-3">
+          {!isAdminEditingOther ? (
+            <Link
+              href={`/author/${profile.address}/publish`}
+              className="inline-flex items-center justify-center rounded-lg border border-andromeda-light/40 px-4 py-2 text-sm font-medium text-andromeda-light hover:bg-andromeda/10"
+            >
+              Publish work
+            </Link>
+          ) : null}
           <button
             type="submit"
             disabled={form.isSaving}
