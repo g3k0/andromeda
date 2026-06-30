@@ -4,6 +4,7 @@ import {
   validateWorkPublishDescription,
   validateWorkPublishExternalUrl,
   validateWorkPublishName,
+  validateWorkPublishPriceMatic,
 } from "./work-publish-field-validation";
 
 describe("work publish field validation", () => {
@@ -28,5 +29,14 @@ describe("work publish field validation", () => {
       "External URL must use HTTP or HTTPS.",
     );
     expect(validateWorkPublishExternalUrl("not-a-url")).toBe("Enter a valid URL.");
+  });
+
+  it("treats an empty initial price as optional", () => {
+    expect(validateWorkPublishPriceMatic("")).toBeNull();
+    expect(validateWorkPublishPriceMatic("   ")).toBeNull();
+    expect(validateWorkPublishPriceMatic("0.01")).toBeNull();
+    expect(validateWorkPublishPriceMatic("not-a-price")).toBe(
+      "Enter a valid MATIC price.",
+    );
   });
 });

@@ -44,6 +44,9 @@ describe("WorkPublishView", () => {
     );
 
     expect(screen.getByText(/ACE metadata preview/i)).toBeInTheDocument();
+    expect(screen.getByText(/Pricing & editions/i)).toBeInTheDocument();
+    expect(screen.getByText(/Leave blank to register the work on-chain/i)).toBeInTheDocument();
+    expect(screen.getByText(/copy #1 versus copy #145/i)).toBeInTheDocument();
     expect(screen.getByText(/Register on-chain/i)).toBeInTheDocument();
   });
 });

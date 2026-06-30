@@ -12,6 +12,10 @@ import {
   getWorkManuscriptUploadGuidance,
   WORK_MANUSCRIPT_UPLOAD_ACCEPT,
 } from "@/lib/works/manuscript-upload-guidance";
+import {
+  getWorkPublishInitialPriceGuidance,
+  getWorkPublishNumberedCopiesGuidance,
+} from "@/lib/works/work-publish-pricing-guidance";
 import { ALLOWED_WORK_COVER_MIME_TYPES } from "@/lib/works/upload-limits";
 import {
   WORK_PUBLISH_DESCRIPTION_MAX_LENGTH,
@@ -126,36 +130,50 @@ export function WorkPublishView({
         ) : null}
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-1">
-          <span className="text-sm text-white/60">Price (MATIC)</span>
-          <input
-            type="text"
-            inputMode="decimal"
-            value={values.priceMatic}
-            disabled={isBusy || step === "success"}
-            onChange={(event) => onFieldChange("priceMatic", event.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50"
-          />
-          {errors.priceMatic ? (
-            <p className="text-xs text-red-400">{errors.priceMatic}</p>
-          ) : null}
-        </label>
+      <div className="space-y-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 text-left">
+        <div>
+          <h2 className="text-sm font-medium text-white">Pricing & editions</h2>
+          <p className="mt-1 text-xs leading-relaxed text-white/50">
+            {getWorkPublishInitialPriceGuidance()}
+          </p>
+        </div>
 
-        <label className="space-y-1">
-          <span className="text-sm text-white/60">Max copies (0 = unlimited)</span>
-          <input
-            type="number"
-            min={0}
-            value={values.maxCopies}
-            disabled={isBusy || step === "success"}
-            onChange={(event) => onFieldChange("maxCopies", event.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50"
-          />
-          {errors.maxCopies ? (
-            <p className="text-xs text-red-400">{errors.maxCopies}</p>
-          ) : null}
-        </label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="space-y-1">
+            <span className="text-sm text-white/60">Initial list price (MATIC, optional)</span>
+            <input
+              type="text"
+              inputMode="decimal"
+              value={values.priceMatic}
+              placeholder="Leave blank for no initial price"
+              disabled={isBusy || step === "success"}
+              onChange={(event) => onFieldChange("priceMatic", event.target.value)}
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50"
+            />
+            {errors.priceMatic ? (
+              <p className="text-xs text-red-400">{errors.priceMatic}</p>
+            ) : null}
+          </label>
+
+          <label className="space-y-1">
+            <span className="text-sm text-white/60">Max copies (0 = unlimited)</span>
+            <input
+              type="number"
+              min={0}
+              value={values.maxCopies}
+              disabled={isBusy || step === "success"}
+              onChange={(event) => onFieldChange("maxCopies", event.target.value)}
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50"
+            />
+            {errors.maxCopies ? (
+              <p className="text-xs text-red-400">{errors.maxCopies}</p>
+            ) : null}
+          </label>
+        </div>
+
+        <p className="text-xs leading-relaxed text-white/50">
+          {getWorkPublishNumberedCopiesGuidance()}
+        </p>
       </div>
 
       <label className="space-y-1">

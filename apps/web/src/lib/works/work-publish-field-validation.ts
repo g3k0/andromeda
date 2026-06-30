@@ -1,3 +1,5 @@
+import { parseEther } from "viem";
+
 export const WORK_PUBLISH_NAME_MAX_LENGTH = 120;
 export const WORK_PUBLISH_DESCRIPTION_MAX_LENGTH = 500;
 export const WORK_PUBLISH_EXTERNAL_URL_MAX_LENGTH = 2048;
@@ -55,6 +57,24 @@ export function validateWorkPublishExternalUrl(externalUrl: string): string | nu
     }
   } catch {
     return "Enter a valid URL.";
+  }
+
+  return null;
+}
+
+export function validateWorkPublishPriceMatic(priceMatic: string): string | null {
+  const trimmed = priceMatic.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  try {
+    const price = parseEther(trimmed);
+    if (price < 0n) {
+      return "Price must be zero or greater.";
+    }
+  } catch {
+    return "Enter a valid MATIC price.";
   }
 
   return null;

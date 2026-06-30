@@ -12,6 +12,7 @@ import {
   validateWorkPublishDescription,
   validateWorkPublishExternalUrl,
   validateWorkPublishName,
+  validateWorkPublishPriceMatic,
 } from "./work-publish-field-validation";
 
 export type WorkPublishFormValues = {
@@ -39,7 +40,7 @@ export function createEmptyWorkPublishForm(): WorkPublishFormValues {
   return {
     name: "",
     description: "",
-    priceMatic: "0",
+    priceMatic: "",
     maxCopies: "0",
     externalUrl: "",
   };
@@ -75,13 +76,9 @@ export function validateWorkPublishForm(
     errors.coverImage = "Cover image is too large.";
   }
 
-  try {
-    const price = parseEther(values.priceMatic.trim() || "0");
-    if (price < 0n) {
-      errors.priceMatic = "Price must be zero or greater.";
-    }
-  } catch {
-    errors.priceMatic = "Enter a valid MATIC price.";
+  const priceError = validateWorkPublishPriceMatic(values.priceMatic);
+  if (priceError) {
+    errors.priceMatic = priceError;
   }
 
   const maxCopies = Number.parseInt(values.maxCopies.trim() || "0", 10);
