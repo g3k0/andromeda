@@ -24,14 +24,17 @@ describe("author-service", () => {
     const svc = service();
     const created = await svc.createAuthorProfile(VALID, {
       displayName: "Before",
+      bio: "Initial bio",
     });
     const updated = await svc.upsertAuthor({
       ...created,
       displayName: "After",
       avatarUrl: "data:image/png;base64,abc",
+      bio: "Updated bio",
     });
 
     expect(updated.displayName).toBe("After");
+    expect(updated.bio).toBe("Updated bio");
     expect(updated.createdAt).toBe(created.createdAt);
     expect(await svc.getAuthorByAddress(VALID)).toEqual(updated);
   });
@@ -51,6 +54,7 @@ describe("author-service", () => {
         address: VALID,
         displayName: "Ghost",
         avatarUrl: null,
+        bio: null,
         createdAt: new Date().toISOString(),
       }),
     ).rejects.toBeInstanceOf(AuthorProfileNotFoundError);

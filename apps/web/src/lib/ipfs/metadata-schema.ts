@@ -24,6 +24,46 @@ const attributeSchema = z.object({
   value: z.union([z.string(), z.number()]),
 });
 
+export const workImprintMetadataSchema = z
+  .object({
+    publication_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    edition_number: z.number().int().min(1),
+    edition_kind: z.enum(["first", "reprint"]),
+    reprint_number: z.number().int().min(1).optional(),
+    series_name: z.string().min(1).max(120).optional(),
+    series_volume: z.number().int().min(1).optional(),
+    language: z.string().min(2).max(32).optional(),
+    original_publication_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    back_cover_text: z.string().min(1).max(2000),
+    about_author: z.string().min(1).max(1000),
+    author_address: addressSchema,
+  })
+  .superRefine((value, ctx) => {
+    if (value.edition_kind === "reprint" && value.reprint_number === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Reprint number is required for a reprint edition.",
+        path: ["reprint_number"],
+      });
+    }
+    if (value.edition_kind === "first" && value.reprint_number !== undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Reprint number applies only to reprint editions.",
+        path: ["reprint_number"],
+      });
+    }
+    if (value.series_name && value.series_volume === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Series volume is required when a series name is provided.",
+        path: ["series_volume"],
+      });
+    }
+  });
+
+export type WorkImprintMetadata = z.infer<typeof workImprintMetadataSchema>;
+
 const aceMetadataBlockSchema = z.object({
   version: z.literal(ACE_VERSION),
   encrypted_content: ipfsUriSchema,
@@ -42,6 +82,7 @@ export const acePublicMetadataSchema = z
     image: ipfsUriSchema,
     external_url: z.string().url().optional(),
     attributes: z.array(attributeSchema).optional(),
+    work_imprint: workImprintMetadataSchema,
     ace: aceMetadataBlockSchema,
   })
   .strict();

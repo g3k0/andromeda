@@ -22,11 +22,31 @@ describe("createAuthorBodySchema", () => {
         ...auth,
         displayName: "Ada",
         avatarUrl: null,
+        bio: "Writes speculative fiction.",
       }),
     ).toMatchObject({
       address: ADDRESS,
       displayName: "Ada",
+      bio: "Writes speculative fiction.",
     });
+  });
+
+  it("normalizes blank bio to null", () => {
+    expect(
+      createAuthorBodySchema.parse({
+        ...auth,
+        bio: "   ",
+      }).bio,
+    ).toBeNull();
+  });
+
+  it("rejects unsafe bio characters", () => {
+    expect(() =>
+      createAuthorBodySchema.parse({
+        ...auth,
+        bio: "Hello\u0007",
+      }),
+    ).toThrow();
   });
 
   it("rejects empty display names", () => {
@@ -62,8 +82,9 @@ describe("updateAuthorActionSchema", () => {
         targetAddress: ADDRESS,
         displayName: "Updated",
         avatarUrl: null,
-      }).displayName,
-    ).toBe("Updated");
+        bio: "Updated bio",
+      }).bio,
+    ).toBe("Updated bio");
   });
 });
 

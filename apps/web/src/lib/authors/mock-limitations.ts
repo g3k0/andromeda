@@ -46,7 +46,7 @@ export const DATABASE_PERSISTENCE_NOTES: readonly string[] = [
 
 export const DATABASE_MIGRATION_STATUS = {
   collections: {
-    authors: ["address", "displayName", "avatarUrl", "createdAt", "updatedAt"],
+    authors: ["address", "displayName", "avatarUrl", "bio", "createdAt", "updatedAt"],
     wallet_preferences: [
       "address",
       "declinedAuthorPage",

@@ -1,6 +1,7 @@
 import mongoose, { Schema, type InferSchemaType } from "mongoose";
 import {
   AUTHOR_AVATAR_URL_MAX_LENGTH,
+  AUTHOR_BIO_MAX_LENGTH,
   AUTHOR_DISPLAY_NAME_MAX_LENGTH,
 } from "@/lib/authors/field-limits";
 
@@ -27,6 +28,11 @@ const authorSchema = new Schema(
       type: String,
       default: null,
       maxlength: AUTHOR_AVATAR_URL_MAX_LENGTH,
+    },
+    bio: {
+      type: String,
+      default: null,
+      maxlength: AUTHOR_BIO_MAX_LENGTH,
     },
   },
   {

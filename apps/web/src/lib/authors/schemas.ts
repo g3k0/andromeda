@@ -2,8 +2,10 @@ import { z } from "zod";
 import { normalizeAddress } from "./address";
 import {
   AUTHOR_AVATAR_URL_MAX_LENGTH,
+  AUTHOR_BIO_MAX_LENGTH,
   AUTHOR_DISPLAY_NAME_MAX_LENGTH,
 } from "./field-limits";
+import { containsUnsafeBioControlCharacters } from "./author-bio-validation";
 
 const ethereumAddressSchema = z
   .string()
@@ -35,6 +37,35 @@ const avatarUrlSchema = z
   ])
   .optional();
 
+function normalizeBioInput(value: unknown): string | null | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return null;
+  }
+  if (typeof value !== "string") {
+    return value as never;
+  }
+  const trimmed = value.trim();
+  return trimmed === "" ? null : trimmed;
+}
+
+const bioSchema = z.preprocess(
+  normalizeBioInput,
+  z
+    .union([
+      z.null(),
+      z
+        .string()
+        .max(AUTHOR_BIO_MAX_LENGTH)
+        .refine((value) => !containsUnsafeBioControlCharacters(value), {
+          message: "Bio contains invalid characters.",
+        }),
+    ])
+    .optional(),
+);
+
 export const walletAuthSchema = z.object({
   address: ethereumAddressSchema,
   message: z.string().min(1),
@@ -47,11 +78,13 @@ export const walletAuthSchema = z.object({
 export const createAuthorBodySchema = walletAuthSchema.extend({
   displayName: displayNameSchema.optional(),
   avatarUrl: avatarUrlSchema,
+  bio: bioSchema,
 });
 
 export const updateAuthorMutationSchema = walletAuthSchema.extend({
   displayName: displayNameSchema,
   avatarUrl: avatarUrlSchema,
+  bio: bioSchema,
 });
 
 export const updateAuthorActionSchema = updateAuthorMutationSchema.extend({

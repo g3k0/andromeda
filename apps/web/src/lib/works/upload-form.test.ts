@@ -4,6 +4,8 @@ import { ForbiddenContentKeyError } from "./errors";
 import { parseWorkUploadFiles } from "./upload-form";
 import { parseWorkUploadFields } from "./upload-schemas";
 
+const AUTHOR = "0x1111111111111111111111111111111111111111";
+
 function createUploadFormData(
   extra: Record<string, string | Blob> = {},
 ): FormData {
@@ -11,13 +13,23 @@ function createUploadFormData(
   formData.set(
     "walletAuth",
     JSON.stringify({
-      address: "0x1111111111111111111111111111111111111111",
+      address: AUTHOR,
       message: "Sign in to Andromeda",
       signature: `0x${"a".repeat(130)}`,
     }),
   );
   formData.set("name", "The Star Gate");
-  formData.set("description", "Encrypted novella.");
+  formData.set("authorAddress", AUTHOR);
+  formData.set("publicationDate", "2026-06-01");
+  formData.set("editionNumber", "1");
+  formData.set("editionKind", "first");
+  formData.set("reprintNumber", "");
+  formData.set("seriesName", "");
+  formData.set("seriesVolume", "");
+  formData.set("language", "");
+  formData.set("originalPublicationDate", "");
+  formData.set("backCoverText", "An encrypted novella about distant stars.");
+  formData.set("aboutAuthor", "The author writes speculative fiction.");
   formData.set(
     "ciphertext",
     new Blob([new Uint8Array([1, 2, 3])], { type: "application/octet-stream" }),
@@ -35,16 +47,40 @@ function createUploadFormData(
 }
 
 describe("parseWorkUploadFields", () => {
-  it("parses required auth and text fields from walletAuth JSON", () => {
+  it("parses required auth, imprint metadata, and text fields from walletAuth JSON", () => {
     const parsed = parseWorkUploadFields(createUploadFormData());
     expect(parsed.name).toBe("The Star Gate");
-    expect(parsed.description).toBe("Encrypted novella.");
+    expect(parsed.imprint.publication_date).toBe("2026-06-01");
+    expect(parsed.imprint.author_address).toBe(AUTHOR);
   });
 
   it("rejects forbidden contentKey field", () => {
     expect(() =>
       parseWorkUploadFields(createUploadFormData({ contentKey: "secret" })),
     ).toThrow(ForbiddenContentKeyError);
+  });
+
+  it("rejects unsafe control characters in text fields", () => {
+    const formData = createUploadFormData();
+    formData.set("name", "Bad\u0007 title");
+
+    expect(() => parseWorkUploadFields(formData)).toThrow();
+  });
+
+  it("rejects non-http external URLs", () => {
+    const formData = createUploadFormData({
+      externalUrl: "javascript:alert(1)",
+    });
+
+    expect(() => parseWorkUploadFields(formData)).toThrow();
+  });
+
+  it("rejects author address that does not match the signed wallet", () => {
+    const formData = createUploadFormData({
+      authorAddress: "0x2222222222222222222222222222222222222222",
+    });
+
+    expect(() => parseWorkUploadFields(formData)).toThrow();
   });
 });
 

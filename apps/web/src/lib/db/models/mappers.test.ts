@@ -9,12 +9,14 @@ describe("toAuthorProfile", () => {
         address: "0xabcdef0123456789abcdef0123456789abcdef01",
         displayName: "Ada",
         avatarUrl: null,
+        bio: "Public bio",
         createdAt,
       }),
     ).toEqual({
       address: "0xabcdef0123456789abcdef0123456789abcdef01",
       displayName: "Ada",
       avatarUrl: null,
+      bio: "Public bio",
       createdAt: createdAt.toISOString(),
     });
   });

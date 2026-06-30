@@ -28,6 +28,7 @@ const profile: AuthorProfile = {
   address: ADDRESS,
   displayName: "Jane Doe",
   avatarUrl: null,
+  bio: null,
   createdAt: "2026-06-03T12:00:00.000Z",
 };
 

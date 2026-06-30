@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import { uploadWorkPublishPayload } from "./work-publish-client";
 import { createEmptyWorkPublishForm } from "./work-publish-form-state";
 
+const AUTHOR = "0x1111111111111111111111111111111111111111";
+
 describe("uploadWorkPublishPayload", () => {
   it("encrypts locally and uploads multipart payload", async () => {
     const fetchImpl = vi.fn(async () =>
@@ -10,8 +12,16 @@ describe("uploadWorkPublishPayload", () => {
         metadataUri: "ipfs://bafyMetadata",
         metadata: {
           name: "Novella",
-          description: "Encrypted story.",
+          description: "First edition, edition 1 · published 2026-06-01 · Author: 0x1111",
           image: "ipfs://cover",
+          work_imprint: {
+            publication_date: "2026-06-01",
+            edition_number: 1,
+            edition_kind: "first",
+            back_cover_text: "Encrypted story blurb.",
+            about_author: "Author bio.",
+            author_address: AUTHOR,
+          },
           ace: {
             version: "1",
             encrypted_content: "ipfs://content",
@@ -29,18 +39,24 @@ describe("uploadWorkPublishPayload", () => {
     const cover = new File([new Uint8Array([1])], "cover.png", {
       type: "image/png",
     });
+    const manuscript = new File([new TextEncoder().encode("Chapter 1")], "novel.txt", {
+      type: "text/plain",
+    });
 
     const result = await uploadWorkPublishPayload(
       {
         values: {
           ...createEmptyWorkPublishForm(),
           name: "Novella",
-          description: "Encrypted story.",
-          manuscriptText: "Chapter 1",
+          publicationDate: "2026-06-01",
+          backCoverText: "Encrypted story blurb.",
+          aboutAuthor: "Author bio.",
         },
+        authorAddress: AUTHOR,
         coverImage: cover,
+        manuscriptFile: manuscript,
         walletAuth: {
-          address: "0x1111111111111111111111111111111111111111",
+          address: AUTHOR,
           message: "Sign in",
           signature: `0x${"b".repeat(130)}`,
         },
@@ -55,6 +71,8 @@ describe("uploadWorkPublishPayload", () => {
     expect(init?.body).toBeInstanceOf(FormData);
     const formData = init!.body as FormData;
     expect(formData.get("walletAuth")).toContain("0x1111");
+    expect(formData.get("authorAddress")).toBe(AUTHOR);
+    expect(formData.get("publicationDate")).toBe("2026-06-01");
     expect(formData.has("contentKey")).toBe(false);
   });
 });

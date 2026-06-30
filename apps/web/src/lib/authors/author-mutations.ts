@@ -44,6 +44,7 @@ export async function runCreateAuthorMutation(
   const profile = await service.createAuthorProfile(body.address, {
     displayName: body.displayName,
     avatarUrl: body.avatarUrl ?? null,
+    bio: body.bio ?? null,
   });
 
   await userService.findOrCreateByWallet(body.address);
@@ -76,6 +77,7 @@ export async function runUpdateAuthorMutation(
     ...existing,
     displayName: body.displayName,
     avatarUrl: body.avatarUrl ?? null,
+    bio: body.bio ?? null,
   });
 }
 

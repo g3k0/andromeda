@@ -1,10 +1,25 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { AUTHOR_AVATAR_PLACEHOLDER_PATH } from "./constants";
 import { AuthorProfileView } from "./AuthorProfileView";
+
+vi.mock("next/link", () => ({
+  default: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+}));
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 
@@ -13,6 +28,7 @@ function buildProfile(overrides: Partial<AuthorProfile> = {}): AuthorProfile {
     address: ADDRESS,
     displayName: "Jane Doe",
     avatarUrl: null,
+    bio: null,
     createdAt: "2026-06-03T12:00:00.000Z",
     ...overrides,
   };
@@ -34,9 +50,26 @@ describe("AuthorProfileView", () => {
   it("renders the full blockchain address below the name", () => {
     render(<AuthorProfileView profile={buildProfile()} />);
 
+    const identity = screen.getByTestId("author-profile-identity");
+    const heading = screen.getByRole("heading", { level: 1, name: "Jane Doe" });
     const address = screen.getByText(ADDRESS);
+
+    expect(identity).toContainElement(heading);
+    expect(identity).toContainElement(address);
     expect(address.tagName).toBe("P");
     expect(address).toHaveClass("font-mono", "break-all", "text-white/60");
+  });
+
+  it("renders the profile image beside the identity details", () => {
+    render(<AuthorProfileView profile={buildProfile()} />);
+
+    const identity = screen.getByTestId("author-profile-identity");
+    expect(identity).toContainElement(
+      screen.getByRole("img", { name: "Jane Doe" }),
+    );
+    expect(identity).toContainElement(
+      screen.getByRole("heading", { level: 1, name: "Jane Doe" }),
+    );
   });
 
   it("renders the placeholder avatar when avatarUrl is null", () => {
@@ -64,5 +97,47 @@ describe("AuthorProfileView", () => {
   it("exposes the profile as an article landmark", () => {
     render(<AuthorProfileView profile={buildProfile()} />);
     expect(screen.getByRole("article")).toBeInTheDocument();
+  });
+
+  it("shows the public address label", () => {
+    render(<AuthorProfileView profile={buildProfile()} />);
+    expect(screen.getByText("Public address")).toBeInTheDocument();
+  });
+
+  it("renders the author bio below the public address", () => {
+    render(
+      <AuthorProfileView
+        profile={buildProfile({ bio: "Speculative fiction author." })}
+      />,
+    );
+
+    const identity = screen.getByTestId("author-profile-identity");
+    const address = screen.getByText(ADDRESS);
+    const bio = screen.getByText("Speculative fiction author.");
+
+    expect(identity).toContainElement(address);
+    expect(identity).toContainElement(bio);
+    expect(
+      address.compareDocumentPosition(bio) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("shows edit and publish actions for the profile owner", () => {
+    const onEditClick = vi.fn();
+
+    render(
+      <AuthorProfileView
+        profile={buildProfile()}
+        audience="owner"
+        onEditClick={onEditClick}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+    expect(onEditClick).toHaveBeenCalled();
+    expect(screen.getByRole("link", { name: "Publish work" })).toHaveAttribute(
+      "href",
+      `/author/${ADDRESS}/publish`,
+    );
   });
 });

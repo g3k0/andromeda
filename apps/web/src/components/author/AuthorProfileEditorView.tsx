@@ -1,8 +1,12 @@
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
-import { AUTHOR_DISPLAY_NAME_MAX_LENGTH } from "@/lib/authors/field-limits";
+import { FormTextareaControl } from "@/components/form/FormTextareaControl";
+import {
+  AUTHOR_BIO_MAX_LENGTH,
+  AUTHOR_DISPLAY_NAME_MAX_LENGTH,
+} from "@/lib/authors/field-limits";
+import { AUTHOR_FORM_GUIDANCE } from "@/lib/authors/author-form-guidance";
 import type { AuthorProfile } from "@/lib/authors/types";
-import Link from "next/link";
-import { AuthorAvatar } from "./AuthorAvatar";
+import { AuthorProfileIdentitySection } from "./AuthorProfileIdentitySection";
 import {
   AVATAR_UPLOAD_MIME_ACCEPT,
   getAuthorAvatarUploadGuidance,
@@ -14,6 +18,7 @@ export type AuthorProfileEditorViewProps = {
   form: EditorFormState;
   isAdminEditingOther: boolean;
   onDisplayNameChange: (value: string) => void;
+  onBioChange: (value: string) => void;
   onAvatarFileSelect: (file: File | undefined) => void;
   onSubmit: () => void;
   onCancel: () => void;
@@ -25,6 +30,7 @@ export function AuthorProfileEditorView({
   form,
   isAdminEditingOther,
   onDisplayNameChange,
+  onBioChange,
   onAvatarFileSelect,
   onSubmit,
   onCancel,
@@ -44,38 +50,53 @@ export function AuthorProfileEditorView({
         </p>
       ) : null}
 
-      <AuthorAvatar
+      <AuthorProfileIdentitySection
         avatarUrl={form.avatarUrl}
-        alt={form.displayName || profile.displayName}
-      />
-
-      <label
-        htmlFor="author-display-name"
-        className="w-full space-y-1 text-left"
+        avatarAlt={form.displayName || profile.displayName}
       >
-        <span className="text-sm text-white/60">Author name</span>
-        <input
-          id="author-display-name"
-          type="text"
-          value={form.displayName}
-          maxLength={AUTHOR_DISPLAY_NAME_MAX_LENGTH}
-          aria-invalid={form.displayNameError ? true : undefined}
-          aria-describedby={
-            form.displayNameError ? "author-display-name-error" : undefined
-          }
-          onChange={(event) => onDisplayNameChange(event.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50 aria-invalid:border-red-400/60"
-        />
-        {form.displayNameError ? (
-          <p
-            id="author-display-name-error"
-            className="text-xs text-red-400"
-            role="alert"
-          >
-            {form.displayNameError}
+        <label htmlFor="author-display-name" className="block space-y-1">
+          <span className="text-sm text-white/60">Author name</span>
+          <input
+            id="author-display-name"
+            type="text"
+            value={form.displayName}
+            maxLength={AUTHOR_DISPLAY_NAME_MAX_LENGTH}
+            aria-invalid={form.displayNameError ? true : undefined}
+            aria-describedby={
+              form.displayNameError ? "author-display-name-error" : undefined
+            }
+            onChange={(event) => onDisplayNameChange(event.target.value)}
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50 aria-invalid:border-red-400/60"
+          />
+          {form.displayNameError ? (
+            <p
+              id="author-display-name-error"
+              className="text-xs text-red-400"
+              role="alert"
+            >
+              {form.displayNameError}
+            </p>
+          ) : null}
+        </label>
+        <div className="space-y-1">
+          <span className="text-sm text-white/60">Public address</span>
+          <p className="break-all font-mono text-sm text-white/60">
+            {profile.address}
           </p>
-        ) : null}
-      </label>
+        </div>
+        <FormTextareaControl
+          id="author-bio"
+          name="bio"
+          label="Bio"
+          tooltipId="author-bio-tooltip"
+          tooltip={AUTHOR_FORM_GUIDANCE.bio}
+          error={form.bioError ?? undefined}
+          value={form.bio}
+          maxLength={AUTHOR_BIO_MAX_LENGTH}
+          rows={4}
+          onChange={(event) => onBioChange(event.target.value)}
+        />
+      </AuthorProfileIdentitySection>
 
       <div className="w-full space-y-4">
         <div className="space-y-1 text-left">
@@ -106,13 +127,6 @@ export function AuthorProfileEditorView({
           ) : null}
         </div>
 
-        <div className="space-y-1 text-left">
-          <span className="text-sm text-white/60">Public address</span>
-          <p className="break-all font-mono text-sm text-white/60">
-            {profile.address}
-          </p>
-        </div>
-
         {form.errorMessage ? (
           <p className="text-sm text-red-400" role="alert">
             {form.errorMessage}
@@ -120,14 +134,6 @@ export function AuthorProfileEditorView({
         ) : null}
 
         <div className="flex flex-wrap gap-3">
-          {!isAdminEditingOther ? (
-            <Link
-              href={`/author/${profile.address}/publish`}
-              className="inline-flex items-center justify-center rounded-lg border border-andromeda-light/40 px-4 py-2 text-sm font-medium text-andromeda-light hover:bg-andromeda/10"
-            >
-              Publish work
-            </Link>
-          ) : null}
           <button
             type="submit"
             disabled={form.isSaving}

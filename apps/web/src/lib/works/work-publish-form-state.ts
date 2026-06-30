@@ -3,22 +3,32 @@ import { parseEther } from "viem";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 
 import { WorkUploadValidationError } from "./errors";
+import { validateManuscriptFileForForm } from "./manuscript-upload";
+import {
+  createEmptyWorkPublishImprintForm,
+  validateWorkPublishImprintForm,
+  type WorkPublishImprintFormValues,
+} from "./work-imprint-metadata";
 import {
   ALLOWED_WORK_COVER_MIME_TYPES,
   MAX_WORK_COVER_BYTES,
 } from "./upload-limits";
+import {
+  validateWorkPublishExternalUrl,
+  validateWorkPublishMaxCopies,
+  validateWorkPublishName,
+  validateWorkPublishPriceMatic,
+} from "./work-publish-field-validation";
 
 export type WorkPublishFormValues = {
   name: string;
-  description: string;
-  manuscriptText: string;
   priceMatic: string;
   maxCopies: string;
   externalUrl: string;
-};
+} & WorkPublishImprintFormValues;
 
 export type WorkPublishFormErrors = Partial<
-  Record<keyof WorkPublishFormValues | "coverImage", string>
+  Record<keyof WorkPublishFormValues | "coverImage" | "manuscriptFile", string>
 >;
 
 export type WorkPublishStep =
@@ -33,10 +43,9 @@ export type WorkPublishStep =
 export function createEmptyWorkPublishForm(): WorkPublishFormValues {
   return {
     name: "",
-    description: "",
-    manuscriptText: "",
-    priceMatic: "0",
-    maxCopies: "0",
+    ...createEmptyWorkPublishImprintForm(),
+    priceMatic: "",
+    maxCopies: "1",
     externalUrl: "",
   };
 }
@@ -44,19 +53,21 @@ export function createEmptyWorkPublishForm(): WorkPublishFormValues {
 export function validateWorkPublishForm(
   values: WorkPublishFormValues,
   coverImage: File | null,
+  manuscriptFile: File | null,
 ): WorkPublishFormErrors {
   const errors: WorkPublishFormErrors = {};
 
-  if (!values.name.trim()) {
-    errors.name = "Title is required.";
+  const nameError = validateWorkPublishName(values.name);
+  if (nameError) {
+    errors.name = nameError;
   }
 
-  if (!values.description.trim()) {
-    errors.description = "Description is required.";
-  }
+  const imprintErrors = validateWorkPublishImprintForm(values);
+  Object.assign(errors, imprintErrors);
 
-  if (!values.manuscriptText.trim()) {
-    errors.manuscriptText = "Manuscript text is required.";
+  const manuscriptError = validateManuscriptFileForForm(manuscriptFile);
+  if (manuscriptError) {
+    errors.manuscriptFile = manuscriptError;
   }
 
   if (!coverImage) {
@@ -67,26 +78,19 @@ export function validateWorkPublishForm(
     errors.coverImage = "Cover image is too large.";
   }
 
-  try {
-    const price = parseEther(values.priceMatic.trim() || "0");
-    if (price < 0n) {
-      errors.priceMatic = "Price must be zero or greater.";
-    }
-  } catch {
-    errors.priceMatic = "Enter a valid MATIC price.";
+  const priceError = validateWorkPublishPriceMatic(values.priceMatic);
+  if (priceError) {
+    errors.priceMatic = priceError;
   }
 
-  const maxCopies = Number.parseInt(values.maxCopies.trim() || "0", 10);
-  if (!Number.isFinite(maxCopies) || maxCopies < 0) {
-    errors.maxCopies = "Max copies must be zero or greater.";
+  const maxCopiesError = validateWorkPublishMaxCopies(values.maxCopies);
+  if (maxCopiesError) {
+    errors.maxCopies = maxCopiesError;
   }
 
-  if (values.externalUrl.trim()) {
-    try {
-      new URL(values.externalUrl.trim());
-    } catch {
-      errors.externalUrl = "Enter a valid URL.";
-    }
+  const externalUrlError = validateWorkPublishExternalUrl(values.externalUrl);
+  if (externalUrlError) {
+    errors.externalUrl = externalUrlError;
   }
 
   return errors;
@@ -102,7 +106,7 @@ export function parseRegisterWorkParams(values: WorkPublishFormValues): {
 } {
   return {
     priceWei: parseEther(values.priceMatic.trim() || "0"),
-    maxCopies: BigInt(values.maxCopies.trim() || "0"),
+    maxCopies: BigInt(values.maxCopies.trim()),
   };
 }
 
@@ -115,10 +119,12 @@ export function assertCoverImageReady(coverImage: File | null): asserts coverIma
     {
       ...createEmptyWorkPublishForm(),
       name: "x",
-      description: "x",
-      manuscriptText: "x",
+      publicationDate: "2026-01-01",
+      backCoverText: "Blurb.",
+      aboutAuthor: "Bio.",
     },
     coverImage,
+    new File(["chapter"], "novel.txt", { type: "text/plain" }),
   );
 
   if (errors.coverImage) {

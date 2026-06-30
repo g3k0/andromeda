@@ -35,6 +35,30 @@ export function resolveCanEditAuthorPage({
   return canEditAuthorPage(viewerAddress, profileOwnerAddress, isAdmin);
 }
 
+export function isAuthorProfileOwner({
+  viewerAddress,
+  isConnected,
+  isAdmin,
+  viewerRole,
+  profileOwnerAddress,
+}: AuthorPageEditContext): boolean {
+  return (
+    resolveCanEditAuthorPage({
+      viewerAddress,
+      isConnected,
+      isAdmin,
+      viewerRole,
+      profileOwnerAddress,
+    }) &&
+    !isAdminEditingOtherAuthorPage({
+      viewerAddress,
+      isAdmin,
+      viewerRole,
+      profileOwnerAddress,
+    })
+  );
+}
+
 export function isAdminEditingOtherAuthorPage({
   viewerAddress,
   isAdmin,
@@ -51,4 +75,44 @@ export function isAdminEditingOtherAuthorPage({
   const viewer = normalizeAddress(viewerAddress ?? "");
   const owner = normalizeAddress(profileOwnerAddress);
   return !!viewer && !!owner && viewer !== owner;
+}
+
+export type AuthorPageReadOnlyViewState = {
+  variant: "read-only";
+  audience: "visitor" | "owner";
+};
+
+export type AuthorPageEditViewState = {
+  variant: "edit";
+  audience: "owner" | "admin";
+};
+
+export type AuthorPageViewState =
+  | AuthorPageReadOnlyViewState
+  | AuthorPageEditViewState;
+
+export type AuthorPageViewContext = {
+  canEdit: boolean;
+  isAdminEditingOther: boolean;
+  isProfileOwner: boolean;
+  isEditing: boolean;
+};
+
+export function resolveAuthorPageViewState({
+  canEdit,
+  isAdminEditingOther,
+  isProfileOwner,
+  isEditing,
+}: AuthorPageViewContext): AuthorPageViewState {
+  if (isEditing && canEdit) {
+    return {
+      variant: "edit",
+      audience: isAdminEditingOther ? "admin" : "owner",
+    };
+  }
+
+  return {
+    variant: "read-only",
+    audience: isProfileOwner ? "owner" : "visitor",
+  };
 }

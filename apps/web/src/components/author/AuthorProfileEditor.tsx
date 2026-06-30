@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { AuthorProfile } from "@/lib/authors/types";
 import {
+  applyBioInput,
   applyDisplayNameInput,
   buildSavePayload,
   createEditorFormState,
@@ -11,6 +12,7 @@ import {
   type AuthorProfileEditorSaveInput,
   type EditorFormState,
 } from "./author-profile-editor-state";
+import { validateAuthorBio } from "@/lib/authors/author-bio-validation";
 import { AuthorProfileEditorView } from "./AuthorProfileEditorView";
 import {
   InvalidAvatarFileError,
@@ -67,13 +69,17 @@ export function AuthorProfileEditor({
 
   async function handleSubmit() {
     const displayNameError = validateDisplayName(form.displayName);
+    const bioError = validateAuthorBio(form.bio);
     const result = buildSavePayload(form);
     if (!result.payload) {
       setForm((current) => ({
         ...current,
         displayNameError,
+        bioError,
         avatarError:
-          result.error !== displayNameError ? result.error : current.avatarError,
+          result.error !== displayNameError && result.error !== bioError
+            ? result.error
+            : current.avatarError,
         errorMessage: result.error,
       }));
       return;
@@ -112,6 +118,15 @@ export function AuthorProfileEditor({
           ...current,
           displayName: nextDisplayName,
           displayNameError: validateDisplayName(nextDisplayName),
+          errorMessage: null,
+        }));
+      }}
+      onBioChange={(bio) => {
+        const nextBio = applyBioInput(bio);
+        setForm((current) => ({
+          ...current,
+          bio: nextBio,
+          bioError: validateAuthorBio(nextBio),
           errorMessage: null,
         }));
       }}

@@ -1,4 +1,5 @@
 export {
   AUTHOR_AVATAR_URL_MAX_LENGTH,
+  AUTHOR_BIO_MAX_LENGTH,
   AUTHOR_DISPLAY_NAME_MAX_LENGTH,
 } from "@/lib/config/authors";

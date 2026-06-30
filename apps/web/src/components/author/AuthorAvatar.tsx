@@ -39,3 +39,11 @@ export function AuthorAvatar({
     />
   );
 }
+
+export function AuthorFramedAvatar(props: AuthorAvatarProps) {
+  return (
+    <div className="rounded-full border-2 border-andromeda p-1.5">
+      <AuthorAvatar {...props} />
+    </div>
+  );
+}

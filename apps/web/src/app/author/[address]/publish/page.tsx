@@ -55,7 +55,10 @@ export default async function AuthorPublishPage({ params }: AuthorPublishPagePro
       >
         ← Back to author page
       </Link>
-      <WorkPublishClient authorAddress={state.profile.address} />
+      <WorkPublishClient
+        authorAddress={state.profile.address}
+        authorDisplayName={state.profile.displayName}
+      />
     </div>
   );
 }
