@@ -1,21 +1,21 @@
 "use client";
 
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
+import { FormFieldLabel } from "@/components/form/FormFieldLabel";
+import {
+  formErrorClassName,
+  formFileInputClassName,
+  formTextInputClassName,
+} from "@/components/form/form-field-styles";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
+import { WORK_MANUSCRIPT_UPLOAD_ACCEPT } from "@/lib/works/manuscript-upload-guidance";
+import { WORK_PUBLISH_FORM_GUIDANCE } from "@/lib/works/work-publish-form-guidance";
 import type {
   WorkPublishFormErrors,
   WorkPublishFormValues,
   WorkPublishStep,
 } from "@/lib/works/work-publish-form-state";
 import { formatMetadataPreview } from "@/lib/works/work-publish-form-state";
-import {
-  getWorkManuscriptUploadGuidance,
-  WORK_MANUSCRIPT_UPLOAD_ACCEPT,
-} from "@/lib/works/manuscript-upload-guidance";
-import {
-  getWorkPublishInitialPriceGuidance,
-  getWorkPublishNumberedCopiesGuidance,
-} from "@/lib/works/work-publish-pricing-guidance";
 import { ALLOWED_WORK_COVER_MIME_TYPES } from "@/lib/works/upload-limits";
 import {
   WORK_PUBLISH_DESCRIPTION_MAX_LENGTH,
@@ -38,6 +38,17 @@ export type WorkPublishViewProps = {
   onRegister: () => void;
 };
 
+function fieldDescribedBy(
+  error: string | undefined,
+  errorId: string,
+  hintId?: string,
+): string | undefined {
+  if (error) {
+    return hintId ? `${errorId} ${hintId}` : errorId;
+  }
+  return hintId;
+}
+
 export function WorkPublishView({
   values,
   errors,
@@ -54,141 +65,263 @@ export function WorkPublishView({
   onRegister,
 }: WorkPublishViewProps) {
   const isBusy = step === "encrypting" || step === "uploading" || step === "registering";
+  const isComplete = step === "success";
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-4">
+    <form
+      noValidate
+      className="flex w-full max-w-2xl flex-col gap-4"
+      aria-labelledby="publish-work-title"
+    >
       <div>
-        <h1 className="text-2xl font-semibold text-white">Publish a work</h1>
-        <p className="mt-1 text-sm text-white/60">
-          Upload your manuscript file. It is encrypted in your browser before it
-          reaches IPFS.
+        <h1 id="publish-work-title" className="text-2xl font-semibold text-white">
+          Publish a work
+        </h1>
+        <p className="mt-1 text-sm text-white/60">{WORK_PUBLISH_FORM_GUIDANCE.intro}</p>
+        <p className="mt-2 text-xs text-white/50">
+          Fields marked with <span className="text-red-400">*</span> are required.
         </p>
       </div>
 
-      <label className="space-y-1">
-        <span className="text-sm text-white/60">Title</span>
+      <div className="space-y-1">
+        <FormFieldLabel
+          htmlFor="publish-work-title-input"
+          label="Title"
+          required
+          tooltipId="publish-work-title-tooltip"
+          tooltip={WORK_PUBLISH_FORM_GUIDANCE.title}
+        />
         <input
+          id="publish-work-title-input"
+          name="name"
           type="text"
           value={values.name}
           maxLength={WORK_PUBLISH_NAME_MAX_LENGTH}
-          disabled={isBusy || step === "success"}
+          disabled={isBusy || isComplete}
+          aria-required="true"
+          aria-invalid={errors.name ? true : undefined}
+          aria-describedby={fieldDescribedBy(errors.name, "publish-work-title-error")}
           onChange={(event) => onFieldChange("name", event.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50"
+          className={formTextInputClassName}
         />
-        {errors.name ? <p className="text-xs text-red-400">{errors.name}</p> : null}
-      </label>
+        {errors.name ? (
+          <p id="publish-work-title-error" className={formErrorClassName} role="alert">
+            {errors.name}
+          </p>
+        ) : null}
+      </div>
 
-      <label className="space-y-1">
-        <span className="text-sm text-white/60">Description</span>
+      <div className="space-y-1">
+        <FormFieldLabel
+          htmlFor="publish-work-description"
+          label="Description"
+          required
+          tooltipId="publish-work-description-tooltip"
+          tooltip={WORK_PUBLISH_FORM_GUIDANCE.description}
+        />
         <textarea
+          id="publish-work-description"
+          name="description"
           value={values.description}
           maxLength={WORK_PUBLISH_DESCRIPTION_MAX_LENGTH}
-          disabled={isBusy || step === "success"}
+          disabled={isBusy || isComplete}
           rows={3}
+          aria-required="true"
+          aria-invalid={errors.description ? true : undefined}
+          aria-describedby={fieldDescribedBy(
+            errors.description,
+            "publish-work-description-error",
+          )}
           onChange={(event) => onFieldChange("description", event.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50"
+          className={formTextInputClassName}
         />
         {errors.description ? (
-          <p className="text-xs text-red-400">{errors.description}</p>
+          <p
+            id="publish-work-description-error"
+            className={formErrorClassName}
+            role="alert"
+          >
+            {errors.description}
+          </p>
         ) : null}
-      </label>
+      </div>
 
-      <label className="space-y-1">
-        <span className="text-sm text-white/60">Manuscript file</span>
+      <div className="space-y-1">
+        <FormFieldLabel
+          htmlFor="publish-work-manuscript"
+          label="Manuscript file"
+          required
+          tooltipId="publish-work-manuscript-tooltip"
+          tooltip={WORK_PUBLISH_FORM_GUIDANCE.manuscript}
+        />
         <input
+          id="publish-work-manuscript"
+          name="manuscriptFile"
           type="file"
           accept={WORK_MANUSCRIPT_UPLOAD_ACCEPT}
-          disabled={isBusy || step === "success"}
+          disabled={isBusy || isComplete}
+          aria-required="true"
+          aria-invalid={errors.manuscriptFile ? true : undefined}
+          aria-describedby={fieldDescribedBy(
+            errors.manuscriptFile,
+            "publish-work-manuscript-error",
+            manuscriptFileName ? "publish-work-manuscript-selected" : undefined,
+          )}
           onChange={(event) => onManuscriptFileChange(event.target.files?.[0])}
-          className="w-full text-sm text-white/80 file:mr-3 file:rounded-md file:border-0 file:bg-andromeda file:px-3 file:py-2 file:text-sm file:text-white"
+          className={formFileInputClassName}
         />
-        <p className="text-xs leading-relaxed text-white/50">
-          {getWorkManuscriptUploadGuidance()}
-        </p>
         {manuscriptFileName ? (
-          <p className="text-xs text-white/50">Selected: {manuscriptFileName}</p>
+          <p id="publish-work-manuscript-selected" className="text-xs text-white/50">
+            Selected: {manuscriptFileName}
+          </p>
         ) : null}
         {errors.manuscriptFile ? (
-          <p className="text-xs text-red-400">{errors.manuscriptFile}</p>
+          <p
+            id="publish-work-manuscript-error"
+            className={formErrorClassName}
+            role="alert"
+          >
+            {errors.manuscriptFile}
+          </p>
         ) : null}
-      </label>
+      </div>
 
-      <label className="space-y-1">
-        <span className="text-sm text-white/60">Cover image</span>
+      <div className="space-y-1">
+        <FormFieldLabel
+          htmlFor="publish-work-cover"
+          label="Cover image"
+          required
+          tooltipId="publish-work-cover-tooltip"
+          tooltip={WORK_PUBLISH_FORM_GUIDANCE.cover}
+        />
         <input
+          id="publish-work-cover"
+          name="coverImage"
           type="file"
           accept={ALLOWED_WORK_COVER_MIME_TYPES.join(",")}
-          disabled={isBusy || step === "success"}
+          disabled={isBusy || isComplete}
+          aria-required="true"
+          aria-invalid={errors.coverImage ? true : undefined}
+          aria-describedby={fieldDescribedBy(
+            errors.coverImage,
+            "publish-work-cover-error",
+            coverImageName ? "publish-work-cover-selected" : undefined,
+          )}
           onChange={(event) => onCoverImageChange(event.target.files?.[0])}
-          className="w-full text-sm text-white/80 file:mr-3 file:rounded-md file:border-0 file:bg-andromeda file:px-3 file:py-2 file:text-sm file:text-white"
+          className={formFileInputClassName}
         />
         {coverImageName ? (
-          <p className="text-xs text-white/50">Selected: {coverImageName}</p>
+          <p id="publish-work-cover-selected" className="text-xs text-white/50">
+            Selected: {coverImageName}
+          </p>
         ) : null}
         {errors.coverImage ? (
-          <p className="text-xs text-red-400">{errors.coverImage}</p>
-        ) : null}
-      </label>
-
-      <div className="space-y-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 text-left">
-        <div>
-          <h2 className="text-sm font-medium text-white">Pricing & editions</h2>
-          <p className="mt-1 text-xs leading-relaxed text-white/50">
-            {getWorkPublishInitialPriceGuidance()}
+          <p id="publish-work-cover-error" className={formErrorClassName} role="alert">
+            {errors.coverImage}
           </p>
-        </div>
+        ) : null}
+      </div>
+
+      <fieldset
+        disabled={isBusy || isComplete}
+        className="space-y-4 rounded-lg border border-white/10 p-4"
+      >
+        <legend className="px-1 text-sm font-medium text-white">Pricing & editions</legend>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <label className="space-y-1">
-            <span className="text-sm text-white/60">Initial list price (MATIC, optional)</span>
+          <div className="space-y-1">
+            <FormFieldLabel
+              htmlFor="publish-work-price"
+              label="Initial list price (MATIC)"
+              tooltipId="publish-work-price-tooltip"
+              tooltip={WORK_PUBLISH_FORM_GUIDANCE.initialPrice}
+            />
             <input
+              id="publish-work-price"
+              name="priceMatic"
               type="text"
               inputMode="decimal"
               value={values.priceMatic}
               placeholder="Leave blank for no initial price"
-              disabled={isBusy || step === "success"}
+              aria-invalid={errors.priceMatic ? true : undefined}
+              aria-describedby={fieldDescribedBy(
+                errors.priceMatic,
+                "publish-work-price-error",
+              )}
               onChange={(event) => onFieldChange("priceMatic", event.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50"
+              className={formTextInputClassName}
             />
             {errors.priceMatic ? (
-              <p className="text-xs text-red-400">{errors.priceMatic}</p>
+              <p id="publish-work-price-error" className={formErrorClassName} role="alert">
+                {errors.priceMatic}
+              </p>
             ) : null}
-          </label>
+          </div>
 
-          <label className="space-y-1">
-            <span className="text-sm text-white/60">Max copies (0 = unlimited)</span>
+          <div className="space-y-1">
+            <FormFieldLabel
+              htmlFor="publish-work-max-copies"
+              label="Max copies"
+              tooltipId="publish-work-max-copies-tooltip"
+              tooltip={WORK_PUBLISH_FORM_GUIDANCE.maxCopies}
+            />
             <input
+              id="publish-work-max-copies"
+              name="maxCopies"
               type="number"
               min={0}
               value={values.maxCopies}
-              disabled={isBusy || step === "success"}
+              aria-invalid={errors.maxCopies ? true : undefined}
+              aria-describedby={fieldDescribedBy(
+                errors.maxCopies,
+                "publish-work-max-copies-error",
+              )}
               onChange={(event) => onFieldChange("maxCopies", event.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50"
+              className={formTextInputClassName}
             />
             {errors.maxCopies ? (
-              <p className="text-xs text-red-400">{errors.maxCopies}</p>
+              <p
+                id="publish-work-max-copies-error"
+                className={formErrorClassName}
+                role="alert"
+              >
+                {errors.maxCopies}
+              </p>
             ) : null}
-          </label>
+          </div>
         </div>
+      </fieldset>
 
-        <p className="text-xs leading-relaxed text-white/50">
-          {getWorkPublishNumberedCopiesGuidance()}
-        </p>
-      </div>
-
-      <label className="space-y-1">
-        <span className="text-sm text-white/60">External URL (optional)</span>
+      <div className="space-y-1">
+        <FormFieldLabel
+          htmlFor="publish-work-external-url"
+          label="External URL"
+          tooltipId="publish-work-external-url-tooltip"
+          tooltip={WORK_PUBLISH_FORM_GUIDANCE.externalUrl}
+        />
         <input
+          id="publish-work-external-url"
+          name="externalUrl"
           type="url"
           value={values.externalUrl}
-          disabled={isBusy || step === "success"}
+          aria-invalid={errors.externalUrl ? true : undefined}
+          aria-describedby={fieldDescribedBy(
+            errors.externalUrl,
+            "publish-work-external-url-error",
+          )}
           onChange={(event) => onFieldChange("externalUrl", event.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-andromeda-light/50"
+          className={formTextInputClassName}
         />
         {errors.externalUrl ? (
-          <p className="text-xs text-red-400">{errors.externalUrl}</p>
+          <p
+            id="publish-work-external-url-error"
+            className={formErrorClassName}
+            role="alert"
+          >
+            {errors.externalUrl}
+          </p>
         ) : null}
-      </label>
+      </div>
 
       {metadataPreview ? (
         <div className="space-y-2">
@@ -200,7 +333,7 @@ export function WorkPublishView({
       ) : null}
 
       {errorMessage ? (
-        <p className="text-sm text-red-400" role="alert">
+        <p className={formErrorClassName} role="alert">
           {errorMessage}
         </p>
       ) : null}
@@ -215,7 +348,7 @@ export function WorkPublishView({
         {step === "ready" || step === "registering" || step === "success" ? (
           <button
             type="button"
-            disabled={isBusy || step === "success"}
+            disabled={isBusy || isComplete}
             onClick={onRegister}
             className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
@@ -240,6 +373,6 @@ export function WorkPublishView({
           </button>
         )}
       </div>
-    </div>
+    </form>
   );
 }
