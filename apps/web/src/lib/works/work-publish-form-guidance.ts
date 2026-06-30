@@ -27,6 +27,10 @@ export const WORK_PUBLISH_FORM_GUIDANCE = {
     "Optional language code or name (for example, en or Italian) for catalogue listings.",
   originalPublicationDate:
     "Optional date of first publication when this edition was published later.",
+  backCoverText:
+    "Synopsis or promotional text for the back cover (quarta di copertina), as it would appear on a printed edition.",
+  aboutAuthor:
+    "Short biographical note about the author, as printed on the back cover or colophon.",
   authorAddress:
     "Your public wallet address, stored in metadata as the certified author identity.",
   manuscript: getWorkManuscriptUploadGuidance(),

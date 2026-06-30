@@ -120,6 +120,8 @@ export function assertCoverImageReady(coverImage: File | null): asserts coverIma
       ...createEmptyWorkPublishForm(),
       name: "x",
       publicationDate: "2026-01-01",
+      backCoverText: "Blurb.",
+      aboutAuthor: "Bio.",
     },
     coverImage,
     new File(["chapter"], "novel.txt", { type: "text/plain" }),

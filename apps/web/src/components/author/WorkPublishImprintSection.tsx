@@ -7,6 +7,7 @@ import type {
 
 import { FormFieldLabel } from "@/components/form/FormFieldLabel";
 import { FormTextControl } from "@/components/form/FormTextControl";
+import { FormTextareaControl } from "@/components/form/FormTextareaControl";
 import {
   formErrorClassName,
   formSelectClassName,
@@ -14,6 +15,8 @@ import {
 } from "@/components/form/form-field-styles";
 import { formFieldDescribedBy, resolveFormFieldLabelId } from "@/components/form/form-field-utils";
 import {
+  WORK_PUBLISH_ABOUT_AUTHOR_MAX_LENGTH,
+  WORK_PUBLISH_BACK_COVER_TEXT_MAX_LENGTH,
   WORK_PUBLISH_LANGUAGE_MAX_LENGTH,
   WORK_PUBLISH_SERIES_NAME_MAX_LENGTH,
 } from "@/lib/works/work-imprint-metadata";
@@ -197,6 +200,36 @@ export function WorkPublishImprintSection({
           }
         />
       </div>
+
+      <FormTextareaControl
+        id="publish-work-back-cover-text"
+        name="backCoverText"
+        label="Back cover text"
+        required
+        tooltipId="publish-work-back-cover-text-tooltip"
+        tooltip={WORK_PUBLISH_FORM_GUIDANCE.backCoverText}
+        error={imprintError(errors, "backCoverText")}
+        value={values.backCoverText}
+        maxLength={WORK_PUBLISH_BACK_COVER_TEXT_MAX_LENGTH}
+        disabled={disabled}
+        rows={4}
+        onChange={(event) => onFieldChange("backCoverText", event.target.value)}
+      />
+
+      <FormTextareaControl
+        id="publish-work-about-author"
+        name="aboutAuthor"
+        label="About the author"
+        required
+        tooltipId="publish-work-about-author-tooltip"
+        tooltip={WORK_PUBLISH_FORM_GUIDANCE.aboutAuthor}
+        error={imprintError(errors, "aboutAuthor")}
+        value={values.aboutAuthor}
+        maxLength={WORK_PUBLISH_ABOUT_AUTHOR_MAX_LENGTH}
+        disabled={disabled}
+        rows={3}
+        onChange={(event) => onFieldChange("aboutAuthor", event.target.value)}
+      />
 
       <div className="space-y-1">
         <FormFieldLabel

@@ -19,6 +19,8 @@ const VALID_METADATA = {
     publication_date: "2026-06-01",
     edition_number: 1,
     edition_kind: "first",
+    back_cover_text: "Author-certified literary work.",
+    about_author: "Jane Doe is a writer.",
     author_address: "0x00000000000000000000000000000000000000c8",
   },
   ace: {

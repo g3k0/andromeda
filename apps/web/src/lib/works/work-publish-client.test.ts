@@ -18,6 +18,8 @@ describe("uploadWorkPublishPayload", () => {
             publication_date: "2026-06-01",
             edition_number: 1,
             edition_kind: "first",
+            back_cover_text: "Encrypted story blurb.",
+            about_author: "Author bio.",
             author_address: AUTHOR,
           },
           ace: {
@@ -47,6 +49,8 @@ describe("uploadWorkPublishPayload", () => {
           ...createEmptyWorkPublishForm(),
           name: "Novella",
           publicationDate: "2026-06-01",
+          backCoverText: "Encrypted story blurb.",
+          aboutAuthor: "Author bio.",
         },
         authorAddress: AUTHOR,
         coverImage: cover,

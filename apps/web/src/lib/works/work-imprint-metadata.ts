@@ -8,6 +8,8 @@ export { workImprintMetadataSchema } from "@/lib/ipfs/metadata-schema";
 
 export const WORK_PUBLISH_SERIES_NAME_MAX_LENGTH = 120;
 export const WORK_PUBLISH_LANGUAGE_MAX_LENGTH = 32;
+export const WORK_PUBLISH_BACK_COVER_TEXT_MAX_LENGTH = 2000;
+export const WORK_PUBLISH_ABOUT_AUTHOR_MAX_LENGTH = 1000;
 
 export type WorkEditionKind = WorkImprintMetadata["edition_kind"];
 
@@ -20,6 +22,8 @@ export type WorkPublishImprintFormValues = {
   seriesVolume: string;
   language: string;
   originalPublicationDate: string;
+  backCoverText: string;
+  aboutAuthor: string;
 };
 
 export type WorkPublishImprintFormErrors = Partial<
@@ -50,6 +54,24 @@ function validateOptionalIsoDate(value: string, label: string): string | null {
   }
   if (Number.isNaN(Date.parse(`${trimmed}T00:00:00.000Z`))) {
     return `${label} is not a valid date.`;
+  }
+  return null;
+}
+
+function validateRequiredTextField(
+  value: string,
+  label: string,
+  maxLength: number,
+): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return `${label} is required.`;
+  }
+  if (trimmed.length > maxLength) {
+    return `${label} must be ${maxLength} characters or fewer.`;
+  }
+  if (containsUnsafeControlCharacters(trimmed)) {
+    return `${label} contains invalid characters.`;
   }
   return null;
 }
@@ -144,6 +166,24 @@ export function validateWorkPublishImprintForm(
     errors.originalPublicationDate = originalPublicationDateError;
   }
 
+  const backCoverTextError = validateRequiredTextField(
+    values.backCoverText,
+    "Back cover text",
+    WORK_PUBLISH_BACK_COVER_TEXT_MAX_LENGTH,
+  );
+  if (backCoverTextError) {
+    errors.backCoverText = backCoverTextError;
+  }
+
+  const aboutAuthorError = validateRequiredTextField(
+    values.aboutAuthor,
+    "About the author",
+    WORK_PUBLISH_ABOUT_AUTHOR_MAX_LENGTH,
+  );
+  if (aboutAuthorError) {
+    errors.aboutAuthor = aboutAuthorError;
+  }
+
   return errors;
 }
 
@@ -165,6 +205,8 @@ export function parseWorkImprintFromFormValues(
       : undefined,
     language: values.language.trim() || undefined,
     original_publication_date: values.originalPublicationDate.trim() || undefined,
+    back_cover_text: values.backCoverText.trim(),
+    about_author: values.aboutAuthor.trim(),
     author_address: authorAddress,
   };
 
@@ -174,33 +216,36 @@ export function parseWorkImprintFromFormValues(
 export function buildWorkDescriptionFromImprint(
   imprint: WorkImprintMetadata,
 ): string {
-  const parts: string[] = [];
+  const parts: string[] = [imprint.back_cover_text];
+  const editionParts: string[] = [];
 
   if (imprint.edition_kind === "first") {
-    parts.push(`First edition, edition ${imprint.edition_number}`);
+    editionParts.push(`First edition, edition ${imprint.edition_number}`);
   } else {
-    parts.push(
+    editionParts.push(
       `Reprint ${imprint.reprint_number}, edition ${imprint.edition_number}`,
     );
   }
 
-  parts.push(`published ${imprint.publication_date}`);
+  editionParts.push(`published ${imprint.publication_date}`);
 
   if (imprint.original_publication_date) {
-    parts.push(`originally published ${imprint.original_publication_date}`);
+    editionParts.push(`originally published ${imprint.original_publication_date}`);
   }
 
   if (imprint.series_name) {
-    parts.push(`Vol. ${imprint.series_volume} of ${imprint.series_name}`);
+    editionParts.push(`Vol. ${imprint.series_volume} of ${imprint.series_name}`);
   }
 
   if (imprint.language) {
-    parts.push(`Language: ${imprint.language}`);
+    editionParts.push(`Language: ${imprint.language}`);
   }
 
-  parts.push(`Author: ${imprint.author_address}`);
+  editionParts.push(`Author: ${imprint.author_address}`);
 
-  return parts.join(" · ");
+  parts.push(editionParts.join(" · "));
+
+  return parts.join("\n\n");
 }
 
 export function workImprintToAttributes(
@@ -246,5 +291,7 @@ export function createEmptyWorkPublishImprintForm(): WorkPublishImprintFormValue
     seriesVolume: "",
     language: "",
     originalPublicationDate: "",
+    backCoverText: "",
+    aboutAuthor: "",
   };
 }

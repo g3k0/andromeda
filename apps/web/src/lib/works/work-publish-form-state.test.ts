@@ -19,6 +19,8 @@ function validPublishFormValues() {
     publicationDate: "2026-06-01",
     editionNumber: "1",
     editionKind: "first" as const,
+    backCoverText: "A short encrypted novella.",
+    aboutAuthor: "The author writes speculative fiction.",
   };
 }
 
@@ -28,6 +30,8 @@ describe("validateWorkPublishForm", () => {
     expect(hasWorkPublishFormErrors(errors)).toBe(true);
     expect(errors.name).toBeTruthy();
     expect(errors.publicationDate).toBeTruthy();
+    expect(errors.backCoverText).toBeTruthy();
+    expect(errors.aboutAuthor).toBeTruthy();
     expect(errors.coverImage).toBeTruthy();
     expect(errors.manuscriptFile).toBeTruthy();
   });
@@ -139,6 +143,8 @@ describe("formatMetadataPreview", () => {
           seriesVolume: "",
           language: "",
           originalPublicationDate: "",
+          backCoverText: "Encrypted story blurb.",
+          aboutAuthor: "Author bio.",
         },
         AUTHOR,
       ),

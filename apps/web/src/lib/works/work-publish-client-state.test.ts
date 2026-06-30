@@ -31,6 +31,8 @@ describe("workPublishClientReducer", () => {
         publication_date: "2026-06-01",
         edition_number: 1,
         edition_kind: "first" as const,
+        back_cover_text: "Encrypted story blurb.",
+        about_author: "Author bio.",
         author_address: "0x1111111111111111111111111111111111111111",
       },
       ace: {

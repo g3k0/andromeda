@@ -34,6 +34,8 @@ export const workImprintMetadataSchema = z
     series_volume: z.number().int().min(1).optional(),
     language: z.string().min(2).max(32).optional(),
     original_publication_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    back_cover_text: z.string().min(1).max(2000),
+    about_author: z.string().min(1).max(1000),
     author_address: addressSchema,
   })
   .superRefine((value, ctx) => {

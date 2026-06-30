@@ -28,6 +28,8 @@ function createUploadFormData(
   formData.set("seriesVolume", "");
   formData.set("language", "");
   formData.set("originalPublicationDate", "");
+  formData.set("backCoverText", "An encrypted novella about distant stars.");
+  formData.set("aboutAuthor", "The author writes speculative fiction.");
   formData.set(
     "ciphertext",
     new Blob([new Uint8Array([1, 2, 3])], { type: "application/octet-stream" }),

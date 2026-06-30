@@ -99,6 +99,8 @@ function readImprintFormValues(formData: FormData): WorkPublishImprintFormValues
     seriesVolume: String(formData.get("seriesVolume") ?? ""),
     language: String(formData.get("language") ?? ""),
     originalPublicationDate: String(formData.get("originalPublicationDate") ?? ""),
+    backCoverText: String(formData.get("backCoverText") ?? ""),
+    aboutAuthor: String(formData.get("aboutAuthor") ?? ""),
   };
 }
 

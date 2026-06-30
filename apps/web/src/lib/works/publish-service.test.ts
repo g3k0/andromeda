@@ -26,6 +26,8 @@ function sampleWorkImprint() {
       seriesVolume: "",
       language: "",
       originalPublicationDate: "",
+      backCoverText: "An encrypted science-fiction novella.",
+      aboutAuthor: "The author explores distant worlds.",
     },
     AUTHOR,
   );

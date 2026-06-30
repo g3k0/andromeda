@@ -70,6 +70,8 @@ async function signedUploadForm(extra: Record<string, string | Blob> = {}) {
   formData.set("seriesVolume", "");
   formData.set("language", "");
   formData.set("originalPublicationDate", "");
+  formData.set("backCoverText", "An encrypted novella about distant stars.");
+  formData.set("aboutAuthor", "The author writes speculative fiction.");
   formData.set(
     "ciphertext",
     new Blob([Uint8Array.from(ciphertext)], { type: "application/octet-stream" }),

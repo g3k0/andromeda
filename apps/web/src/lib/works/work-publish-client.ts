@@ -40,6 +40,8 @@ export async function uploadWorkPublishPayload(
   formData.set("seriesVolume", input.values.seriesVolume);
   formData.set("language", input.values.language);
   formData.set("originalPublicationDate", input.values.originalPublicationDate);
+  formData.set("backCoverText", input.values.backCoverText);
+  formData.set("aboutAuthor", input.values.aboutAuthor);
   if (input.values.externalUrl.trim()) {
     formData.set("externalUrl", input.values.externalUrl.trim());
   }
