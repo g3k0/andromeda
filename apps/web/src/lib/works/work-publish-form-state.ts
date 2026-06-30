@@ -11,6 +11,7 @@ import {
 import {
   validateWorkPublishDescription,
   validateWorkPublishExternalUrl,
+  validateWorkPublishMaxCopies,
   validateWorkPublishName,
   validateWorkPublishPriceMatic,
 } from "./work-publish-field-validation";
@@ -41,7 +42,7 @@ export function createEmptyWorkPublishForm(): WorkPublishFormValues {
     name: "",
     description: "",
     priceMatic: "",
-    maxCopies: "0",
+    maxCopies: "1",
     externalUrl: "",
   };
 }
@@ -81,9 +82,9 @@ export function validateWorkPublishForm(
     errors.priceMatic = priceError;
   }
 
-  const maxCopies = Number.parseInt(values.maxCopies.trim() || "0", 10);
-  if (!Number.isFinite(maxCopies) || maxCopies < 0) {
-    errors.maxCopies = "Max copies must be zero or greater.";
+  const maxCopiesError = validateWorkPublishMaxCopies(values.maxCopies);
+  if (maxCopiesError) {
+    errors.maxCopies = maxCopiesError;
   }
 
   const externalUrlError = validateWorkPublishExternalUrl(values.externalUrl);
@@ -104,7 +105,7 @@ export function parseRegisterWorkParams(values: WorkPublishFormValues): {
 } {
   return {
     priceWei: parseEther(values.priceMatic.trim() || "0"),
-    maxCopies: BigInt(values.maxCopies.trim() || "0"),
+    maxCopies: BigInt(values.maxCopies.trim()),
   };
 }
 

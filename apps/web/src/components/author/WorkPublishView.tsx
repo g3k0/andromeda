@@ -10,6 +10,10 @@ import {
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 import { WORK_MANUSCRIPT_UPLOAD_ACCEPT } from "@/lib/works/manuscript-upload-guidance";
 import { WORK_PUBLISH_FORM_GUIDANCE } from "@/lib/works/work-publish-form-guidance";
+import {
+  WORK_PUBLISH_MAX_MAX_COPIES,
+  WORK_PUBLISH_MIN_MAX_COPIES,
+} from "@/lib/works/work-publish-limits";
 import type {
   WorkPublishFormErrors,
   WorkPublishFormValues,
@@ -262,6 +266,7 @@ export function WorkPublishView({
             <FormFieldLabel
               htmlFor="publish-work-max-copies"
               label="Max copies"
+              required
               tooltipId="publish-work-max-copies-tooltip"
               tooltip={WORK_PUBLISH_FORM_GUIDANCE.maxCopies}
             />
@@ -269,8 +274,11 @@ export function WorkPublishView({
               id="publish-work-max-copies"
               name="maxCopies"
               type="number"
-              min={0}
+              min={WORK_PUBLISH_MIN_MAX_COPIES}
+              max={WORK_PUBLISH_MAX_MAX_COPIES}
+              step={1}
               value={values.maxCopies}
+              aria-required="true"
               aria-invalid={errors.maxCopies ? true : undefined}
               aria-describedby={fieldDescribedBy(
                 errors.maxCopies,

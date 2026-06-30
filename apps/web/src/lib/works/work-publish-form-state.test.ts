@@ -77,9 +77,45 @@ describe("parseRegisterWorkParams", () => {
     const params = parseRegisterWorkParams({
       ...createEmptyWorkPublishForm(),
       priceMatic: "",
-      maxCopies: "0",
+      maxCopies: "25",
     });
     expect(params.priceWei).toBe(0n);
+    expect(params.maxCopies).toBe(25n);
+  });
+});
+
+describe("validateWorkPublishForm max copies", () => {
+  it("rejects zero and over-limit max copies", () => {
+    const cover = new File([new Uint8Array([1])], "cover.png", {
+      type: "image/png",
+    });
+    const manuscript = new File([new TextEncoder().encode("Chapter 1")], "novel.txt", {
+      type: "text/plain",
+    });
+
+    const zeroErrors = validateWorkPublishForm(
+      {
+        ...createEmptyWorkPublishForm(),
+        name: "Novella",
+        description: "Encrypted story.",
+        maxCopies: "0",
+      },
+      cover,
+      manuscript,
+    );
+    expect(zeroErrors.maxCopies).toBe("Max copies must be at least 1.");
+
+    const overLimitErrors = validateWorkPublishForm(
+      {
+        ...createEmptyWorkPublishForm(),
+        name: "Novella",
+        description: "Encrypted story.",
+        maxCopies: "501",
+      },
+      cover,
+      manuscript,
+    );
+    expect(overLimitErrors.maxCopies).toBe("Max copies cannot exceed 500.");
   });
 });
 

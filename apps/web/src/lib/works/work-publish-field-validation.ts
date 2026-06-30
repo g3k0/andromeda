@@ -1,5 +1,10 @@
 import { parseEther } from "viem";
 
+import {
+  WORK_PUBLISH_MAX_MAX_COPIES,
+  WORK_PUBLISH_MIN_MAX_COPIES,
+} from "./work-publish-limits";
+
 export const WORK_PUBLISH_NAME_MAX_LENGTH = 120;
 export const WORK_PUBLISH_DESCRIPTION_MAX_LENGTH = 500;
 export const WORK_PUBLISH_EXTERNAL_URL_MAX_LENGTH = 2048;
@@ -57,6 +62,26 @@ export function validateWorkPublishExternalUrl(externalUrl: string): string | nu
     }
   } catch {
     return "Enter a valid URL.";
+  }
+
+  return null;
+}
+
+export function validateWorkPublishMaxCopies(maxCopies: string): string | null {
+  const trimmed = maxCopies.trim();
+  if (!trimmed) {
+    return "Max copies is required.";
+  }
+
+  const parsed = Number(trimmed);
+  if (!Number.isInteger(parsed)) {
+    return "Max copies must be a whole number.";
+  }
+  if (parsed < WORK_PUBLISH_MIN_MAX_COPIES) {
+    return `Max copies must be at least ${WORK_PUBLISH_MIN_MAX_COPIES}.`;
+  }
+  if (parsed > WORK_PUBLISH_MAX_MAX_COPIES) {
+    return `Max copies cannot exceed ${WORK_PUBLISH_MAX_MAX_COPIES}.`;
   }
 
   return null;

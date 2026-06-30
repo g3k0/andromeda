@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   validateWorkPublishDescription,
   validateWorkPublishExternalUrl,
+  validateWorkPublishMaxCopies,
   validateWorkPublishName,
   validateWorkPublishPriceMatic,
 } from "./work-publish-field-validation";
@@ -38,5 +39,14 @@ describe("work publish field validation", () => {
     expect(validateWorkPublishPriceMatic("not-a-price")).toBe(
       "Enter a valid MATIC price.",
     );
+  });
+
+  it("requires max copies between 1 and 500", () => {
+    expect(validateWorkPublishMaxCopies("")).toBe("Max copies is required.");
+    expect(validateWorkPublishMaxCopies("0")).toBe("Max copies must be at least 1.");
+    expect(validateWorkPublishMaxCopies("501")).toBe("Max copies cannot exceed 500.");
+    expect(validateWorkPublishMaxCopies("1.5")).toBe("Max copies must be a whole number.");
+    expect(validateWorkPublishMaxCopies("1")).toBeNull();
+    expect(validateWorkPublishMaxCopies("500")).toBeNull();
   });
 });
