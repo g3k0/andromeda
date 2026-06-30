@@ -16,6 +16,7 @@ export type WorkPublishClientState = {
   manuscriptFileName: string | null;
   editionPreview: WorkPublishEditionPreview | null;
   editionPreviewReady: boolean;
+  editionPreviewAcknowledged: boolean;
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
@@ -32,6 +33,7 @@ export type WorkPublishClientAction =
   | { type: "set_errors"; errors: WorkPublishFormErrors }
   | { type: "set_step"; step: WorkPublishStep }
   | { type: "edition_preview_ready"; preview: WorkPublishEditionPreview }
+  | { type: "edition_preview_acknowledged_change"; acknowledged: boolean }
   | { type: "clear_edition_preview" }
   | { type: "upload_success"; metadata: AcePublicMetadata }
   | { type: "set_error_message"; message: string | null }
@@ -47,6 +49,7 @@ export function createWorkPublishClientState(): WorkPublishClientState {
     manuscriptFileName: null,
     editionPreview: null,
     editionPreviewReady: false,
+    editionPreviewAcknowledged: false,
     metadataPreview: null,
     txHash: null,
     errorMessage: null,
@@ -55,11 +58,12 @@ export function createWorkPublishClientState(): WorkPublishClientState {
 
 function clearEditionPreviewState(): Pick<
   WorkPublishClientState,
-  "editionPreview" | "editionPreviewReady"
+  "editionPreview" | "editionPreviewReady" | "editionPreviewAcknowledged"
 > {
   return {
     editionPreview: null,
     editionPreviewReady: false,
+    editionPreviewAcknowledged: false,
   };
 }
 
@@ -107,7 +111,13 @@ export function workPublishClientReducer(
         ...state,
         editionPreview: action.preview,
         editionPreviewReady: true,
+        editionPreviewAcknowledged: false,
         errorMessage: null,
+      };
+    case "edition_preview_acknowledged_change":
+      return {
+        ...state,
+        editionPreviewAcknowledged: action.acknowledged,
       };
     case "clear_edition_preview":
       return {

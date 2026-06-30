@@ -133,6 +133,15 @@ export function WorkPublishClient({
       return;
     }
 
+    if (!state.editionPreviewAcknowledged) {
+      dispatch({
+        type: "set_error_message",
+        message:
+          "Confirm that you reviewed the edition preview and accept on-chain immutability.",
+      });
+      return;
+    }
+
     const nextErrors = validateWorkPublishForm(
       state.values,
       coverImage,
@@ -225,6 +234,7 @@ export function WorkPublishClient({
       manuscriptFileName={state.manuscriptFileName}
       editionPreview={state.editionPreview}
       editionPreviewReady={state.editionPreviewReady}
+      editionPreviewAcknowledged={state.editionPreviewAcknowledged}
       metadataPreview={state.metadataPreview}
       txHash={state.txHash}
       errorMessage={state.errorMessage}
@@ -245,6 +255,9 @@ export function WorkPublishClient({
       }}
       onPreviewEdition={() => {
         void handlePreviewEdition();
+      }}
+      onEditionPreviewAcknowledgedChange={(acknowledged) => {
+        dispatch({ type: "edition_preview_acknowledged_change", acknowledged });
       }}
       onUpload={() => {
         void handleUpload();

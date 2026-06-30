@@ -41,4 +41,6 @@ export const WORK_PUBLISH_FORM_GUIDANCE = {
     "Optional public link included in metadata, such as your author website.",
   previewBeforeUpload:
     "Generate an edition preview before uploading. The preview shows cover, colophon, table of contents, body text, and back-matter as readers will see them.",
+  editionPreviewAcknowledgment:
+    "I have reviewed the edition preview and understand that once uploaded and minted, this work becomes immutable on-chain and cannot be modified.",
 } as const;

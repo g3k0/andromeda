@@ -23,6 +23,7 @@ export type WorkPublishViewProps = {
   manuscriptFileName: string | null;
   editionPreview: WorkPublishEditionPreview | null;
   editionPreviewReady: boolean;
+  editionPreviewAcknowledged: boolean;
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
@@ -30,6 +31,7 @@ export type WorkPublishViewProps = {
   onCoverImageChange: (file: File | undefined) => void;
   onManuscriptFileChange: (file: File | undefined) => void;
   onPreviewEdition: () => void;
+  onEditionPreviewAcknowledgedChange: (acknowledged: boolean) => void;
   onUpload: () => void;
   onRegister: () => void;
 };
@@ -43,6 +45,7 @@ export function WorkPublishView({
   manuscriptFileName,
   editionPreview,
   editionPreviewReady,
+  editionPreviewAcknowledged,
   metadataPreview,
   txHash,
   errorMessage,
@@ -50,6 +53,7 @@ export function WorkPublishView({
   onCoverImageChange,
   onManuscriptFileChange,
   onPreviewEdition,
+  onEditionPreviewAcknowledgedChange,
   onUpload,
   onRegister,
 }: WorkPublishViewProps) {
@@ -101,6 +105,7 @@ export function WorkPublishView({
         errors={errors}
         step={step}
         editionPreviewReady={editionPreviewReady}
+        editionPreviewAcknowledged={editionPreviewAcknowledged}
         metadataPreview={metadataPreview}
         txHash={txHash}
         errorMessage={errorMessage}
@@ -108,6 +113,7 @@ export function WorkPublishView({
         isComplete={isComplete}
         onFieldChange={onFieldChange}
         onPreviewEdition={onPreviewEdition}
+        onEditionPreviewAcknowledgedChange={onEditionPreviewAcknowledgedChange}
         onUpload={onUpload}
         onRegister={onRegister}
       />

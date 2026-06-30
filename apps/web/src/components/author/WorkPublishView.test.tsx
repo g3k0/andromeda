@@ -49,6 +49,7 @@ describe("WorkPublishView", () => {
         manuscriptFileName="novel.txt"
         editionPreview={null}
         editionPreviewReady={false}
+        editionPreviewAcknowledged={false}
         metadataPreview={metadata}
         txHash={null}
         errorMessage={null}
@@ -56,6 +57,7 @@ describe("WorkPublishView", () => {
         onCoverImageChange={() => undefined}
         onManuscriptFileChange={() => undefined}
         onPreviewEdition={() => undefined}
+        onEditionPreviewAcknowledgedChange={() => undefined}
         onUpload={() => undefined}
         onRegister={() => undefined}
       />,
@@ -92,6 +94,7 @@ describe("WorkPublishView", () => {
         onCoverImageChange={() => undefined}
         onManuscriptFileChange={() => undefined}
         onPreviewEdition={() => undefined}
+        onEditionPreviewAcknowledgedChange={() => undefined}
         onUpload={() => undefined}
         onRegister={() => undefined}
       />,

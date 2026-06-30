@@ -15,6 +15,7 @@ export type WorkPublishFormFooterProps = {
   errors: WorkPublishFormErrors;
   step: WorkPublishStep;
   editionPreviewReady: boolean;
+  editionPreviewAcknowledged: boolean;
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
@@ -22,6 +23,7 @@ export type WorkPublishFormFooterProps = {
   isComplete: boolean;
   onFieldChange: (field: keyof WorkPublishFormValues, value: string) => void;
   onPreviewEdition: () => void;
+  onEditionPreviewAcknowledgedChange: (acknowledged: boolean) => void;
   onUpload: () => void;
   onRegister: () => void;
 };
@@ -31,6 +33,7 @@ export function WorkPublishFormFooter({
   errors,
   step,
   editionPreviewReady,
+  editionPreviewAcknowledged,
   metadataPreview,
   txHash,
   errorMessage,
@@ -38,10 +41,21 @@ export function WorkPublishFormFooter({
   isComplete,
   onFieldChange,
   onPreviewEdition,
+  onEditionPreviewAcknowledgedChange,
   onUpload,
   onRegister,
 }: WorkPublishFormFooterProps) {
-  const canUpload = editionPreviewReady && !isBusy && !isComplete;
+  const canUpload =
+    editionPreviewReady &&
+    editionPreviewAcknowledged &&
+    !isBusy &&
+    !isComplete;
+
+  const uploadDisabledReason = !editionPreviewReady
+    ? WORK_PUBLISH_FORM_GUIDANCE.previewBeforeUpload
+    : !editionPreviewAcknowledged
+      ? WORK_PUBLISH_FORM_GUIDANCE.editionPreviewAcknowledgment
+      : undefined;
 
   return (
     <>
@@ -78,6 +92,27 @@ export function WorkPublishFormFooter({
         </p>
       ) : null}
 
+      {editionPreviewReady && step !== "ready" && step !== "registering" && step !== "success" ? (
+        <label className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-white/85">
+          <input
+            id="publish-work-edition-preview-acknowledgment"
+            name="editionPreviewAcknowledged"
+            type="checkbox"
+            required
+            checked={editionPreviewAcknowledged}
+            disabled={isBusy}
+            onChange={(event) =>
+              onEditionPreviewAcknowledgedChange(event.target.checked)
+            }
+            className="mt-0.5 size-4 shrink-0 accent-andromeda"
+          />
+          <span>
+            {WORK_PUBLISH_FORM_GUIDANCE.editionPreviewAcknowledgment}
+            <span className="text-red-400"> *</span>
+          </span>
+        </label>
+      ) : null}
+
       <div className="flex flex-wrap items-center gap-3">
         {step === "ready" || step === "registering" || step === "success" ? (
           <button
@@ -103,11 +138,7 @@ export function WorkPublishFormFooter({
               type="button"
               disabled={!canUpload}
               onClick={onUpload}
-              title={
-                editionPreviewReady
-                  ? undefined
-                  : WORK_PUBLISH_FORM_GUIDANCE.previewBeforeUpload
-              }
+              title={uploadDisabledReason}
               className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               {step === "encrypting" || step === "uploading" ? (

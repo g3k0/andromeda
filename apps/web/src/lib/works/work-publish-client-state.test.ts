@@ -47,15 +47,23 @@ describe("workPublishClientReducer", () => {
     });
 
     expect(ready.editionPreviewReady).toBe(true);
+    expect(ready.editionPreviewAcknowledged).toBe(false);
     expect(ready.editionPreview?.title).toBe("Novella");
 
-    const changed = workPublishClientReducer(ready, {
+    const acknowledged = workPublishClientReducer(ready, {
+      type: "edition_preview_acknowledged_change",
+      acknowledged: true,
+    });
+    expect(acknowledged.editionPreviewAcknowledged).toBe(true);
+
+    const changed = workPublishClientReducer(acknowledged, {
       type: "manuscript_file_change",
       fileName: "other.txt",
     });
 
     expect(changed.editionPreview).toBeNull();
     expect(changed.editionPreviewReady).toBe(false);
+    expect(changed.editionPreviewAcknowledged).toBe(false);
   });
 
   it("marks upload success and moves to ready", () => {
