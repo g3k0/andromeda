@@ -1,16 +1,15 @@
 import { generateContentKey } from "@/lib/content-crypto/ace-spec";
-import {
-  encryptContent,
-  encodeUtf8Plaintext,
-} from "@/lib/content-crypto/content-cipher";
+import { encryptContent } from "@/lib/content-crypto/content-cipher";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 import type { SignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 
+import { readManuscriptFile } from "./manuscript-upload";
 import type { WorkPublishFormValues } from "./work-publish-form-state";
 
 export type UploadWorkPublishInput = {
   values: WorkPublishFormValues;
   coverImage: File;
+  manuscriptFile: File;
   walletAuth: SignedWalletPayload;
 };
 
@@ -25,10 +24,8 @@ export async function uploadWorkPublishPayload(
   fetchImpl: typeof fetch = fetch,
 ): Promise<UploadWorkPublishResult> {
   const contentKey = generateContentKey();
-  const ciphertext = await encryptContent(
-    encodeUtf8Plaintext(input.values.manuscriptText),
-    contentKey,
-  );
+  const manuscriptBytes = await readManuscriptFile(input.manuscriptFile);
+  const ciphertext = await encryptContent(manuscriptBytes, contentKey);
 
   const formData = new FormData();
   formData.set("walletAuth", JSON.stringify(input.walletAuth));

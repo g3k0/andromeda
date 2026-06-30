@@ -3,22 +3,27 @@ import { parseEther } from "viem";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 
 import { WorkUploadValidationError } from "./errors";
+import { validateManuscriptFileForForm } from "./manuscript-upload";
 import {
   ALLOWED_WORK_COVER_MIME_TYPES,
   MAX_WORK_COVER_BYTES,
 } from "./upload-limits";
+import {
+  validateWorkPublishDescription,
+  validateWorkPublishExternalUrl,
+  validateWorkPublishName,
+} from "./work-publish-field-validation";
 
 export type WorkPublishFormValues = {
   name: string;
   description: string;
-  manuscriptText: string;
   priceMatic: string;
   maxCopies: string;
   externalUrl: string;
 };
 
 export type WorkPublishFormErrors = Partial<
-  Record<keyof WorkPublishFormValues | "coverImage", string>
+  Record<keyof WorkPublishFormValues | "coverImage" | "manuscriptFile", string>
 >;
 
 export type WorkPublishStep =
@@ -34,7 +39,6 @@ export function createEmptyWorkPublishForm(): WorkPublishFormValues {
   return {
     name: "",
     description: "",
-    manuscriptText: "",
     priceMatic: "0",
     maxCopies: "0",
     externalUrl: "",
@@ -44,19 +48,23 @@ export function createEmptyWorkPublishForm(): WorkPublishFormValues {
 export function validateWorkPublishForm(
   values: WorkPublishFormValues,
   coverImage: File | null,
+  manuscriptFile: File | null,
 ): WorkPublishFormErrors {
   const errors: WorkPublishFormErrors = {};
 
-  if (!values.name.trim()) {
-    errors.name = "Title is required.";
+  const nameError = validateWorkPublishName(values.name);
+  if (nameError) {
+    errors.name = nameError;
   }
 
-  if (!values.description.trim()) {
-    errors.description = "Description is required.";
+  const descriptionError = validateWorkPublishDescription(values.description);
+  if (descriptionError) {
+    errors.description = descriptionError;
   }
 
-  if (!values.manuscriptText.trim()) {
-    errors.manuscriptText = "Manuscript text is required.";
+  const manuscriptError = validateManuscriptFileForForm(manuscriptFile);
+  if (manuscriptError) {
+    errors.manuscriptFile = manuscriptError;
   }
 
   if (!coverImage) {
@@ -81,12 +89,9 @@ export function validateWorkPublishForm(
     errors.maxCopies = "Max copies must be zero or greater.";
   }
 
-  if (values.externalUrl.trim()) {
-    try {
-      new URL(values.externalUrl.trim());
-    } catch {
-      errors.externalUrl = "Enter a valid URL.";
-    }
+  const externalUrlError = validateWorkPublishExternalUrl(values.externalUrl);
+  if (externalUrlError) {
+    errors.externalUrl = externalUrlError;
   }
 
   return errors;
@@ -116,9 +121,9 @@ export function assertCoverImageReady(coverImage: File | null): asserts coverIma
       ...createEmptyWorkPublishForm(),
       name: "x",
       description: "x",
-      manuscriptText: "x",
     },
     coverImage,
+    new File(["chapter"], "novel.txt", { type: "text/plain" }),
   );
 
   if (errors.coverImage) {

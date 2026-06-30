@@ -36,6 +36,7 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
     createWorkPublishClientState,
   );
   const coverImageRef = useRef<File | null>(null);
+  const manuscriptFileRef = useRef<File | null>(null);
   const metadataUriRef = useRef<string | null>(null);
 
   const { isLoading: isConfirming } = useWaitForTransactionReceipt({
@@ -52,8 +53,9 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
 
   async function handleUpload() {
     const coverImage = coverImageRef.current;
+    const manuscriptFile = manuscriptFileRef.current;
 
-    if (!canPublish || !coverImage) {
+    if (!canPublish || !coverImage || !manuscriptFile) {
       dispatch({
         type: "set_error_message",
         message: "Connect the author wallet to publish.",
@@ -61,7 +63,11 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
       return;
     }
 
-    const nextErrors = validateWorkPublishForm(state.values, coverImage);
+    const nextErrors = validateWorkPublishForm(
+      state.values,
+      coverImage,
+      manuscriptFile,
+    );
     dispatch({ type: "set_errors", errors: nextErrors });
     if (hasWorkPublishFormErrors(nextErrors)) {
       return;
@@ -81,6 +87,7 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
         const result = await uploadWorkPublishPayload({
           values: state.values,
           coverImage,
+          manuscriptFile,
           walletAuth,
         });
 
@@ -144,6 +151,7 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
       errors={state.errors}
       step={isConfirming ? "registering" : state.step}
       coverImageName={state.coverImageName}
+      manuscriptFileName={state.manuscriptFileName}
       metadataPreview={state.metadataPreview}
       txHash={state.txHash}
       errorMessage={state.errorMessage}
@@ -152,6 +160,13 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
         coverImageRef.current = file ?? null;
         dispatch({
           type: "cover_image_change",
+          fileName: file?.name ?? null,
+        });
+      }}
+      onManuscriptFileChange={(file) => {
+        manuscriptFileRef.current = file ?? null;
+        dispatch({
+          type: "manuscript_file_change",
           fileName: file?.name ?? null,
         });
       }}

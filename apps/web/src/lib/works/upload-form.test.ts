@@ -46,6 +46,21 @@ describe("parseWorkUploadFields", () => {
       parseWorkUploadFields(createUploadFormData({ contentKey: "secret" })),
     ).toThrow(ForbiddenContentKeyError);
   });
+
+  it("rejects unsafe control characters in text fields", () => {
+    const formData = createUploadFormData();
+    formData.set("name", "Bad\u0007 title");
+
+    expect(() => parseWorkUploadFields(formData)).toThrow();
+  });
+
+  it("rejects non-http external URLs", () => {
+    const formData = createUploadFormData({
+      externalUrl: "javascript:alert(1)",
+    });
+
+    expect(() => parseWorkUploadFields(formData)).toThrow();
+  });
 });
 
 describe("parseWorkUploadFiles", () => {

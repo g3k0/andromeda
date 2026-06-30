@@ -31,11 +31,13 @@ describe("WorkPublishView", () => {
         errors={{}}
         step="ready"
         coverImageName="cover.png"
+        manuscriptFileName="novel.txt"
         metadataPreview={metadata}
         txHash={null}
         errorMessage={null}
         onFieldChange={() => undefined}
         onCoverImageChange={() => undefined}
+        onManuscriptFileChange={() => undefined}
         onUpload={() => undefined}
         onRegister={() => undefined}
       />,

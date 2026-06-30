@@ -12,6 +12,7 @@ export type WorkPublishClientState = {
   errors: WorkPublishFormErrors;
   step: WorkPublishStep;
   coverImageName: string | null;
+  manuscriptFileName: string | null;
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
@@ -24,6 +25,7 @@ export type WorkPublishClientAction =
       value: string;
     }
   | { type: "cover_image_change"; fileName: string | null }
+  | { type: "manuscript_file_change"; fileName: string | null }
   | { type: "set_errors"; errors: WorkPublishFormErrors }
   | { type: "set_step"; step: WorkPublishStep }
   | { type: "upload_success"; metadata: AcePublicMetadata }
@@ -37,6 +39,7 @@ export function createWorkPublishClientState(): WorkPublishClientState {
     errors: {},
     step: "idle",
     coverImageName: null,
+    manuscriptFileName: null,
     metadataPreview: null,
     txHash: null,
     errorMessage: null,
@@ -63,6 +66,15 @@ export function workPublishClientReducer(
       return {
         ...state,
         coverImageName: action.fileName,
+        errors: nextErrors,
+      };
+    }
+    case "manuscript_file_change": {
+      const nextErrors = { ...state.errors };
+      delete nextErrors.manuscriptFile;
+      return {
+        ...state,
+        manuscriptFileName: action.fileName,
         errors: nextErrors,
       };
     }

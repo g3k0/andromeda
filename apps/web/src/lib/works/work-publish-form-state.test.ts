@@ -11,26 +11,30 @@ import { buildAcePublicMetadata } from "./publish-service";
 
 describe("validateWorkPublishForm", () => {
   it("requires title, description, manuscript, and cover", () => {
-    const errors = validateWorkPublishForm(createEmptyWorkPublishForm(), null);
+    const errors = validateWorkPublishForm(createEmptyWorkPublishForm(), null, null);
     expect(hasWorkPublishFormErrors(errors)).toBe(true);
     expect(errors.name).toBeTruthy();
     expect(errors.coverImage).toBeTruthy();
+    expect(errors.manuscriptFile).toBeTruthy();
   });
 
   it("accepts a valid form", () => {
     const cover = new File([new Uint8Array([1])], "cover.png", {
       type: "image/png",
     });
+    const manuscript = new File([new TextEncoder().encode("Chapter 1")], "novel.txt", {
+      type: "text/plain",
+    });
     const errors = validateWorkPublishForm(
       {
         ...createEmptyWorkPublishForm(),
         name: "Novella",
         description: "Encrypted story.",
-        manuscriptText: "Chapter 1",
         priceMatic: "0.01",
         maxCopies: "10",
       },
       cover,
+      manuscript,
     );
     expect(hasWorkPublishFormErrors(errors)).toBe(false);
   });

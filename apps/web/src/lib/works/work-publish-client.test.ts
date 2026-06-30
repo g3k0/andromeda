@@ -29,6 +29,9 @@ describe("uploadWorkPublishPayload", () => {
     const cover = new File([new Uint8Array([1])], "cover.png", {
       type: "image/png",
     });
+    const manuscript = new File([new TextEncoder().encode("Chapter 1")], "novel.txt", {
+      type: "text/plain",
+    });
 
     const result = await uploadWorkPublishPayload(
       {
@@ -36,9 +39,9 @@ describe("uploadWorkPublishPayload", () => {
           ...createEmptyWorkPublishForm(),
           name: "Novella",
           description: "Encrypted story.",
-          manuscriptText: "Chapter 1",
         },
         coverImage: cover,
+        manuscriptFile: manuscript,
         walletAuth: {
           address: "0x1111111111111111111111111111111111111111",
           message: "Sign in",

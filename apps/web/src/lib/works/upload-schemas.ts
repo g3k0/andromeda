@@ -3,17 +3,42 @@ import { z } from "zod";
 import { walletAuthSchema } from "@/lib/authors/schemas";
 
 import { ForbiddenContentKeyError } from "./errors";
+import {
+  WORK_PUBLISH_DESCRIPTION_MAX_LENGTH,
+  WORK_PUBLISH_EXTERNAL_URL_MAX_LENGTH,
+  WORK_PUBLISH_NAME_MAX_LENGTH,
+  containsUnsafeControlCharacters,
+} from "./work-publish-field-validation";
 
-const workTextFieldSchema = z
+const safeWorkTextFieldSchema = z
   .string()
   .trim()
   .min(1, "Value is required.")
-  .max(500);
+  .max(WORK_PUBLISH_DESCRIPTION_MAX_LENGTH)
+  .refine((value) => !containsUnsafeControlCharacters(value), {
+    message: "Value contains invalid characters.",
+  });
 
 export const workUploadFieldsSchema = walletAuthSchema.extend({
-  name: workTextFieldSchema.max(120),
-  description: workTextFieldSchema.max(500),
-  externalUrl: z.string().url().optional(),
+  name: safeWorkTextFieldSchema.max(WORK_PUBLISH_NAME_MAX_LENGTH),
+  description: safeWorkTextFieldSchema.max(WORK_PUBLISH_DESCRIPTION_MAX_LENGTH),
+  externalUrl: z
+    .string()
+    .trim()
+    .max(WORK_PUBLISH_EXTERNAL_URL_MAX_LENGTH)
+    .url()
+    .refine(
+      (value) => {
+        try {
+          const parsed = new URL(value);
+          return parsed.protocol === "http:" || parsed.protocol === "https:";
+        } catch {
+          return false;
+        }
+      },
+      { message: "External URL must use HTTP or HTTPS." },
+    )
+    .optional(),
 });
 
 export type WorkUploadFields = z.infer<typeof workUploadFieldsSchema>;
