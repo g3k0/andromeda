@@ -14,12 +14,14 @@ export type WorkPublishFormFooterProps = {
   values: WorkPublishFormValues;
   errors: WorkPublishFormErrors;
   step: WorkPublishStep;
+  editionPreviewReady: boolean;
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
   isBusy: boolean;
   isComplete: boolean;
   onFieldChange: (field: keyof WorkPublishFormValues, value: string) => void;
+  onPreviewEdition: () => void;
   onUpload: () => void;
   onRegister: () => void;
 };
@@ -28,15 +30,19 @@ export function WorkPublishFormFooter({
   values,
   errors,
   step,
+  editionPreviewReady,
   metadataPreview,
   txHash,
   errorMessage,
   isBusy,
   isComplete,
   onFieldChange,
+  onPreviewEdition,
   onUpload,
   onRegister,
 }: WorkPublishFormFooterProps) {
+  const canUpload = editionPreviewReady && !isBusy && !isComplete;
+
   return (
     <>
       <FormTextControl
@@ -72,7 +78,7 @@ export function WorkPublishFormFooter({
         </p>
       ) : null}
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         {step === "ready" || step === "registering" || step === "success" ? (
           <button
             type="button"
@@ -84,23 +90,42 @@ export function WorkPublishFormFooter({
             Register on-chain
           </button>
         ) : (
-          <button
-            type="button"
-            disabled={isBusy}
-            onClick={onUpload}
-            className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-          >
-            {step === "encrypting" || step === "uploading" ? (
-              <LoadingSpinner size="sm" />
-            ) : null}
-            {step === "encrypting"
-              ? "Encrypting…"
-              : step === "uploading"
-                ? "Pinning to IPFS…"
-                : "Upload to IPFS"}
-          </button>
+          <>
+            <button
+              type="button"
+              disabled={isBusy}
+              onClick={onPreviewEdition}
+              className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            >
+              Preview edition
+            </button>
+            <button
+              type="button"
+              disabled={!canUpload}
+              onClick={onUpload}
+              title={
+                editionPreviewReady
+                  ? undefined
+                  : WORK_PUBLISH_FORM_GUIDANCE.previewBeforeUpload
+              }
+              className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            >
+              {step === "encrypting" || step === "uploading" ? (
+                <LoadingSpinner size="sm" />
+              ) : null}
+              {step === "encrypting"
+                ? "Encrypting…"
+                : step === "uploading"
+                  ? "Pinning to IPFS…"
+                  : "Upload to IPFS"}
+            </button>
+          </>
         )}
       </div>
+
+      {!editionPreviewReady && step !== "ready" && step !== "registering" && step !== "success" ? (
+        <p className="text-xs text-white/50">{WORK_PUBLISH_FORM_GUIDANCE.previewBeforeUpload}</p>
+      ) : null}
     </>
   );
 }

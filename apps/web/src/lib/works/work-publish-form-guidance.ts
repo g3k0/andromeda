@@ -39,4 +39,6 @@ export const WORK_PUBLISH_FORM_GUIDANCE = {
   maxCopies: `Numbered copies to mint (${WORK_PUBLISH_MIN_MAX_COPIES}–${WORK_PUBLISH_MAX_MAX_COPIES}). Each minted copy is a numbered NFT; collectors may value copies differently—for example, copy #1 versus copy #145.`,
   externalUrl:
     "Optional public link included in metadata, such as your author website.",
+  previewBeforeUpload:
+    "Generate an edition preview before uploading. The preview shows cover, colophon, table of contents, body text, and back-matter as readers will see them.",
 } as const;

@@ -1,4 +1,5 @@
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
+import type { WorkPublishEditionPreview } from "@/lib/works/work-publish-preview";
 
 import {
   createEmptyWorkPublishForm,
@@ -13,6 +14,8 @@ export type WorkPublishClientState = {
   step: WorkPublishStep;
   coverImageName: string | null;
   manuscriptFileName: string | null;
+  editionPreview: WorkPublishEditionPreview | null;
+  editionPreviewReady: boolean;
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
@@ -28,6 +31,8 @@ export type WorkPublishClientAction =
   | { type: "manuscript_file_change"; fileName: string | null }
   | { type: "set_errors"; errors: WorkPublishFormErrors }
   | { type: "set_step"; step: WorkPublishStep }
+  | { type: "edition_preview_ready"; preview: WorkPublishEditionPreview }
+  | { type: "clear_edition_preview" }
   | { type: "upload_success"; metadata: AcePublicMetadata }
   | { type: "set_error_message"; message: string | null }
   | { type: "register_success"; txHash: `0x${string}` }
@@ -40,9 +45,21 @@ export function createWorkPublishClientState(): WorkPublishClientState {
     step: "idle",
     coverImageName: null,
     manuscriptFileName: null,
+    editionPreview: null,
+    editionPreviewReady: false,
     metadataPreview: null,
     txHash: null,
     errorMessage: null,
+  };
+}
+
+function clearEditionPreviewState(): Pick<
+  WorkPublishClientState,
+  "editionPreview" | "editionPreviewReady"
+> {
+  return {
+    editionPreview: null,
+    editionPreviewReady: false,
   };
 }
 
@@ -58,6 +75,7 @@ export function workPublishClientReducer(
         ...state,
         values: { ...state.values, [action.field]: action.value },
         errors: nextErrors,
+        ...clearEditionPreviewState(),
       };
     }
     case "cover_image_change": {
@@ -67,6 +85,7 @@ export function workPublishClientReducer(
         ...state,
         coverImageName: action.fileName,
         errors: nextErrors,
+        ...clearEditionPreviewState(),
       };
     }
     case "manuscript_file_change": {
@@ -76,12 +95,25 @@ export function workPublishClientReducer(
         ...state,
         manuscriptFileName: action.fileName,
         errors: nextErrors,
+        ...clearEditionPreviewState(),
       };
     }
     case "set_errors":
       return { ...state, errors: action.errors };
     case "set_step":
       return { ...state, step: action.step };
+    case "edition_preview_ready":
+      return {
+        ...state,
+        editionPreview: action.preview,
+        editionPreviewReady: true,
+        errorMessage: null,
+      };
+    case "clear_edition_preview":
+      return {
+        ...state,
+        ...clearEditionPreviewState(),
+      };
     case "upload_success":
       return {
         ...state,

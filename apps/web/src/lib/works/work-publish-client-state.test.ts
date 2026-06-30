@@ -20,6 +20,42 @@ describe("workPublishClientReducer", () => {
 
     expect(next.values.name).toBe("Novella");
     expect(next.errors.name).toBeUndefined();
+    expect(next.editionPreview).toBeNull();
+    expect(next.editionPreviewReady).toBe(false);
+  });
+
+  it("stores edition preview and clears it when the manuscript changes", () => {
+    const preview = {
+      title: "Novella",
+      authorLabel: "Jane Doe",
+      authorAddress: "0x1111111111111111111111111111111111111111",
+      coverImageUrl: "blob:cover",
+      colophon: [],
+      backCoverText: "Blurb",
+      aboutAuthor: "Bio",
+      marketplaceDescription: "Blurb",
+      manuscript: {
+        kind: "text" as const,
+        blocks: [],
+        tableOfContents: [],
+      },
+    };
+
+    const ready = workPublishClientReducer(createWorkPublishClientState(), {
+      type: "edition_preview_ready",
+      preview,
+    });
+
+    expect(ready.editionPreviewReady).toBe(true);
+    expect(ready.editionPreview?.title).toBe("Novella");
+
+    const changed = workPublishClientReducer(ready, {
+      type: "manuscript_file_change",
+      fileName: "other.txt",
+    });
+
+    expect(changed.editionPreview).toBeNull();
+    expect(changed.editionPreviewReady).toBe(false);
   });
 
   it("marks upload success and moves to ready", () => {

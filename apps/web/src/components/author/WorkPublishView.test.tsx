@@ -47,12 +47,15 @@ describe("WorkPublishView", () => {
         step="ready"
         coverImageName="cover.png"
         manuscriptFileName="novel.txt"
+        editionPreview={null}
+        editionPreviewReady={false}
         metadataPreview={metadata}
         txHash={null}
         errorMessage={null}
         onFieldChange={() => undefined}
         onCoverImageChange={() => undefined}
         onManuscriptFileChange={() => undefined}
+        onPreviewEdition={() => undefined}
         onUpload={() => undefined}
         onRegister={() => undefined}
       />,
@@ -80,12 +83,15 @@ describe("WorkPublishView", () => {
         step="idle"
         coverImageName={null}
         manuscriptFileName={null}
+        editionPreview={null}
+        editionPreviewReady={false}
         metadataPreview={null}
         txHash={null}
         errorMessage={null}
         onFieldChange={() => undefined}
         onCoverImageChange={() => undefined}
         onManuscriptFileChange={() => undefined}
+        onPreviewEdition={() => undefined}
         onUpload={() => undefined}
         onRegister={() => undefined}
       />,

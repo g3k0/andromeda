@@ -1,11 +1,12 @@
 "use client";
 
-import { useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { useAccount, useSignMessage, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 import { andromedaWorksAbi } from "@/lib/chain/contract";
 import { getContractAddress } from "@/lib/config/public-env";
 import { storeWorkContentKey } from "@/lib/works/content-key-session";
+import { buildWorkPublishEditionPreview } from "@/lib/works/work-publish-preview";
 import { uploadWorkPublishPayload } from "@/lib/works/work-publish-client";
 import {
   createWorkPublishClientState,
@@ -22,9 +23,13 @@ import { WorkPublishView } from "./WorkPublishView";
 
 export type WorkPublishClientProps = {
   authorAddress: string;
+  authorDisplayName?: string | null;
 };
 
-export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
+export function WorkPublishClient({
+  authorAddress,
+  authorDisplayName,
+}: WorkPublishClientProps) {
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const { writeContractAsync } = useWriteContract();
@@ -47,8 +52,65 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
     isConnected &&
     address?.toLowerCase() === authorAddress.toLowerCase();
 
+  useEffect(() => {
+    const url = state.editionPreview?.coverImageUrl;
+    if (!url?.startsWith("blob:")) {
+      return;
+    }
+
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [state.editionPreview?.coverImageUrl]);
+
   function updateField(field: keyof WorkPublishFormValues, value: string) {
     dispatch({ type: "field_change", field, value });
+  }
+
+  async function handlePreviewEdition() {
+    const coverImage = coverImageRef.current;
+    const manuscriptFile = manuscriptFileRef.current;
+
+    if (!canPublish || !coverImage || !manuscriptFile) {
+      dispatch({
+        type: "set_error_message",
+        message: "Connect the author wallet and attach cover and manuscript files.",
+      });
+      return;
+    }
+
+    const nextErrors = validateWorkPublishForm(
+      state.values,
+      coverImage,
+      manuscriptFile,
+    );
+    dispatch({ type: "set_errors", errors: nextErrors });
+    if (hasWorkPublishFormErrors(nextErrors)) {
+      return;
+    }
+
+    dispatch({ type: "set_error_message", message: null });
+
+    try {
+      const coverImageUrl = URL.createObjectURL(coverImage);
+
+      const preview = await buildWorkPublishEditionPreview({
+        values: state.values,
+        authorAddress,
+        authorDisplayName,
+        coverImage,
+        manuscriptFile,
+        coverImageUrl,
+      });
+
+      dispatch({ type: "edition_preview_ready", preview });
+    } catch (error) {
+      dispatch({
+        type: "set_error_message",
+        message:
+          error instanceof Error ? error.message : "Edition preview failed.",
+      });
+    }
   }
 
   async function handleUpload() {
@@ -59,6 +121,14 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
       dispatch({
         type: "set_error_message",
         message: "Connect the author wallet to publish.",
+      });
+      return;
+    }
+
+    if (!state.editionPreviewReady) {
+      dispatch({
+        type: "set_error_message",
+        message: "Preview the edition before uploading to IPFS.",
       });
       return;
     }
@@ -93,7 +163,6 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
         });
 
         metadataUriRef.current = result.metadataUri;
-        // Content key stays in the browser for PR7 mint envelopes — never sent to the server.
         storeWorkContentKey(result.metadataUri, result.contentKey);
         dispatch({ type: "upload_success", metadata: result.metadata });
       }, "Uploading encrypted work…");
@@ -154,6 +223,8 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
       step={isConfirming ? "registering" : state.step}
       coverImageName={state.coverImageName}
       manuscriptFileName={state.manuscriptFileName}
+      editionPreview={state.editionPreview}
+      editionPreviewReady={state.editionPreviewReady}
       metadataPreview={state.metadataPreview}
       txHash={state.txHash}
       errorMessage={state.errorMessage}
@@ -171,6 +242,9 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
           type: "manuscript_file_change",
           fileName: file?.name ?? null,
         });
+      }}
+      onPreviewEdition={() => {
+        void handlePreviewEdition();
       }}
       onUpload={() => {
         void handleUpload();

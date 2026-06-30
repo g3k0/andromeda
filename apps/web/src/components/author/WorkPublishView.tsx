@@ -11,6 +11,8 @@ import { WorkPublishFormFooter } from "./WorkPublishFormFooter";
 import { WorkPublishFormHeader } from "./WorkPublishFormHeader";
 import { WorkPublishMetadataFields } from "./WorkPublishMetadataFields";
 import { WorkPublishPricingSection } from "./WorkPublishPricingSection";
+import { WorkPublishBookPreview } from "./WorkPublishBookPreview";
+import type { WorkPublishEditionPreview } from "@/lib/works/work-publish-preview";
 
 export type WorkPublishViewProps = {
   values: WorkPublishFormValues;
@@ -19,12 +21,15 @@ export type WorkPublishViewProps = {
   step: WorkPublishStep;
   coverImageName: string | null;
   manuscriptFileName: string | null;
+  editionPreview: WorkPublishEditionPreview | null;
+  editionPreviewReady: boolean;
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
   onFieldChange: (field: keyof WorkPublishFormValues, value: string) => void;
   onCoverImageChange: (file: File | undefined) => void;
   onManuscriptFileChange: (file: File | undefined) => void;
+  onPreviewEdition: () => void;
   onUpload: () => void;
   onRegister: () => void;
 };
@@ -36,12 +41,15 @@ export function WorkPublishView({
   step,
   coverImageName,
   manuscriptFileName,
+  editionPreview,
+  editionPreviewReady,
   metadataPreview,
   txHash,
   errorMessage,
   onFieldChange,
   onCoverImageChange,
   onManuscriptFileChange,
+  onPreviewEdition,
   onUpload,
   onRegister,
 }: WorkPublishViewProps) {
@@ -76,16 +84,30 @@ export function WorkPublishView({
         onFieldChange={onFieldChange}
       />
 
+      {editionPreview ? (
+        <div className="space-y-3">
+          <div>
+            <h2 className="text-sm font-medium text-white">Edition preview</h2>
+            <p className="mt-1 text-xs text-white/50">
+              Review the formatted edition before pinning it to IPFS.
+            </p>
+          </div>
+          <WorkPublishBookPreview preview={editionPreview} />
+        </div>
+      ) : null}
+
       <WorkPublishFormFooter
         values={values}
         errors={errors}
         step={step}
+        editionPreviewReady={editionPreviewReady}
         metadataPreview={metadataPreview}
         txHash={txHash}
         errorMessage={errorMessage}
         isBusy={isBusy}
         isComplete={isComplete}
         onFieldChange={onFieldChange}
+        onPreviewEdition={onPreviewEdition}
         onUpload={onUpload}
         onRegister={onRegister}
       />
