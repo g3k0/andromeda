@@ -25,8 +25,14 @@ describe("workPublishClientReducer", () => {
   it("marks upload success and moves to ready", () => {
     const metadata = {
       name: "Novella",
-      description: "Encrypted story.",
+      description: "First edition, edition 1 · published 2026-06-01",
       image: "ipfs://cover",
+      work_imprint: {
+        publication_date: "2026-06-01",
+        edition_number: 1,
+        edition_kind: "first" as const,
+        author_address: "0x1111111111111111111111111111111111111111",
+      },
       ace: {
         version: "1" as const,
         encrypted_content: "ipfs://content",

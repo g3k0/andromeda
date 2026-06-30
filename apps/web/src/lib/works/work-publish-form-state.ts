@@ -5,11 +5,15 @@ import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 import { WorkUploadValidationError } from "./errors";
 import { validateManuscriptFileForForm } from "./manuscript-upload";
 import {
+  createEmptyWorkPublishImprintForm,
+  validateWorkPublishImprintForm,
+  type WorkPublishImprintFormValues,
+} from "./work-imprint-metadata";
+import {
   ALLOWED_WORK_COVER_MIME_TYPES,
   MAX_WORK_COVER_BYTES,
 } from "./upload-limits";
 import {
-  validateWorkPublishDescription,
   validateWorkPublishExternalUrl,
   validateWorkPublishMaxCopies,
   validateWorkPublishName,
@@ -18,11 +22,10 @@ import {
 
 export type WorkPublishFormValues = {
   name: string;
-  description: string;
   priceMatic: string;
   maxCopies: string;
   externalUrl: string;
-};
+} & WorkPublishImprintFormValues;
 
 export type WorkPublishFormErrors = Partial<
   Record<keyof WorkPublishFormValues | "coverImage" | "manuscriptFile", string>
@@ -40,7 +43,7 @@ export type WorkPublishStep =
 export function createEmptyWorkPublishForm(): WorkPublishFormValues {
   return {
     name: "",
-    description: "",
+    ...createEmptyWorkPublishImprintForm(),
     priceMatic: "",
     maxCopies: "1",
     externalUrl: "",
@@ -59,10 +62,8 @@ export function validateWorkPublishForm(
     errors.name = nameError;
   }
 
-  const descriptionError = validateWorkPublishDescription(values.description);
-  if (descriptionError) {
-    errors.description = descriptionError;
-  }
+  const imprintErrors = validateWorkPublishImprintForm(values);
+  Object.assign(errors, imprintErrors);
 
   const manuscriptError = validateManuscriptFileForForm(manuscriptFile);
   if (manuscriptError) {
@@ -118,7 +119,7 @@ export function assertCoverImageReady(coverImage: File | null): asserts coverIma
     {
       ...createEmptyWorkPublishForm(),
       name: "x",
-      description: "x",
+      publicationDate: "2026-01-01",
     },
     coverImage,
     new File(["chapter"], "novel.txt", { type: "text/plain" }),

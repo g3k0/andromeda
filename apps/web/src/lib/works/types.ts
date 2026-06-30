@@ -1,4 +1,4 @@
-import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
+import type { AcePublicMetadata, WorkImprintMetadata } from "@/lib/ipfs/metadata-schema";
 import type { IpfsUri, PinResult } from "@/lib/ipfs/types";
 
 export type WorkAttribute = {
@@ -11,7 +11,7 @@ export type PublishWorkInput = {
   ciphertext: Uint8Array;
   coverImage: Uint8Array;
   name: string;
-  description: string;
+  workImprint: WorkImprintMetadata;
   chainId: number;
   contractAddress: `0x${string}`;
   registryAddress: `0x${string}`;
@@ -29,7 +29,7 @@ export type PublishWorkResult = {
 
 export type BuildAceMetadataInput = {
   name: string;
-  description: string;
+  workImprint: WorkImprintMetadata;
   imageUri: IpfsUri;
   encryptedContentUri: IpfsUri;
   chainId: number;

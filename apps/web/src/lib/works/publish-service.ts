@@ -8,6 +8,10 @@ import { parseAcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
 import type { IpfsUri } from "@/lib/ipfs/types";
 
+import {
+  buildWorkDescriptionFromImprint,
+  workImprintToAttributes,
+} from "./work-imprint-metadata";
 import type {
   BuildAceMetadataInput,
   PublishWorkInput,
@@ -17,12 +21,19 @@ import type {
 export function buildAcePublicMetadata(
   input: BuildAceMetadataInput,
 ): ReturnType<typeof parseAcePublicMetadata> {
+  const description = buildWorkDescriptionFromImprint(input.workImprint);
+  const attributes = [
+    ...workImprintToAttributes(input.workImprint),
+    ...(input.attributes ?? []),
+  ];
+
   return parseAcePublicMetadata({
     name: input.name,
-    description: input.description,
+    description,
     image: input.imageUri,
+    work_imprint: input.workImprint,
     ...(input.externalUrl ? { external_url: input.externalUrl } : {}),
-    ...(input.attributes?.length ? { attributes: [...input.attributes] } : {}),
+    ...(attributes.length ? { attributes } : {}),
     ace: {
       version: ACE_VERSION,
       encrypted_content: input.encryptedContentUri,
@@ -50,7 +61,7 @@ export async function publishWorkToIpfs(
 
   const metadata = buildAcePublicMetadata({
     name: input.name,
-    description: input.description,
+    workImprint: input.workImprint,
     imageUri: coverPin.uri,
     encryptedContentUri: contentPin.uri as IpfsUri,
     chainId: input.chainId,
@@ -78,8 +89,7 @@ function slugifyPinName(name: string): string {
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 48);
+    .replace(/^-+|-+$/g, "");
 
   return slug || "work";
 }

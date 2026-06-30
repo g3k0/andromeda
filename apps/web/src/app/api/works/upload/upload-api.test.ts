@@ -61,7 +61,15 @@ async function signedUploadForm(extra: Record<string, string | Blob> = {}) {
     }),
   );
   formData.set("name", "The Star Gate");
-  formData.set("description", "Encrypted novella.");
+  formData.set("authorAddress", AUTHOR.address);
+  formData.set("publicationDate", "2026-06-01");
+  formData.set("editionNumber", "1");
+  formData.set("editionKind", "first");
+  formData.set("reprintNumber", "");
+  formData.set("seriesName", "");
+  formData.set("seriesVolume", "");
+  formData.set("language", "");
+  formData.set("originalPublicationDate", "");
   formData.set(
     "ciphertext",
     new Blob([Uint8Array.from(ciphertext)], { type: "application/octet-stream" }),
@@ -158,6 +166,7 @@ describe("works upload API", () => {
     expect(json.metadataUri).toMatch(/^ipfs:\/\//);
     expect(json.metadata.ace.encrypted_content).toMatch(/^ipfs:\/\//);
     expect(json.metadata.name).toBe("The Star Gate");
+    expect(json.metadata.work_imprint.publication_date).toBe("2026-06-01");
   });
 
   it("rejects contentKey in the upload payload", async () => {

@@ -86,6 +86,7 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
         dispatch({ type: "set_step", step: "uploading" });
         const result = await uploadWorkPublishPayload({
           values: state.values,
+          authorAddress,
           coverImage,
           manuscriptFile,
           walletAuth,
@@ -149,6 +150,7 @@ export function WorkPublishClient({ authorAddress }: WorkPublishClientProps) {
     <WorkPublishView
       values={state.values}
       errors={state.errors}
+      authorAddress={authorAddress}
       step={isConfirming ? "registering" : state.step}
       coverImageName={state.coverImageName}
       manuscriptFileName={state.manuscriptFileName}

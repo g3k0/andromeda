@@ -8,6 +8,7 @@ import type { WorkPublishFormValues } from "./work-publish-form-state";
 
 export type UploadWorkPublishInput = {
   values: WorkPublishFormValues;
+  authorAddress: string;
   coverImage: File;
   manuscriptFile: File;
   walletAuth: SignedWalletPayload;
@@ -30,7 +31,15 @@ export async function uploadWorkPublishPayload(
   const formData = new FormData();
   formData.set("walletAuth", JSON.stringify(input.walletAuth));
   formData.set("name", input.values.name.trim());
-  formData.set("description", input.values.description.trim());
+  formData.set("authorAddress", input.authorAddress);
+  formData.set("publicationDate", input.values.publicationDate);
+  formData.set("editionNumber", input.values.editionNumber);
+  formData.set("editionKind", input.values.editionKind);
+  formData.set("reprintNumber", input.values.reprintNumber);
+  formData.set("seriesName", input.values.seriesName);
+  formData.set("seriesVolume", input.values.seriesVolume);
+  formData.set("language", input.values.language);
+  formData.set("originalPublicationDate", input.values.originalPublicationDate);
   if (input.values.externalUrl.trim()) {
     formData.set("externalUrl", input.values.externalUrl.trim());
   }

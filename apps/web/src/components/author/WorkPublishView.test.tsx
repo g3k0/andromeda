@@ -9,8 +9,14 @@ import { createEmptyWorkPublishForm } from "@/lib/works/work-publish-form-state"
 
 const metadata: AcePublicMetadata = {
   name: "Novella",
-  description: "Encrypted story.",
+  description: "First edition, edition 1 · published 2026-06-01 · Author: 0xabc",
   image: "ipfs://cover",
+  work_imprint: {
+    publication_date: "2026-06-01",
+    edition_number: 1,
+    edition_kind: "first",
+    author_address: "0xabcdef0123456789abcdef0123456789abcdef01",
+  },
   ace: {
     version: "1",
     encrypted_content: "ipfs://content",
@@ -23,6 +29,8 @@ const metadata: AcePublicMetadata = {
   },
 };
 
+const AUTHOR = "0xabcdef0123456789abcdef0123456789abcdef01";
+
 describe("WorkPublishView", () => {
   afterEach(() => {
     cleanup();
@@ -33,6 +41,7 @@ describe("WorkPublishView", () => {
       <WorkPublishView
         values={createEmptyWorkPublishForm()}
         errors={{}}
+        authorAddress={AUTHOR}
         step="ready"
         coverImageName="cover.png"
         manuscriptFileName="novel.txt"
@@ -50,6 +59,7 @@ describe("WorkPublishView", () => {
     expect(screen.getByRole("form")).toBeInTheDocument();
     expect(screen.getByText(/Fields marked with/i)).toBeInTheDocument();
     expect(screen.getByText(/ACE metadata preview/i)).toBeInTheDocument();
+    expect(screen.getByText(/Work metadata/i)).toBeInTheDocument();
     expect(screen.getByText(/Pricing & editions/i)).toBeInTheDocument();
     expect(screen.getByText(/Leave blank to register/i)).toBeInTheDocument();
     expect(screen.getByText(/copy #1 versus copy #145/i)).toBeInTheDocument();
@@ -64,6 +74,7 @@ describe("WorkPublishView", () => {
           name: "Title is required.",
           manuscriptFile: "Manuscript file is required.",
         }}
+        authorAddress={AUTHOR}
         step="idle"
         coverImageName={null}
         manuscriptFileName={null}

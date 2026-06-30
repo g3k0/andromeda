@@ -6,7 +6,6 @@ import {
 } from "./work-publish-limits";
 
 export const WORK_PUBLISH_NAME_MAX_LENGTH = 120;
-export const WORK_PUBLISH_DESCRIPTION_MAX_LENGTH = 500;
 export const WORK_PUBLISH_EXTERNAL_URL_MAX_LENGTH = 2048;
 
 const UNSAFE_CONTROL_CHARS = /[\0-\x08\x0B\x0C\x0E-\x1F\x7F]/;
@@ -25,20 +24,6 @@ export function validateWorkPublishName(name: string): string | null {
   }
   if (containsUnsafeControlCharacters(trimmed)) {
     return "Title contains invalid characters.";
-  }
-  return null;
-}
-
-export function validateWorkPublishDescription(description: string): string | null {
-  const trimmed = description.trim();
-  if (!trimmed) {
-    return "Description is required.";
-  }
-  if (trimmed.length > WORK_PUBLISH_DESCRIPTION_MAX_LENGTH) {
-    return `Description must be ${WORK_PUBLISH_DESCRIPTION_MAX_LENGTH} characters or fewer.`;
-  }
-  if (containsUnsafeControlCharacters(trimmed)) {
-    return "Description contains invalid characters.";
   }
   return null;
 }

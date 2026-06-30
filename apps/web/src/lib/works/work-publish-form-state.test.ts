@@ -8,12 +8,26 @@ import {
   validateWorkPublishForm,
 } from "./work-publish-form-state";
 import { buildAcePublicMetadata } from "./publish-service";
+import { parseWorkImprintFromFormValues } from "./work-imprint-metadata";
+
+const AUTHOR = "0xabcdef0123456789abcdef0123456789abcdef01";
+
+function validPublishFormValues() {
+  return {
+    ...createEmptyWorkPublishForm(),
+    name: "Novella",
+    publicationDate: "2026-06-01",
+    editionNumber: "1",
+    editionKind: "first" as const,
+  };
+}
 
 describe("validateWorkPublishForm", () => {
-  it("requires title, description, manuscript, and cover", () => {
+  it("requires title, imprint metadata, manuscript, and cover", () => {
     const errors = validateWorkPublishForm(createEmptyWorkPublishForm(), null, null);
     expect(hasWorkPublishFormErrors(errors)).toBe(true);
     expect(errors.name).toBeTruthy();
+    expect(errors.publicationDate).toBeTruthy();
     expect(errors.coverImage).toBeTruthy();
     expect(errors.manuscriptFile).toBeTruthy();
   });
@@ -27,9 +41,7 @@ describe("validateWorkPublishForm", () => {
     });
     const errors = validateWorkPublishForm(
       {
-        ...createEmptyWorkPublishForm(),
-        name: "Novella",
-        description: "Encrypted story.",
+        ...validPublishFormValues(),
         priceMatic: "0.01",
         maxCopies: "10",
       },
@@ -48,9 +60,7 @@ describe("validateWorkPublishForm", () => {
     });
     const errors = validateWorkPublishForm(
       {
-        ...createEmptyWorkPublishForm(),
-        name: "Novella",
-        description: "Encrypted story.",
+        ...validPublishFormValues(),
         priceMatic: "",
         maxCopies: "10",
       },
@@ -95,9 +105,7 @@ describe("validateWorkPublishForm max copies", () => {
 
     const zeroErrors = validateWorkPublishForm(
       {
-        ...createEmptyWorkPublishForm(),
-        name: "Novella",
-        description: "Encrypted story.",
+        ...validPublishFormValues(),
         maxCopies: "0",
       },
       cover,
@@ -107,9 +115,7 @@ describe("validateWorkPublishForm max copies", () => {
 
     const overLimitErrors = validateWorkPublishForm(
       {
-        ...createEmptyWorkPublishForm(),
-        name: "Novella",
-        description: "Encrypted story.",
+        ...validPublishFormValues(),
         maxCopies: "501",
       },
       cover,
@@ -123,7 +129,19 @@ describe("formatMetadataPreview", () => {
   it("pretty prints ACE metadata JSON", () => {
     const metadata = buildAcePublicMetadata({
       name: "Novella",
-      description: "Encrypted story.",
+      workImprint: parseWorkImprintFromFormValues(
+        {
+          publicationDate: "2026-06-01",
+          editionNumber: "1",
+          editionKind: "first",
+          reprintNumber: "",
+          seriesName: "",
+          seriesVolume: "",
+          language: "",
+          originalPublicationDate: "",
+        },
+        AUTHOR,
+      ),
       imageUri: "ipfs://cover",
       encryptedContentUri: "ipfs://content",
       chainId: 80002,
@@ -132,5 +150,6 @@ describe("formatMetadataPreview", () => {
     });
 
     expect(formatMetadataPreview(metadata)).toContain('"ace"');
+    expect(formatMetadataPreview(metadata)).toContain('"work_imprint"');
   });
 });

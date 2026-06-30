@@ -35,7 +35,7 @@ export async function runWorkUploadMutation(
     ciphertext: files.ciphertext,
     coverImage: files.coverImage,
     name: fields.name,
-    description: fields.description,
+    workImprint: fields.imprint,
     chainId: getTargetChainId(),
     contractAddress: getContractAddress(),
     registryAddress: getErc6551RegistryAddress(),

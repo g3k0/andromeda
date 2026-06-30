@@ -15,6 +15,7 @@ import { WorkPublishPricingSection } from "./WorkPublishPricingSection";
 export type WorkPublishViewProps = {
   values: WorkPublishFormValues;
   errors: WorkPublishFormErrors;
+  authorAddress: string;
   step: WorkPublishStep;
   coverImageName: string | null;
   manuscriptFileName: string | null;
@@ -31,6 +32,7 @@ export type WorkPublishViewProps = {
 export function WorkPublishView({
   values,
   errors,
+  authorAddress,
   step,
   coverImageName,
   manuscriptFileName,
@@ -58,6 +60,7 @@ export function WorkPublishView({
       <WorkPublishMetadataFields
         values={values}
         errors={errors}
+        authorAddress={authorAddress}
         disabled={disabled}
         coverImageName={coverImageName}
         manuscriptFileName={manuscriptFileName}

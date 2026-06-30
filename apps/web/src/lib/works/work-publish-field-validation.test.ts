@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  validateWorkPublishDescription,
   validateWorkPublishExternalUrl,
   validateWorkPublishMaxCopies,
   validateWorkPublishName,
@@ -15,12 +14,6 @@ describe("work publish field validation", () => {
       "Title contains invalid characters.",
     );
     expect(validateWorkPublishName("Valid title")).toBeNull();
-  });
-
-  it("rejects empty and oversized descriptions", () => {
-    expect(validateWorkPublishDescription("")).toBe("Description is required.");
-    expect(validateWorkPublishDescription("a".repeat(501))).toContain("500");
-    expect(validateWorkPublishDescription("A valid description.")).toBeNull();
   });
 
   it("accepts http(s) external URLs and rejects others", () => {

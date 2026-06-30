@@ -1,6 +1,7 @@
+"use client";
+
 import { FormFileControl } from "@/components/form/FormFileControl";
 import { FormTextControl } from "@/components/form/FormTextControl";
-import { FormTextareaControl } from "@/components/form/FormTextareaControl";
 import { WORK_MANUSCRIPT_UPLOAD_ACCEPT } from "@/lib/works/manuscript-upload-guidance";
 import { WORK_PUBLISH_FORM_GUIDANCE } from "@/lib/works/work-publish-form-guidance";
 import type {
@@ -8,14 +9,14 @@ import type {
   WorkPublishFormValues,
 } from "@/lib/works/work-publish-form-state";
 import { ALLOWED_WORK_COVER_MIME_TYPES } from "@/lib/works/upload-limits";
-import {
-  WORK_PUBLISH_DESCRIPTION_MAX_LENGTH,
-  WORK_PUBLISH_NAME_MAX_LENGTH,
-} from "@/lib/works/work-publish-field-validation";
+import { WORK_PUBLISH_NAME_MAX_LENGTH } from "@/lib/works/work-publish-field-validation";
+
+import { WorkPublishImprintSection } from "./WorkPublishImprintSection";
 
 export type WorkPublishMetadataFieldsProps = {
   values: WorkPublishFormValues;
   errors: WorkPublishFormErrors;
+  authorAddress: string;
   disabled: boolean;
   coverImageName: string | null;
   manuscriptFileName: string | null;
@@ -27,6 +28,7 @@ export type WorkPublishMetadataFieldsProps = {
 export function WorkPublishMetadataFields({
   values,
   errors,
+  authorAddress,
   disabled,
   coverImageName,
   manuscriptFileName,
@@ -51,19 +53,12 @@ export function WorkPublishMetadataFields({
         onChange={(event) => onFieldChange("name", event.target.value)}
       />
 
-      <FormTextareaControl
-        id="publish-work-description"
-        name="description"
-        label="Description"
-        required
-        tooltipId="publish-work-description-tooltip"
-        tooltip={WORK_PUBLISH_FORM_GUIDANCE.description}
-        error={errors.description}
-        value={values.description}
-        maxLength={WORK_PUBLISH_DESCRIPTION_MAX_LENGTH}
+      <WorkPublishImprintSection
+        values={values}
+        errors={errors}
+        authorAddress={authorAddress}
         disabled={disabled}
-        rows={3}
-        onChange={(event) => onFieldChange("description", event.target.value)}
+        onFieldChange={onFieldChange}
       />
 
       <FormFileControl
