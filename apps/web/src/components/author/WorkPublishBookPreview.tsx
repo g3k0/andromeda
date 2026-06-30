@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import Image from "next/image";
+import { Fragment, type ReactNode } from "react";
 
 import type {
   ManuscriptPreviewBlock,
@@ -6,21 +7,63 @@ import type {
 } from "@/lib/works/manuscript-text-parser";
 import type { WorkPublishEditionPreview } from "@/lib/works/work-publish-preview";
 
-function renderInlineMarkdown(text: string): ReactNode[] {
-  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_)/g);
+type InlineMarkdownPart =
+  | { kind: "text"; value: string; key: string }
+  | { kind: "strong"; value: string; key: string }
+  | { kind: "em"; value: string; key: string };
 
-  return parts.map((part, index) => {
-    if (part.startsWith("**") && part.endsWith("**")) {
-      return <strong key={index}>{part.slice(2, -2)}</strong>;
+function parseInlineMarkdownParts(text: string): InlineMarkdownPart[] {
+  const rawParts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_)/g);
+  const parts: InlineMarkdownPart[] = [];
+  let offset = 0;
+
+  for (const part of rawParts) {
+    if (!part) {
+      continue;
     }
+
+    const key = `${offset}:${part}`;
+    offset += part.length;
+
+    if (part.startsWith("**") && part.endsWith("**")) {
+      parts.push({ kind: "strong", value: part.slice(2, -2), key });
+      continue;
+    }
+
     if (
       (part.startsWith("*") && part.endsWith("*")) ||
       (part.startsWith("_") && part.endsWith("_"))
     ) {
-      return <em key={index}>{part.slice(1, -1)}</em>;
+      parts.push({ kind: "em", value: part.slice(1, -1), key });
+      continue;
     }
-    return part;
-  });
+
+    parts.push({ kind: "text", value: part, key });
+  }
+
+  return parts;
+}
+
+function ManuscriptInlineMarkdown({ text }: { text: string }) {
+  const parts = parseInlineMarkdownParts(text);
+
+  return (
+    <>
+      {parts.map((part) => {
+        if (part.kind === "strong") {
+          return <strong key={part.key}>{part.value}</strong>;
+        }
+        if (part.kind === "em") {
+          return <em key={part.key}>{part.value}</em>;
+        }
+        return <Fragment key={part.key}>{part.value}</Fragment>;
+      })}
+    </>
+  );
+}
+
+function manuscriptBlockKey(block: ManuscriptPreviewBlock): string {
+  return block.type === "heading" ? block.id : `paragraph:${block.text}`;
 }
 
 function ManuscriptBody({ manuscript }: { manuscript: ParsedManuscriptPreview }) {
@@ -40,8 +83,8 @@ function ManuscriptBody({ manuscript }: { manuscript: ParsedManuscriptPreview })
 
   return (
     <div className="space-y-4">
-      {manuscript.blocks.map((block, index) => (
-        <ManuscriptBlock key={`${block.type}-${index}`} block={block} />
+      {manuscript.blocks.map((block) => (
+        <ManuscriptBlock key={manuscriptBlockKey(block)} block={block} />
       ))}
     </div>
   );
@@ -65,7 +108,7 @@ function ManuscriptBlock({ block }: { block: ManuscriptPreviewBlock }) {
 
   return (
     <p className="text-sm leading-7 text-white/85">
-      {renderInlineMarkdown(block.text)}
+      <ManuscriptInlineMarkdown text={block.text} />
     </p>
   );
 }
@@ -87,6 +130,25 @@ function PreviewPage({
   );
 }
 
+function EditionCoverImage({
+  coverImageUrl,
+  title,
+}: {
+  coverImageUrl: string;
+  title: string;
+}) {
+  return (
+    <Image
+      src={coverImageUrl}
+      alt={`Cover for ${title}`}
+      width={320}
+      height={480}
+      unoptimized={coverImageUrl.startsWith("blob:") || coverImageUrl.startsWith("data:")}
+      className="aspect-[2/3] w-full max-w-xs object-cover"
+    />
+  );
+}
+
 export type WorkPublishBookPreviewProps = {
   preview: WorkPublishEditionPreview;
 };
@@ -97,11 +159,9 @@ export function WorkPublishBookPreview({ preview }: WorkPublishBookPreviewProps)
       <PreviewPage title="Cover">
         <div className="overflow-hidden rounded-lg border border-white/10 bg-black/30">
           {preview.coverImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={preview.coverImageUrl}
-              alt={`Cover for ${preview.title}`}
-              className="aspect-[2/3] w-full max-w-xs object-cover"
+            <EditionCoverImage
+              coverImageUrl={preview.coverImageUrl}
+              title={preview.title}
             />
           ) : (
             <div className="flex aspect-[2/3] w-full max-w-xs items-center justify-center bg-white/5 text-sm text-white/40">
