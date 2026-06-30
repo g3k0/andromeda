@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode } from "react";
+import type { InputHTMLAttributes } from "react";
 
 import { FormFieldLabel } from "./FormFieldLabel";
 import { formErrorClassName, formFileInputClassName } from "./form-field-styles";
@@ -11,8 +11,7 @@ export type FormFileControlProps = {
   tooltipId: string;
   tooltip: string;
   error?: string;
-  selectionHint?: ReactNode;
-  selectionHintId?: string;
+  selectedFileName?: string | null;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "type">;
 
 export function FormFileControl({
@@ -22,13 +21,13 @@ export function FormFileControl({
   tooltipId,
   tooltip,
   error,
-  selectionHint,
-  selectionHintId,
+  selectedFileName,
   className,
   ...inputProps
 }: FormFileControlProps) {
   const labelId = resolveFormFieldLabelId(id);
   const errorId = `${id}-error`;
+  const selectionHintId = selectedFileName ? `${id}-selected` : undefined;
 
   return (
     <div className="space-y-1">
@@ -50,7 +49,11 @@ export function FormFileControl({
         aria-describedby={formFieldDescribedBy(error, errorId, selectionHintId)}
         className={className ?? formFileInputClassName}
       />
-      {selectionHint}
+      {selectedFileName ? (
+        <p id={selectionHintId} className="text-xs text-white/50">
+          Selected: {selectedFileName}
+        </p>
+      ) : null}
       {error ? (
         <p id={errorId} className={formErrorClassName} role="alert">
           {error}

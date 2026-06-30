@@ -76,16 +76,7 @@ export function WorkPublishMetadataFields({
         error={errors.manuscriptFile}
         accept={WORK_MANUSCRIPT_UPLOAD_ACCEPT}
         disabled={disabled}
-        selectionHintId={
-          manuscriptFileName ? "publish-work-manuscript-selected" : undefined
-        }
-        selectionHint={
-          manuscriptFileName ? (
-            <p id="publish-work-manuscript-selected" className="text-xs text-white/50">
-              Selected: {manuscriptFileName}
-            </p>
-          ) : null
-        }
+        selectedFileName={manuscriptFileName}
         onChange={(event) => onManuscriptFileChange(event.target.files?.[0])}
       />
 
@@ -99,14 +90,7 @@ export function WorkPublishMetadataFields({
         error={errors.coverImage}
         accept={ALLOWED_WORK_COVER_MIME_TYPES.join(",")}
         disabled={disabled}
-        selectionHintId={coverImageName ? "publish-work-cover-selected" : undefined}
-        selectionHint={
-          coverImageName ? (
-            <p id="publish-work-cover-selected" className="text-xs text-white/50">
-              Selected: {coverImageName}
-            </p>
-          ) : null
-        }
+        selectedFileName={coverImageName}
         onChange={(event) => onCoverImageChange(event.target.files?.[0])}
       />
     </>
