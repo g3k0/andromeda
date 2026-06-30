@@ -50,3 +50,48 @@ export type StoredWorkContentKey = {
   contentKeyBase64: string;
   storedAt: string;
 };
+
+/** Off-chain projection of an on-chain work (catalog/library UX, not authorization). */
+export type WorkRecord = {
+  workId: bigint;
+  author: `0x${string}`;
+  metadataURI: string;
+  encryptedContentCid: string | null;
+  price: bigint;
+  maxCopies: bigint;
+  minted: bigint;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UpsertWorkInput = {
+  workId: bigint;
+  author: string;
+  metadataURI: string;
+  price: bigint;
+  maxCopies: bigint;
+  active?: boolean;
+  encryptedContentCid?: string | null;
+};
+
+/** Off-chain projection of a minted copy (ERC-721 token). */
+export type TokenRecord = {
+  tokenId: bigint;
+  workId: bigint;
+  owner: `0x${string}`;
+  copyNumber: number | null;
+  tbaAddress: `0x${string}` | null;
+  envelopeCid: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UpsertTokenInput = {
+  tokenId: bigint;
+  workId: bigint;
+  owner: string;
+  copyNumber?: number | null;
+  tbaAddress?: string | null;
+  envelopeCid?: string | null;
+};
