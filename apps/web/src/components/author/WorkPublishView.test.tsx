@@ -87,6 +87,7 @@ describe("WorkPublishView", () => {
         manuscriptFileName={null}
         editionPreview={null}
         editionPreviewReady={false}
+        editionPreviewAcknowledged={false}
         metadataPreview={null}
         txHash={null}
         errorMessage={null}
