@@ -12,6 +12,8 @@ import {
 import { MintEnvelopeError } from "./errors";
 import {
   createTokenEnvelope,
+  provisionTokenEnvelope,
+  reuseTokenEnvelope,
   tokenEnvelopePinName,
 } from "./mint-envelope-service";
 
@@ -68,5 +70,50 @@ describe("createTokenEnvelope", () => {
         recipientPublicKey: createTbaKeyFixture().publicKey,
       }),
     ).rejects.toBeInstanceOf(MintEnvelopeError);
+  });
+});
+
+describe("reuseTokenEnvelope", () => {
+  it("builds a reused result from an existing envelope URI", () => {
+    const result = reuseTokenEnvelope(5n, "ipfs://bafyExisting");
+
+    expect(result).toEqual({
+      tokenId: 5n,
+      envelopeCid: "bafyExisting",
+      envelopeUri: "ipfs://bafyExisting",
+      reused: true,
+    });
+  });
+});
+
+describe("provisionTokenEnvelope", () => {
+  it("pins a new envelope when none exists yet", async () => {
+    const state = createInMemoryIpfsState();
+    const ipfs = createInMemoryIpfsStorage(state);
+
+    const result = await provisionTokenEnvelope(ipfs, {
+      tokenId: 9n,
+      contentKey: generateContentKey(),
+      recipientPublicKey: createTbaKeyFixture().publicKey,
+    });
+
+    expect(result.reused).toBe(false);
+    expect(state.records.size).toBe(1);
+  });
+
+  it("reuses an existing envelope without pinning again (idempotent)", async () => {
+    const state = createInMemoryIpfsState();
+    const ipfs = createInMemoryIpfsStorage(state);
+
+    const result = await provisionTokenEnvelope(ipfs, {
+      tokenId: 9n,
+      contentKey: generateContentKey(),
+      recipientPublicKey: createTbaKeyFixture().publicKey,
+      existingEnvelopeUri: "ipfs://bafyExisting",
+    });
+
+    expect(result.reused).toBe(true);
+    expect(result.envelopeUri).toBe("ipfs://bafyExisting");
+    expect(state.records.size).toBe(0);
   });
 });

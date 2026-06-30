@@ -1,7 +1,7 @@
 import { wrapContentKey } from "@/lib/content-crypto/envelope";
 import type { ContentKey, Envelope } from "@/lib/content-crypto/types";
 import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
-import type { Cid, IpfsUri } from "@/lib/ipfs/types";
+import { parseIpfsUri, type Cid, type IpfsUri } from "@/lib/ipfs/types";
 
 import { MintEnvelopeError } from "./errors";
 
@@ -58,4 +58,37 @@ export async function createTokenEnvelope(
     envelopeUri: pin.uri,
     reused: false,
   };
+}
+
+/** Builds a reused result from an already-pinned envelope URI (no new pin). */
+export function reuseTokenEnvelope(
+  tokenId: bigint,
+  envelopeUri: IpfsUri,
+): CreateTokenEnvelopeResult {
+  return {
+    tokenId,
+    envelopeCid: parseIpfsUri(envelopeUri),
+    envelopeUri,
+    reused: true,
+  };
+}
+
+export type ProvisionTokenEnvelopeInput = CreateTokenEnvelopeInput & {
+  /** When set, the token already has an envelope and pinning is skipped. */
+  existingEnvelopeUri?: IpfsUri | null;
+};
+
+/**
+ * Idempotent envelope provisioning: reuses an existing envelope for the token
+ * when present, otherwise wraps `K` and pins a fresh one.
+ */
+export async function provisionTokenEnvelope(
+  ipfs: IpfsStoragePort,
+  input: ProvisionTokenEnvelopeInput,
+): Promise<CreateTokenEnvelopeResult> {
+  if (input.existingEnvelopeUri) {
+    return reuseTokenEnvelope(input.tokenId, input.existingEnvelopeUri);
+  }
+
+  return createTokenEnvelope(ipfs, input);
 }
