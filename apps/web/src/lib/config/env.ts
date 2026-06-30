@@ -38,6 +38,14 @@ const serverEnvSchema = z.object({
   RATE_LIMIT_MAX_REQUESTS: z.string().optional().transform(optionalPositiveInt),
   RATE_LIMIT_WINDOW_MS: z.string().optional().transform(optionalPositiveInt),
   AUTH_MESSAGE_RATE_LIMIT: z.string().optional().transform(optionalPositiveInt),
+  CHAIN_INDEXER_ENABLED: z
+    .string()
+    .optional()
+    .transform((value) => value === "true"),
+  CHAIN_INDEXER_START_BLOCK: z
+    .string()
+    .optional()
+    .transform(optionalPositiveInt),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
@@ -67,4 +75,13 @@ export function isTrustProxyEnabled(): boolean {
 
 export function getAdminAddressesRaw(): string | undefined {
   return getServerEnv().ADMIN_ADDRESSES;
+}
+
+export function isChainIndexerEnabled(): boolean {
+  return getServerEnv().CHAIN_INDEXER_ENABLED ?? false;
+}
+
+export function getChainIndexerStartBlock(): bigint | undefined {
+  const startBlock = getServerEnv().CHAIN_INDEXER_START_BLOCK;
+  return startBlock !== undefined ? BigInt(startBlock) : undefined;
 }

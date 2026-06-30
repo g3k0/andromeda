@@ -1,8 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   getAdminAddressesRaw,
+  getChainIndexerStartBlock,
   getMongoDbUri,
   getServerEnv,
+  isChainIndexerEnabled,
   isTrustProxyEnabled,
   resetServerEnvForTests,
 } from "./env";
@@ -10,6 +12,8 @@ import {
 describe("server env config", () => {
   afterEach(() => {
     resetServerEnvForTests();
+    delete process.env.CHAIN_INDEXER_ENABLED;
+    delete process.env.CHAIN_INDEXER_START_BLOCK;
   });
 
   it("reads configured environment values", () => {
@@ -37,5 +41,18 @@ describe("server env config", () => {
 
     expect(getServerEnv().WALLET_BINDING_TTL_HOURS).toBeUndefined();
     expect(getServerEnv().AUTH_MESSAGE_RATE_LIMIT).toBeUndefined();
+  });
+
+  it("reads the chain indexer toggle and start block", () => {
+    process.env.CHAIN_INDEXER_ENABLED = "true";
+    process.env.CHAIN_INDEXER_START_BLOCK = "1234";
+
+    expect(isChainIndexerEnabled()).toBe(true);
+    expect(getChainIndexerStartBlock()).toBe(1234n);
+  });
+
+  it("defaults the chain indexer to disabled", () => {
+    expect(isChainIndexerEnabled()).toBe(false);
+    expect(getChainIndexerStartBlock()).toBeUndefined();
   });
 });
