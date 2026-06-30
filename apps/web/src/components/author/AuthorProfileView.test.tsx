@@ -28,6 +28,7 @@ function buildProfile(overrides: Partial<AuthorProfile> = {}): AuthorProfile {
     address: ADDRESS,
     displayName: "Jane Doe",
     avatarUrl: null,
+    bio: null,
     createdAt: "2026-06-03T12:00:00.000Z",
     ...overrides,
   };
@@ -101,6 +102,24 @@ describe("AuthorProfileView", () => {
   it("shows the public address label", () => {
     render(<AuthorProfileView profile={buildProfile()} />);
     expect(screen.getByText("Public address")).toBeInTheDocument();
+  });
+
+  it("renders the author bio below the public address", () => {
+    render(
+      <AuthorProfileView
+        profile={buildProfile({ bio: "Speculative fiction author." })}
+      />,
+    );
+
+    const identity = screen.getByTestId("author-profile-identity");
+    const address = screen.getByText(ADDRESS);
+    const bio = screen.getByText("Speculative fiction author.");
+
+    expect(identity).toContainElement(address);
+    expect(identity).toContainElement(bio);
+    expect(
+      address.compareDocumentPosition(bio) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it("shows edit and publish actions for the profile owner", () => {

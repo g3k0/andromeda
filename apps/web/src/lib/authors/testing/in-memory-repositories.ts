@@ -22,6 +22,7 @@ export function createInMemoryAuthorRepositories(): AuthorRepositories {
           address,
           displayName: input.displayName ?? address,
           avatarUrl: input.avatarUrl ?? null,
+          bio: input.bio ?? null,
           createdAt: new Date().toISOString(),
         };
         authors.set(address, profile);

@@ -11,6 +11,7 @@ export type AuthorDocumentLike = {
   address: string;
   displayName: string;
   avatarUrl: string | null;
+  bio?: string | null;
   createdAt: Date;
 };
 
@@ -24,6 +25,7 @@ export function toAuthorProfile(doc: AuthorDocumentLike): AuthorProfile {
     address: doc.address,
     displayName: doc.displayName,
     avatarUrl: doc.avatarUrl,
+    bio: doc.bio ?? null,
     createdAt: doc.createdAt.toISOString(),
   };
 }

@@ -33,6 +33,7 @@ vi.mock("./AuthorProfileEditor", () => ({
     onSave: (input: {
       displayName: string;
       avatarUrl: string | null;
+      bio: string | null;
     }) => Promise<void>;
   }) => (
     <div data-testid="author-editor">
@@ -44,7 +45,7 @@ vi.mock("./AuthorProfileEditor", () => ({
       <button
         type="button"
         onClick={() =>
-          void onSave({ displayName: profile.displayName, avatarUrl: null })
+          void onSave({ displayName: profile.displayName, avatarUrl: null, bio: null })
         }
       >
         Save
@@ -57,6 +58,7 @@ const profile: AuthorProfile = {
   address: "0xabcdef0123456789abcdef0123456789abcdef01",
   displayName: "Jane Doe",
   avatarUrl: null,
+  bio: null,
   createdAt: "2026-06-03T12:00:00.000Z",
 };
 

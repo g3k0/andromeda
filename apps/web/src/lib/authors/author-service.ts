@@ -51,6 +51,7 @@ export function createAuthorService(repositories: AuthorRepositories) {
       return authors.create(normalized, {
         displayName: input.displayName ?? defaultDisplayName(normalized),
         avatarUrl: input.avatarUrl ?? null,
+        bio: input.bio ?? null,
       });
     },
 
@@ -65,6 +66,7 @@ export function createAuthorService(repositories: AuthorRepositories) {
         address: normalized,
         displayName: profile.displayName,
         avatarUrl: profile.avatarUrl,
+        bio: profile.bio,
         createdAt: existing.createdAt,
       });
     },

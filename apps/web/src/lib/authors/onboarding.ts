@@ -60,6 +60,7 @@ export function buildDraftAuthorProfile(address: string): AuthorProfile {
     address: normalizedAddress,
     displayName: defaultDisplayName(normalizedAddress),
     avatarUrl: null,
+    bio: null,
     createdAt: new Date().toISOString(),
   };
 }

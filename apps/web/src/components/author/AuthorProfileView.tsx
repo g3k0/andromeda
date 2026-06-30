@@ -30,6 +30,11 @@ export function AuthorProfileView({
             {profile.address}
           </p>
         </div>
+        {profile.bio ? (
+          <p className="whitespace-pre-wrap text-left text-sm leading-relaxed text-white/70">
+            {profile.bio}
+          </p>
+        ) : null}
       </AuthorProfileIdentitySection>
       {isOwnerView ? (
         <button

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { AUTHOR_DISPLAY_NAME_MAX_LENGTH } from "@/lib/authors/field-limits";
 import type { AuthorProfile } from "@/lib/authors/types";
 import {
+  applyBioInput,
   applyDisplayNameInput,
   buildSavePayload,
   createEditorFormState,
@@ -15,6 +16,7 @@ const profile: AuthorProfile = {
   address: "0xabcdef0123456789abcdef0123456789abcdef01",
   displayName: "Jane Doe",
   avatarUrl: null,
+  bio: null,
   createdAt: "2026-06-03T12:00:00.000Z",
 };
 
@@ -23,8 +25,10 @@ describe("author profile editor state", () => {
     expect(createEditorFormState(profile)).toEqual({
       displayName: "Jane Doe",
       avatarUrl: null,
+      bio: "",
       displayNameError: null,
       avatarError: null,
+      bioError: null,
       errorMessage: null,
       isSaving: false,
     });
@@ -35,6 +39,10 @@ describe("author profile editor state", () => {
     expect(applyDisplayNameInput(` ${"a".repeat(80)} `)).toHaveLength(
       AUTHOR_DISPLAY_NAME_MAX_LENGTH,
     );
+  });
+
+  it("sanitizes bio input while preserving newlines", () => {
+    expect(applyBioInput("Line one\nLine two\u0007")).toBe("Line one\nLine two");
   });
 
   it("validates display name", () => {
@@ -57,10 +65,12 @@ describe("author profile editor state", () => {
     );
   });
 
-  it("builds save payload with trimmed display name", () => {
+  it("builds save payload with trimmed display name and normalized bio", () => {
     const result = buildSavePayload({
       displayName: "  Updated  ",
       avatarUrl: "data:image/png;base64,x",
+      bio: "  Public bio.  ",
+      bioError: null,
       displayNameError: null,
       avatarError: null,
       errorMessage: null,
@@ -71,6 +81,7 @@ describe("author profile editor state", () => {
       payload: {
         displayName: "Updated",
         avatarUrl: "data:image/png;base64,x",
+        bio: "Public bio.",
       },
       error: null,
     });
@@ -81,6 +92,8 @@ describe("author profile editor state", () => {
       buildSavePayload({
         displayName: "",
         avatarUrl: null,
+        bio: "",
+        bioError: null,
         displayNameError: null,
         avatarError: null,
         errorMessage: null,
@@ -97,6 +110,8 @@ describe("author profile editor state", () => {
       buildSavePayload({
         displayName: "Writer",
         avatarUrl: "not-an-image",
+        bio: "",
+        bioError: null,
         displayNameError: null,
         avatarError: null,
         errorMessage: null,
@@ -113,12 +128,15 @@ describe("author profile editor state", () => {
       ...profile,
       displayName: "Changed",
       avatarUrl: "ipfs://x",
+      bio: "Updated bio",
     });
 
     expect(reset.displayName).toBe("Changed");
     expect(reset.avatarUrl).toBe("ipfs://x");
+    expect(reset.bio).toBe("Updated bio");
     expect(reset.displayNameError).toBeNull();
     expect(reset.avatarError).toBeNull();
+    expect(reset.bioError).toBeNull();
     expect(reset.errorMessage).toBeNull();
   });
 });

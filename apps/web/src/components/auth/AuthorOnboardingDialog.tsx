@@ -67,6 +67,7 @@ function AuthorOnboardingDialogFlow({
         ...signed,
         displayName: input.displayName,
         avatarUrl: input.avatarUrl,
+        bio: input.bio,
       });
 
       markWalletBound(address);

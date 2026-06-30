@@ -14,6 +14,7 @@ export class MongoAuthorRepository implements AuthorRepository {
       address: doc.address,
       displayName: doc.displayName,
       avatarUrl: doc.avatarUrl ?? null,
+      bio: doc.bio ?? null,
       createdAt: doc.createdAt,
     });
   }
@@ -31,12 +32,14 @@ export class MongoAuthorRepository implements AuthorRepository {
       address,
       displayName: input.displayName ?? defaultDisplayName(address),
       avatarUrl: input.avatarUrl ?? null,
+      bio: input.bio ?? null,
     });
 
     return toAuthorProfile({
       address: doc.address,
       displayName: doc.displayName,
       avatarUrl: doc.avatarUrl ?? null,
+      bio: doc.bio ?? null,
       createdAt: doc.createdAt,
     });
   }
@@ -47,6 +50,7 @@ export class MongoAuthorRepository implements AuthorRepository {
       {
         displayName: profile.displayName,
         avatarUrl: profile.avatarUrl,
+        bio: profile.bio,
       },
       { returnDocument: "after" },
     ).lean();
@@ -59,6 +63,7 @@ export class MongoAuthorRepository implements AuthorRepository {
       address: doc.address,
       displayName: doc.displayName,
       avatarUrl: doc.avatarUrl ?? null,
+      bio: doc.bio ?? null,
       createdAt: doc.createdAt,
     });
   }

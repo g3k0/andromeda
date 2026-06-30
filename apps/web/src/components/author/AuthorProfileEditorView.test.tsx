@@ -25,6 +25,7 @@ const profile: AuthorProfile = {
   address: "0xabcdef0123456789abcdef0123456789abcdef01",
   displayName: "Jane Doe",
   avatarUrl: null,
+  bio: null,
   createdAt: "2026-06-03T12:00:00.000Z",
 };
 
@@ -40,6 +41,7 @@ describe("AuthorProfileEditorView", () => {
         form={createEditorFormState(profile)}
         isAdminEditingOther
         onDisplayNameChange={vi.fn()}
+        onBioChange={vi.fn()}
         onAvatarFileSelect={vi.fn()}
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
@@ -58,6 +60,7 @@ describe("AuthorProfileEditorView", () => {
         form={createEditorFormState(profile)}
         isAdminEditingOther={false}
         onDisplayNameChange={vi.fn()}
+        onBioChange={vi.fn()}
         onAvatarFileSelect={vi.fn()}
         onSubmit={onSubmit}
         onCancel={vi.fn()}
@@ -79,6 +82,7 @@ describe("AuthorProfileEditorView", () => {
         }}
         isAdminEditingOther={false}
         onDisplayNameChange={vi.fn()}
+        onBioChange={vi.fn()}
         onAvatarFileSelect={vi.fn()}
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
@@ -103,6 +107,7 @@ describe("AuthorProfileEditorView", () => {
         }}
         isAdminEditingOther={false}
         onDisplayNameChange={vi.fn()}
+        onBioChange={vi.fn()}
         onAvatarFileSelect={vi.fn()}
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
@@ -121,6 +126,7 @@ describe("AuthorProfileEditorView", () => {
         form={createEditorFormState(profile)}
         isAdminEditingOther={false}
         onDisplayNameChange={vi.fn()}
+        onBioChange={vi.fn()}
         onAvatarFileSelect={vi.fn()}
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
@@ -147,6 +153,7 @@ describe("AuthorProfileEditorView", () => {
         form={createEditorFormState(profile)}
         isAdminEditingOther={false}
         onDisplayNameChange={vi.fn()}
+        onBioChange={vi.fn()}
         onAvatarFileSelect={vi.fn()}
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
@@ -164,6 +171,7 @@ describe("AuthorProfileEditorView", () => {
         form={createEditorFormState(profile)}
         isAdminEditingOther={false}
         onDisplayNameChange={vi.fn()}
+        onBioChange={vi.fn()}
         onAvatarFileSelect={vi.fn()}
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
@@ -175,8 +183,9 @@ describe("AuthorProfileEditorView", () => {
     expect(guidance.textContent).not.toContain("488");
   });
 
-  it("forwards display name and file changes", () => {
+  it("forwards display name, bio, and file changes", () => {
     const onDisplayNameChange = vi.fn();
+    const onBioChange = vi.fn();
     const onAvatarFileSelect = vi.fn();
 
     render(
@@ -185,6 +194,7 @@ describe("AuthorProfileEditorView", () => {
         form={createEditorFormState(profile)}
         isAdminEditingOther={false}
         onDisplayNameChange={onDisplayNameChange}
+        onBioChange={onBioChange}
         onAvatarFileSelect={onAvatarFileSelect}
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
@@ -194,12 +204,16 @@ describe("AuthorProfileEditorView", () => {
     fireEvent.change(screen.getByLabelText("Author name"), {
       target: { value: "New Name" },
     });
+    fireEvent.change(screen.getByRole("textbox", { name: /^Bio/i }), {
+      target: { value: "New bio" },
+    });
     const file = new File(["avatar"], "avatar.png", { type: "image/png" });
     fireEvent.change(screen.getByLabelText("Profile image"), {
       target: { files: [file] },
     });
 
     expect(onDisplayNameChange).toHaveBeenCalledWith("New Name");
+    expect(onBioChange).toHaveBeenCalledWith("New bio");
     expect(onAvatarFileSelect).toHaveBeenCalledWith(file);
   });
 });

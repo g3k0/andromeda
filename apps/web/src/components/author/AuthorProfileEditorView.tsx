@@ -1,5 +1,10 @@
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
-import { AUTHOR_DISPLAY_NAME_MAX_LENGTH } from "@/lib/authors/field-limits";
+import { FormTextareaControl } from "@/components/form/FormTextareaControl";
+import {
+  AUTHOR_BIO_MAX_LENGTH,
+  AUTHOR_DISPLAY_NAME_MAX_LENGTH,
+} from "@/lib/authors/field-limits";
+import { AUTHOR_FORM_GUIDANCE } from "@/lib/authors/author-form-guidance";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { AuthorProfileIdentitySection } from "./AuthorProfileIdentitySection";
 import {
@@ -13,6 +18,7 @@ export type AuthorProfileEditorViewProps = {
   form: EditorFormState;
   isAdminEditingOther: boolean;
   onDisplayNameChange: (value: string) => void;
+  onBioChange: (value: string) => void;
   onAvatarFileSelect: (file: File | undefined) => void;
   onSubmit: () => void;
   onCancel: () => void;
@@ -24,6 +30,7 @@ export function AuthorProfileEditorView({
   form,
   isAdminEditingOther,
   onDisplayNameChange,
+  onBioChange,
   onAvatarFileSelect,
   onSubmit,
   onCancel,
@@ -77,6 +84,18 @@ export function AuthorProfileEditorView({
             {profile.address}
           </p>
         </div>
+        <FormTextareaControl
+          id="author-bio"
+          name="bio"
+          label="Bio"
+          tooltipId="author-bio-tooltip"
+          tooltip={AUTHOR_FORM_GUIDANCE.bio}
+          error={form.bioError ?? undefined}
+          value={form.bio}
+          maxLength={AUTHOR_BIO_MAX_LENGTH}
+          rows={4}
+          onChange={(event) => onBioChange(event.target.value)}
+        />
       </AuthorProfileIdentitySection>
 
       <div className="w-full space-y-4">

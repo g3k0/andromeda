@@ -85,6 +85,7 @@ export function AuthorPageContent({
           targetAddress: profile.address,
           displayName: input.displayName,
           avatarUrl: input.avatarUrl,
+          bio: input.bio,
         });
         setProfile(updated);
         onProfileSaved?.(updated);
