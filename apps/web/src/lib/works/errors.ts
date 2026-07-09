@@ -22,6 +22,20 @@ export class WorkUploadValidationError extends WorkPublishError {
   }
 }
 
+export class WorkCatalogError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "WorkCatalogError";
+  }
+}
+
+export class InvalidWorkIdParamError extends WorkCatalogError {
+  constructor(public readonly value: string) {
+    super(`Invalid work id: ${value}`);
+    this.name = "InvalidWorkIdParamError";
+  }
+}
+
 export class WorkMintError extends Error {
   constructor(message: string) {
     super(message);

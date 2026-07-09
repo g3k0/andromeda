@@ -3,10 +3,15 @@ import { IpfsConfigError, IpfsMetadataValidationError } from "@/lib/ipfs/errors"
 
 import {
   ForbiddenContentKeyError,
+  InvalidWorkIdParamError,
   WorkUploadValidationError,
 } from "./errors";
 
 export function mapWorkErrorToStatus(error: unknown): number {
+  if (error instanceof InvalidWorkIdParamError) {
+    return 400;
+  }
+
   if (
     error instanceof WorkUploadValidationError ||
     error instanceof ForbiddenContentKeyError ||
@@ -23,6 +28,10 @@ export function mapWorkErrorToStatus(error: unknown): number {
 }
 
 export function mapWorkErrorToMessage(error: unknown): string {
+  if (error instanceof InvalidWorkIdParamError) {
+    return "Invalid work id.";
+  }
+
   if (error instanceof WorkUploadValidationError) {
     return error.message;
   }
