@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useReducer } from "react";
 import { useAccount, useReadContract, useSignMessage } from "wagmi";
 
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
@@ -12,6 +12,11 @@ import {
   READER_KEY_SIGNATURE_MESSAGE,
   createReaderSignerFromSignature,
 } from "@/lib/works/reader-signer";
+import {
+  createReaderState,
+  isReaderBusy,
+  readerReducer,
+} from "@/lib/works/reader-state";
 
 export type WorkReaderClientProps = {
   tokenId: string;
@@ -45,21 +50,26 @@ export function WorkReaderClient({
     args: [BigInt(tokenId)],
   });
 
-  const [text, setText] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [state, dispatch] = useReducer(
+    readerReducer,
+    undefined,
+    createReaderState,
+  );
 
   const owner = typeof ownerData === "string" ? ownerData : null;
   const isOwner = owner ? isCopyOwner(owner, address ?? null) : false;
+  const busy = isReaderBusy(state.status);
 
   async function handleRead() {
     if (!envelopeUrl) {
-      setError("The reading key for this copy is not available yet.");
+      dispatch({
+        type: "decrypt_failed",
+        message: "The reading key for this copy is not available yet.",
+      });
       return;
     }
 
-    setBusy(true);
-    setError(null);
+    dispatch({ type: "decrypt_started" });
     try {
       const signature = await signMessageAsync({
         message: READER_KEY_SIGNATURE_MESSAGE,
@@ -84,15 +94,15 @@ export function WorkReaderClient({
           return new Uint8Array(await response.arrayBuffer());
         },
       });
-      setText(decodeUtf8(bytes));
+      dispatch({ type: "decrypt_succeeded", text: decodeUtf8(bytes) });
     } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "Failed to decrypt this copy.",
-      );
-    } finally {
-      setBusy(false);
+      dispatch({
+        type: "decrypt_failed",
+        message:
+          cause instanceof Error
+            ? cause.message
+            : "Failed to decrypt this copy.",
+      });
     }
   }
 
@@ -112,10 +122,10 @@ export function WorkReaderClient({
     return <Notice>Only the owner of this copy can read it.</Notice>;
   }
 
-  if (text !== null) {
+  if (state.text !== null) {
     return (
       <article className="whitespace-pre-wrap rounded-xl border border-white/10 bg-white/5 p-6 text-sm leading-relaxed text-white/90">
-        {text}
+        {state.text}
       </article>
     );
   }
@@ -139,9 +149,9 @@ export function WorkReaderClient({
         server never sees the decrypted text.
       </p>
 
-      {error ? (
+      {state.errorMessage ? (
         <p className={formErrorClassName} role="alert">
-          {error}
+          {state.errorMessage}
         </p>
       ) : null}
     </div>
