@@ -117,15 +117,16 @@ Minting happens through the `AndromedaWorks` ERC-721 contract on Polygon.
 OpenSea is used **after** minting, when collectors want visibility or wish to
 resell a copy they already own.
 
-### Numbered editions (current state & next step)
+### Numbered editions
 
 The `AndromedaWorks` contract supports a maximum number of copies per work
-(e.g. `maxCopies = 100`). Today, every minted copy shares the same
-`metadataURI` registered with the work. To display distinct edition numbers
-on OpenSea and in wallets (Copy #1/100, #2/100, …), the contract will be
-extended so each token receives metadata that includes its copy number — either
-as a dedicated IPFS file per token or via a dynamic metadata endpoint keyed by
-`tokenId`.
+(e.g. `maxCopies = 100`). Each minted copy can carry its own metadata so that
+OpenSea and wallets display distinct edition numbers (Copy #1/100, #2/100, …).
+After a copy is minted, its owner pins a per-token metadata JSON — identical to
+the work metadata plus `Copy number` / `Edition size` attributes — and points
+the token's on-chain `tokenURI` at it via `setCopyMetadataURI(tokenId, uri)`.
+The shared ciphertext and per-token envelope are unchanged, so numbering never
+affects the encryption model. See [`documentation/ace-v1.md`](documentation/ace-v1.md).
 
 ### What Andromeda owns vs. what OpenSea provides
 
@@ -138,6 +139,24 @@ as a dedicated IPFS file per token or via a dynamic metadata endpoint keyed by
 | Platform admin & curation | ✓ | |
 | Secondary-market listing & trading | | ✓ |
 | Discovery for NFT collectors | | ✓ |
+
+## Web3 layer (blockchain + IPFS)
+
+The Web3 layer connects `apps/web` to Polygon, the `AndromedaWorks` ERC-721
+contract, ERC-6551 token bound accounts, and IPFS. Reading is protected by a
+**technical paywall**: metadata is public, the work text is encrypted, and each
+copy carries a per-token *envelope* that only its owner can unwrap in the
+browser. The server never custodies keys or streams plaintext.
+
+- **Architecture & rationale:** [documentation/plans/web3-layer-architecture.md](documentation/plans/web3-layer-architecture.md)
+- **ACE v1 encryption spec (for third-party readers):** [documentation/ace-v1.md](documentation/ace-v1.md)
+
+**Content flow:** author encrypts the work once with a random key `K`
+(AES-256-GCM) → ciphertext pinned to IPFS → `K` wrapped (ECIES/secp256k1) per
+token into an envelope → owner signs a message to derive their reading key,
+unwraps the envelope, and decrypts locally. Off-chain reads (catalog, library)
+are served from a MongoDB projection kept in sync by a chain indexer (polling
+and/or Alchemy Notify webhook).
 
 ## Tech Stack
 
@@ -318,8 +337,8 @@ Smart contract tests are separate: `pnpm contracts:test` (Hardhat).
 #### Continuous integration
 
 Pull requests and pushes to `develop` and `main` run the [CI workflow](.github/workflows/ci.yml)
-(GitHub Actions). It currently runs web unit tests with coverage. More steps (lint, build,
-contract tests, and so on) can be added to that workflow over time.
+(GitHub Actions) on Node 20: lint, typecheck, React Doctor (on the diff), web unit tests with
+coverage, web build, dependency audit, and the smart-contract compile (`contracts:build`).
 
 #### MongoDB & platform data
 
@@ -392,14 +411,58 @@ Add the `NEXT_PUBLIC_*` environment variables from `apps/web/.env.example` in
 **Settings → Environment Variables** (Production for `main`, Preview for
 `develop` and pull requests).
 
+#### Production environment checklist (Vercel)
+
+Set these in **Settings → Environment Variables**. Public (`NEXT_PUBLIC_*`)
+values are exposed to the browser; server-only values must **never** be prefixed
+with `NEXT_PUBLIC_`. Rotate provider keys from their dashboards, not in the repo.
+
+**Chain & contract**
+
+| Variable | Scope | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_CHAIN` | public | Target chain: `polygon` (mainnet) or `amoy` (testnet) |
+| `NEXT_PUBLIC_CONTRACT_ADDRESS` | public | Deployed `AndromedaWorks` ERC-721 address |
+| `ALCHEMY_RPC_URL` | server | Alchemy JSON-RPC for indexer / public client / read-access |
+| `NEXT_PUBLIC_ALCHEMY_RPC_URL` | public | Alchemy JSON-RPC for wagmi in the browser |
+| `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | public | WalletConnect Cloud project id |
+
+**ERC-6551 (token bound accounts)**
+
+| Variable | Scope | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_ERC6551_REGISTRY` | public | Registry address (defaults to Tokenbound v0.3.1 canonical) |
+| `NEXT_PUBLIC_ERC6551_IMPLEMENTATION` | public | Account proxy address (defaults to Tokenbound v0.3.1) |
+
+**IPFS (Pinata / gateway)**
+
+| Variable | Scope | Purpose |
+| --- | --- | --- |
+| `IPFS_PINNING_API_KEY` | server | Pinning provider API key (Pinata or compatible) |
+| `IPFS_GATEWAY_BASE_URL` | server | Gateway base URL for server-side fetches |
+| `NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL` | public | Gateway base URL for browser fetches |
+
+**Indexer & platform data**
+
+| Variable | Scope | Purpose |
+| --- | --- | --- |
+| `MONGODB_URI` | server | MongoDB connection string (off-chain projection) |
+| `CHAIN_INDEXER_ENABLED` | server | Enable the polling chain indexer (`true`/`false`) |
+| `CHAIN_INDEXER_START_BLOCK` | server | Optional first block to index from |
+| `ALCHEMY_NOTIFY_SIGNING_KEY` | server | HMAC signing key to verify Alchemy Notify webhooks |
+| `ADMIN_ADDRESSES` | server | Comma-separated admin wallets (bootstrap) |
+
+Use **separate Alchemy apps** and **separate contract addresses** for Preview
+(Amoy) and Production (Polygon mainnet).
+
 ## Roadmap
 
 - [x] Core smart contracts for minting and certifying works
-- [ ] IPFS upload workflow for work content and metadata
-- [ ] Author publishing flow
-- [ ] Per-copy metadata for numbered editions
-- [ ] Reader marketplace and library
-- [ ] In-app reading experience
+- [x] IPFS upload workflow for work content and metadata
+- [x] Author publishing flow
+- [x] Per-copy metadata for numbered editions
+- [x] Reader marketplace and library
+- [x] In-app reading experience (client-side ACE decryption)
 - [ ] OpenSea integration for secondary-market visibility
 
 ## Contributing
