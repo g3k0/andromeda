@@ -3,16 +3,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
 
-import type { PublicTokenDto } from "@/lib/works/public-dto";
+import type { LibraryCopyDto } from "@/lib/works/library-service";
 
 import { LibraryList } from "./LibraryList";
 
-async function fetchLibraryCopies(address: string): Promise<PublicTokenDto[]> {
+async function fetchLibraryCopies(address: string): Promise<LibraryCopyDto[]> {
   const response = await fetch(`/api/library/${address}`);
   if (!response.ok) {
     throw new Error("Failed to load your library.");
   }
-  const body = (await response.json()) as { copies: PublicTokenDto[] };
+  const body = (await response.json()) as { copies: LibraryCopyDto[] };
   return body.copies;
 }
 
