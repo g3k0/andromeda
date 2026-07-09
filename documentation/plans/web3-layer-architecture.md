@@ -11,6 +11,9 @@ clean architecture già applicati al layer auth/DB.
 **Accesso al testo:** paywall **tecnico** — metadata pubblico su IPFS, contenuto cifrato, envelope
 per token tramite [ERC-6551](https://eips.ethereum.org/EIPS/eip-6551) (Token Bound Account).
 
+**Specifica ACE pubblica:** il formato di cifratura, il layout IPFS, il calcolo del TBA e il flusso
+di decrypt per client terzi sono documentati in [`ace-v1.md`](../ace-v1.md).
+
 ---
 
 ## Decisioni di prodotto (vincolanti)

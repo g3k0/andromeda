@@ -47,9 +47,19 @@ describe("createPinataIpfsStorage", () => {
       }),
     );
 
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     await expect(storage.pinJson(metadata)).rejects.toThrow(
       /Unable to pin metadata to IPFS/,
     );
+    expect(errorSpy).toHaveBeenCalled();
+    const parsed = JSON.parse(errorSpy.mock.calls[0][0] as string);
+    expect(parsed).toMatchObject({
+      scope: "ipfs.pinata",
+      event: "pin_http_error",
+      status: 500,
+    });
+    expect(parsed).not.toHaveProperty("stack");
+    errorSpy.mockRestore();
   });
 
   it("returns a generic error when Pinata responds without a CID", async () => {

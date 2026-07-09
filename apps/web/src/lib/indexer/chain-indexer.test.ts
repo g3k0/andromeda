@@ -86,6 +86,30 @@ describe("syncChainEvents", () => {
     );
   });
 
+  it("logs and rethrows on getLogs failure, leaving the cursor untouched", async () => {
+    const repos = createInMemoryIndexerRepositories();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const getBlockNumber = vi.fn(async () => 5n);
+    const getLogs = vi.fn(async () => {
+      throw new Error("RPC 429 rate limited");
+    });
+    const client = { getLogs, getBlockNumber } as unknown as PublicClient;
+
+    await expect(
+      syncChainEvents(client, repos, { maxRangeSize: 100n }),
+    ).rejects.toThrow(/rate limited/);
+
+    expect(errorSpy).toHaveBeenCalledTimes(1);
+    const parsed = JSON.parse(errorSpy.mock.calls[0][0] as string);
+    expect(parsed).toMatchObject({
+      scope: "chain.indexer",
+      event: "get_logs_failed",
+    });
+    expect(await repos.chainSync.getLastProcessedBlock()).toBe(0n);
+
+    errorSpy.mockRestore();
+  });
+
   it("splits work across multiple ranges and advances the cursor each time", async () => {
     const repos = createInMemoryIndexerRepositories();
     const { client, getLogs } = fakeClient(25n, []);
