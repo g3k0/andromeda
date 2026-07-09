@@ -1,57 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
 
 import type { PublicTokenDto } from "@/lib/works/public-dto";
 
 import { LibraryList } from "./LibraryList";
 
+async function fetchLibraryCopies(address: string): Promise<PublicTokenDto[]> {
+  const response = await fetch(`/api/library/${address}`);
+  if (!response.ok) {
+    throw new Error("Failed to load your library.");
+  }
+  const body = (await response.json()) as { copies: PublicTokenDto[] };
+  return body.copies;
+}
+
 export function LibraryClient() {
   const { address, isConnected } = useAccount();
-  const [copies, setCopies] = useState<PublicTokenDto[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!isConnected || !address) {
-      setCopies([]);
-      return;
-    }
-
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-
-    fetch(`/api/library/${address}`)
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error("Failed to load your library.");
-        }
-        const body = (await response.json()) as { copies: PublicTokenDto[] };
-        if (!cancelled) {
-          setCopies(body.copies);
-        }
-      })
-      .catch((cause: unknown) => {
-        if (!cancelled) {
-          setError(
-            cause instanceof Error
-              ? cause.message
-              : "Failed to load your library.",
-          );
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [address, isConnected]);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["library", address],
+    queryFn: () => fetchLibraryCopies(address as string),
+    enabled: isConnected && Boolean(address),
+  });
 
   if (!isConnected) {
     return (
@@ -61,5 +33,17 @@ export function LibraryClient() {
     );
   }
 
-  return <LibraryList copies={copies} loading={loading} error={error} />;
+  return (
+    <LibraryList
+      copies={data ?? []}
+      loading={isLoading}
+      error={
+        error
+          ? error instanceof Error
+            ? error.message
+            : "Failed to load your library."
+          : null
+      }
+    />
+  );
 }
