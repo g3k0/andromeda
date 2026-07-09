@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getAlchemyNotifySigningKey } from "@/lib/config/env";
+import { logServerError } from "@/lib/logging/server-logger";
 import { extractLogsFromAlchemyPayload } from "@/lib/indexer/alchemy-payload";
 import { handleChainLogs } from "@/lib/indexer/chain-event-handler";
 import {
@@ -12,6 +13,7 @@ import { createMongoIndexerRepositories } from "@/lib/works/adapters/create-inde
 export async function POST(request: Request): Promise<Response> {
   const signingKey = getAlchemyNotifySigningKey();
   if (!signingKey) {
+    logServerError("chain.webhook", "not_configured", undefined);
     return NextResponse.json(
       { error: "Webhook is not configured." },
       { status: 500 },
@@ -37,7 +39,10 @@ export async function POST(request: Request): Promise<Response> {
     const repositories = await createMongoIndexerRepositories();
     const result = await handleChainLogs(repositories, logs);
     return NextResponse.json({ ok: true, processed: result.processed });
-  } catch {
+  } catch (error) {
+    logServerError("chain.webhook", "process_failed", error, {
+      logs: logs.length,
+    });
     // Return 500 so Alchemy retries; event handling is idempotent.
     return NextResponse.json(
       { error: "Failed to process webhook." },

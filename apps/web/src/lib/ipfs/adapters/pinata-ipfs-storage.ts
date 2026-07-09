@@ -1,3 +1,5 @@
+import { logServerError } from "@/lib/logging/server-logger";
+
 import { toGatewayUrl } from "../gateway-url";
 import { IpfsPinError } from "../errors";
 import type { IpfsStoragePort } from "../ports/ipfs-storage-port";
@@ -41,11 +43,18 @@ async function readPinataResponse(
   failureMessage: string,
 ): Promise<PinataPinResponse> {
   if (!response.ok) {
+    // Log the transport status server-side (no headers/api key), return generic error.
+    logServerError("ipfs.pinata", "pin_http_error", failureMessage, {
+      status: response.status,
+    });
     throw new IpfsPinError(failureMessage);
   }
 
   const payload = (await response.json()) as PinataPinResponse;
   if (!payload.IpfsHash) {
+    logServerError("ipfs.pinata", "pin_missing_cid", failureMessage, {
+      status: response.status,
+    });
     throw new IpfsPinError(failureMessage);
   }
 

@@ -3,6 +3,7 @@ import "server-only";
 import type { PublicClient } from "viem";
 
 import { getContractAddress } from "@/lib/chain/contract";
+import { logServerError } from "@/lib/logging/server-logger";
 import type { IndexerRepositories } from "@/lib/works/ports/work-repository";
 
 import { handleChainLogs } from "./chain-event-handler";
@@ -60,11 +61,21 @@ export async function syncChainEvents(
 
   let processedEvents = 0;
   for (const range of ranges) {
-    const logs = await client.getLogs({
-      address,
-      fromBlock: range.fromBlock,
-      toBlock: range.toBlock,
-    });
+    let logs;
+    try {
+      logs = await client.getLogs({
+        address,
+        fromBlock: range.fromBlock,
+        toBlock: range.toBlock,
+      });
+    } catch (error) {
+      // Surface RPC/indexer failures with a safe log; stop so the cursor stays put.
+      logServerError("chain.indexer", "get_logs_failed", error, {
+        fromBlock: range.fromBlock.toString(),
+        toBlock: range.toBlock.toString(),
+      });
+      throw error;
+    }
     const result = await handleChainLogs(repositories, logs);
     processedEvents += result.processed;
     await repositories.chainSync.setLastProcessedBlock(range.toBlock);

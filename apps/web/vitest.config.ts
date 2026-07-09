@@ -23,6 +23,7 @@ export default defineConfig({
         "src/lib/ipfs/**/*.ts",
         "src/lib/works/**/*.ts",
         "src/lib/indexer/**/*.ts",
+        "src/lib/logging/**/*.ts",
         "src/lib/config/**/*.ts",
         "src/lib/db/**/*.ts",
         "src/lib/navigation/**/*.ts",
