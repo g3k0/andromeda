@@ -46,6 +46,7 @@ const serverEnvSchema = z.object({
     .string()
     .optional()
     .transform(optionalPositiveInt),
+  ALCHEMY_NOTIFY_SIGNING_KEY: z.string().optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
@@ -84,4 +85,9 @@ export function isChainIndexerEnabled(): boolean {
 export function getChainIndexerStartBlock(): bigint | undefined {
   const startBlock = getServerEnv().CHAIN_INDEXER_START_BLOCK;
   return startBlock !== undefined ? BigInt(startBlock) : undefined;
+}
+
+export function getAlchemyNotifySigningKey(): string | undefined {
+  const key = getServerEnv().ALCHEMY_NOTIFY_SIGNING_KEY?.trim();
+  return key ? key : undefined;
 }

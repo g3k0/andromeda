@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import {
   getAdminAddressesRaw,
+  getAlchemyNotifySigningKey,
   getChainIndexerStartBlock,
   getMongoDbUri,
   getServerEnv,
@@ -14,6 +15,7 @@ describe("server env config", () => {
     resetServerEnvForTests();
     delete process.env.CHAIN_INDEXER_ENABLED;
     delete process.env.CHAIN_INDEXER_START_BLOCK;
+    delete process.env.ALCHEMY_NOTIFY_SIGNING_KEY;
   });
 
   it("reads configured environment values", () => {
@@ -54,5 +56,14 @@ describe("server env config", () => {
   it("defaults the chain indexer to disabled", () => {
     expect(isChainIndexerEnabled()).toBe(false);
     expect(getChainIndexerStartBlock()).toBeUndefined();
+  });
+
+  it("reads the Alchemy Notify signing key and ignores blanks", () => {
+    process.env.ALCHEMY_NOTIFY_SIGNING_KEY = "  whsec_abc  ";
+    expect(getAlchemyNotifySigningKey()).toBe("whsec_abc");
+
+    resetServerEnvForTests();
+    process.env.ALCHEMY_NOTIFY_SIGNING_KEY = "   ";
+    expect(getAlchemyNotifySigningKey()).toBeUndefined();
   });
 });
