@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ABOUT_NAV_LINK,
+  CATALOG_NAV_LINK,
   LIBRARY_NAV_LINK,
   MY_AUTHOR_PAGE_NAV_LINK,
   buildHeaderNavLinks,
@@ -34,18 +35,18 @@ describe("shouldShowMyAuthorPageLink", () => {
 });
 
 describe("buildHeaderNavLinks", () => {
-  it("always includes Library and About", () => {
+  it("always includes Catalog, Library and About", () => {
     expect(buildHeaderNavLinks({ role: "reader", hasAuthorProfile: false })).toEqual(
-      [LIBRARY_NAV_LINK, ABOUT_NAV_LINK],
+      [CATALOG_NAV_LINK, LIBRARY_NAV_LINK, ABOUT_NAV_LINK],
     );
   });
 
   it("does not include Admin in the header nav for any role", () => {
     expect(buildHeaderNavLinks({ role: "admin", hasAuthorProfile: false })).toEqual(
-      [LIBRARY_NAV_LINK, ABOUT_NAV_LINK],
+      [CATALOG_NAV_LINK, LIBRARY_NAV_LINK, ABOUT_NAV_LINK],
     );
     expect(buildHeaderNavLinks({ role: "author", hasAuthorProfile: true })).toEqual(
-      [LIBRARY_NAV_LINK, ABOUT_NAV_LINK, MY_AUTHOR_PAGE_NAV_LINK],
+      [CATALOG_NAV_LINK, LIBRARY_NAV_LINK, ABOUT_NAV_LINK, MY_AUTHOR_PAGE_NAV_LINK],
     );
   });
 
@@ -60,6 +61,7 @@ describe("buildHeaderNavLinks", () => {
       MY_AUTHOR_PAGE_NAV_LINK,
     );
     expect(buildHeaderNavLinks({ role: "admin", hasAuthorProfile: true })).toEqual([
+      CATALOG_NAV_LINK,
       LIBRARY_NAV_LINK,
       ABOUT_NAV_LINK,
       MY_AUTHOR_PAGE_NAV_LINK,
@@ -82,6 +84,6 @@ describe("buildHeaderNavLinks", () => {
       },
     });
 
-    expect(links).toEqual([LIBRARY_NAV_LINK, ABOUT_NAV_LINK]);
+    expect(links).toEqual([CATALOG_NAV_LINK, LIBRARY_NAV_LINK, ABOUT_NAV_LINK]);
   });
 });

@@ -66,7 +66,11 @@ describe("route guard", () => {
       hasAuthorProfile: false,
       isConnected: true,
     });
-    expect(readerLinks.map((link) => link.href)).toEqual(["/", "/about"]);
+    expect(readerLinks.map((link) => link.href)).toEqual([
+      "/works",
+      "/library",
+      "/about",
+    ]);
 
     const authorLinks = buildAuthorizedNavLinks({
       user: buildNavUser("author"),
@@ -74,7 +78,8 @@ describe("route guard", () => {
       isConnected: true,
     });
     expect(authorLinks.map((link) => link.href)).toEqual([
-      "/",
+      "/works",
+      "/library",
       "/about",
       "/author",
     ]);
@@ -85,7 +90,8 @@ describe("route guard", () => {
       isConnected: true,
     });
     expect(adminLinks.map((link) => link.href)).toEqual([
-      "/",
+      "/works",
+      "/library",
       "/about",
       "/author",
     ]);
