@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 
 import { getAlchemyNotifySigningKey } from "@/lib/config/env";
+import { extractLogsFromAlchemyPayload } from "@/lib/indexer/alchemy-payload";
+import { handleChainLogs } from "@/lib/indexer/chain-event-handler";
 import {
   ALCHEMY_SIGNATURE_HEADER,
   verifyAlchemySignature,
 } from "@/lib/indexer/webhook-signature";
+import { createMongoIndexerRepositories } from "@/lib/works/adapters/create-indexer-repositories";
 
 export async function POST(request: Request): Promise<Response> {
   const signingKey = getAlchemyNotifySigningKey();
@@ -21,5 +24,24 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ error: "Invalid signature." }, { status: 401 });
   }
 
-  return NextResponse.json({ ok: true });
+  let payload: unknown;
+  try {
+    payload = JSON.parse(rawBody);
+  } catch {
+    return NextResponse.json({ error: "Invalid payload." }, { status: 400 });
+  }
+
+  const logs = extractLogsFromAlchemyPayload(payload);
+
+  try {
+    const repositories = await createMongoIndexerRepositories();
+    const result = await handleChainLogs(repositories, logs);
+    return NextResponse.json({ ok: true, processed: result.processed });
+  } catch {
+    // Return 500 so Alchemy retries; event handling is idempotent.
+    return NextResponse.json(
+      { error: "Failed to process webhook." },
+      { status: 500 },
+    );
+  }
 }
