@@ -1,4 +1,6 @@
-import { InvalidWorkIdParamError } from "./errors";
+import { getAddress, isAddress } from "viem";
+
+import { InvalidOwnerAddressError, InvalidWorkIdParamError } from "./errors";
 import type { TokenRecord, WorkRecord } from "./types";
 
 /** Public, JSON-safe projection of a work — never includes ciphertext or `K`. */
@@ -69,4 +71,12 @@ export function parseWorkIdParam(value: string): bigint {
   }
 
   return workId;
+}
+
+/** Parses a route param into a checksummed owner address, rejecting bad input. */
+export function parseOwnerParam(value: string): `0x${string}` {
+  if (!isAddress(value)) {
+    throw new InvalidOwnerAddressError(value);
+  }
+  return getAddress(value);
 }

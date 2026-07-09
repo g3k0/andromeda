@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { InvalidWorkIdParamError } from "./errors";
+import { InvalidOwnerAddressError, InvalidWorkIdParamError } from "./errors";
 import {
+  parseOwnerParam,
   parseWorkIdParam,
   toPublicTokenDto,
   toPublicWorkDto,
@@ -84,5 +85,20 @@ describe("parseWorkIdParam", () => {
     expect(() => parseWorkIdParam("0")).toThrow(InvalidWorkIdParamError);
     expect(() => parseWorkIdParam("-1")).toThrow(InvalidWorkIdParamError);
     expect(() => parseWorkIdParam("1.5")).toThrow(InvalidWorkIdParamError);
+  });
+});
+
+describe("parseOwnerParam", () => {
+  it("returns the checksummed address for valid input", () => {
+    expect(
+      parseOwnerParam("0x2222222222222222222222222222222222222222"),
+    ).toBe("0x2222222222222222222222222222222222222222");
+  });
+
+  it("rejects malformed addresses", () => {
+    expect(() => parseOwnerParam("0x123")).toThrow(InvalidOwnerAddressError);
+    expect(() => parseOwnerParam("not-an-address")).toThrow(
+      InvalidOwnerAddressError,
+    );
   });
 });

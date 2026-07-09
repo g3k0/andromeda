@@ -36,6 +36,13 @@ export class InvalidWorkIdParamError extends WorkCatalogError {
   }
 }
 
+export class InvalidOwnerAddressError extends WorkCatalogError {
+  constructor(public readonly value: string) {
+    super(`Invalid owner address: ${value}`);
+    this.name = "InvalidOwnerAddressError";
+  }
+}
+
 export class WorkMintError extends Error {
   constructor(message: string) {
     super(message);
