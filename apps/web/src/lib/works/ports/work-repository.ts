@@ -19,6 +19,8 @@ export type TokenRepository = {
   listByOwner(owner: string): Promise<TokenRecord[]>;
   /** Updates the owner only when the token exists; returns whether it changed. */
   setOwner(tokenId: bigint, owner: string): Promise<boolean>;
+  /** Sets the token's numbered metadata URI; returns whether the token existed. */
+  setMetadataURI(tokenId: bigint, metadataURI: string): Promise<boolean>;
 };
 
 export type ChainSyncRepository = {

@@ -6,6 +6,7 @@ import type { WorkOnChain } from "@/lib/chain/types";
 
 import {
   buildMintCopyRequest,
+  buildSetCopyMetadataRequest,
   formatWorkPrice,
   getWorkAvailability,
 } from "./mint-copy-tx";
@@ -75,5 +76,20 @@ describe("buildMintCopyRequest", () => {
     expect(request.address).toBe(CONTRACT);
     expect(request.args).toEqual([3n]);
     expect(request.value).toBe(parseEther("0.05"));
+  });
+});
+
+describe("buildSetCopyMetadataRequest", () => {
+  it("builds a setCopyMetadataURI write request", () => {
+    const request = buildSetCopyMetadataRequest({
+      tokenId: 9n,
+      metadataUri: "ipfs://bafyToken",
+      contractAddress: CONTRACT,
+      abi: andromedaWorksAbi,
+    });
+
+    expect(request.functionName).toBe("setCopyMetadataURI");
+    expect(request.address).toBe(CONTRACT);
+    expect(request.args).toEqual([9n, "ipfs://bafyToken"]);
   });
 });

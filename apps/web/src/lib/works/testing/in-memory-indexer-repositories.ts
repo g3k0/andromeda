@@ -91,6 +91,10 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
             input.envelopeCid !== undefined
               ? input.envelopeCid
               : (existing?.envelopeCid ?? null),
+          metadataURI:
+            input.metadataURI !== undefined
+              ? input.metadataURI
+              : (existing?.metadataURI ?? null),
           createdAt: existing?.createdAt ?? nowIso(),
           updatedAt: nowIso(),
         };
@@ -114,6 +118,18 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
         tokens.set(tokenId.toString(), {
           ...record,
           owner: getAddress(owner),
+          updatedAt: nowIso(),
+        });
+        return true;
+      },
+      async setMetadataURI(tokenId: bigint, metadataURI: string) {
+        const record = tokens.get(tokenId.toString());
+        if (!record) {
+          return false;
+        }
+        tokens.set(tokenId.toString(), {
+          ...record,
+          metadataURI,
           updatedAt: nowIso(),
         });
         return true;

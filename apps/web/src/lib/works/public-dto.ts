@@ -46,6 +46,7 @@ export type PublicTokenDto = {
   copyNumber: number | null;
   tbaAddress: `0x${string}` | null;
   envelopeCid: string | null;
+  metadataURI: string | null;
 };
 
 export function toPublicTokenDto(token: TokenRecord): PublicTokenDto {
@@ -56,6 +57,7 @@ export function toPublicTokenDto(token: TokenRecord): PublicTokenDto {
     copyNumber: token.copyNumber,
     tbaAddress: token.tbaAddress,
     envelopeCid: token.envelopeCid,
+    metadataURI: token.metadataURI,
   };
 }
 

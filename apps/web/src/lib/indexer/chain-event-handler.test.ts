@@ -94,6 +94,25 @@ function copyMintedLog(
   );
 }
 
+function copyMetadataUpdatedLog(
+  args: { tokenId: bigint; metadataURI: string },
+  logIndex: number,
+  blockNumber?: bigint,
+): Log {
+  return baseLog(
+    {
+      topics: encodeEventTopics({
+        abi: andromedaWorksAbi,
+        eventName: "CopyMetadataUpdated",
+        args: { tokenId: args.tokenId },
+      }) as `0x${string}`[],
+      data: encodeAbiParameters([{ type: "string" }], [args.metadataURI]),
+    },
+    logIndex,
+    blockNumber,
+  );
+}
+
 function transferLog(
   args: { from: `0x${string}`; to: `0x${string}`; tokenId: bigint },
   logIndex: number,
@@ -198,6 +217,22 @@ describe("handleChainLogs", () => {
 
     expect((await repos.works.getWork(1n))?.minted).toBe(1n);
     expect((await repos.tokens.listByOwner(BUYER)).length).toBe(1);
+  });
+
+  it("sets token metadata URI on CopyMetadataUpdated", async () => {
+    const repos = createInMemoryIndexerRepositories();
+    await handleChainLogs(repos, [
+      workRegisteredLog(
+        { workId: 1n, metadataURI: "ipfs://m", price: 10n, maxCopies: 100n },
+        0,
+      ),
+      copyMintedLog({ workId: 1n, tokenId: 10n, buyer: BUYER }, 1),
+      copyMetadataUpdatedLog({ tokenId: 10n, metadataURI: "ipfs://token-10" }, 2),
+    ]);
+
+    expect((await repos.tokens.getToken(10n))?.metadataURI).toBe(
+      "ipfs://token-10",
+    );
   });
 
   it("updates owner on secondary Transfer but ignores mint Transfer", async () => {

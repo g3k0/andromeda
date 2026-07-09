@@ -21,6 +21,9 @@ export class MongoTokenRepository implements TokenRepository {
           ...(input.envelopeCid !== undefined
             ? { envelopeCid: input.envelopeCid }
             : {}),
+          ...(input.metadataURI !== undefined
+            ? { metadataURI: input.metadataURI }
+            : {}),
         },
       },
       {
@@ -53,6 +56,14 @@ export class MongoTokenRepository implements TokenRepository {
     const result = await TokenModel.updateOne(
       { tokenId: tokenId.toString() },
       { $set: { owner: owner.toLowerCase() } },
+    );
+    return result.matchedCount > 0;
+  }
+
+  async setMetadataURI(tokenId: bigint, metadataURI: string): Promise<boolean> {
+    const result = await TokenModel.updateOne(
+      { tokenId: tokenId.toString() },
+      { $set: { metadataURI } },
     );
     return result.matchedCount > 0;
   }

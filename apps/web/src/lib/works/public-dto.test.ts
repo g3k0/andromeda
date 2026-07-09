@@ -61,6 +61,7 @@ describe("toPublicTokenDto", () => {
       copyNumber: 2,
       tbaAddress: null,
       envelopeCid: "bafyenvelope",
+      metadataURI: "ipfs://token-42",
       createdAt: "2026-01-01T00:00:00.000Z",
       updatedAt: "2026-01-01T00:00:00.000Z",
     };
@@ -71,6 +72,7 @@ describe("toPublicTokenDto", () => {
       copyNumber: 2,
       tbaAddress: null,
       envelopeCid: "bafyenvelope",
+      metadataURI: "ipfs://token-42",
     });
   });
 });

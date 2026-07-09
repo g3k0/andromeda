@@ -55,3 +55,30 @@ export function buildMintCopyRequest(
     value: input.priceWei,
   };
 }
+
+export type SetCopyMetadataTxRequest = {
+  abi: Abi;
+  address: `0x${string}`;
+  functionName: "setCopyMetadataURI";
+  args: readonly [bigint, string];
+};
+
+export type BuildSetCopyMetadataRequestInput = {
+  tokenId: bigint;
+  /** IPFS URI of the token's numbered metadata document. */
+  metadataUri: string;
+  contractAddress: `0x${string}`;
+  abi: Abi;
+};
+
+/** Builds the write request to point a copy's on-chain `tokenURI` at its metadata. */
+export function buildSetCopyMetadataRequest(
+  input: BuildSetCopyMetadataRequestInput,
+): SetCopyMetadataTxRequest {
+  return {
+    abi: input.abi,
+    address: input.contractAddress,
+    functionName: "setCopyMetadataURI",
+    args: [input.tokenId, input.metadataUri],
+  };
+}

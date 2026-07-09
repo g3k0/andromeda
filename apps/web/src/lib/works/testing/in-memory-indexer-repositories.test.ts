@@ -73,6 +73,16 @@ describe("in-memory indexer repositories", () => {
     );
   });
 
+  it("sets token metadata URI only when the token exists", async () => {
+    const { tokens } = createInMemoryIndexerRepositories();
+    await tokens.upsertToken({ tokenId: 42n, workId: 1n, owner: OWNER });
+
+    expect(await tokens.setMetadataURI(42n, "ipfs://token-42")).toBe(true);
+    expect(await tokens.setMetadataURI(999n, "ipfs://ghost")).toBe(false);
+
+    expect((await tokens.getToken(42n))?.metadataURI).toBe("ipfs://token-42");
+  });
+
   it("lists tokens by owner regardless of address casing", async () => {
     const { tokens } = createInMemoryIndexerRepositories();
     await tokens.upsertToken({ tokenId: 1n, workId: 1n, owner: OWNER });

@@ -37,6 +37,10 @@ const tokenSchema = new Schema(
       type: String,
       default: null,
     },
+    metadataURI: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
