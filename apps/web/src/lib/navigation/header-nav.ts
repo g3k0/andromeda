@@ -2,6 +2,7 @@ import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissi
 import {
   ABOUT_ROUTE,
   ADMIN_ROUTE,
+  CATALOG_ROUTE,
   LIBRARY_ROUTE,
   MY_AUTHOR_PAGE_ROUTE,
   buildAuthorizedNavLinks,
@@ -20,6 +21,11 @@ export type HeaderNavInput = {
   hasAuthorProfile: boolean;
   isConnected?: boolean;
   snapshot?: UserSnapshot | null;
+};
+
+export const CATALOG_NAV_LINK = {
+  href: CATALOG_ROUTE.href,
+  label: CATALOG_ROUTE.label,
 };
 
 export const LIBRARY_NAV_LINK = {

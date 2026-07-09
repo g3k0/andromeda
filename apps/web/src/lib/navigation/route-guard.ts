@@ -27,9 +27,16 @@ export type RouteNavContext = {
   isConnected: boolean;
 };
 
+export const CATALOG_ROUTE: RouteDefinition = {
+  id: "catalog",
+  href: "/works",
+  label: "Catalog",
+  pagePermission: "pages:read",
+};
+
 export const LIBRARY_ROUTE: RouteDefinition = {
   id: "library",
-  href: "/",
+  href: "/library",
   label: "Library",
   pagePermission: "pages:read",
 };
@@ -63,6 +70,7 @@ export const MY_AUTHOR_PAGE_ROUTE: RouteDefinition = {
 };
 
 export const APP_ROUTES: RouteDefinition[] = [
+  CATALOG_ROUTE,
   LIBRARY_ROUTE,
   ABOUT_ROUTE,
   ADMIN_ROUTE,
