@@ -83,6 +83,8 @@ export type TokenRecord = {
   copyNumber: number | null;
   tbaAddress: `0x${string}` | null;
   envelopeCid: string | null;
+  /** IPFS URI of the token's numbered metadata, once its `tokenURI` is set. */
+  metadataURI: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -94,4 +96,5 @@ export type UpsertTokenInput = {
   copyNumber?: number | null;
   tbaAddress?: string | null;
   envelopeCid?: string | null;
+  metadataURI?: string | null;
 };

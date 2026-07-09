@@ -3,6 +3,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 
 import { TokenModel } from "@/lib/db/models/token.model";
+import { WorkModel } from "@/lib/db/models/work.model";
 import { connectMongo, resetMongoConnectionForTests } from "@/lib/db/mongodb";
 import { createMongoIndexerRepositories } from "@/lib/works/adapters/create-indexer-repositories";
 
@@ -22,6 +23,7 @@ describe("library API", () => {
 
   afterEach(async () => {
     await TokenModel.deleteMany({});
+    await WorkModel.deleteMany({});
   });
 
   afterAll(async () => {
@@ -30,13 +32,21 @@ describe("library API", () => {
     await memoryServer?.stop();
   });
 
-  it("returns the copies owned by an address", async () => {
+  it("returns the copies owned by an address with edition size", async () => {
     const repos = await createMongoIndexerRepositories();
+    await repos.works.upsertWork({
+      workId: 7n,
+      author: "0xabcdef0123456789abcdef0123456789abcdef01",
+      metadataURI: "ipfs://work-7",
+      price: 0n,
+      maxCopies: 25n,
+    });
     await repos.tokens.upsertToken({
       tokenId: 1n,
       workId: 7n,
       owner: OWNER,
       copyNumber: 1,
+      metadataURI: "ipfs://token-1",
     });
 
     const response = await getLibrary(
@@ -47,7 +57,12 @@ describe("library API", () => {
     expect(response.status).toBe(200);
     const body = await response.json();
     expect(body.copies).toHaveLength(1);
-    expect(body.copies[0].tokenId).toBe("1");
+    expect(body.copies[0]).toMatchObject({
+      tokenId: "1",
+      copyNumber: 1,
+      metadataURI: "ipfs://token-1",
+      editionSize: "25",
+    });
   });
 
   it("returns 400 for a malformed owner address", async () => {

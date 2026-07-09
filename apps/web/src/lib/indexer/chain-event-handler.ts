@@ -20,6 +20,11 @@ export type AndromedaChainEvent =
       buyer: `0x${string}`;
     }
   | {
+      kind: "CopyMetadataUpdated";
+      tokenId: bigint;
+      metadataURI: string;
+    }
+  | {
       kind: "Transfer";
       from: `0x${string}`;
       to: `0x${string}`;
@@ -36,6 +41,7 @@ const INDEXED_EVENT_NAMES = [
   "WorkRegistered",
   "WorkStatusChanged",
   "CopyMinted",
+  "CopyMetadataUpdated",
   "Transfer",
 ] as const;
 
@@ -64,6 +70,12 @@ function toEvent(eventName: string, args: DecodedArgs): AndromedaChainEvent | nu
         workId: args.workId as bigint,
         tokenId: args.tokenId as bigint,
         buyer: args.buyer as `0x${string}`,
+      };
+    case "CopyMetadataUpdated":
+      return {
+        kind: "CopyMetadataUpdated",
+        tokenId: args.tokenId as bigint,
+        metadataURI: args.metadataURI as string,
       };
     case "Transfer":
       return {
@@ -142,6 +154,9 @@ async function applyEvent(
       await repositories.works.setMinted(event.workId, BigInt(copyNumber));
       return;
     }
+    case "CopyMetadataUpdated":
+      await repositories.tokens.setMetadataURI(event.tokenId, event.metadataURI);
+      return;
     case "Transfer":
       if (event.from === zeroAddress) {
         return; // mint transfer handled by CopyMinted

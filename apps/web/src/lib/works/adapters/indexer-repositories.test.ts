@@ -98,9 +98,20 @@ describe("mongo indexer repositories", () => {
     const token = await tokens.getToken(42n);
     expect(token?.owner).toBe(OWNER2);
     expect(token?.copyNumber).toBe(1);
+    expect(token?.metadataURI).toBeNull();
     expect((await tokens.listByOwner(OWNER2)).map((t) => t.tokenId)).toEqual([
       42n,
     ]);
+  });
+
+  it("sets a token metadata URI only when the token exists", async () => {
+    const { tokens } = await createMongoIndexerRepositories();
+    await tokens.upsertToken({ tokenId: 42n, workId: 1n, owner: OWNER });
+
+    expect(await tokens.setMetadataURI(42n, "ipfs://token-42")).toBe(true);
+    expect(await tokens.setMetadataURI(999n, "ipfs://ghost")).toBe(false);
+
+    expect((await tokens.getToken(42n))?.metadataURI).toBe("ipfs://token-42");
   });
 
   it("tracks the chain sync cursor", async () => {

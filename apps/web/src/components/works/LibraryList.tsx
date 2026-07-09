@@ -2,13 +2,22 @@ import Link from "next/link";
 
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { formErrorClassName } from "@/components/form/form-field-styles";
-import type { PublicTokenDto } from "@/lib/works/public-dto";
+import type { LibraryCopyDto } from "@/lib/works/library-service";
+import { formatCopyLabel } from "@/lib/works/token-metadata";
 
 export type LibraryListProps = {
-  copies: PublicTokenDto[];
+  copies: LibraryCopyDto[];
   loading: boolean;
   error: string | null;
 };
+
+function copyLabel(copy: LibraryCopyDto): string {
+  if (copy.copyNumber === null) {
+    return "Copy";
+  }
+  const editionSize = copy.editionSize ? BigInt(copy.editionSize) : 0n;
+  return formatCopyLabel(copy.copyNumber, editionSize);
+}
 
 export function LibraryList({ copies, loading, error }: LibraryListProps) {
   if (loading) {
@@ -51,8 +60,7 @@ export function LibraryList({ copies, loading, error }: LibraryListProps) {
             Work #{copy.workId}
           </span>
           <span className="text-sm text-white/60">
-            {copy.copyNumber !== null ? `Copy #${copy.copyNumber}` : "Copy"} ·
-            Token #{copy.tokenId}
+            {copyLabel(copy)} · Token #{copy.tokenId}
           </span>
           <span className="mt-2 text-sm text-andromeda-light">Read →</span>
         </Link>

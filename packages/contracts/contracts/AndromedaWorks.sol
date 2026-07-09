@@ -38,10 +38,12 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
         uint256 indexed tokenId,
         address indexed buyer
     );
+    event CopyMetadataUpdated(uint256 indexed tokenId, string metadataURI);
 
     error WorkNotFound();
     error WorkInactive();
     error NotAuthor();
+    error NotCopyOwner();
     error SoldOut();
     error InsufficientPayment();
     error PaymentFailed();
@@ -111,6 +113,20 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
         }
 
         emit CopyMinted(workId, tokenId, msg.sender);
+    }
+
+    /// @notice Attach per-token metadata to a minted copy (numbered edition).
+    /// @dev Only the copy owner can set it — the buyer pins their token's ACE
+    ///      metadata (with the `Copy #n/N` attributes) after minting, then
+    ///      points the on-chain `tokenURI` to it. Emits `MetadataUpdate` (via
+    ///      ERC721URIStorage) so marketplaces refresh the numbered metadata.
+    function setCopyMetadataURI(uint256 tokenId, string calldata metadataURI)
+        external
+    {
+        address tokenOwner = _requireOwned(tokenId);
+        if (msg.sender != tokenOwner) revert NotCopyOwner();
+        _setTokenURI(tokenId, metadataURI);
+        emit CopyMetadataUpdated(tokenId, metadataURI);
     }
 
     function _getWork(uint256 workId) private view returns (Work storage) {

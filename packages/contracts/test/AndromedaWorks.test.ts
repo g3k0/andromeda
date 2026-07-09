@@ -55,4 +55,36 @@ describe("AndromedaWorks", () => {
       contract.connect(reader).mintCopy(1)
     ).to.be.revertedWithCustomError(contract, "SoldOut");
   });
+
+  it("lets the copy owner set per-token metadata for numbered editions", async () => {
+    const { contract, author, reader } = await deploy();
+    await contract.connect(author).registerWork("ipfs://work-1", 0, 10);
+    await contract.connect(reader).mintCopy(1);
+
+    await expect(
+      contract.connect(reader).setCopyMetadataURI(1, "ipfs://token-1-copy")
+    )
+      .to.emit(contract, "CopyMetadataUpdated")
+      .withArgs(1n, "ipfs://token-1-copy");
+
+    expect(await contract.tokenURI(1)).to.equal("ipfs://token-1-copy");
+  });
+
+  it("reverts when a non-owner sets per-token metadata", async () => {
+    const { contract, author, reader, owner } = await deploy();
+    await contract.connect(author).registerWork("ipfs://work-1", 0, 10);
+    await contract.connect(reader).mintCopy(1);
+
+    await expect(
+      contract.connect(owner).setCopyMetadataURI(1, "ipfs://hijack")
+    ).to.be.revertedWithCustomError(contract, "NotCopyOwner");
+  });
+
+  it("reverts when setting metadata for a nonexistent token", async () => {
+    const { contract, reader } = await deploy();
+
+    await expect(
+      contract.connect(reader).setCopyMetadataURI(999, "ipfs://ghost")
+    ).to.be.revertedWithCustomError(contract, "ERC721NonexistentToken");
+  });
 });
