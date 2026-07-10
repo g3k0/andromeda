@@ -134,4 +134,31 @@ describe("RoleMenuDropdown", () => {
 
     expect(onLogout).toHaveBeenCalledTimes(1);
   });
+
+  it("renders localized menu labels for French visitors", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <I18nProvider locale="fr">
+        <RoleMenuDropdown
+          roleSlug="reader"
+          roleName="Lecteur"
+          permissions={defaultPermissionsForRoleSlug("reader")}
+          onLogout={vi.fn()}
+        />
+      </I18nProvider>,
+    );
+
+    await user.click(screen.getByText("Lecteur"));
+
+    expect(
+      screen.getByRole("menuitem", { name: "Paramètres du profil" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "Devenir auteur" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "Déconnexion" }),
+    ).toBeInTheDocument();
+  });
 });

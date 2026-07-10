@@ -69,6 +69,14 @@ describe("buildHeaderNavLinks", () => {
     ]);
   });
 
+  it("localizes links and labels for German visitors", () => {
+    expect(buildHeaderNavLinks({ role: "reader", hasAuthorProfile: false }, "de")).toEqual([
+      { href: "/de/works", label: translate("de", "nav.catalog") },
+      { href: "/de/library", label: translate("de", "nav.library") },
+      { href: "/de/about", label: translate("de", "nav.about") },
+    ]);
+  });
+
   it("does not include Admin in the header nav for any role", () => {
     expect(buildHeaderNavLinks({ role: "admin", hasAuthorProfile: false }, LOCALE)).toEqual(
       [LOCALIZED_CATALOG, LOCALIZED_LIBRARY, LOCALIZED_ABOUT],
