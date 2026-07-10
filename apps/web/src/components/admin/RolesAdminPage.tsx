@@ -16,6 +16,7 @@ import {
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { useNotifications } from "@/components/notifications/NotificationProvider";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import {
   buildCreateRolePayload,
   buildUpdateRolePayload,
@@ -50,6 +51,7 @@ export function RolesAdminPage() {
   const { signMessageAsync } = useSignMessage();
   const { runWithLoading } = useLoading();
   const { notify } = useNotifications();
+  const { t } = useTranslation();
 
   const [rows, setRows] = useState<AdminRoleRow[]>([]);
   const [drafts, setDrafts] = useState<AdminRoleRowDraft[]>([]);
@@ -100,11 +102,11 @@ export function RolesAdminPage() {
       setRows(synced.rows);
       setDrafts(synced.drafts);
     } catch (error) {
-      setErrorMessage(adminSessionErrorMessage(error));
+      setErrorMessage(adminSessionErrorMessage(error, t));
     } finally {
       setIsLoading(false);
     }
-  }, [address, authorizeAdminSession, isConnected]);
+  }, [address, authorizeAdminSession, isConnected, t]);
 
   useEffect(() => {
     void loadRoles();
@@ -156,17 +158,17 @@ export function RolesAdminPage() {
               : item,
           ),
         );
-        notify({ message: "Role updated.", variant: "success" });
-      }, "Saving role…");
+        notify({ message: t("admin.roles.notifications.updated"), variant: "success" });
+      }, t("admin.roles.loading.saving"));
     } catch {
-      setErrorMessage("Failed to update role.");
+      setErrorMessage(t("admin.roles.errors.updateFailed"));
     } finally {
       setSavingSlug(null);
     }
   }
 
   async function handleDeleteRow(slug: string) {
-    if (!window.confirm(`Delete role ${slug}? This cannot be undone.`)) {
+    if (!window.confirm(t("admin.roles.confirmDelete", { slug }))) {
       return;
     }
 
@@ -178,17 +180,17 @@ export function RolesAdminPage() {
         await deleteRoleAction({ slug });
         setRows((current) => current.filter((row) => row.slug !== slug));
         setDrafts((current) => current.filter((draft) => draft.slug !== slug));
-        notify({ message: "Role deleted.", variant: "success" });
-      }, "Deleting role…");
+        notify({ message: t("admin.roles.notifications.deleted"), variant: "success" });
+      }, t("admin.roles.loading.deleting"));
     } catch {
-      setErrorMessage("Failed to delete role.");
+      setErrorMessage(t("admin.roles.errors.deleteFailed"));
     } finally {
       setDeletingSlug(null);
     }
   }
 
   async function handleCreateSubmit() {
-    const validationError = validateCreateRoleForm(createForm, existingSlugs);
+    const validationError = validateCreateRoleForm(createForm, existingSlugs, t);
     if (validationError) {
       setCreateForm((current) => ({
         ...current,
@@ -213,12 +215,12 @@ export function RolesAdminPage() {
         setDrafts((current) => [...current, createAdminRoleRowDraft(createdRow)]);
         setCreateForm(createDefaultCreateRoleFormState());
         setShowCreateForm(false);
-        notify({ message: "Role created.", variant: "success" });
-      }, "Creating role…");
+        notify({ message: t("admin.roles.notifications.created"), variant: "success" });
+      }, t("admin.roles.loading.creating"));
     } catch {
       setCreateForm((current) => ({
         ...current,
-        errorMessage: "Failed to create role.",
+        errorMessage: t("admin.roles.errors.createFailed"),
       }));
     } finally {
       setIsCreating(false);

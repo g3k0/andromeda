@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { renderWithI18n } from "@/lib/i18n/test-utils";
+import { cleanup, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
@@ -28,7 +29,7 @@ function renderView(
   const rows = overrides.rows ?? [buildRow()];
   const drafts = overrides.drafts ?? rows.map(createAdminRoleRowDraft);
 
-  return render(
+  return renderWithI18n(
     <RolesAdminTableView
       rows={rows}
       drafts={drafts}

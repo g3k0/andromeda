@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createTranslateFn } from "@/lib/i18n/translate";
 import type { UserPermission } from "@/lib/users/types";
 import type { RoleWithUserCount } from "./types";
 import {
@@ -12,6 +13,8 @@ import {
   toggleRoleDraftPermission,
   validateCreateRoleForm,
 } from "./admin-roles-state";
+
+const t = createTranslateFn("en");
 
 const role: RoleWithUserCount = {
   slug: "moderator",
@@ -55,20 +58,20 @@ describe("admin roles state", () => {
       slug: "moderator",
       name: "Moderator",
     };
-    expect(validateCreateRoleForm(form, ["moderator"])).toBe(
+    expect(validateCreateRoleForm(form, ["moderator"], t)).toBe(
       "A role with this slug already exists.",
     );
-    expect(validateCreateRoleForm(form, [])).toBeNull();
+    expect(validateCreateRoleForm(form, [], t)).toBeNull();
   });
 
   it("blocks delete for system roles and roles assigned to users", () => {
     const synced = syncAdminRowsFromRoles([role]);
     expect(canDeleteRole(synced.rows[0]!)).toBe(false);
-    expect(roleDeleteBlockedReason(synced.rows[0]!)).toContain("assigned to 2 user");
+    expect(roleDeleteBlockedReason(synced.rows[0]!, t)).toContain("assigned to 2 user");
 
     const unused = syncAdminRowsFromRoles([{ ...role, userCount: 0 }]);
     expect(canDeleteRole(unused.rows[0]!)).toBe(true);
-    expect(roleDeleteBlockedReason(unused.rows[0]!)).toBeNull();
+    expect(roleDeleteBlockedReason(unused.rows[0]!, t)).toBeNull();
   });
 
   it("builds create and update payloads", () => {
