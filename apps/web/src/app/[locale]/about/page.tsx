@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { DonationSection } from "@/components/about/DonationSection";
 import { buildLocalizedPageMetadata } from "@/lib/i18n/page-metadata";
+import { getServerTranslations } from "@/lib/i18n/server";
 import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
 
 type AboutPageProps = {
@@ -24,171 +25,129 @@ export async function generateMetadata({
   );
 }
 
-export default function AboutPage() {
+export default async function AboutPage({ params }: AboutPageProps) {
+  const { locale: localeParam } = await params;
+  const locale = isSupportedLocale(localeParam)
+    ? (localeParam as SupportedLocale)
+    : ("en" as const);
+  const { t } = getServerTranslations(locale);
+
   return (
     <div className="space-y-10">
       <section className="space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">About Andromeda</h1>
-        <p className="max-w-2xl text-lg text-white/70">
-          Andromeda is a blockchain publishing platform for literary works.
-          Writers certify, number, and mint limited editions as NFTs; readers
-          buy, read, and collect genuine copies. The platform connects authors
-          and readers — it does not take a cut of your sales.
-        </p>
+        <h1 className="text-4xl font-bold tracking-tight">{t("about.title")}</h1>
+        <p className="max-w-2xl text-lg text-white/70">{t("about.intro")}</p>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl font-semibold">What we do</h2>
-        <p className="max-w-2xl text-white/70">
-          Each work is stored off-chain on IPFS and certified on-chain on
-          Polygon. Every copy is an ERC-721 token tied to its author&apos;s
-          wallet. Ownership and transfer history are public and verifiable.
-        </p>
+        <h2 className="text-2xl font-semibold">{t("about.whatWeDoTitle")}</h2>
+        <p className="max-w-2xl text-white/70">{t("about.whatWeDoBody")}</p>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl font-semibold">No platform fees</h2>
+        <h2 className="text-2xl font-semibold">{t("about.noFeesTitle")}</h2>
         <ul className="max-w-2xl list-disc space-y-2 pl-5 text-white/70">
+          <li>{t("about.noFeesItem1")}</li>
+          <li>{t("about.noFeesItem2")}</li>
           <li>
-            Andromeda does not charge authors subscription fees or listing
-            fees.
+            <strong className="text-white/90">{t("about.noFeesItem3Strong")}</strong>{" "}
+            {t("about.noFeesItem3Rest")}
           </li>
-          <li>
-            Andromeda does not take a percentage of primary or secondary
-            sales.
-          </li>
-          <li>
-            <strong className="text-white/90">
-              100% of primary-sale proceeds go to the author.
-            </strong>{" "}
-            The smart contract forwards payment directly to the author&apos;s
-            wallet.
-          </li>
-          <li>
-            Authors remain solely responsible for taxes and legal obligations
-            in their jurisdiction.
-          </li>
+          <li>{t("about.noFeesItem4")}</li>
         </ul>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl font-semibold">What authors pay for</h2>
+        <h2 className="text-2xl font-semibold">{t("about.authorsPayTitle")}</h2>
         <p className="max-w-2xl text-white/70">
-          Putting a work on-chain involves costs that{" "}
-          <strong className="text-white/90">authors bear directly</strong> — not
-          the platform:
+          {t("about.authorsPayIntroBefore")}{" "}
+          <strong className="text-white/90">{t("about.authorsPayIntroStrong")}</strong>{" "}
+          {t("about.authorsPayIntroAfter")}
         </p>
         <ul className="max-w-2xl list-disc space-y-2 pl-5 text-white/70">
           <li>
-            <strong className="text-white/90">Blockchain gas fees (Polygon)</strong>{" "}
-            — paid in MATIC when registering a work, minting copies, and
-            updating on-chain settings. These fees go to the Polygon network
-            validators, not to Andromeda.
+            <strong className="text-white/90">{t("about.authorsPayGasStrong")}</strong>{" "}
+            {t("about.authorsPayGasRest")}
           </li>
           <li>
-            <strong className="text-white/90">IPFS storage</strong> — storing
-            the text and metadata, typically via a pinning service the author
-            chooses and pays for.
+            <strong className="text-white/90">{t("about.authorsPayIpfsStrong")}</strong>{" "}
+            {t("about.authorsPayIpfsRest")}
           </li>
           <li>
-            <strong className="text-white/90">Buyer transaction fees</strong>{" "}
-            — when a reader purchases a copy, they pay network gas on top of
-            the sale price. That cost is borne by the buyer, not the author.
+            <strong className="text-white/90">{t("about.authorsPayBuyerStrong")}</strong>{" "}
+            {t("about.authorsPayBuyerRest")}
           </li>
         </ul>
-        <p className="max-w-2xl text-sm text-white/50">
-          Andromeda itself does not invoice authors for minting or publishing.
-        </p>
+        <p className="max-w-2xl text-sm text-white/50">{t("about.authorsPayFootnote")}</p>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl font-semibold">Where the money goes</h2>
+        <h2 className="text-2xl font-semibold">{t("about.moneyGoesTitle")}</h2>
         <div className="max-w-2xl space-y-4 rounded-xl border border-white/10 bg-white/5 p-5 text-sm text-white/70">
           <div>
-            <p className="font-medium text-white">Primary sale (on Andromeda)</p>
+            <p className="font-medium text-white">{t("about.moneyGoesPrimaryTitle")}</p>
             <p className="mt-2">
-              The reader pays the listed price in crypto. The smart contract
-              mints the NFT and sends the{" "}
-              <strong className="text-white/90">full amount to the author&apos;s wallet</strong>.
-              Andromeda receives nothing.
+              {t("about.moneyGoesPrimaryBodyBefore")}{" "}
+              <strong className="text-white/90">
+                {t("about.moneyGoesPrimaryBodyStrong")}
+              </strong>
+              {t("about.moneyGoesPrimaryBodyAfter")}
             </p>
           </div>
           <div>
-            <p className="font-medium text-white">
-              Secondary market (e.g. OpenSea)
-            </p>
-            <p className="mt-2">
-              Collectors may resell copies on external marketplaces. Proceeds and
-              any marketplace fees are between buyer, seller, and that
-              marketplace — not Andromeda.
-            </p>
+            <p className="font-medium text-white">{t("about.moneyGoesSecondaryTitle")}</p>
+            <p className="mt-2">{t("about.moneyGoesSecondaryBody")}</p>
           </div>
         </div>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl font-semibold">Author control</h2>
+        <h2 className="text-2xl font-semibold">{t("about.authorControlTitle")}</h2>
         <ul className="max-w-2xl list-disc space-y-2 pl-5 text-white/70">
           <li>
-            <strong className="text-white/90">Edition size</strong> — the author
-            decides how many copies can be minted (e.g. 100 numbered editions).
+            <strong className="text-white/90">{t("about.authorControlEditionStrong")}</strong>{" "}
+            {t("about.authorControlEditionRest")}
           </li>
           <li>
-            <strong className="text-white/90">Certification and numbering</strong>{" "}
-            — each copy is author-certified on-chain and receives a distinct
-            edition number.
+            <strong className="text-white/90">{t("about.authorControlCertStrong")}</strong>{" "}
+            {t("about.authorControlCertRest")}
           </li>
           <li>
-            <strong className="text-white/90">Sale or hold</strong> — the
-            author can enable or disable sales, or keep copies unsold.
+            <strong className="text-white/90">{t("about.authorControlSaleStrong")}</strong>{" "}
+            {t("about.authorControlSaleRest")}
           </li>
           <li>
-            <strong className="text-white/90">Pricing</strong> — set a fixed
-            price per copy, or list copies at auction to the highest bidder
-            (auction support is on the publishing roadmap).
+            <strong className="text-white/90">{t("about.authorControlPriceStrong")}</strong>{" "}
+            {t("about.authorControlPriceRest")}
           </li>
         </ul>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl font-semibold">For readers</h2>
+        <h2 className="text-2xl font-semibold">{t("about.readersTitle")}</h2>
         <p className="max-w-2xl text-white/70">
-          What you purchase is a{" "}
-          <strong className="text-white/90">
-            digital copy of a book certified and signed by the author
-          </strong>
-          . Each edition is tied to the author&apos;s public wallet address on
-          the blockchain — the same idea as owning a physical book that is
-          personally signed and authenticated by its writer, except in digital
-          form and with a provenance anyone can verify.
+          {t("about.readersPara1Before")}{" "}
+          <strong className="text-white/90">{t("about.readersPara1Strong")}</strong>
+          . {t("about.readersPara1After")}
         </p>
         <p className="max-w-2xl text-white/70">
-          When you buy a copy, the NFT is minted straight into{" "}
-          <strong className="text-white/90">your wallet</strong>. It is yours —
-          not a rental, not a subscription, and not an account locked inside
-          Andromeda.{" "}
-          <strong className="text-white/90">
-            Readers are not tied to this platform in any way.
-          </strong>
+          {t("about.readersPara2Before")}{" "}
+          <strong className="text-white/90">{t("about.readersPara2StrongWallet")}</strong>.{" "}
+          {t("about.readersPara2Middle")}{" "}
+          <strong className="text-white/90">{t("about.readersPara2StrongFree")}</strong>
         </p>
         <p className="max-w-2xl text-white/70">
-          You may read the work with Andromeda or with{" "}
-          <strong className="text-white/90">
-            any other reading application
-          </strong>{" "}
-          capable of supporting this kind of technology. The token stays in your
-          wallet whether or not you ever visit Andromeda again.
+          {t("about.readersPara3Before")}{" "}
+          <strong className="text-white/90">{t("about.readersPara3Strong")}</strong>{" "}
+          {t("about.readersPara3After")}
         </p>
       </section>
 
-      <DonationSection />
+      <DonationSection locale={locale} />
 
       <section className="space-y-3 border-t border-white/10 pt-8">
-        <h2 className="text-2xl font-semibold">Open to everyone</h2>
-        <p className="max-w-2xl text-white/70">
-          This page is public. You can learn about Andromeda without connecting
-          a wallet — whether you are a reader, an author, or just browsing.
-        </p>
+        <h2 className="text-2xl font-semibold">{t("about.openTitle")}</h2>
+        <p className="max-w-2xl text-white/70">{t("about.openBody")}</p>
       </section>
     </div>
   );

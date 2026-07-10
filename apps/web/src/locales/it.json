@@ -2,6 +2,10 @@
   "meta": {
     "siteName": "Andromeda",
     "siteDescription": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies.",
+    "home": {
+      "title": "Andromeda — Leggi, possiedi e colleziona opere letterarie on-chain",
+      "description": "Andromeda trasforma ogni libro in un NFT certificato dall'autore. Gli scrittori pubblicano e vendono direttamente ai lettori, e i lettori possiedono davvero le edizioni che acquistano."
+    },
     "catalog": {
       "title": "Catalogo | Andromeda",
       "description": "Sfoglia le edizioni letterarie certificate dall'autore su Andromeda."
@@ -9,6 +13,10 @@
     "library": {
       "title": "Libreria | Andromeda",
       "description": "Le copie letterarie che possiedi su Andromeda."
+    },
+    "about": {
+      "title": "Chi siamo — Andromeda",
+      "description": "Come funziona Andromeda per autori e lettori: nessuna commissione di piattaforma, edizioni controllate dall'autore e vendite dirette on-chain."
     }
   },
   "locales": {
@@ -74,5 +82,75 @@
     "copyFallback": "Copia",
     "copyNumber": "Copia n. {number}",
     "copyNumberOf": "Copia n. {number} / {total}"
+  },
+  "home": {
+    "tagline": "La tua chiave, il tuo libro.",
+    "headline": "Leggi, possiedi e colleziona opere letterarie on-chain.",
+    "intro": "Andromeda trasforma ogni libro in un NFT certificato dall'autore. Gli scrittori pubblicano e vendono direttamente ai lettori, e i lettori possiedono davvero le edizioni che acquistano.",
+    "cardCertifiedTitle": "Certificato dall'autore",
+    "cardCertifiedBody": "Ogni opera è firmata crittograficamente dal suo autore.",
+    "cardOwnedTitle": "Davvero tuo",
+    "cardOwnedBody": "Ogni copia è un NFT che puoi leggere, conservare e collezionare.",
+    "cardDirectTitle": "Vendite dirette",
+    "cardDirectBody": "Gli scrittori raggiungono i lettori senza intermediari.",
+    "quote": "— non si fa l'arte per sentirsi dare del poeta, ma perché la si ama, semplicemente",
+    "quoteAttribution": "(Alda Merini)"
+  },
+  "about": {
+    "title": "Su Andromeda",
+    "intro": "Andromeda è una piattaforma di pubblicazione blockchain per opere letterarie. Gli scrittori certificano, numerano e coniano edizioni limitate come NFT; i lettori acquistano, leggono e collezionano copie autentiche. La piattaforma collega autori e lettori — non trattiene una quota delle tue vendite.",
+    "whatWeDoTitle": "Cosa facciamo",
+    "whatWeDoBody": "Ogni opera è archiviata off-chain su IPFS e certificata on-chain su Polygon. Ogni copia è un token ERC-721 legato al wallet del suo autore. Proprietà e cronologia dei trasferimenti sono pubbliche e verificabili.",
+    "noFeesTitle": "Nessuna commissione di piattaforma",
+    "noFeesItem1": "Andromeda non addebita agli autori abbonamenti o commissioni di pubblicazione.",
+    "noFeesItem2": "Andromeda non trattiene una percentuale sulle vendite primarie o secondarie.",
+    "noFeesItem3Strong": "Il 100% dei proventi della vendita primaria va all'autore.",
+    "noFeesItem3Rest": "Lo smart contract inoltra il pagamento direttamente al wallet dell'autore.",
+    "noFeesItem4": "Gli autori restano gli unici responsabili di tasse e obblighi legali nella propria giurisdizione.",
+    "authorsPayTitle": "Cosa pagano gli autori",
+    "authorsPayIntroBefore": "Mettere un'opera on-chain comporta costi che gli",
+    "authorsPayIntroStrong": "autori sostengono direttamente",
+    "authorsPayIntroAfter": "— non la piattaforma:",
+    "authorsPayGasStrong": "Commissioni gas della blockchain (Polygon)",
+    "authorsPayGasRest": "— pagate in MATIC quando si registra un'opera, si coniano copie e si aggiornano le impostazioni on-chain. Queste commissioni vanno ai validatori della rete Polygon, non ad Andromeda.",
+    "authorsPayIpfsStrong": "Archiviazione IPFS",
+    "authorsPayIpfsRest": "— archiviazione del testo e dei metadati, di solito tramite un servizio di pinning scelto e pagato dall'autore.",
+    "authorsPayBuyerStrong": "Commissioni di transazione dell'acquirente",
+    "authorsPayBuyerRest": "— quando un lettore acquista una copia, paga il gas di rete oltre al prezzo di vendita. Tale costo è a carico dell'acquirente, non dell'autore.",
+    "authorsPayFootnote": "Andromeda in sé non fattura agli autori per conio o pubblicazione.",
+    "moneyGoesTitle": "Dove va il denaro",
+    "moneyGoesPrimaryTitle": "Vendita primaria (su Andromeda)",
+    "moneyGoesPrimaryBodyBefore": "Il lettore paga il prezzo indicato in crypto. Lo smart contract conia l'NFT e invia l'",
+    "moneyGoesPrimaryBodyStrong": "intero importo al wallet dell'autore",
+    "moneyGoesPrimaryBodyAfter": ". Andromeda non riceve nulla.",
+    "moneyGoesSecondaryTitle": "Mercato secondario (es. OpenSea)",
+    "moneyGoesSecondaryBody": "I collezionisti possono rivendere copie su marketplace esterni. Proventi ed eventuali commissioni del marketplace sono tra acquirente, venditore e quel marketplace — non Andromeda.",
+    "authorControlTitle": "Controllo dell'autore",
+    "authorControlEditionStrong": "Dimensione dell'edizione",
+    "authorControlEditionRest": "— l'autore decide quante copie possono essere coniate (es. 100 edizioni numerate).",
+    "authorControlCertStrong": "Certificazione e numerazione",
+    "authorControlCertRest": "— ogni copia è certificata dall'autore on-chain e riceve un numero di edizione distinto.",
+    "authorControlSaleStrong": "Vendita o conservazione",
+    "authorControlSaleRest": "— l'autore può abilitare o disabilitare le vendite, o tenere copie invendute.",
+    "authorControlPriceStrong": "Prezzi",
+    "authorControlPriceRest": "— fissare un prezzo fisso per copia, o mettere copie all'asta al miglior offerente (il supporto alle aste è nella roadmap di pubblicazione).",
+    "readersTitle": "Per i lettori",
+    "readersPara1Before": "Ciò che acquisti è una",
+    "readersPara1Strong": "copia digitale di un libro certificata e firmata dall'autore",
+    "readersPara1After": "Ogni edizione è legata all'indirizzo pubblico del wallet dell'autore sulla blockchain — la stessa idea di possedere un libro fisico firmato e autenticato personalmente dal suo scrittore, tranne che in forma digitale e con una provenienza che chiunque può verificare.",
+    "readersPara2Before": "Quando acquisti una copia, l'NFT viene coniato direttamente nel",
+    "readersPara2StrongWallet": "tuo wallet",
+    "readersPara2Middle": "È tuo — non è un noleggio, non è un abbonamento, e non è un account bloccato dentro Andromeda.",
+    "readersPara2StrongFree": "I lettori non sono legati a questa piattaforma in alcun modo.",
+    "readersPara3Before": "Puoi leggere l'opera con Andromeda o con",
+    "readersPara3Strong": "qualsiasi altra applicazione di lettura",
+    "readersPara3After": "capace di supportare questo tipo di tecnologia. Il token resta nel tuo wallet che tu torni o meno su Andromeda.",
+    "donationsTitle": "Donazioni",
+    "donationsIntro": "Andromeda è gratuito per autori e lettori. Se desideri sostenere il progetto, puoi fare una donazione volontaria in crypto. I contributi aiutano a coprire i costi di infrastruttura — hosting, RPC, indicizzazione e servizi correlati che mantengono la piattaforma operativa.",
+    "donationsQrAlt": "Codice QR per donazioni in crypto ad Andromeda",
+    "donationsScan": "Scansiona il codice QR con la tua app wallet, o invia crypto direttamente a:",
+    "donationsDisclaimer": "Si può usare qualsiasi rete o token compatibile EVM supportato dal tuo wallet; verifica l'indirizzo di destinazione prima di inviare.",
+    "openTitle": "Aperto a tutti",
+    "openBody": "Questa pagina è pubblica. Puoi conoscere Andromeda senza connettere un wallet — che tu sia lettore, autore o semplicemente in esplorazione."
   }
 }

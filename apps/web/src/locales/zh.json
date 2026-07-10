@@ -2,6 +2,10 @@
   "meta": {
     "siteName": "Andromeda",
     "siteDescription": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies.",
+    "home": {
+      "title": "Andromeda — 在链上阅读、拥有并收藏文学作品",
+      "description": "Andromeda 将每本书转化为作者认证的 NFT。作家直接向读者发布和销售，读者真正拥有所购买的版本。"
+    },
     "catalog": {
       "title": "目录 | Andromeda",
       "description": "浏览 Andromeda 上的作者认证文学版本。"
@@ -9,6 +13,10 @@
     "library": {
       "title": "图书馆 | Andromeda",
       "description": "您在 Andromeda 上拥有的文学副本。"
+    },
+    "about": {
+      "title": "关于 — Andromeda",
+      "description": "Andromeda 如何为作者和读者服务：无平台费用、作者控制版本、链上直接销售。"
     }
   },
   "locales": {
@@ -74,5 +82,75 @@
     "copyFallback": "副本",
     "copyNumber": "副本 #{number}",
     "copyNumberOf": "副本 #{number} / {total}"
+  },
+  "home": {
+    "tagline": "你的密钥，你的书。",
+    "headline": "在链上阅读、拥有并收藏文学作品。",
+    "intro": "Andromeda 将每本书转化为作者认证的 NFT。作家直接向读者发布和销售，读者真正拥有所购买的版本。",
+    "cardCertifiedTitle": "作者认证",
+    "cardCertifiedBody": "每部作品均经作者加密签名。",
+    "cardOwnedTitle": "真正拥有",
+    "cardOwnedBody": "每份副本都是可阅读、保存和收藏的 NFT。",
+    "cardDirectTitle": "直接销售",
+    "cardDirectBody": "作家无需中介即可触达读者。",
+    "quote": "— non si fa l'arte per sentirsi dare del poeta, ma perché la si ama, semplicemente",
+    "quoteAttribution": "（Alda Merini）"
+  },
+  "about": {
+    "title": "关于 Andromeda",
+    "intro": "Andromeda 是一个面向文学作品的区块链出版平台。作家认证、编号并铸造限量版 NFT；读者购买、阅读并收藏正版副本。平台连接作者与读者——不从中抽取销售分成。",
+    "whatWeDoTitle": "我们做什么",
+    "whatWeDoBody": "每部作品在 IPFS 上链下存储，并在 Polygon 上链认证。每份副本是与作者钱包绑定的 ERC-721 代币。所有权和转让记录公开可验证。",
+    "noFeesTitle": "无平台费用",
+    "noFeesItem1": "Andromeda 不向作者收取订阅费或上架费。",
+    "noFeesItem2": "Andromeda 不抽取一级或二级销售的百分比。",
+    "noFeesItem3Strong": "一级销售的 100% 收益归作者所有。",
+    "noFeesItem3Rest": "智能合约将付款直接转入作者钱包。",
+    "noFeesItem4": "作者仍须独自承担其司法管辖区的税务和法律义务。",
+    "authorsPayTitle": "作者需支付什么",
+    "authorsPayIntroBefore": "将作品上链涉及的费用由",
+    "authorsPayIntroStrong": "作者直接承担",
+    "authorsPayIntroAfter": "——而非平台：",
+    "authorsPayGasStrong": "区块链 gas 费（Polygon）",
+    "authorsPayGasRest": "——注册作品、铸造副本和更新链上设置时以 MATIC 支付。这些费用支付给 Polygon 网络验证者，而非 Andromeda。",
+    "authorsPayIpfsStrong": "IPFS 存储",
+    "authorsPayIpfsRest": "——存储文本和元数据，通常通过作者选择并付费的固定服务。",
+    "authorsPayBuyerStrong": "买家交易费",
+    "authorsPayBuyerRest": "——读者购买副本时，除售价外还需支付网络 gas。该费用由买家承担，而非作者。",
+    "authorsPayFootnote": "Andromeda 本身不向作者收取铸造或发布费用。",
+    "moneyGoesTitle": "钱款去向",
+    "moneyGoesPrimaryTitle": "一级销售（在 Andromeda 上）",
+    "moneyGoesPrimaryBodyBefore": "读者以加密货币支付标价。智能合约铸造 NFT 并将",
+    "moneyGoesPrimaryBodyStrong": "全额转入作者钱包",
+    "moneyGoesPrimaryBodyAfter": "。Andromeda 不收取任何费用。",
+    "moneyGoesSecondaryTitle": "二级市场（如 OpenSea）",
+    "moneyGoesSecondaryBody": "收藏家可在外部市场上转售副本。收益及任何市场费用在买家、卖家与该市场之间结算——与 Andromeda 无关。",
+    "authorControlTitle": "作者控制权",
+    "authorControlEditionStrong": "版本规模",
+    "authorControlEditionRest": "——作者决定可铸造多少份副本（例如 100 份编号版本）。",
+    "authorControlCertStrong": "认证与编号",
+    "authorControlCertRest": "——每份副本在链上经作者认证并获得独立版本号。",
+    "authorControlSaleStrong": "销售或保留",
+    "authorControlSaleRest": "——作者可启用或禁用销售，或保留未售副本。",
+    "authorControlPriceStrong": "定价",
+    "authorControlPriceRest": "——为每份副本设定固定价格，或将副本以拍卖方式售给出价最高者（拍卖支持在发布路线图中）。",
+    "readersTitle": "面向读者",
+    "readersPara1Before": "您购买的是",
+    "readersPara1Strong": "经作者认证并签名的书籍数字副本",
+    "readersPara1After": "每个版本与作者在区块链上的公开钱包地址绑定——如同拥有一本由作家亲笔签名并认证实体书，只是以数字形式呈现，且来源可供任何人验证。",
+    "readersPara2Before": "购买副本时，NFT 直接铸造到",
+    "readersPara2StrongWallet": "您的钱包",
+    "readersPara2Middle": "中。它属于您——不是租赁，不是订阅，也不是锁定在 Andromeda 内的账户。",
+    "readersPara2StrongFree": "读者与该平台无任何绑定关系。",
+    "readersPara3Before": "您可使用 Andromeda 或",
+    "readersPara3Strong": "任何其他阅读应用",
+    "readersPara3After": "阅读该作品，只要其支持此类技术。无论您是否再次访问 Andromeda，代币始终留在您的钱包中。",
+    "donationsTitle": "捐赠",
+    "donationsIntro": "Andromeda 对作者和读者免费使用。若您希望支持本项目，可进行自愿加密货币捐赠。捐款有助于支付基础设施成本——托管、RPC、索引及相关服务，以维持平台运行。",
+    "donationsQrAlt": "向 Andromeda 进行加密货币捐赠的二维码",
+    "donationsScan": "使用钱包应用扫描二维码，或直接发送加密货币至：",
+    "donationsDisclaimer": "可使用钱包支持的任何 EVM 兼容网络或代币；发送前请核实目标地址。",
+    "openTitle": "向所有人开放",
+    "openBody": "本页面公开可见。无需连接钱包即可了解 Andromeda——无论您是读者、作者还是随意浏览。"
   }
 }
