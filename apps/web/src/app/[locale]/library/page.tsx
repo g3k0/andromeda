@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { LibraryClient } from "@/components/works/LibraryClient";
 import { buildLocalizedPageMetadata } from "@/lib/i18n/page-metadata";
+import { getServerTranslations } from "@/lib/i18n/server";
 import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
 
 type LibraryPageProps = {
@@ -24,14 +25,20 @@ export async function generateMetadata({
   );
 }
 
-export default function LibraryPage() {
+export default async function LibraryPage({
+  params,
+}: LibraryPageProps) {
+  const { locale: localeParam } = await params;
+  const locale = isSupportedLocale(localeParam)
+    ? (localeParam as SupportedLocale)
+    : ("en" as const);
+  const { t } = getServerTranslations(locale);
+
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">Your library</h1>
-        <p className="text-sm text-white/60">
-          Every copy you own, ready to read in your browser.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t("library.title")}</h1>
+        <p className="text-sm text-white/60">{t("library.subtitle")}</p>
       </header>
 
       <LibraryClient />

@@ -25,7 +25,7 @@ describe("buildLocalizedPageMetadata", () => {
     });
   });
 
-  it("falls back to English copy for missing locale keys", () => {
+  it("returns French metadata when locale catalog includes library keys", () => {
     const metadata = buildLocalizedPageMetadata(
       "fr",
       "/library",
@@ -33,7 +33,7 @@ describe("buildLocalizedPageMetadata", () => {
       "meta.library.description",
     );
 
-    expect(metadata.title).toBe("Library | Andromeda");
+    expect(metadata.title).toBe("Bibliothèque | Andromeda");
     expect(metadata.alternates?.canonical).toBe("/fr/library");
   });
 });

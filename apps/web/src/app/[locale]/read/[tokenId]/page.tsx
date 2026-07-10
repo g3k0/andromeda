@@ -5,19 +5,31 @@ import { WorkReaderClient } from "@/components/works/WorkReaderClient";
 import { getContractAddress } from "@/lib/config/public-env";
 import { toGatewayUrl } from "@/lib/ipfs/gateway-url";
 import { getIpfsGatewayBaseUrl } from "@/lib/ipfs/ipfs-config";
+import { getServerTranslations } from "@/lib/i18n/server";
+import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
+import { formatLocalizedCopyLabel } from "@/lib/i18n/work-labels";
 import { createMongoIndexerRepositories } from "@/lib/works/adapters/create-indexer-repositories";
-import { formatCopyLabel } from "@/lib/works/token-metadata";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Read | Andromeda",
-  description: "Read a copy you own, decrypted in your browser.",
+type ReadPageProps = {
+  params: Promise<{ locale: string; tokenId: string }>;
 };
 
-type ReadPageProps = {
-  params: Promise<{ tokenId: string }>;
-};
+export async function generateMetadata({
+  params,
+}: ReadPageProps): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  if (!isSupportedLocale(localeParam)) {
+    return {};
+  }
+
+  const { t } = getServerTranslations(localeParam as SupportedLocale);
+  return {
+    title: t("reader.metaTitle"),
+    description: t("reader.metaDescription"),
+  };
+}
 
 function parseTokenId(value: string): bigint | null {
   if (!/^\d+$/.test(value)) {
@@ -28,7 +40,11 @@ function parseTokenId(value: string): bigint | null {
 }
 
 export default async function ReadPage({ params }: ReadPageProps) {
-  const { tokenId } = await params;
+  const { locale: localeParam, tokenId } = await params;
+  const locale = isSupportedLocale(localeParam)
+    ? (localeParam as SupportedLocale)
+    : ("en" as const);
+  const { t } = getServerTranslations(locale);
   const parsed = parseTokenId(tokenId);
   if (parsed === null) {
     notFound();
@@ -48,19 +64,24 @@ export default async function ReadPage({ params }: ReadPageProps) {
   const gatewayBaseUrl = getIpfsGatewayBaseUrl();
   const copyLabel =
     token.copyNumber !== null
-      ? formatCopyLabel(token.copyNumber, work.maxCopies)
-      : `token #${token.tokenId.toString()}`;
+      ? formatLocalizedCopyLabel(t, token.copyNumber, work.maxCopies)
+      : t("reader.tokenFallback", { tokenId: token.tokenId.toString() });
   const editionLabel =
     work.maxCopies > 0n
-      ? `Edition of ${work.maxCopies.toString()}`
-      : "Open edition";
+      ? t("reader.editionOf", { size: work.maxCopies.toString() })
+      : t("reader.openEdition");
 
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">Reading {copyLabel}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("reader.heading", { copyLabel })}
+        </h1>
         <p className="text-sm text-white/60">
-          Work #{work.workId.toString()} · {editionLabel}
+          {t("reader.workEdition", {
+            workId: work.workId.toString(),
+            editionLabel,
+          })}
         </p>
       </header>
 

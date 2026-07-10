@@ -4,6 +4,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import type { WorkAvailability } from "@/lib/works/mint-copy-tx";
 
 import { MintCopyView } from "./MintCopyView";
@@ -24,18 +25,20 @@ describe("MintCopyView", () => {
     const onMint = vi.fn();
 
     render(
-      <MintCopyView
-        title="The Star Gate"
-        priceLabel="0.05 POL"
-        availability={OPEN}
-        step="idle"
-        tokenId={null}
-        txHash={null}
-        tbaAddress={null}
-        errorMessage={null}
-        canMint
-        onMint={onMint}
-      />,
+      <I18nProvider locale="en">
+        <MintCopyView
+          title="The Star Gate"
+          priceLabel="0.05 POL"
+          availability={OPEN}
+          step="idle"
+          tokenId={null}
+          txHash={null}
+          tbaAddress={null}
+          errorMessage={null}
+          canMint
+          onMint={onMint}
+        />
+      </I18nProvider>,
     );
 
     expect(screen.getByText(/0\.05 POL/)).toBeInTheDocument();
@@ -47,18 +50,20 @@ describe("MintCopyView", () => {
 
   it("disables the button when the edition is sold out", () => {
     render(
-      <MintCopyView
-        title="The Star Gate"
-        priceLabel="0.05 POL"
-        availability={{ remaining: 0n, soldOut: true, saleOpen: false }}
-        step="idle"
-        tokenId={null}
-        txHash={null}
-        tbaAddress={null}
-        errorMessage={null}
-        canMint
-        onMint={() => undefined}
-      />,
+      <I18nProvider locale="en">
+        <MintCopyView
+          title="The Star Gate"
+          priceLabel="0.05 POL"
+          availability={{ remaining: 0n, soldOut: true, saleOpen: false }}
+          step="idle"
+          tokenId={null}
+          txHash={null}
+          tbaAddress={null}
+          errorMessage={null}
+          canMint
+          onMint={() => undefined}
+        />
+      </I18nProvider>,
     );
 
     expect(screen.getByRole("button", { name: /Sold out/i })).toBeDisabled();
@@ -66,18 +71,20 @@ describe("MintCopyView", () => {
 
   it("renders the minted token id on success", () => {
     render(
-      <MintCopyView
-        title="The Star Gate"
-        priceLabel="0.05 POL"
-        availability={OPEN}
-        step="success"
-        tokenId={42n}
-        txHash="0xabc"
-        tbaAddress="0x000000000000000000000000000000000000dEaD"
-        errorMessage={null}
-        canMint
-        onMint={() => undefined}
-      />,
+      <I18nProvider locale="en">
+        <MintCopyView
+          title="The Star Gate"
+          priceLabel="0.05 POL"
+          availability={OPEN}
+          step="success"
+          tokenId={42n}
+          txHash="0xabc"
+          tbaAddress="0x000000000000000000000000000000000000dEaD"
+          errorMessage={null}
+          canMint
+          onMint={() => undefined}
+        />
+      </I18nProvider>,
     );
 
     expect(screen.getByText(/Copy #42 minted successfully/)).toBeInTheDocument();

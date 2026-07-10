@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { MintCopyClient } from "@/components/works/MintCopyClient";
 import { WorkDetailView } from "@/components/works/WorkDetailView";
+import { getServerTranslations } from "@/lib/i18n/server";
+import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
 import { getIpfsGatewayBaseUrl } from "@/lib/ipfs/ipfs-config";
 import { createMongoIndexerRepositories } from "@/lib/works/adapters/create-indexer-repositories";
 import { InvalidWorkIdParamError } from "@/lib/works/errors";
@@ -15,7 +17,7 @@ import { loadPublicWorkMetadata } from "../work-metadata-loader";
 export const dynamic = "force-dynamic";
 
 type WorkDetailPageProps = {
-  params: Promise<{ workId: string }>;
+  params: Promise<{ locale: string; workId: string }>;
 };
 
 async function resolveWork(workIdParam: string) {
@@ -36,15 +38,20 @@ async function resolveWork(workIdParam: string) {
 export async function generateMetadata({
   params,
 }: WorkDetailPageProps): Promise<Metadata> {
-  const { workId } = await params;
+  const { locale: localeParam, workId } = await params;
   const work = await resolveWork(workId);
+  const locale = isSupportedLocale(localeParam)
+    ? (localeParam as SupportedLocale)
+    : ("en" as const);
+  const { t } = getServerTranslations(locale);
+
   if (!work) {
-    return { title: "Work | Andromeda" };
+    return { title: t("work.metaNotFoundTitle") };
   }
 
   return {
-    title: `Work #${work.workId.toString()} | Andromeda`,
-    description: "An author-certified literary edition on Andromeda.",
+    title: t("work.metaTitle", { workId: work.workId.toString() }),
+    description: t("work.metaDescription"),
   };
 }
 

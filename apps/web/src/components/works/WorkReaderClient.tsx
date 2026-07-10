@@ -6,6 +6,7 @@ import { useAccount, useReadContract, useSignMessage } from "wagmi";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { formErrorClassName } from "@/components/form/form-field-styles";
 import { andromedaWorksAbi } from "@/lib/chain/contract";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { isCopyOwner } from "@/lib/works/reader-access";
 import { decodeUtf8, readWorkContent } from "@/lib/works/reader-client";
 import {
@@ -41,6 +42,7 @@ export function WorkReaderClient({
   gatewayBaseUrl,
   contractAddress,
 }: WorkReaderClientProps) {
+  const { t } = useTranslation();
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const { data: ownerData, isLoading: ownerLoading } = useReadContract({
@@ -64,7 +66,7 @@ export function WorkReaderClient({
     if (!envelopeUrl) {
       dispatch({
         type: "decrypt_failed",
-        message: "The reading key for this copy is not available yet.",
+        message: t("reader.envelopeUnavailable"),
       });
       return;
     }
@@ -82,14 +84,14 @@ export function WorkReaderClient({
         fetchJson: async (url) => {
           const response = await fetch(url, { cache: "no-store" });
           if (!response.ok) {
-            throw new Error("Failed to load work metadata.");
+            throw new Error(t("reader.metadataLoadFailed"));
           }
           return response.json();
         },
         fetchBytes: async (url) => {
           const response = await fetch(url, { cache: "no-store" });
           if (!response.ok) {
-            throw new Error("Failed to load encrypted content.");
+            throw new Error(t("reader.contentLoadFailed"));
           }
           return new Uint8Array(await response.arrayBuffer());
         },
@@ -101,25 +103,26 @@ export function WorkReaderClient({
         message:
           cause instanceof Error
             ? cause.message
-            : "Failed to decrypt this copy.",
+            : t("reader.decryptFailed"),
       });
     }
   }
 
   if (!isConnected) {
-    return <Notice>Connect your wallet to read this copy.</Notice>;
+    return <Notice>{t("reader.connectWallet")}</Notice>;
   }
 
   if (ownerLoading) {
     return (
       <div className="flex items-center gap-2 text-sm text-white/60">
-        <LoadingSpinner size="sm" /> Verifying ownership…
+        <LoadingSpinner size="sm" label={t("reader.verifyingOwnershipAria")} />
+        {t("reader.verifyingOwnership")}
       </div>
     );
   }
 
   if (!isOwner) {
-    return <Notice>Only the owner of this copy can read it.</Notice>;
+    return <Notice>{t("reader.ownersOnly")}</Notice>;
   }
 
   if (state.text !== null) {
@@ -141,13 +144,10 @@ export function WorkReaderClient({
         className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {busy ? <LoadingSpinner size="sm" /> : null}
-        {busy ? "Decrypting…" : "Decrypt & read"}
+        {busy ? t("reader.decrypting") : t("reader.decryptRead")}
       </button>
 
-      <p className="text-xs text-white/50">
-        You will be asked to sign a message. Your key stays in your browser — the
-        server never sees the decrypted text.
-      </p>
+      <p className="text-xs text-white/50">{t("reader.signHint")}</p>
 
       {state.errorMessage ? (
         <p className={formErrorClassName} role="alert">

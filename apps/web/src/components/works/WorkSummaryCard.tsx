@@ -1,9 +1,15 @@
+"use client";
+
 import Image from "next/image";
 
 import { LocalizedLink } from "@/lib/i18n/LocalizedLink";
+import { formatWorkAvailabilityLabel } from "@/lib/i18n/work-labels";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import type { WorkView } from "@/lib/works/work-view";
 
 export function WorkSummaryCard({ view }: { view: WorkView }) {
+  const { t } = useTranslation();
+
   return (
     <LocalizedLink
       href={`/works/${view.workId}`}
@@ -13,7 +19,7 @@ export function WorkSummaryCard({ view }: { view: WorkView }) {
         {view.coverImageUrl ? (
           <Image
             src={view.coverImageUrl}
-            alt={`Cover for ${view.title}`}
+            alt={t("catalog.coverAlt", { title: view.title })}
             width={320}
             height={214}
             unoptimized
@@ -21,7 +27,7 @@ export function WorkSummaryCard({ view }: { view: WorkView }) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-white/40">
-            No cover
+            {t("catalog.noCover")}
           </div>
         )}
       </div>
@@ -30,7 +36,7 @@ export function WorkSummaryCard({ view }: { view: WorkView }) {
           {view.title}
         </h2>
         <p className="text-sm text-white/60">
-          {view.priceLabel} · {view.availabilityLabel}
+          {view.priceLabel} · {formatWorkAvailabilityLabel(t, view)}
         </p>
       </div>
     </LocalizedLink>

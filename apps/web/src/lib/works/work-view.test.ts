@@ -35,7 +35,8 @@ describe("buildWorkView", () => {
     expect(view.description).toBe("A novella about distant stars.");
     expect(view.coverImageUrl).toBe("https://gateway.test/ipfs/bafycover");
     expect(view.priceLabel).toBe("1 POL");
-    expect(view.availabilityLabel).toBe("7 copies left");
+    expect(view.remainingCopies).toBe("7");
+    expect(view.soldOut).toBe(false);
   });
 
   it("falls back to a generated title and no cover when metadata is missing", () => {
@@ -48,11 +49,11 @@ describe("buildWorkView", () => {
   it("labels sold-out and open editions", () => {
     expect(
       buildWorkView(dto({ soldOut: true, remainingCopies: "0" }), null, GATEWAY)
-        .availabilityLabel,
-    ).toBe("Sold out");
+        .soldOut,
+    ).toBe(true);
     expect(
       buildWorkView(dto({ remainingCopies: null }), null, GATEWAY)
-        .availabilityLabel,
-    ).toBe("Open edition");
+        .remainingCopies,
+    ).toBeNull();
   });
 });
