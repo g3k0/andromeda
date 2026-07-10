@@ -7,6 +7,7 @@ import {
   getRouteById,
   userFromSnapshot,
 } from "@/lib/navigation/route-guard";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
 import { WalletButton } from "@/components/WalletButton";
 
@@ -34,6 +35,7 @@ function resolveAllowed(
 
 export function RouteGuard({ routeId, children }: RouteGuardProps) {
   const route = getRouteById(routeId);
+  const { t } = useTranslation();
   const { isConnected, isReconnecting } = useAccount();
   const { snapshot } = useUserSnapshot();
   const allowed = resolveAllowed(route, snapshot, isConnected);
@@ -57,7 +59,7 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
   if (!isConnected && route.pagePermission !== "pages:read") {
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center">
-        <h1 className="text-xl font-semibold">{route.label}</h1>
+        <h1 className="text-xl font-semibold">{t(route.labelKey)}</h1>
         <p className="mt-2 text-sm text-white/60">
           Connect your wallet to continue.
         </p>
@@ -81,7 +83,7 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
       <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-8 text-center">
         <h1 className="text-xl font-semibold">Access denied</h1>
         <p className="mt-2 text-sm text-white/60">
-          You are not authorized to access {route.label}.
+          You are not authorized to access {t(route.labelKey)}.
         </p>
       </div>
     );

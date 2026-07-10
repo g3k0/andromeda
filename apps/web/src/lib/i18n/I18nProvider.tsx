@@ -42,3 +42,8 @@ export function useI18n(): I18nContextValue {
   }
   return context;
 }
+
+/** Returns the nearest I18n context when present — for hooks that support both modes. */
+export function useOptionalI18n(): I18nContextValue | null {
+  return useContext(I18nContext);
+}

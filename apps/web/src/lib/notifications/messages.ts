@@ -1,1 +1,2 @@
-export const WALLET_DISCONNECTED_MESSAGE = "Wallet disconnected.";
+export const WALLET_DISCONNECTED_MESSAGE_KEY =
+  "notifications.walletDisconnected" as const;

@@ -3,14 +3,14 @@ import type { PermissionSubject } from "@/lib/users/permissions";
 import type { UserPermission, UserSnapshot } from "@/lib/users/types";
 import { defaultUserPreferences } from "@/lib/users/types";
 import { stripLocalePrefix } from "@/lib/i18n/routing";
-import type { HeaderNavLink } from "./header-nav";
+import type { AuthorizedNavLink } from "./header-nav";
 
 export type HttpMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
 export type RouteDefinition = {
   id: string;
   href: string;
-  label: string;
+  labelKey: string;
   pagePermission: UserPermission;
   showInNav?: (context: RouteNavContext) => boolean;
 };
@@ -31,28 +31,28 @@ export type RouteNavContext = {
 export const CATALOG_ROUTE: RouteDefinition = {
   id: "catalog",
   href: "/works",
-  label: "Catalog",
+  labelKey: "nav.catalog",
   pagePermission: "pages:read",
 };
 
 export const LIBRARY_ROUTE: RouteDefinition = {
   id: "library",
   href: "/library",
-  label: "Library",
+  labelKey: "nav.library",
   pagePermission: "pages:read",
 };
 
 export const ABOUT_ROUTE: RouteDefinition = {
   id: "about",
   href: "/about",
-  label: "About",
+  labelKey: "nav.about",
   pagePermission: "pages:read",
 };
 
 export const ADMIN_ROUTE: RouteDefinition = {
   id: "admin",
   href: "/admin",
-  label: "Admin",
+  labelKey: "nav.admin",
   pagePermission: "admin:access",
   showInNav: () => false,
 };
@@ -60,7 +60,7 @@ export const ADMIN_ROUTE: RouteDefinition = {
 export const MY_AUTHOR_PAGE_ROUTE: RouteDefinition = {
   id: "my-author-page",
   href: "/author",
-  label: "My page",
+  labelKey: "nav.myPage",
   pagePermission: "pages:read",
   showInNav: ({ user, hasAuthorProfile }) => {
     if (!hasAuthorProfile) {
@@ -266,11 +266,11 @@ export function canShowRouteInNav(
 
 export function buildAuthorizedNavLinks(
   context: RouteNavContext,
-): HeaderNavLink[] {
+): AuthorizedNavLink[] {
   return APP_ROUTES.filter((route) => canShowRouteInNav(route, context)).map(
     (route) => ({
       href: route.href,
-      label: route.label,
+      labelKey: route.labelKey,
     }),
   );
 }

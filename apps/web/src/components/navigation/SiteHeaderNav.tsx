@@ -8,7 +8,8 @@ import { useNotifications } from "@/components/notifications/NotificationProvide
 import { useLocalizedHref } from "@/lib/i18n/use-localized-href";
 import { useLocale } from "@/lib/i18n/use-locale";
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
-import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
+import { WALLET_DISCONNECTED_MESSAGE_KEY } from "@/lib/notifications/messages";
 import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
 import { RoleMenuDropdown } from "@/components/RoleMenuDropdown";
 
@@ -17,13 +18,14 @@ export function SiteHeaderNav() {
   const locale = useLocale();
   const localizedHref = useLocalizedHref();
   const { notify } = useNotifications();
+  const { t } = useTranslation();
   const { snapshot } = useUserSnapshot();
   const { disconnect, isPending: isLoggingOut } = useDisconnect({
     mutation: {
       onSuccess: () => {
         notify({
           variant: "info",
-          message: WALLET_DISCONNECTED_MESSAGE,
+          message: t(WALLET_DISCONNECTED_MESSAGE_KEY),
         });
         router.push(localizedHref("/"));
       },

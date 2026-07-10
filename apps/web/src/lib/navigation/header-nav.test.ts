@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { translate } from "@/lib/i18n/translate";
 import {
   ABOUT_NAV_LINK,
   CATALOG_NAV_LINK,
@@ -10,10 +11,22 @@ import {
 
 const LOCALE = "en" as const;
 
-const LOCALIZED_CATALOG = { ...CATALOG_NAV_LINK, href: "/en/works" };
-const LOCALIZED_LIBRARY = { ...LIBRARY_NAV_LINK, href: "/en/library" };
-const LOCALIZED_ABOUT = { ...ABOUT_NAV_LINK, href: "/en/about" };
-const LOCALIZED_MY_PAGE = { ...MY_AUTHOR_PAGE_NAV_LINK, href: "/en/author" };
+const LOCALIZED_CATALOG = {
+  href: "/en/works",
+  label: translate(LOCALE, CATALOG_NAV_LINK.labelKey),
+};
+const LOCALIZED_LIBRARY = {
+  href: "/en/library",
+  label: translate(LOCALE, LIBRARY_NAV_LINK.labelKey),
+};
+const LOCALIZED_ABOUT = {
+  href: "/en/about",
+  label: translate(LOCALE, ABOUT_NAV_LINK.labelKey),
+};
+const LOCALIZED_MY_PAGE = {
+  href: "/en/author",
+  label: translate(LOCALE, MY_AUTHOR_PAGE_NAV_LINK.labelKey),
+};
 
 describe("shouldShowMyAuthorPageLink", () => {
   it("returns true for authors", () => {
@@ -48,11 +61,19 @@ describe("buildHeaderNavLinks", () => {
     );
   });
 
-  it("localizes links for Italian visitors", () => {
+  it("localizes links and labels for Italian visitors", () => {
     expect(buildHeaderNavLinks({ role: "reader", hasAuthorProfile: false }, "it")).toEqual([
-      { href: "/it/works", label: "Catalog" },
-      { href: "/it/library", label: "Library" },
-      { href: "/it/about", label: "About" },
+      { href: "/it/works", label: translate("it", "nav.catalog") },
+      { href: "/it/library", label: translate("it", "nav.library") },
+      { href: "/it/about", label: translate("it", "nav.about") },
+    ]);
+  });
+
+  it("localizes links and labels for German visitors", () => {
+    expect(buildHeaderNavLinks({ role: "reader", hasAuthorProfile: false }, "de")).toEqual([
+      { href: "/de/works", label: translate("de", "nav.catalog") },
+      { href: "/de/library", label: translate("de", "nav.library") },
+      { href: "/de/about", label: translate("de", "nav.about") },
     ]);
   });
 

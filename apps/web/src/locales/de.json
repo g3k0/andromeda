@@ -12,5 +12,32 @@
     "pt": "Português",
     "zh": "中文",
     "ja": "日本語"
+  },
+  "nav": {
+    "catalog": "Katalog",
+    "library": "Bibliothek",
+    "about": "Über uns",
+    "admin": "Administration",
+    "myPage": "Meine Seite"
+  },
+  "roleMenu": {
+    "profileSettings": "Profileinstellungen",
+    "becomeAuthor": "Autor werden",
+    "manageUsers": "Benutzer und Rollen verwalten",
+    "logout": "Abmelden",
+    "loggingOut": "Abmeldung läuft"
+  },
+  "wallet": {
+    "connect": "Wallet verbinden",
+    "connecting": "Verbindung…",
+    "connectingAria": "Wallet wird verbunden"
+  },
+  "notifications": {
+    "walletDisconnected": "Wallet getrennt."
+  },
+  "common": {
+    "processing": "Verarbeitung…",
+    "loading": "Laden…",
+    "loadingAria": "Laden"
   }
 }

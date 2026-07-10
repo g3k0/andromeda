@@ -1,6 +1,7 @@
 import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissions";
 import type { SupportedLocale } from "@/lib/i18n/locales";
 import { localizedPath } from "@/lib/i18n/routing";
+import { translate } from "@/lib/i18n/translate";
 import {
   ABOUT_ROUTE,
   ADMIN_ROUTE,
@@ -18,6 +19,11 @@ export type HeaderNavLink = {
   label: string;
 };
 
+export type AuthorizedNavLink = {
+  href: string;
+  labelKey: string;
+};
+
 export type HeaderNavInput = {
   role: string;
   hasAuthorProfile: boolean;
@@ -27,27 +33,27 @@ export type HeaderNavInput = {
 
 export const CATALOG_NAV_LINK = {
   href: CATALOG_ROUTE.href,
-  label: CATALOG_ROUTE.label,
+  labelKey: CATALOG_ROUTE.labelKey,
 };
 
 export const LIBRARY_NAV_LINK = {
   href: LIBRARY_ROUTE.href,
-  label: LIBRARY_ROUTE.label,
+  labelKey: LIBRARY_ROUTE.labelKey,
 };
 
 export const ABOUT_NAV_LINK = {
   href: ABOUT_ROUTE.href,
-  label: ABOUT_ROUTE.label,
+  labelKey: ABOUT_ROUTE.labelKey,
 };
 
 export const ADMIN_NAV_LINK = {
   href: ADMIN_ROUTE.href,
-  label: ADMIN_ROUTE.label,
+  labelKey: ADMIN_ROUTE.labelKey,
 };
 
 export const MY_AUTHOR_PAGE_NAV_LINK = {
   href: MY_AUTHOR_PAGE_ROUTE.href,
-  label: MY_AUTHOR_PAGE_ROUTE.label,
+  labelKey: MY_AUTHOR_PAGE_ROUTE.labelKey,
 };
 
 export function shouldShowMyAuthorPageLink(
@@ -86,6 +92,6 @@ export function buildHeaderNavLinks(
 ): HeaderNavLink[] {
   return buildAuthorizedNavLinks(toRouteNavContext(input)).map((link) => ({
     href: localizedPath(locale, link.href),
-    label: link.label,
+    label: translate(locale, link.labelKey),
   }));
 }

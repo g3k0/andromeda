@@ -15,7 +15,8 @@ import {
   buildDraftAuthorProfile,
 } from "@/lib/authors/onboarding";
 import { useLocalizedHref } from "@/lib/i18n/use-localized-href";
-import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
+import { WALLET_DISCONNECTED_MESSAGE_KEY } from "@/lib/notifications/messages";
 import { requestUserSnapshotRefresh } from "@/lib/users/user-snapshot-sync";
 import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
 import { AuthorOnboardingEditor } from "./AuthorOnboardingEditor";
@@ -42,6 +43,7 @@ function AuthorOnboardingDialogFlow({
   const router = useRouter();
   const localizedHref = useLocalizedHref();
   const { notify } = useNotifications();
+  const { t } = useTranslation();
   const { signMessageAsync } = useSignMessage();
   const { applySnapshot } = useUserSnapshot();
   const [step, setStep] = useState<AuthorOnboardingStep>("prompt");
@@ -51,7 +53,7 @@ function AuthorOnboardingDialogFlow({
       onSuccess: () => {
         notify({
           variant: "info",
-          message: WALLET_DISCONNECTED_MESSAGE,
+          message: t(WALLET_DISCONNECTED_MESSAGE_KEY),
         });
         router.push(localizedHref("/"));
       },
