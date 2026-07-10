@@ -12,5 +12,19 @@
     "pt": "Português",
     "zh": "中文",
     "ja": "日本語"
+  },
+  "nav": {
+    "catalog": "Catálogo",
+    "library": "Biblioteca",
+    "about": "Sobre",
+    "admin": "Administração",
+    "myPage": "Minha página"
+  },
+  "roleMenu": {
+    "profileSettings": "Configurações do perfil",
+    "becomeAuthor": "Tornar-se autor",
+    "manageUsers": "Gerir utilizadores e funções",
+    "logout": "Terminar sessão",
+    "loggingOut": "A terminar sessão"
   }
 }

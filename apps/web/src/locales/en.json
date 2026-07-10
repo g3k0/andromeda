@@ -28,5 +28,19 @@
     "pt": "Português",
     "zh": "中文",
     "ja": "日本語"
+  },
+  "nav": {
+    "catalog": "Catalog",
+    "library": "Library",
+    "about": "About",
+    "admin": "Admin",
+    "myPage": "My page"
+  },
+  "roleMenu": {
+    "profileSettings": "Profile settings",
+    "becomeAuthor": "Become author",
+    "manageUsers": "Manage users and roles",
+    "logout": "Logout",
+    "loggingOut": "Logging out"
   }
 }

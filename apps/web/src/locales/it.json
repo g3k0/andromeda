@@ -12,5 +12,19 @@
     "pt": "Português",
     "zh": "中文",
     "ja": "日本語"
+  },
+  "nav": {
+    "catalog": "Catalogo",
+    "library": "Libreria",
+    "about": "Chi siamo",
+    "admin": "Amministrazione",
+    "myPage": "La mia pagina"
+  },
+  "roleMenu": {
+    "profileSettings": "Impostazioni profilo",
+    "becomeAuthor": "Diventa autore",
+    "manageUsers": "Gestisci utenti e ruoli",
+    "logout": "Esci",
+    "loggingOut": "Disconnessione in corso"
   }
 }

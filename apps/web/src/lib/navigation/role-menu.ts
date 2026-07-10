@@ -2,7 +2,7 @@ import type { UserPermission } from "@/lib/users/types";
 
 export type RoleMenuItem = {
   id: string;
-  label: string;
+  labelKey: string;
 };
 
 export type RoleMenuContext = {
@@ -13,17 +13,17 @@ export type RoleMenuContext = {
 
 export const PROFILE_SETTINGS_MENU_ITEM: RoleMenuItem = {
   id: "profile-settings",
-  label: "Profile settings",
+  labelKey: "roleMenu.profileSettings",
 };
 
 export const BECOME_AUTHOR_MENU_ITEM: RoleMenuItem = {
   id: "become-author",
-  label: "Become author",
+  labelKey: "roleMenu.becomeAuthor",
 };
 
 export const MANAGE_USERS_MENU_ITEM: RoleMenuItem = {
   id: "manage-users",
-  label: "Manage users and roles",
+  labelKey: "roleMenu.manageUsers",
 };
 
 export const MANAGE_USERS_PATH = "/admin/users";

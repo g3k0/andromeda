@@ -12,5 +12,19 @@
     "pt": "Português",
     "zh": "中文",
     "ja": "日本語"
+  },
+  "nav": {
+    "catalog": "カタログ",
+    "library": "ライブラリ",
+    "about": "概要",
+    "admin": "管理",
+    "myPage": "マイページ"
+  },
+  "roleMenu": {
+    "profileSettings": "プロフィール設定",
+    "becomeAuthor": "著者になる",
+    "manageUsers": "ユーザーとロールを管理",
+    "logout": "ログアウト",
+    "loggingOut": "ログアウト中"
   }
 }
