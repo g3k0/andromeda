@@ -283,8 +283,8 @@ Start the app:
 pnpm dev    # http://localhost:3000
 ```
 
-**Local admin:** connect a wallet listed in `ADMIN_ADDRESSES`, open `/admin` →
-*Manage users and roles* (`/admin/users`, `/admin/roles`). Admin mutations use a
+**Local admin:** connect a wallet listed in `ADMIN_ADDRESSES`, open `/en/admin` →
+*Manage users and roles* (`/en/admin/users`, `/en/admin/roles`). Admin mutations use a
 server-side wallet session (signature only on first access).
 
 #### Environment configuration
@@ -337,7 +337,7 @@ Smart contract tests are separate: `pnpm contracts:test` (Hardhat).
 #### Continuous integration
 
 Pull requests and pushes to `develop` and `main` run the [CI workflow](.github/workflows/ci.yml)
-(GitHub Actions) on Node 20: lint, typecheck, React Doctor (on the diff), web unit tests with
+(GitHub Actions) on Node 20: lint, typecheck, i18n key parity, React Doctor (on the diff), web unit tests with
 coverage, web build, dependency audit, and the smart-contract compile (`contracts:build`).
 
 #### MongoDB & platform data
@@ -352,13 +352,42 @@ Persistence via Mongoose (`apps/web/src/lib/db/*`). Mutations require a **wallet
 | `authors` | Public author profiles |
 | `wallet_sessions` | Admin sessions with permission snapshots |
 
-**Main routes**
+**Main routes** (logical paths; the UI is served under `/{locale}/…`, e.g. `/it/works`)
 
 | Route | Purpose |
 | --- | --- |
-| `/author`, `/author/[address]` | Author profile and onboarding |
-| `/admin` | Admin dashboard (wallet + `admin:access` permission) |
-| `/admin/users`, `/admin/roles` | User and role management |
+| `/{locale}` | Home |
+| `/{locale}/works` | Public catalog |
+| `/{locale}/library` | Reader library (wallet) |
+| `/{locale}/about` | About Andromeda |
+| `/{locale}/works/[workId]` | Work detail |
+| `/{locale}/read/[tokenId]` | Encrypted reader |
+| `/{locale}/author`, `/{locale}/author/[address]` | Author profile and onboarding |
+| `/{locale}/author/[address]/publish` | Publish flow |
+| `/{locale}/admin` | Admin dashboard (wallet + `admin:access` permission) |
+| `/{locale}/admin/users`, `/{locale}/admin/roles` | User and role management |
+| `/api/*` | JSON API (no locale prefix) |
+
+### Internationalization (i18n)
+
+The web app UI is localized in eight languages: `en`, `fr`, `es`, `it`, `de`, `pt`, `zh`, `ja`.
+
+- **URLs** — Every UI page lives under `/{locale}/…`. Middleware redirects legacy paths
+  (e.g. `/works`) with **308** to the detected or cookie-backed locale (`/it/works`).
+  API routes stay at `/api/*` without a locale segment.
+- **Catalog** — Translation keys live in `apps/web/src/locales/*.json`. English (`en.json`)
+  is canonical; add the same dot-separated keys to all seven other locale files.
+- **Runtime** — Client components use `useTranslation()`; Server Components use
+  `getServerTranslations(locale)` from `apps/web/src/lib/i18n/`.
+- **Links** — Prefer `LocalizedLink` or `localizedPath(locale, "/works")` so internal
+  navigation keeps the active locale.
+- **SEO** — Static pages expose `canonical` and `hreflang` alternates via
+  `buildLocalizedPageMetadata`. The multilingual sitemap is served at `/sitemap.xml`.
+  Set `NEXT_PUBLIC_SITE_URL` in production so absolute URLs resolve correctly.
+- **Quality gate** — Run `pnpm web:i18n:check-keys` locally (also enforced in CI) to ensure
+  every locale JSON file matches the key structure of `en.json`.
+
+Full programme and PR history: [documentation/plans/i18n.md](documentation/plans/i18n.md).
 
 **Roles:** stored in `roles`; each user references one via `users.roleSlug`. Seed roles are
 `reader`, `author`, `admin`. Effective permissions come from the role document (+ optional overrides).
@@ -422,6 +451,7 @@ with `NEXT_PUBLIC_`. Rotate provider keys from their dashboards, not in the repo
 | Variable | Scope | Purpose |
 | --- | --- | --- |
 | `NEXT_PUBLIC_CHAIN` | public | Target chain: `polygon` (mainnet) or `amoy` (testnet) |
+| `NEXT_PUBLIC_SITE_URL` | public | Canonical site origin for metadata, sitemap, and hreflang |
 | `NEXT_PUBLIC_CONTRACT_ADDRESS` | public | Deployed `AndromedaWorks` ERC-721 address |
 | `ALCHEMY_RPC_URL` | server | Alchemy JSON-RPC for indexer / public client / read-access |
 | `NEXT_PUBLIC_ALCHEMY_RPC_URL` | public | Alchemy JSON-RPC for wagmi in the browser |
