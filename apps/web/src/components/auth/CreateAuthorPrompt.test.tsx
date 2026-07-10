@@ -1,8 +1,9 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderWithI18n } from "@/lib/i18n/test-utils";
 import { CreateAuthorPrompt } from "./CreateAuthorPrompt";
 
 describe("CreateAuthorPrompt", () => {
@@ -11,7 +12,7 @@ describe("CreateAuthorPrompt", () => {
   });
 
   it("renders nothing when closed", () => {
-    const { container } = render(
+    const { container } = renderWithI18n(
       <CreateAuthorPrompt
         open={false}
         onAccept={vi.fn()}
@@ -23,7 +24,7 @@ describe("CreateAuthorPrompt", () => {
   });
 
   it("renders the dialog copy when open", () => {
-    render(
+    renderWithI18n(
       <CreateAuthorPrompt
         open
         onAccept={vi.fn()}
@@ -44,7 +45,7 @@ describe("CreateAuthorPrompt", () => {
     const onDecline = vi.fn();
     const onCancel = vi.fn();
 
-    render(
+    renderWithI18n(
       <CreateAuthorPrompt
         open
         onAccept={onAccept}
@@ -67,7 +68,7 @@ describe("CreateAuthorPrompt", () => {
   });
 
   it("disables actions and shows a spinner while loading", () => {
-    render(
+    renderWithI18n(
       <CreateAuthorPrompt
         open
         loading

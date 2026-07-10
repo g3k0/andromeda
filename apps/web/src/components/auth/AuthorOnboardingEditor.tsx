@@ -1,5 +1,8 @@
+"use client";
+
 import { AuthorProfileEditor } from "@/components/author/AuthorProfileEditor";
 import type { AuthorProfileEditorSaveInput } from "@/components/author/author-profile-editor-state";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import type { AuthorProfile } from "@/lib/authors/types";
 
 export type AuthorOnboardingEditorProps = {
@@ -19,6 +22,8 @@ export function AuthorOnboardingEditor({
   onSave,
   onBack,
 }: AuthorOnboardingEditorProps) {
+  const { t } = useTranslation();
+
   return (
     <dialog
       ref={openModalDialog}
@@ -34,10 +39,10 @@ export function AuthorOnboardingEditor({
           id="author-onboarding-editor-title"
           className="text-xl font-semibold tracking-tight text-white"
         >
-          Create your author page
+          {t("authorOnboarding.editor.title")}
         </h2>
         <p className="text-sm text-white/60">
-          Customize your profile before publishing it on Andromeda.
+          {t("authorOnboarding.editor.description")}
         </p>
       </div>
 
@@ -46,7 +51,7 @@ export function AuthorOnboardingEditor({
         isAdminEditingOther={false}
         onSave={onSave}
         onCancel={onBack}
-        cancelLabel="Back"
+        cancelLabel={t("authorOnboarding.editor.back")}
       />
     </dialog>
   );
