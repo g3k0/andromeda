@@ -1,5 +1,5 @@
 import type { AuthorProfile } from "@/lib/authors/types";
-import Link from "next/link";
+import { LocalizedLink } from "@/lib/i18n/LocalizedLink";
 import { AuthorProfileIdentitySection } from "./AuthorProfileIdentitySection";
 
 export type AuthorProfileViewProps = {
@@ -47,12 +47,12 @@ export function AuthorProfileView({
       ) : null}
       {isOwnerView ? (
         <div className="flex w-full justify-center pt-2">
-          <Link
+          <LocalizedLink
             href={`/author/${profile.address}/publish`}
             className="inline-flex items-center justify-center rounded-lg bg-andromeda px-6 py-3 text-base font-semibold text-white shadow-lg shadow-andromeda/25 transition-colors hover:bg-andromeda-dark"
           >
             Publish work
-          </Link>
+          </LocalizedLink>
         </div>
       ) : null}
     </article>

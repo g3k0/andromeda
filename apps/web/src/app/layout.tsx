@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
-import { Providers } from "./providers";
-import { SiteHeader } from "@/components/SiteHeader";
 
 export const metadata: Metadata = {
   title: "Andromeda",
@@ -18,10 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Providers>
-          <SiteHeader />
-          <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
-        </Providers>
+        {children}
         <Analytics />
       </body>
     </html>

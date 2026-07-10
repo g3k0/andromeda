@@ -1,4 +1,6 @@
 import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissions";
+import type { SupportedLocale } from "@/lib/i18n/locales";
+import { localizedPath } from "@/lib/i18n/routing";
 import {
   ABOUT_ROUTE,
   ADMIN_ROUTE,
@@ -48,9 +50,12 @@ export const MY_AUTHOR_PAGE_NAV_LINK = {
   label: MY_AUTHOR_PAGE_ROUTE.label,
 };
 
-export function shouldShowMyAuthorPageLink(input: HeaderNavInput): boolean {
-  return buildHeaderNavLinks(input).some(
-    (link) => link.href === MY_AUTHOR_PAGE_ROUTE.href,
+export function shouldShowMyAuthorPageLink(
+  input: HeaderNavInput,
+  locale: SupportedLocale,
+): boolean {
+  return buildHeaderNavLinks(input, locale).some(
+    (link) => link.href === localizedPath(locale, MY_AUTHOR_PAGE_ROUTE.href),
   );
 }
 
@@ -75,6 +80,12 @@ function toRouteNavContext(input: HeaderNavInput): RouteNavContext {
   };
 }
 
-export function buildHeaderNavLinks(input: HeaderNavInput): HeaderNavLink[] {
-  return buildAuthorizedNavLinks(toRouteNavContext(input));
+export function buildHeaderNavLinks(
+  input: HeaderNavInput,
+  locale: SupportedLocale,
+): HeaderNavLink[] {
+  return buildAuthorizedNavLinks(toRouteNavContext(input)).map((link) => ({
+    href: localizedPath(locale, link.href),
+    label: link.label,
+  }));
 }

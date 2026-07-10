@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { LoadingPanel } from "@/components/loading/LoadingPanel";
 import { WalletButton } from "@/components/WalletButton";
+import { useLocalizedHref } from "@/lib/i18n/use-localized-href";
 import { toAuthorOnboardingSnapshot } from "@/lib/authors/onboarding-snapshot";
 import { resolveAuthorIndexPage } from "@/lib/authors/author-index";
 import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
@@ -11,6 +12,7 @@ import { AuthorPageStatusMessage } from "./AuthorPageStatusMessage";
 
 export function AuthorIndexPage() {
   const router = useRouter();
+  const localizedHref = useLocalizedHref();
   const redirectedToRef = useRef<string | null>(null);
   const { snapshot } = useUserSnapshot();
   const resolved = resolveAuthorIndexPage(
@@ -20,7 +22,7 @@ export function AuthorIndexPage() {
   if (resolved.status === "redirect") {
     if (redirectedToRef.current !== resolved.path) {
       redirectedToRef.current = resolved.path;
-      router.replace(resolved.path);
+      router.replace(localizedHref(resolved.path));
     }
 
     return <LoadingPanel label="Loading author page…" />;

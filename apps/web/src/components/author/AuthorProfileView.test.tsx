@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { renderWithI18n } from "@/lib/i18n/test-utils";
+import { cleanup, fireEvent, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { AUTHOR_AVATAR_PLACEHOLDER_PATH } from "./constants";
@@ -40,7 +41,7 @@ describe("AuthorProfileView", () => {
   });
 
   it("renders the author display name as the page heading", () => {
-    render(<AuthorProfileView profile={buildProfile()} />);
+    renderWithI18n(<AuthorProfileView profile={buildProfile()} />);
 
     expect(
       screen.getByRole("heading", { level: 1, name: "Jane Doe" }),
@@ -48,7 +49,7 @@ describe("AuthorProfileView", () => {
   });
 
   it("renders the full blockchain address below the name", () => {
-    render(<AuthorProfileView profile={buildProfile()} />);
+    renderWithI18n(<AuthorProfileView profile={buildProfile()} />);
 
     const identity = screen.getByTestId("author-profile-identity");
     const heading = screen.getByRole("heading", { level: 1, name: "Jane Doe" });
@@ -61,7 +62,7 @@ describe("AuthorProfileView", () => {
   });
 
   it("renders the profile image beside the identity details", () => {
-    render(<AuthorProfileView profile={buildProfile()} />);
+    renderWithI18n(<AuthorProfileView profile={buildProfile()} />);
 
     const identity = screen.getByTestId("author-profile-identity");
     expect(identity).toContainElement(
@@ -73,7 +74,7 @@ describe("AuthorProfileView", () => {
   });
 
   it("renders the placeholder avatar when avatarUrl is null", () => {
-    render(<AuthorProfileView profile={buildProfile()} />);
+    renderWithI18n(<AuthorProfileView profile={buildProfile()} />);
 
     expect(screen.getByRole("img", { name: "Jane Doe" })).toHaveAttribute(
       "src",
@@ -82,7 +83,7 @@ describe("AuthorProfileView", () => {
   });
 
   it("renders a custom avatar when avatarUrl is set", () => {
-    render(
+    renderWithI18n(
       <AuthorProfileView
         profile={buildProfile({ avatarUrl: "ipfs://author-avatar" })}
       />,
@@ -95,17 +96,17 @@ describe("AuthorProfileView", () => {
   });
 
   it("exposes the profile as an article landmark", () => {
-    render(<AuthorProfileView profile={buildProfile()} />);
+    renderWithI18n(<AuthorProfileView profile={buildProfile()} />);
     expect(screen.getByRole("article")).toBeInTheDocument();
   });
 
   it("shows the public address label", () => {
-    render(<AuthorProfileView profile={buildProfile()} />);
+    renderWithI18n(<AuthorProfileView profile={buildProfile()} />);
     expect(screen.getByText("Public address")).toBeInTheDocument();
   });
 
   it("renders the author bio below the public address", () => {
-    render(
+    renderWithI18n(
       <AuthorProfileView
         profile={buildProfile({ bio: "Speculative fiction author." })}
       />,
@@ -125,7 +126,7 @@ describe("AuthorProfileView", () => {
   it("shows edit and publish actions for the profile owner", () => {
     const onEditClick = vi.fn();
 
-    render(
+    renderWithI18n(
       <AuthorProfileView
         profile={buildProfile()}
         audience="owner"
@@ -137,7 +138,7 @@ describe("AuthorProfileView", () => {
     expect(onEditClick).toHaveBeenCalled();
     expect(screen.getByRole("link", { name: "Publish work" })).toHaveAttribute(
       "href",
-      `/author/${ADDRESS}/publish`,
+      `/en/author/${ADDRESS}/publish`,
     );
   });
 });

@@ -1,13 +1,13 @@
-import Link from "next/link";
+import { LocalizedLink } from "@/lib/i18n/LocalizedLink";
 import { SiteHeaderNav } from "./navigation/SiteHeaderNav";
 import { WalletButton } from "./WalletButton";
 
 export function SiteHeader() {
   return (
     <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-      <Link href="/" className="text-lg font-semibold tracking-tight">
+      <LocalizedLink href="/" className="text-lg font-semibold tracking-tight">
         Andromeda
-      </Link>
+      </LocalizedLink>
       <nav className="flex items-center gap-6 text-sm">
         <SiteHeaderNav />
         <WalletButton />

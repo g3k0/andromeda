@@ -1,4 +1,6 @@
-import Link from "next/link";
+"use client";
+
+import { LocalizedLink } from "@/lib/i18n/LocalizedLink";
 
 export type AuthorPageStatusMessageProps = {
   title: string;
@@ -13,12 +15,12 @@ export function AuthorPageStatusMessage({
     <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center">
       <h1 className="text-xl font-semibold">{title}</h1>
       <p className="mt-2 text-sm text-white/60">{description}</p>
-      <Link
+      <LocalizedLink
         href="/"
         className="mt-4 inline-block text-sm text-andromeda-light hover:text-white"
       >
         Back to Library
-      </Link>
+      </LocalizedLink>
     </div>
   );
 }

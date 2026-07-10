@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocalizedLink } from "@/lib/i18n/LocalizedLink";
 import { MANAGE_USERS_PATH } from "@/lib/navigation/role-menu";
 
 const ADMIN_CARDS = [
@@ -46,13 +46,13 @@ export default function AdminPage() {
 
           if ("href" in card && card.href) {
             return (
-              <Link
+              <LocalizedLink
                 key={card.title}
                 href={card.href}
                 className="rounded-xl border border-white/10 bg-white/5 p-5 transition hover:border-andromeda-light/40 hover:bg-white/10"
               >
                 {content}
-              </Link>
+              </LocalizedLink>
             );
           }
 

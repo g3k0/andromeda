@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { renderWithI18n } from "@/lib/i18n/test-utils";
+import { cleanup, fireEvent, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { AuthorPageContentView } from "./AuthorPageContentView";
@@ -68,7 +69,7 @@ describe("AuthorPageContentView", () => {
   });
 
   it("renders read-only view for visitors", () => {
-    render(
+    renderWithI18n(
       <AuthorPageContentView
         profile={profile}
         variant="read-only"
@@ -86,7 +87,7 @@ describe("AuthorPageContentView", () => {
   });
 
   it("renders read-only view with edit and publish for the profile owner", () => {
-    render(
+    renderWithI18n(
       <AuthorPageContentView
         profile={profile}
         variant="read-only"
@@ -100,14 +101,14 @@ describe("AuthorPageContentView", () => {
     expect(screen.getByRole("button", { name: "Edit" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Publish work" })).toHaveAttribute(
       "href",
-      `/author/${profile.address}/publish`,
+      `/en/author/${profile.address}/publish`,
     );
   });
 
   it("calls onEditClick when the owner clicks Edit", () => {
     const onEditClick = vi.fn();
 
-    render(
+    renderWithI18n(
       <AuthorPageContentView
         profile={profile}
         variant="read-only"
@@ -121,7 +122,7 @@ describe("AuthorPageContentView", () => {
   });
 
   it("renders the owner editor without publish work", () => {
-    render(
+    renderWithI18n(
       <AuthorPageContentView
         profile={profile}
         variant="edit"
@@ -138,7 +139,7 @@ describe("AuthorPageContentView", () => {
   });
 
   it("renders the admin editor variant", () => {
-    render(
+    renderWithI18n(
       <AuthorPageContentView
         profile={profile}
         variant="edit"
@@ -156,7 +157,7 @@ describe("AuthorPageContentView", () => {
   it("calls onCancelEdit when cancel is clicked", () => {
     const onCancelEdit = vi.fn();
 
-    render(
+    renderWithI18n(
       <AuthorPageContentView
         profile={profile}
         variant="edit"
@@ -173,7 +174,7 @@ describe("AuthorPageContentView", () => {
   it("forwards save to the editor", async () => {
     const onSave = vi.fn().mockResolvedValue(undefined);
 
-    render(
+    renderWithI18n(
       <AuthorPageContentView
         profile={profile}
         variant="edit"

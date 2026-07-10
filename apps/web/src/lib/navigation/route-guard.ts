@@ -2,6 +2,7 @@ import { hasPermission } from "@/lib/users/permissions";
 import type { PermissionSubject } from "@/lib/users/permissions";
 import type { UserPermission, UserSnapshot } from "@/lib/users/types";
 import { defaultUserPreferences } from "@/lib/users/types";
+import { stripLocalePrefix } from "@/lib/i18n/routing";
 import type { HeaderNavLink } from "./header-nav";
 
 export type HttpMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -157,7 +158,7 @@ export function getRouteById(routeId: string): RouteDefinition | undefined {
 }
 
 export function getRouteByHref(href: string): RouteDefinition | undefined {
-  const normalized = normalizeHref(href);
+  const normalized = normalizeHref(stripLocalePrefix(href));
   return APP_ROUTES.find((route) => normalizeHref(route.href) === normalized);
 }
 
