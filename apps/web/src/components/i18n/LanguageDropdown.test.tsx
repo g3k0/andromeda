@@ -2,19 +2,17 @@
 
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { LanguageDropdown } from "./LanguageDropdown";
 
 const mockedUseRouter = vi.mocked(useRouter);
-const mockedUsePathname = vi.mocked(usePathname);
 
 describe("LanguageDropdown", () => {
   afterEach(() => {
     cleanup();
     vi.clearAllMocks();
-    mockedUsePathname.mockReturnValue("/en");
   });
 
   it("renders the active locale with flag and label", () => {
@@ -35,7 +33,11 @@ describe("LanguageDropdown", () => {
       refresh: vi.fn(),
       prefetch: vi.fn(),
     });
-    mockedUsePathname.mockReturnValue("/en/works");
+
+    vi.stubGlobal("location", {
+      ...window.location,
+      pathname: "/en/works",
+    });
 
     const user = userEvent.setup();
     render(<LanguageDropdown />);

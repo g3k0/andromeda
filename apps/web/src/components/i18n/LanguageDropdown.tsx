@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import {
   SUPPORTED_LOCALES,
@@ -15,9 +15,15 @@ import {
   closeParentDetails,
 } from "@/components/role-menu-dropdown-behavior";
 
+function navigateToLocale(
+  router: ReturnType<typeof useRouter>,
+  newLocale: SupportedLocale,
+) {
+  router.push(switchLocaleInPath(window.location.pathname, newLocale));
+}
+
 export function LanguageDropdown() {
   const router = useRouter();
-  const pathname = usePathname();
   const activeLocale = useLocale();
   const { t } = useTranslation();
   const current = getLocaleDefinition(activeLocale);
@@ -61,9 +67,7 @@ export function LanguageDropdown() {
             onClick={(event) => {
               closeParentDetails(event.currentTarget);
               if (locale.code !== activeLocale) {
-                router.push(
-                  switchLocaleInPath(pathname, locale.code as SupportedLocale),
-                );
+                navigateToLocale(router, locale.code as SupportedLocale);
               }
             }}
             className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white"
