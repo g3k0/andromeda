@@ -1,10 +1,27 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Andromeda — Read, own and collect literary works on-chain",
-  description:
-    "Andromeda turns every book into an author-certified NFT. Writers publish and sell directly to readers, and readers truly own the editions they buy.",
+import { buildLocalizedPageMetadata } from "@/lib/i18n/page-metadata";
+import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
+
+type HomePageProps = {
+  params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: HomePageProps): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  if (!isSupportedLocale(localeParam)) {
+    return {};
+  }
+
+  return buildLocalizedPageMetadata(
+    localeParam as SupportedLocale,
+    "/",
+    "meta.home.title",
+    "meta.home.description",
+  );
+}
 
 export default function HomePage() {
   return (

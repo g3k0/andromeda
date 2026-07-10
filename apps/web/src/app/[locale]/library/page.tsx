@@ -1,11 +1,28 @@
 import type { Metadata } from "next";
 
 import { LibraryClient } from "@/components/works/LibraryClient";
+import { buildLocalizedPageMetadata } from "@/lib/i18n/page-metadata";
+import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
 
-export const metadata: Metadata = {
-  title: "Library | Andromeda",
-  description: "The literary copies you own on Andromeda.",
+type LibraryPageProps = {
+  params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: LibraryPageProps): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  if (!isSupportedLocale(localeParam)) {
+    return {};
+  }
+
+  return buildLocalizedPageMetadata(
+    localeParam as SupportedLocale,
+    "/library",
+    "meta.library.title",
+    "meta.library.description",
+  );
+}
 
 export default function LibraryPage() {
   return (

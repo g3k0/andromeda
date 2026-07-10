@@ -57,9 +57,6 @@ describe("RoleMenuDropdown", () => {
     expect(
       screen.getByRole("menuitem", { name: "Profile settings" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("menuitem", { name: "Change language" }),
-    ).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Logout" })).toBeInTheDocument();
   });
 

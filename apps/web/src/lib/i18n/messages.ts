@@ -1,10 +1,24 @@
+import de from "@/locales/de.json";
 import en from "@/locales/en.json";
+import es from "@/locales/es.json";
+import fr from "@/locales/fr.json";
+import it from "@/locales/it.json";
+import ja from "@/locales/ja.json";
+import pt from "@/locales/pt.json";
+import zh from "@/locales/zh.json";
 
 import { DEFAULT_LOCALE, type SupportedLocale } from "./locales";
 import type { MessageTree } from "./types";
 
 const catalogs: Partial<Record<SupportedLocale, MessageTree>> = {
+  de: de as MessageTree,
   en: en as MessageTree,
+  es: es as MessageTree,
+  fr: fr as MessageTree,
+  it: it as MessageTree,
+  ja: ja as MessageTree,
+  pt: pt as MessageTree,
+  zh: zh as MessageTree,
 };
 
 /** Returns the message catalog for a locale, falling back to English. */

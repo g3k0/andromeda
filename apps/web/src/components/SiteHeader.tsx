@@ -1,3 +1,4 @@
+import { LanguageDropdown } from "@/components/i18n/LanguageDropdown";
 import { LocalizedLink } from "@/lib/i18n/LocalizedLink";
 import { SiteHeaderNav } from "./navigation/SiteHeaderNav";
 import { WalletButton } from "./WalletButton";
@@ -10,6 +11,7 @@ export function SiteHeader() {
       </LocalizedLink>
       <nav className="flex items-center gap-6 text-sm">
         <SiteHeaderNav />
+        <LanguageDropdown />
         <WalletButton />
       </nav>
     </header>
