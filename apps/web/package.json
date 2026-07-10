@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "i18n:check-keys": "node ./scripts/i18n-check-keys.mjs",
     "sync:contract-abi": "node ./scripts/sync-andromeda-works-abi.mjs",
     "sync:chain-events": "tsx ./scripts/sync-chain-events.ts"
   },

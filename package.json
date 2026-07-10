@@ -51,6 +51,7 @@
     "react-doctor:ci": "pnpm --filter @andromeda/web react-doctor:ci",
     "web:test": "pnpm --filter @andromeda/web test",
     "web:test:coverage": "pnpm --filter @andromeda/web test:coverage",
+    "web:i18n:check-keys": "pnpm --filter @andromeda/web i18n:check-keys",
     "contracts:build": "pnpm --filter @andromeda/contracts build",
     "contracts:test": "pnpm --filter @andromeda/contracts test",
     "contracts:deploy:amoy": "pnpm --filter @andromeda/contracts deploy:amoy"

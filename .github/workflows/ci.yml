@@ -56,6 +56,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: i18n key parity
+        run: pnpm web:i18n:check-keys
+
       - name: React Doctor
         run: |
           BASE_REF="${{ github.event.pull_request.base.ref || 'main' }}"
