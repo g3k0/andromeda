@@ -6,6 +6,11 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: "node",
+    server: {
+      deps: {
+        inline: ["react", "react-dom", "@testing-library/react"],
+      },
+    },
     globalSetup: ["./vitest.global-setup.ts"],
     setupFiles: ["./vitest.setup.ts"],
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
@@ -24,6 +29,8 @@ export default defineConfig({
         "src/lib/works/**/*.ts",
         "src/lib/indexer/**/*.ts",
         "src/lib/logging/**/*.ts",
+        "src/lib/i18n/**/*.ts",
+        "src/lib/i18n/**/*.tsx",
         "src/lib/config/**/*.ts",
         "src/lib/db/**/*.ts",
         "src/lib/navigation/**/*.ts",
@@ -71,6 +78,12 @@ export default defineConfig({
     dedupe: ["react", "react-dom"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      react: path.resolve(__dirname, "../../node_modules/react"),
+      "react-dom": path.resolve(__dirname, "../../node_modules/react-dom"),
+      "react-dom/client": path.resolve(
+        __dirname,
+        "../../node_modules/react-dom/client",
+      ),
     },
   },
 });
