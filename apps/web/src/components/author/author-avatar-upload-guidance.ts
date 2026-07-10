@@ -8,7 +8,3 @@ export const AUTHOR_AVATAR_ALLOWED_FORMATS_LABEL = "PNG, JPEG, WebP";
 
 /** Public MIME allowlist for the avatar file picker (not a secret). */
 export const AVATAR_UPLOAD_MIME_ACCEPT = "image/png,image/jpeg,image/webp";
-
-export function getAuthorAvatarUploadGuidance(): string {
-  return `Allowed formats: ${AUTHOR_AVATAR_ALLOWED_FORMATS_LABEL}. Maximum size: ${AUTHOR_AVATAR_MAX_KB} KB.`;
-}

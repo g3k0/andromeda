@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
-import {
-  AUTHOR_AVATAR_MAX_KB,
-  getAuthorAvatarUploadGuidance,
-} from "./author-avatar-upload-guidance";
+import { createTranslateFn } from "@/lib/i18n/translate";
+import { getAuthorAvatarUploadGuidance } from "@/lib/i18n/author-profile-messages";
+import { AUTHOR_AVATAR_MAX_KB } from "./author-avatar-upload-guidance";
 
 describe("author avatar upload guidance", () => {
   it("uses the database save limit as the maximum size", () => {
@@ -10,7 +9,7 @@ describe("author avatar upload guidance", () => {
   });
 
   it("describes allowed formats and a single size limit", () => {
-    const guidance = getAuthorAvatarUploadGuidance();
+    const guidance = getAuthorAvatarUploadGuidance(createTranslateFn("en"));
 
     expect(guidance).toContain("PNG, JPEG, WebP");
     expect(guidance).toContain("128 KB");

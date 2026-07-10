@@ -35,7 +35,16 @@ describe("validateAvatarFile", () => {
   it("rejects files larger than the limit", () => {
     expect(() =>
       validateAvatarFile(createFile({ size: MAX_AUTHOR_AVATAR_BYTES + 1 })),
-    ).toThrow(/128 KB/);
+    ).toThrow(InvalidAvatarFileError);
+
+    try {
+      validateAvatarFile(createFile({ size: MAX_AUTHOR_AVATAR_BYTES + 1 }));
+    } catch (error) {
+      expect(error).toBeInstanceOf(InvalidAvatarFileError);
+      expect((error as InvalidAvatarFileError).code).toBe(
+        "authorProfile.validation.avatarMaxSize",
+      );
+    }
   });
 });
 
@@ -55,7 +64,16 @@ describe("validateAvatarDataUrl", () => {
   it("rejects oversized data URLs", () => {
     const oversized = `data:image/png;base64,${"a".repeat(AUTHOR_AVATAR_URL_MAX_LENGTH)}`;
 
-    expect(() => validateAvatarDataUrl(oversized)).toThrow(/128 KB/);
+    expect(() => validateAvatarDataUrl(oversized)).toThrow(InvalidAvatarFileError);
+
+    try {
+      validateAvatarDataUrl(oversized);
+    } catch (error) {
+      expect(error).toBeInstanceOf(InvalidAvatarFileError);
+      expect((error as InvalidAvatarFileError).code).toBe(
+        "authorProfile.validation.avatarMaxSize",
+      );
+    }
   });
 });
 

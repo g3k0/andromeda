@@ -1,4 +1,6 @@
 import { AUTHOR_AVATAR_URL_MAX_LENGTH } from "@/lib/authors/field-limits";
+import type { TranslationParams } from "@/lib/i18n/types";
+
 import { AUTHOR_AVATAR_MAX_KB } from "./author-avatar-upload-guidance";
 
 export const AUTHOR_AVATAR_ALLOWED_MIME_TYPES = [
@@ -16,8 +18,11 @@ export const MAX_AUTHOR_AVATAR_BYTES = Math.floor(
 );
 
 export class InvalidAvatarFileError extends Error {
-  constructor(message: string) {
-    super(message);
+  constructor(
+    public readonly code: string,
+    public readonly params?: TranslationParams,
+  ) {
+    super(code);
     this.name = "InvalidAvatarFileError";
   }
 }
@@ -28,25 +33,29 @@ export function validateAvatarFile(file: File): void {
       file.type as (typeof AUTHOR_AVATAR_ALLOWED_MIME_TYPES)[number],
     )
   ) {
-    throw new InvalidAvatarFileError("Allowed formats: PNG, JPEG, WebP.");
+    throw new InvalidAvatarFileError("authorProfile.validation.avatarFormat", {
+      formats: "PNG, JPEG, WebP",
+    });
   }
 
   if (file.size > MAX_AUTHOR_AVATAR_BYTES) {
-    throw new InvalidAvatarFileError(
-      `Image must be ${AUTHOR_AVATAR_MAX_KB} KB or smaller.`,
-    );
+    throw new InvalidAvatarFileError("authorProfile.validation.avatarMaxSize", {
+      maxKb: String(AUTHOR_AVATAR_MAX_KB),
+    });
   }
 }
 
 export function validateAvatarDataUrl(dataUrl: string): void {
   if (!AUTHOR_AVATAR_DATA_URL_PATTERN.test(dataUrl)) {
-    throw new InvalidAvatarFileError("Allowed formats: PNG, JPEG, WebP.");
+    throw new InvalidAvatarFileError("authorProfile.validation.avatarFormat", {
+      formats: "PNG, JPEG, WebP",
+    });
   }
 
   if (dataUrl.length > AUTHOR_AVATAR_URL_MAX_LENGTH) {
-    throw new InvalidAvatarFileError(
-      `Image must be ${AUTHOR_AVATAR_MAX_KB} KB or smaller.`,
-    );
+    throw new InvalidAvatarFileError("authorProfile.validation.avatarMaxSize", {
+      maxKb: String(AUTHOR_AVATAR_MAX_KB),
+    });
   }
 }
 
@@ -59,7 +68,9 @@ export function readAvatarAsDataUrl(
   return new Promise((resolve, reject) => {
     reader.onload = () => {
       if (typeof reader.result !== "string") {
-        reject(new InvalidAvatarFileError("Failed to read image file."));
+        reject(
+          new InvalidAvatarFileError("authorProfile.validation.avatarReadFailed"),
+        );
         return;
       }
 
@@ -71,7 +82,9 @@ export function readAvatarAsDataUrl(
       }
     };
     reader.onerror = () => {
-      reject(new InvalidAvatarFileError("Failed to read image file."));
+      reject(
+        new InvalidAvatarFileError("authorProfile.validation.avatarReadFailed"),
+      );
     };
     reader.readAsDataURL(file);
   });

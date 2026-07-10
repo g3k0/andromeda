@@ -195,5 +195,50 @@
     "metadataLoadFailed": "No se pudieron cargar los metadatos de la obra.",
     "contentLoadFailed": "No se pudo cargar el contenido cifrado.",
     "decryptFailed": "No se pudo descifrar este ejemplar."
+  },
+  "authorProfile": {
+    "publicAddress": "Dirección pública",
+    "edit": "Editar",
+    "publishWork": "Publicar obra",
+    "backToLibrary": "Volver a la biblioteca",
+    "invalidAddressTitle": "Dirección de billetera no válida",
+    "invalidAddressDescription": "La URL no contiene una dirección Ethereum válida.",
+    "notFoundTitle": "Página de autor no encontrada",
+    "notFoundDescription": "Aún no existe un perfil de autor para esta dirección de billetera.",
+    "loadingPage": "Cargando página de autor…",
+    "indexTitle": "Página de autor",
+    "indexConnectWallet": "Conecta tu billetera para abrir o crear tu página de autor.",
+    "onboardingTitle": "Crea tu página de autor",
+    "onboardingDescription": "Usa el diálogo para crear tu página de autor o continuar como lector.",
+    "readerModeTitle": "Modo lector",
+    "readerModeDescription": "Estás navegando como lector. Podrás crear una página de autor más tarde desde el aviso de incorporación cuando te conectes.",
+    "adminEditing": "Editando como administrador",
+    "authorName": "Nombre del autor",
+    "bio": "Biografía",
+    "profileImage": "Imagen de perfil",
+    "savingProfile": "Guardando perfil",
+    "saving": "Guardando…",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "savingProfileOverlay": "Guardando perfil…",
+    "guidance": {
+      "avatarUpload": "Formatos permitidos: {formats}. Tamaño máximo: {maxKb} KB.",
+      "bio": "Biografía pública opcional que se muestra en tu página de autor. Comparte tu trayectoria, géneros o enlaces en texto plano."
+    },
+    "validation": {
+      "displayNameRequired": "El nombre para mostrar es obligatorio.",
+      "displayNameMaxLength": "El nombre para mostrar debe tener {max} caracteres o menos.",
+      "displayNameInvalidChars": "El nombre para mostrar contiene caracteres no válidos.",
+      "invalidImage": "Imagen de perfil no válida.",
+      "avatarFormat": "Formatos permitidos: {formats}.",
+      "avatarMaxSize": "Tamaño máximo: {maxKb} KB.",
+      "avatarReadFailed": "No se pudo leer el archivo de imagen.",
+      "bioMaxLength": "La biografía debe tener {max} caracteres o menos.",
+      "bioInvalidChars": "La biografía contiene caracteres no válidos."
+    },
+    "errors": {
+      "uploadFailed": "No se pudo subir la imagen.",
+      "saveFailed": "No se pudo guardar el perfil."
+    }
   }
 }

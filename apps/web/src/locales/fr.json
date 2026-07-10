@@ -195,5 +195,50 @@
     "metadataLoadFailed": "Échec du chargement des métadonnées de l'œuvre.",
     "contentLoadFailed": "Échec du chargement du contenu chiffré.",
     "decryptFailed": "Échec du déchiffrement de cet exemplaire."
+  },
+  "authorProfile": {
+    "publicAddress": "Adresse publique",
+    "edit": "Modifier",
+    "publishWork": "Publier une œuvre",
+    "backToLibrary": "Retour à la bibliothèque",
+    "invalidAddressTitle": "Adresse de portefeuille invalide",
+    "invalidAddressDescription": "L'URL ne contient pas une adresse Ethereum valide.",
+    "notFoundTitle": "Page auteur introuvable",
+    "notFoundDescription": "Aucun profil auteur n'existe encore pour cette adresse de portefeuille.",
+    "loadingPage": "Chargement de la page auteur…",
+    "indexTitle": "Page auteur",
+    "indexConnectWallet": "Connectez votre portefeuille pour ouvrir ou créer votre page auteur.",
+    "onboardingTitle": "Créez votre page auteur",
+    "onboardingDescription": "Utilisez la boîte de dialogue pour créer votre page auteur ou continuer en tant que lecteur.",
+    "readerModeTitle": "Mode lecteur",
+    "readerModeDescription": "Vous naviguez en tant que lecteur. Vous pourrez créer une page auteur plus tard depuis l'invite d'intégration lorsque vous vous connecterez.",
+    "adminEditing": "Modification en tant qu'administrateur",
+    "authorName": "Nom de l'auteur",
+    "bio": "Biographie",
+    "profileImage": "Image de profil",
+    "savingProfile": "Enregistrement du profil",
+    "saving": "Enregistrement…",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "savingProfileOverlay": "Enregistrement du profil…",
+    "guidance": {
+      "avatarUpload": "Formats autorisés : {formats}. Taille maximale : {maxKb} Ko.",
+      "bio": "Biographie publique optionnelle affichée sur votre page auteur. Partagez votre parcours, vos genres ou vos liens en texte brut."
+    },
+    "validation": {
+      "displayNameRequired": "Le nom affiché est obligatoire.",
+      "displayNameMaxLength": "Le nom affiché doit comporter au maximum {max} caractères.",
+      "displayNameInvalidChars": "Le nom affiché contient des caractères invalides.",
+      "invalidImage": "Image de profil invalide.",
+      "avatarFormat": "Formats autorisés : {formats}.",
+      "avatarMaxSize": "Taille maximale : {maxKb} Ko.",
+      "avatarReadFailed": "Impossible de lire le fichier image.",
+      "bioMaxLength": "La biographie doit comporter au maximum {max} caractères.",
+      "bioInvalidChars": "La biographie contient des caractères invalides."
+    },
+    "errors": {
+      "uploadFailed": "Échec du téléversement de l'image.",
+      "saveFailed": "Échec de l'enregistrement du profil."
+    }
   }
 }

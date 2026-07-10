@@ -1,7 +1,8 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderWithI18n } from "@/lib/i18n/test-utils";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { createEditorFormState } from "./author-profile-editor-state";
 import { AuthorProfileEditorView } from "./AuthorProfileEditorView";
@@ -35,7 +36,7 @@ describe("AuthorProfileEditorView", () => {
   });
 
   it("shows the administrator label when editing as admin", () => {
-    render(
+    renderWithI18n(
       <AuthorProfileEditorView
         profile={profile}
         form={createEditorFormState(profile)}
@@ -54,7 +55,7 @@ describe("AuthorProfileEditorView", () => {
   it("calls save handlers on submit", () => {
     const onSubmit = vi.fn();
 
-    render(
+    renderWithI18n(
       <AuthorProfileEditorView
         profile={profile}
         form={createEditorFormState(profile)}
@@ -72,7 +73,7 @@ describe("AuthorProfileEditorView", () => {
   });
 
   it("shows field validation errors from form state", () => {
-    render(
+    renderWithI18n(
       <AuthorProfileEditorView
         profile={profile}
         form={{
@@ -98,7 +99,7 @@ describe("AuthorProfileEditorView", () => {
   });
 
   it("shows submit errors from form state", () => {
-    render(
+    renderWithI18n(
       <AuthorProfileEditorView
         profile={profile}
         form={{
@@ -120,7 +121,7 @@ describe("AuthorProfileEditorView", () => {
   });
 
   it("renders the author name beside the framed profile image", () => {
-    render(
+    renderWithI18n(
       <AuthorProfileEditorView
         profile={profile}
         form={createEditorFormState(profile)}
@@ -147,7 +148,7 @@ describe("AuthorProfileEditorView", () => {
   });
 
   it("shows the public address with a label", () => {
-    render(
+    renderWithI18n(
       <AuthorProfileEditorView
         profile={profile}
         form={createEditorFormState(profile)}
@@ -165,7 +166,7 @@ describe("AuthorProfileEditorView", () => {
   });
 
   it("shows avatar upload guidance with size and format limits", () => {
-    render(
+    renderWithI18n(
       <AuthorProfileEditorView
         profile={profile}
         form={createEditorFormState(profile)}
@@ -188,7 +189,7 @@ describe("AuthorProfileEditorView", () => {
     const onBioChange = vi.fn();
     const onAvatarFileSelect = vi.fn();
 
-    render(
+    renderWithI18n(
       <AuthorProfileEditorView
         profile={profile}
         form={createEditorFormState(profile)}

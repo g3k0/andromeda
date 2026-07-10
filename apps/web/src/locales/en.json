@@ -195,5 +195,50 @@
     "metadataLoadFailed": "Failed to load work metadata.",
     "contentLoadFailed": "Failed to load encrypted content.",
     "decryptFailed": "Failed to decrypt this copy."
+  },
+  "authorProfile": {
+    "publicAddress": "Public address",
+    "edit": "Edit",
+    "publishWork": "Publish work",
+    "backToLibrary": "Back to Library",
+    "invalidAddressTitle": "Invalid wallet address",
+    "invalidAddressDescription": "The URL does not contain a valid Ethereum address.",
+    "notFoundTitle": "Author page not found",
+    "notFoundDescription": "No author profile exists for this wallet address yet.",
+    "loadingPage": "Loading author page…",
+    "indexTitle": "Author page",
+    "indexConnectWallet": "Connect your wallet to open or create your author page.",
+    "onboardingTitle": "Create your author page",
+    "onboardingDescription": "Use the dialog to create your author page or continue as a reader.",
+    "readerModeTitle": "Reader mode",
+    "readerModeDescription": "You are browsing as a reader. You can create an author page later from the onboarding prompt when you connect.",
+    "adminEditing": "Editing as administrator",
+    "authorName": "Author name",
+    "bio": "Bio",
+    "profileImage": "Profile image",
+    "savingProfile": "Saving profile",
+    "saving": "Saving…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "savingProfileOverlay": "Saving profile…",
+    "guidance": {
+      "avatarUpload": "Allowed formats: {formats}. Maximum size: {maxKb} KB.",
+      "bio": "Optional public biography shown on your author page. Share background, genres, or links in plain text."
+    },
+    "validation": {
+      "displayNameRequired": "Display name is required.",
+      "displayNameMaxLength": "Display name must be {max} characters or fewer.",
+      "displayNameInvalidChars": "Display name contains invalid characters.",
+      "invalidImage": "Invalid profile image.",
+      "avatarFormat": "Allowed formats: {formats}.",
+      "avatarMaxSize": "Maximum size: {maxKb} KB.",
+      "avatarReadFailed": "Failed to read the image file.",
+      "bioMaxLength": "Bio must be {max} characters or fewer.",
+      "bioInvalidChars": "Bio contains invalid characters."
+    },
+    "errors": {
+      "uploadFailed": "Failed to upload image.",
+      "saveFailed": "Failed to save profile."
+    }
   }
 }

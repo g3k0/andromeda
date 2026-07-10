@@ -195,5 +195,50 @@
     "metadataLoadFailed": "无法加载作品元数据。",
     "contentLoadFailed": "无法加载加密内容。",
     "decryptFailed": "无法解密此副本。"
+  },
+  "authorProfile": {
+    "publicAddress": "公开地址",
+    "edit": "编辑",
+    "publishWork": "发布作品",
+    "backToLibrary": "返回图书馆",
+    "invalidAddressTitle": "无效的钱包地址",
+    "invalidAddressDescription": "URL 中不包含有效的以太坊地址。",
+    "notFoundTitle": "未找到作者页面",
+    "notFoundDescription": "此钱包地址尚无作者资料。",
+    "loadingPage": "正在加载作者页面…",
+    "indexTitle": "作者页面",
+    "indexConnectWallet": "连接钱包以打开或创建您的作者页面。",
+    "onboardingTitle": "创建您的作者页面",
+    "onboardingDescription": "使用对话框创建作者页面，或以读者身份继续。",
+    "readerModeTitle": "读者模式",
+    "readerModeDescription": "您当前以读者身份浏览。连接钱包后，可在引导提示中稍后创建作者页面。",
+    "adminEditing": "以管理员身份编辑",
+    "authorName": "作者名称",
+    "bio": "简介",
+    "profileImage": "头像",
+    "savingProfile": "正在保存资料",
+    "saving": "保存中…",
+    "save": "保存",
+    "cancel": "取消",
+    "savingProfileOverlay": "正在保存资料…",
+    "guidance": {
+      "avatarUpload": "允许的格式：{formats}。最大大小：{maxKb} KB。",
+      "bio": "可选的公开简介，显示在您的作者页面上。请以纯文本分享背景、体裁或链接。"
+    },
+    "validation": {
+      "displayNameRequired": "显示名称为必填项。",
+      "displayNameMaxLength": "显示名称不得超过 {max} 个字符。",
+      "displayNameInvalidChars": "显示名称包含无效字符。",
+      "invalidImage": "无效的头像。",
+      "avatarFormat": "允许的格式：{formats}。",
+      "avatarMaxSize": "最大大小：{maxKb} KB。",
+      "avatarReadFailed": "无法读取图片文件。",
+      "bioMaxLength": "简介不得超过 {max} 个字符。",
+      "bioInvalidChars": "简介包含无效字符。"
+    },
+    "errors": {
+      "uploadFailed": "图片上传失败。",
+      "saveFailed": "资料保存失败。"
+    }
   }
 }

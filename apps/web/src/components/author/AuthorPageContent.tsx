@@ -5,6 +5,7 @@ import { useSignMessage } from "wagmi";
 import { updateAuthorAction } from "@/app/actions/authors";
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import type { AuthorProfile } from "@/lib/authors/types";
 import type { UserRole } from "@/lib/users/types";
 import {
@@ -35,6 +36,7 @@ export function AuthorPageContent({
 }: AuthorPageContentProps) {
   const { signMessageAsync } = useSignMessage();
   const { runWithLoading } = useLoading();
+  const { t } = useTranslation();
   const [profile, setProfile] = useState(initialProfile);
 
   const canEdit = resolveCanEditAuthorPage({
@@ -89,7 +91,7 @@ export function AuthorPageContent({
         });
         setProfile(updated);
         onProfileSaved?.(updated);
-      }, "Saving profile…");
+      }, t("authorProfile.savingProfileOverlay"));
       setIsEditing(false);
     } catch {
       // Errors surface via server action validation/auth failures.
