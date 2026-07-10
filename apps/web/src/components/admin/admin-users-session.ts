@@ -1,5 +1,6 @@
 import type { SignMessageFn } from "@/lib/auth/client-wallet-auth";
 import type { WalletSessionStatus } from "@/lib/auth/wallet-session";
+import type { TranslateFn } from "@/lib/i18n/translate";
 
 export type EnsureAdminSessionDeps = {
   getStatus: () => Promise<WalletSessionStatus>;
@@ -30,9 +31,9 @@ export async function ensureAdminSession(
   await deps.establish(signed);
 }
 
-export function adminSessionErrorMessage(error: unknown): string {
+export function adminSessionErrorMessage(error: unknown, t: TranslateFn): string {
   if (error instanceof Error && error.message.includes("expired")) {
-    return "Your admin session expired. Please confirm again in your wallet.";
+    return t("admin.session.expired");
   }
-  return "Failed to authorize admin access. Confirm in your wallet to continue.";
+  return t("admin.session.authorizeFailed");
 }

@@ -508,6 +508,125 @@
       "users": "Users",
       "roles": "Roles",
       "ariaLabel": "Admin management sections"
+    },
+    "actions": {
+      "save": "Save",
+      "saving": "Saving…",
+      "delete": "Delete",
+      "deleting": "Deleting…",
+      "cancel": "Cancel"
+    },
+    "session": {
+      "expired": "Your admin session expired. Please confirm again in your wallet.",
+      "authorizeFailed": "Failed to authorize admin access. Confirm in your wallet to continue."
+    },
+    "users": {
+      "title": "Users administration",
+      "subtitle": "Manage platform accounts, roles and status.",
+      "loadingAria": "Loading users",
+      "creatingAria": "Creating user",
+      "createUser": "Create user",
+      "addUser": "+ Add user",
+      "addFirstUser": "Add the first user",
+      "empty": "No users yet.",
+      "actionsColumn": "Actions",
+      "confirmDelete": "Delete user {address}? This cannot be undone.",
+      "fields": {
+        "walletAddress": "Wallet address",
+        "role": "Role",
+        "status": "Status"
+      },
+      "columns": {
+        "address": "Address",
+        "role": "Role",
+        "status": "Status",
+        "createdAt": "Created"
+      },
+      "status": {
+        "active": "Active",
+        "suspended": "Suspended",
+        "pending": "Pending"
+      },
+      "validation": {
+        "addressRequired": "Wallet address is required.",
+        "addressInvalid": "Invalid Ethereum address.",
+        "addressExists": "A user with this address already exists."
+      },
+      "notifications": {
+        "created": "User created.",
+        "updated": "User updated.",
+        "deleted": "User deleted."
+      },
+      "errors": {
+        "createFailed": "Failed to create user.",
+        "updateFailed": "Failed to update user.",
+        "deleteFailed": "Failed to delete user."
+      },
+      "loading": {
+        "creating": "Creating user…",
+        "saving": "Saving user…",
+        "deleting": "Deleting user…"
+      }
+    },
+    "roles": {
+      "title": "Roles administration",
+      "subtitle": "Configure role names, descriptions and permission sets.",
+      "loadingAria": "Loading roles",
+      "creatingAria": "Creating role",
+      "createRole": "Create role",
+      "addRole": "+ Add role",
+      "addFirstRole": "Add the first role",
+      "empty": "No roles yet.",
+      "systemBadge": "System",
+      "userCountSingular": "{count} user",
+      "userCountPlural": "{count} users",
+      "deleteUnavailable": "Delete unavailable",
+      "confirmDelete": "Delete role {slug}? This cannot be undone.",
+      "fields": {
+        "slug": "Slug",
+        "name": "Name",
+        "description": "Description",
+        "permissions": "Permissions"
+      },
+      "validation": {
+        "slugRequired": "Role slug is required.",
+        "slugInvalid": "Invalid role slug. Use 2–32 lowercase letters, numbers, or hyphens.",
+        "slugExists": "A role with this slug already exists.",
+        "nameRequired": "Role name is required.",
+        "permissionsRequired": "Select at least one permission."
+      },
+      "deleteBlocked": {
+        "system": "System roles cannot be deleted.",
+        "assigned": "Role is assigned to {count} user(s). Reassign them before deleting."
+      },
+      "notifications": {
+        "created": "Role created.",
+        "updated": "Role updated.",
+        "deleted": "Role deleted."
+      },
+      "errors": {
+        "createFailed": "Failed to create role.",
+        "updateFailed": "Failed to update role.",
+        "deleteFailed": "Failed to delete role."
+      },
+      "loading": {
+        "creating": "Creating role…",
+        "saving": "Saving role…",
+        "deleting": "Deleting role…"
+      }
+    },
+    "permissions": {
+      "pagesRead": "Read pages",
+      "authorsWriteOwn": "Edit own author profile",
+      "authorsWriteAny": "Edit any author profile",
+      "authorsDeleteAny": "Delete any author profile",
+      "usersRead": "View users",
+      "usersWrite": "Manage users",
+      "usersDelete": "Delete users",
+      "adminAccess": "Access admin area",
+      "rolesRead": "View roles",
+      "rolesWrite": "Manage roles",
+      "rolesDelete": "Delete roles"
     }
   }
 }

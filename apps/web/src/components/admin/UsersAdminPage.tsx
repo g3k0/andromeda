@@ -17,6 +17,7 @@ import {
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { useNotifications } from "@/components/notifications/NotificationProvider";
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import {
   syncAdminRowsFromUsers,
   userToAdminRow,
@@ -45,6 +46,7 @@ export function UsersAdminPage() {
   const { signMessageAsync } = useSignMessage();
   const { runWithLoading } = useLoading();
   const { notify } = useNotifications();
+  const { t } = useTranslation();
 
   const [rows, setRows] = useState<AdminUserRow[]>([]);
   const [drafts, setDrafts] = useState<AdminUserRowDraft[]>([]);
@@ -105,11 +107,11 @@ export function UsersAdminPage() {
         roles.map((role) => ({ slug: role.slug, name: role.name })),
       );
     } catch (error) {
-      setErrorMessage(adminSessionErrorMessage(error));
+      setErrorMessage(adminSessionErrorMessage(error, t));
     } finally {
       setIsLoading(false);
     }
-  }, [address, authorizeAdminSession, isConnected]);
+  }, [address, authorizeAdminSession, isConnected, t]);
 
   useEffect(() => {
     void loadUsers();
@@ -155,17 +157,17 @@ export function UsersAdminPage() {
               : item,
           ),
         );
-        notify({ message: "User updated.", variant: "success" });
-      }, "Saving user…");
+        notify({ message: t("admin.users.notifications.updated"), variant: "success" });
+      }, t("admin.users.loading.saving"));
     } catch {
-      setErrorMessage("Failed to update user.");
+      setErrorMessage(t("admin.users.errors.updateFailed"));
     } finally {
       setSavingAddress(null);
     }
   }
 
   async function handleDeleteRow(rowAddress: string) {
-    if (!window.confirm(`Delete user ${rowAddress}? This cannot be undone.`)) {
+    if (!window.confirm(t("admin.users.confirmDelete", { address: rowAddress }))) {
       return;
     }
 
@@ -179,17 +181,17 @@ export function UsersAdminPage() {
         setDrafts((current) =>
           current.filter((draft) => draft.address !== rowAddress),
         );
-        notify({ message: "User deleted.", variant: "success" });
-      }, "Deleting user…");
+        notify({ message: t("admin.users.notifications.deleted"), variant: "success" });
+      }, t("admin.users.loading.deleting"));
     } catch {
-      setErrorMessage("Failed to delete user.");
+      setErrorMessage(t("admin.users.errors.deleteFailed"));
     } finally {
       setDeletingAddress(null);
     }
   }
 
   async function handleCreateSubmit() {
-    const validationError = validateCreateUserForm(createForm, existingAddresses);
+    const validationError = validateCreateUserForm(createForm, existingAddresses, t);
     if (validationError) {
       setCreateForm((current) => ({
         ...current,
@@ -218,12 +220,12 @@ export function UsersAdminPage() {
         setDrafts((current) => [...current, createAdminUserRowDraft(createdRow)]);
         setCreateForm(createDefaultCreateUserFormState());
         setShowCreateForm(false);
-        notify({ message: "User created.", variant: "success" });
-      }, "Creating user…");
+        notify({ message: t("admin.users.notifications.created"), variant: "success" });
+      }, t("admin.users.loading.creating"));
     } catch {
       setCreateForm((current) => ({
         ...current,
-        errorMessage: "Failed to create user.",
+        errorMessage: t("admin.users.errors.createFailed"),
       }));
     } finally {
       setIsCreating(false);

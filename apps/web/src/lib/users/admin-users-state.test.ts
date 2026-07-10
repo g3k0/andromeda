@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createTranslateFn } from "@/lib/i18n/translate";
 import {
   buildUpdateUserPayload,
   createAdminUserRowDraft,
@@ -12,6 +13,8 @@ import {
   validateCreateUserForm,
 } from "./admin-users-state";
 import type { AdminUserRow } from "./admin-users-mappers";
+
+const t = createTranslateFn("en");
 
 const ADDRESS = "0xabcdef0123456789abcdef0123456789abcdef01";
 const OTHER = "0x1111111111111111111111111111111111111111";
@@ -45,14 +48,15 @@ describe("admin users state", () => {
       targetAddress: ADDRESS,
     };
 
-    expect(validateCreateUserForm(form, [])).toBeNull();
-    expect(validateCreateUserForm(form, [ADDRESS])).toBe(
+    expect(validateCreateUserForm(form, [], t)).toBeNull();
+    expect(validateCreateUserForm(form, [ADDRESS], t)).toBe(
       "A user with this address already exists.",
     );
     expect(
       validateCreateUserForm(
         { ...form, targetAddress: "not-an-address" },
         [],
+        t,
       ),
     ).toBe("Invalid Ethereum address.");
   });

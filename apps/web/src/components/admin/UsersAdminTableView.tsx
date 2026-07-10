@@ -1,5 +1,11 @@
+"use client";
+
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
-import { USER_ADMIN_COLUMNS } from "@/lib/users/admin-user-columns";
+import {
+  getAdminUserColumns,
+  getUserStatusLabel,
+} from "@/lib/i18n/admin-messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import {
   formatAdminUserCreatedAt,
   truncateAddress,
@@ -63,10 +69,13 @@ export function UsersAdminTableView({
   onDeleteRow,
   isRowDirty,
 }: UsersAdminTableViewProps) {
+  const { t } = useTranslation();
+  const columns = getAdminUserColumns(t);
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-16">
-        <LoadingSpinner size="lg" label="Loading users" />
+        <LoadingSpinner size="lg" label={t("admin.users.loadingAria")} />
       </div>
     );
   }
@@ -75,17 +84,15 @@ export function UsersAdminTableView({
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">Users administration</h2>
-          <p className="text-sm text-white/60">
-            Manage platform accounts, roles and status.
-          </p>
+          <h2 className="text-xl font-semibold tracking-tight">{t("admin.users.title")}</h2>
+          <p className="text-sm text-white/60">{t("admin.users.subtitle")}</p>
         </div>
         <button
           type="button"
           onClick={onToggleCreateForm}
           className="rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark"
         >
-          {showCreateForm ? "Cancel" : "+ Add user"}
+          {showCreateForm ? t("admin.actions.cancel") : t("admin.users.addUser")}
         </button>
       </div>
 
@@ -104,7 +111,7 @@ export function UsersAdminTableView({
           className="grid gap-4 rounded-xl border border-white/10 bg-white/5 p-5 sm:grid-cols-4"
         >
           <label className="space-y-1 sm:col-span-2">
-            <span className="text-sm text-white/60">Wallet address</span>
+            <span className="text-sm text-white/60">{t("admin.users.fields.walletAddress")}</span>
             <input
               type="text"
               value={createForm.targetAddress}
@@ -116,7 +123,7 @@ export function UsersAdminTableView({
           </label>
 
           <label className="space-y-1">
-            <span className="text-sm text-white/60">Role</span>
+            <span className="text-sm text-white/60">{t("admin.users.fields.role")}</span>
             <select
               value={createForm.roleSlug}
               onChange={(event) =>
@@ -133,7 +140,7 @@ export function UsersAdminTableView({
           </label>
 
           <label className="space-y-1">
-            <span className="text-sm text-white/60">Status</span>
+            <span className="text-sm text-white/60">{t("admin.users.fields.status")}</span>
             <select
               value={createForm.status}
               onChange={(event) =>
@@ -143,7 +150,7 @@ export function UsersAdminTableView({
             >
               {USER_STATUSES.map((status) => (
                 <option key={status} value={status}>
-                  {status}
+                  {getUserStatusLabel(t, status)}
                 </option>
               ))}
             </select>
@@ -162,9 +169,9 @@ export function UsersAdminTableView({
               className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isCreating ? (
-                <LoadingSpinner size="sm" label="Creating user" />
+                <LoadingSpinner size="sm" label={t("admin.users.creatingAria")} />
               ) : null}
-              Create user
+              {t("admin.users.createUser")}
             </button>
           </div>
         </form>
@@ -172,13 +179,13 @@ export function UsersAdminTableView({
 
       {rows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-white/10 px-6 py-12 text-center">
-          <p className="text-white/70">No users yet.</p>
+          <p className="text-white/70">{t("admin.users.empty")}</p>
           <button
             type="button"
             onClick={onToggleCreateForm}
             className="mt-4 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark"
           >
-            Add the first user
+            {t("admin.users.addFirstUser")}
           </button>
         </div>
       ) : (
@@ -186,12 +193,12 @@ export function UsersAdminTableView({
           <table className="min-w-full divide-y divide-white/10 text-left text-sm">
             <thead className="bg-white/5 text-white/60">
               <tr>
-                {USER_ADMIN_COLUMNS.map((column) => (
+                {columns.map((column) => (
                   <th key={column.id} className="px-4 py-3 font-medium">
                     {column.label}
                   </th>
                 ))}
-                <th className="px-4 py-3 font-medium">Actions</th>
+                <th className="px-4 py-3 font-medium">{t("admin.users.actionsColumn")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -240,7 +247,7 @@ export function UsersAdminTableView({
                       >
                         {USER_STATUSES.map((status) => (
                           <option key={status} value={status}>
-                            {status}
+                            {getUserStatusLabel(t, status)}
                           </option>
                         ))}
                       </select>
@@ -256,7 +263,9 @@ export function UsersAdminTableView({
                           onClick={() => onSaveRow(row.address)}
                           className="rounded-md border border-white/10 px-3 py-1 text-xs font-medium text-white/80 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          {savingAddress === row.address ? "Saving…" : "Save"}
+                          {savingAddress === row.address
+                            ? t("admin.actions.saving")
+                            : t("admin.actions.save")}
                         </button>
                         <button
                           type="button"
@@ -264,7 +273,9 @@ export function UsersAdminTableView({
                           onClick={() => onDeleteRow(row.address)}
                           className="rounded-md border border-red-400/30 px-3 py-1 text-xs font-medium text-red-300 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          {deletingAddress === row.address ? "Deleting…" : "Delete"}
+                          {deletingAddress === row.address
+                            ? t("admin.actions.deleting")
+                            : t("admin.actions.delete")}
                         </button>
                       </div>
                     </td>

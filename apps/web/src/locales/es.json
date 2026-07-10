@@ -508,6 +508,125 @@
       "users": "Usuarios",
       "roles": "Roles",
       "ariaLabel": "Secciones de gestión administrativa"
+    },
+    "actions": {
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "delete": "Eliminar",
+      "deleting": "Eliminando…",
+      "cancel": "Cancelar"
+    },
+    "session": {
+      "expired": "Tu sesión de administración ha expirado. Confirma de nuevo en tu wallet.",
+      "authorizeFailed": "No se pudo autorizar el acceso de administración. Confirma en tu wallet para continuar."
+    },
+    "users": {
+      "title": "Administración de usuarios",
+      "subtitle": "Gestiona cuentas, roles y estado de la plataforma.",
+      "loadingAria": "Cargando usuarios",
+      "creatingAria": "Creando usuario",
+      "createUser": "Crear usuario",
+      "addUser": "+ Añadir usuario",
+      "addFirstUser": "Añadir el primer usuario",
+      "empty": "Aún no hay usuarios.",
+      "actionsColumn": "Acciones",
+      "confirmDelete": "¿Eliminar al usuario {address}? Esta acción no se puede deshacer.",
+      "fields": {
+        "walletAddress": "Dirección de wallet",
+        "role": "Rol",
+        "status": "Estado"
+      },
+      "columns": {
+        "address": "Dirección",
+        "role": "Rol",
+        "status": "Estado",
+        "createdAt": "Creado"
+      },
+      "status": {
+        "active": "Activo",
+        "suspended": "Suspendido",
+        "pending": "Pendiente"
+      },
+      "validation": {
+        "addressRequired": "La dirección de wallet es obligatoria.",
+        "addressInvalid": "Dirección de Ethereum no válida.",
+        "addressExists": "Ya existe un usuario con esta dirección."
+      },
+      "notifications": {
+        "created": "Usuario creado.",
+        "updated": "Usuario actualizado.",
+        "deleted": "Usuario eliminado."
+      },
+      "errors": {
+        "createFailed": "No se pudo crear el usuario.",
+        "updateFailed": "No se pudo actualizar el usuario.",
+        "deleteFailed": "No se pudo eliminar el usuario."
+      },
+      "loading": {
+        "creating": "Creando usuario…",
+        "saving": "Guardando usuario…",
+        "deleting": "Eliminando usuario…"
+      }
+    },
+    "roles": {
+      "title": "Administración de roles",
+      "subtitle": "Configure nombres, descripciones y conjuntos de permisos de los roles.",
+      "loadingAria": "Cargando roles",
+      "creatingAria": "Creando rol",
+      "createRole": "Crear rol",
+      "addRole": "+ Añadir rol",
+      "addFirstRole": "Añadir el primer rol",
+      "empty": "Aún no hay roles.",
+      "systemBadge": "Sistema",
+      "userCountSingular": "{count} usuario",
+      "userCountPlural": "{count} usuarios",
+      "deleteUnavailable": "Eliminación no disponible",
+      "confirmDelete": "¿Eliminar el rol {slug}? Esta acción no se puede deshacer.",
+      "fields": {
+        "slug": "Slug",
+        "name": "Nombre",
+        "description": "Descripción",
+        "permissions": "Permisos"
+      },
+      "validation": {
+        "slugRequired": "El slug del rol es obligatorio.",
+        "slugInvalid": "Slug de rol no válido. Use de 2 a 32 letras minúsculas, números o guiones.",
+        "slugExists": "Ya existe un rol con este slug.",
+        "nameRequired": "El nombre del rol es obligatorio.",
+        "permissionsRequired": "Seleccione al menos un permiso."
+      },
+      "deleteBlocked": {
+        "system": "Los roles del sistema no se pueden eliminar.",
+        "assigned": "El rol está asignado a {count} usuario(s). Reasígnelos antes de eliminar."
+      },
+      "notifications": {
+        "created": "Rol creado.",
+        "updated": "Rol actualizado.",
+        "deleted": "Rol eliminado."
+      },
+      "errors": {
+        "createFailed": "No se pudo crear el rol.",
+        "updateFailed": "No se pudo actualizar el rol.",
+        "deleteFailed": "No se pudo eliminar el rol."
+      },
+      "loading": {
+        "creating": "Creando rol…",
+        "saving": "Guardando rol…",
+        "deleting": "Eliminando rol…"
+      }
+    },
+    "permissions": {
+      "pagesRead": "Leer páginas",
+      "authorsWriteOwn": "Editar perfil de autor propio",
+      "authorsWriteAny": "Editar cualquier perfil de autor",
+      "authorsDeleteAny": "Eliminar cualquier perfil de autor",
+      "usersRead": "Ver usuarios",
+      "usersWrite": "Gestionar usuarios",
+      "usersDelete": "Eliminar usuarios",
+      "adminAccess": "Acceder al área de administración",
+      "rolesRead": "Ver roles",
+      "rolesWrite": "Gestionar roles",
+      "rolesDelete": "Eliminar roles"
     }
   }
 }
