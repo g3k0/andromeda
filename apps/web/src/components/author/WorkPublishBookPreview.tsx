@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import { Fragment, type ReactNode } from "react";
 
+import { useTranslation } from "@/lib/i18n/use-translation";
 import type {
   ManuscriptPreviewBlock,
   ParsedManuscriptPreview,
@@ -67,16 +70,18 @@ function manuscriptBlockKey(block: ManuscriptPreviewBlock): string {
 }
 
 function ManuscriptBody({ manuscript }: { manuscript: ParsedManuscriptPreview }) {
+  const { t } = useTranslation();
+
   if (manuscript.kind === "unsupported") {
     return (
-      <p className="text-sm leading-relaxed text-white/70">{manuscript.message}</p>
+      <p className="text-sm leading-relaxed text-white/70">{t(manuscript.code)}</p>
     );
   }
 
   if (manuscript.blocks.length === 0) {
     return (
       <p className="text-sm italic text-white/50">
-        No readable body text was found in this manuscript.
+        {t("publish.preview.emptyBody")}
       </p>
     );
   }
@@ -132,15 +137,15 @@ function PreviewPage({
 
 function EditionCoverImage({
   coverImageUrl,
-  title,
+  alt,
 }: {
   coverImageUrl: string;
-  title: string;
+  alt: string;
 }) {
   return (
     <Image
       src={coverImageUrl}
-      alt={`Cover for ${title}`}
+      alt={alt}
       width={320}
       height={480}
       unoptimized={coverImageUrl.startsWith("blob:") || coverImageUrl.startsWith("data:")}
@@ -154,18 +159,20 @@ export type WorkPublishBookPreviewProps = {
 };
 
 export function WorkPublishBookPreview({ preview }: WorkPublishBookPreviewProps) {
+  const { t } = useTranslation();
+
   return (
-    <div className="space-y-4" aria-label="Edition preview">
-      <PreviewPage title="Cover">
+    <div className="space-y-4" aria-label={t("publish.preview.ariaLabel")}>
+      <PreviewPage title={t("publish.preview.pages.cover")}>
         <div className="overflow-hidden rounded-lg border border-white/10 bg-black/30">
           {preview.coverImageUrl ? (
             <EditionCoverImage
               coverImageUrl={preview.coverImageUrl}
-              title={preview.title}
+              alt={t("publish.preview.coverAlt", { title: preview.title })}
             />
           ) : (
             <div className="flex aspect-[2/3] w-full max-w-xs items-center justify-center bg-white/5 text-sm text-white/40">
-              Cover image
+              {t("publish.preview.coverPlaceholder")}
             </div>
           )}
           <div className="space-y-1 p-4">
@@ -175,7 +182,7 @@ export function WorkPublishBookPreview({ preview }: WorkPublishBookPreviewProps)
         </div>
       </PreviewPage>
 
-      <PreviewPage title="Title page">
+      <PreviewPage title={t("publish.preview.pages.titlePage")}>
         <div className="space-y-3 text-center">
           <p className="text-3xl font-semibold text-white">{preview.title}</p>
           <p className="text-lg text-white/80">{preview.authorLabel}</p>
@@ -183,7 +190,7 @@ export function WorkPublishBookPreview({ preview }: WorkPublishBookPreviewProps)
         </div>
       </PreviewPage>
 
-      <PreviewPage title="Colophon">
+      <PreviewPage title={t("publish.preview.pages.colophon")}>
         <dl className="grid gap-3 sm:grid-cols-2">
           {preview.colophon.map((line) => (
             <div key={line.label} className="rounded-lg bg-white/5 p-3">
@@ -195,7 +202,7 @@ export function WorkPublishBookPreview({ preview }: WorkPublishBookPreviewProps)
       </PreviewPage>
 
       {preview.manuscript.kind === "text" && preview.manuscript.tableOfContents.length > 0 ? (
-        <PreviewPage title="Table of contents">
+        <PreviewPage title={t("publish.preview.pages.tableOfContents")}>
           <ol className="space-y-2">
             {preview.manuscript.tableOfContents.map((entry) => (
               <li
@@ -212,23 +219,23 @@ export function WorkPublishBookPreview({ preview }: WorkPublishBookPreviewProps)
         </PreviewPage>
       ) : null}
 
-      <PreviewPage title="Text">
+      <PreviewPage title={t("publish.preview.pages.text")}>
         <ManuscriptBody manuscript={preview.manuscript} />
       </PreviewPage>
 
-      <PreviewPage title="Back cover">
+      <PreviewPage title={t("publish.preview.pages.backCover")}>
         <p className="whitespace-pre-wrap text-sm leading-7 text-white/85">
           {preview.backCoverText}
         </p>
       </PreviewPage>
 
-      <PreviewPage title="About the author">
+      <PreviewPage title={t("publish.preview.pages.aboutAuthor")}>
         <p className="whitespace-pre-wrap text-sm leading-7 text-white/85">
           {preview.aboutAuthor}
         </p>
       </PreviewPage>
 
-      <PreviewPage title="Marketplace description">
+      <PreviewPage title={t("publish.preview.pages.marketplaceDescription")}>
         <p className="whitespace-pre-wrap text-sm leading-7 text-white/75">
           {preview.marketplaceDescription}
         </p>

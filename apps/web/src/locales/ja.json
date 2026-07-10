@@ -309,7 +309,8 @@
       "cover": "メタデータや一覧用のカバー画像。対応形式: PNG、JPEG、WebP。最大サイズ: {maxMb} MB。",
       "initialPrice": "任意。空欄のままにすると販売を開始せずオンチェーン登録のみ行えます。後からコピーを販売したりオークションを開催したりできます。",
       "maxCopies": "ミントする番号付きコピー（{min}–{max}）。ミントされた各コピーは番号付き NFT です。コレクターはコピーごとに価値を異なると見ることがあります（例: #1 と #145）。",
-      "externalUrl": "メタデータに含める任意の公開リンク（著者サイトなど）。"
+      "externalUrl": "メタデータに含める任意の公開リンク（著者サイトなど）。",
+      "previewBeforeUpload": "アップロード前に版のプレビューを生成します。プレビューには、読者が目にする表紙、奥付、目次、本文、後付が表示されます。"
     },
     "validation": {
       "title": {
@@ -380,7 +381,96 @@
       }
     },
     "errors": {
-      "connectWalletToPublish": "作品を公開するには著者ウォレット（{authorAddress}）を接続してください。"
+      "connectWalletToPublish": "作品を公開するには著者ウォレット（{authorAddress}）を接続してください。",
+      "connectWalletAndFiles": "著者ウォレットを接続し、カバーと原稿ファイルを添付してください。",
+      "previewFailed": "版のプレビューに失敗しました。",
+      "connectWalletToPublishShort": "公開するには著者ウォレットを接続してください。",
+      "previewBeforeUpload": "IPFS にアップロードする前に版をプレビューしてください。",
+      "confirmImmutability": "版のプレビューを確認し、オンチェーンの不変性に同意したことを確認してください。",
+      "uploadFailed": "作品のアップロードに失敗しました。",
+      "connectWalletToRegister": "作品を登録するには著者ウォレットを接続してください。",
+      "registerFailed": "オンチェーン登録に失敗しました。",
+      "manuscriptRequiredForPreview": "プレビューには原稿ファイルが必要です。"
+    },
+    "loading": {
+      "uploading": "暗号化された作品をアップロード中…"
+    },
+    "preview": {
+      "sectionTitle": "版のプレビュー",
+      "sectionDescription": "IPFS にピン留めする前に、整形された版を確認してください。",
+      "ariaLabel": "版のプレビュー",
+      "coverAlt": "{title} のカバー",
+      "coverPlaceholder": "カバー画像",
+      "emptyBody": "この原稿に読み取り可能な本文は見つかりませんでした。",
+      "unsupportedBinaryFormat": "プレーンテキストおよび Markdown 原稿では版のライブプレビューが利用できます。バイナリ形式は引き続き暗号化され、そのままアップロードされます。",
+      "unsupportedUtf8": "この原稿はプレビュー用に UTF-8 テキストとしてデコードできませんでした。引き続き暗号化され、そのままアップロードされます。",
+      "pages": {
+        "cover": "表紙",
+        "titlePage": "タイトルページ",
+        "colophon": "奥付",
+        "tableOfContents": "目次",
+        "text": "本文",
+        "backCover": "裏表紙",
+        "aboutAuthor": "著者について",
+        "marketplaceDescription": "マーケットプレイス説明"
+      },
+      "colophon": {
+        "publicationDate": "出版日",
+        "edition": "版",
+        "editionKind": "版の種類",
+        "reprintNumber": "重版番号",
+        "originalPublication": "初版発行",
+        "series": "シリーズ",
+        "seriesVolume": "シリーズ巻数",
+        "language": "言語",
+        "authorAddress": "著者アドレス",
+        "firstEdition": "初版",
+        "reprint": "重版"
+      },
+      "marketplaceDescription": {
+        "firstEdition": "初版、版 {number}",
+        "reprint": "重版 {reprint}、版 {number}",
+        "published": "{date} 出版",
+        "originallyPublished": "初版 {date} 出版",
+        "seriesVolume": "{series} 第 {volume} 巻",
+        "language": "言語: {language}",
+        "author": "著者: {address}"
+      }
+    },
+    "metadataPreview": {
+      "title": "ACE メタデータプレビュー"
+    },
+    "acknowledgment": {
+      "immutability": "版のプレビューを確認し、アップロードおよびミント後はこの作品がオンチェーンで不変となり変更できないことを理解しました。"
+    },
+    "actions": {
+      "registerOnChain": "オンチェーン登録",
+      "previewEdition": "版をプレビュー",
+      "encrypting": "暗号化中…",
+      "pinningToIpfs": "IPFS にピン留め中…",
+      "uploadToIpfs": "IPFS にアップロード"
+    },
+    "success": {
+      "registered": "作品をオンチェーン登録しました。トランザクション: {txHash}"
+    }
+  },
+  "authorOnboarding": {
+    "prompt": {
+      "title": "著者ページを作成しますか？",
+      "description": "Andromeda でプロフィールを公開する、著者ページなしで読者として続ける、またはキャンセルしてサインインせずに終了する、いずれかを選べます。",
+      "accept": "はい、ページを作成",
+      "decline": "いいえ、読者のまま",
+      "cancel": "キャンセル",
+      "creating": "著者ページを作成中"
+    },
+    "editor": {
+      "title": "著者ページを作成",
+      "description": "Andromeda で公開する前にプロフィールをカスタマイズしてください。",
+      "back": "戻る"
+    },
+    "loading": {
+      "creatingPage": "著者ページを作成中…",
+      "savingPreference": "設定を保存中…"
     }
   }
 }

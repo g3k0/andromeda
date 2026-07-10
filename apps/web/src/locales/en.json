@@ -309,7 +309,8 @@
       "cover": "Cover image for metadata and listings. Allowed formats: PNG, JPEG, WebP. Maximum size: {maxMb} MB.",
       "initialPrice": "Optional. Leave blank to register the work on-chain without opening sales. You can list copies for sale or run auctions later.",
       "maxCopies": "Numbered copies to mint ({min}–{max}). Each minted copy is a numbered NFT; collectors may value copies differently—for example, copy #1 versus copy #145.",
-      "externalUrl": "Optional public link included in metadata, such as your author website."
+      "externalUrl": "Optional public link included in metadata, such as your author website.",
+      "previewBeforeUpload": "Generate an edition preview before uploading. The preview shows cover, colophon, table of contents, body text, and back-matter as readers will see them."
     },
     "validation": {
       "title": {
@@ -380,7 +381,96 @@
       }
     },
     "errors": {
-      "connectWalletToPublish": "Connect the author wallet ({authorAddress}) to publish a work."
+      "connectWalletToPublish": "Connect the author wallet ({authorAddress}) to publish a work.",
+      "connectWalletAndFiles": "Connect the author wallet and attach cover and manuscript files.",
+      "previewFailed": "Edition preview failed.",
+      "connectWalletToPublishShort": "Connect the author wallet to publish.",
+      "previewBeforeUpload": "Preview the edition before uploading to IPFS.",
+      "confirmImmutability": "Confirm that you reviewed the edition preview and accept on-chain immutability.",
+      "uploadFailed": "Work upload failed.",
+      "connectWalletToRegister": "Connect the author wallet to register the work.",
+      "registerFailed": "On-chain registration failed.",
+      "manuscriptRequiredForPreview": "Manuscript file is required for preview."
+    },
+    "loading": {
+      "uploading": "Uploading encrypted work…"
+    },
+    "preview": {
+      "sectionTitle": "Edition preview",
+      "sectionDescription": "Review the formatted edition before pinning it to IPFS.",
+      "ariaLabel": "Edition preview",
+      "coverAlt": "Cover for {title}",
+      "coverPlaceholder": "Cover image",
+      "emptyBody": "No readable body text was found in this manuscript.",
+      "unsupportedBinaryFormat": "Live edition preview is available for plain text and Markdown manuscripts. Binary formats are still encrypted and uploaded unchanged.",
+      "unsupportedUtf8": "This manuscript could not be decoded as UTF-8 text for preview. It will still be encrypted and uploaded unchanged.",
+      "pages": {
+        "cover": "Cover",
+        "titlePage": "Title page",
+        "colophon": "Colophon",
+        "tableOfContents": "Table of contents",
+        "text": "Text",
+        "backCover": "Back cover",
+        "aboutAuthor": "About the author",
+        "marketplaceDescription": "Marketplace description"
+      },
+      "colophon": {
+        "publicationDate": "Publication date",
+        "edition": "Edition",
+        "editionKind": "Edition kind",
+        "reprintNumber": "Reprint number",
+        "originalPublication": "Original publication",
+        "series": "Series",
+        "seriesVolume": "Series volume",
+        "language": "Language",
+        "authorAddress": "Author address",
+        "firstEdition": "First edition",
+        "reprint": "Reprint"
+      },
+      "marketplaceDescription": {
+        "firstEdition": "First edition, edition {number}",
+        "reprint": "Reprint {reprint}, edition {number}",
+        "published": "published {date}",
+        "originallyPublished": "originally published {date}",
+        "seriesVolume": "Vol. {volume} of {series}",
+        "language": "Language: {language}",
+        "author": "Author: {address}"
+      }
+    },
+    "metadataPreview": {
+      "title": "ACE metadata preview"
+    },
+    "acknowledgment": {
+      "immutability": "I have reviewed the edition preview and understand that once uploaded and minted, this work becomes immutable on-chain and cannot be modified."
+    },
+    "actions": {
+      "registerOnChain": "Register on-chain",
+      "previewEdition": "Preview edition",
+      "encrypting": "Encrypting…",
+      "pinningToIpfs": "Pinning to IPFS…",
+      "uploadToIpfs": "Upload to IPFS"
+    },
+    "success": {
+      "registered": "Work registered on-chain. Transaction: {txHash}"
+    }
+  },
+  "authorOnboarding": {
+    "prompt": {
+      "title": "Do you want to create your author page?",
+      "description": "You can publish your profile on Andromeda, continue as a reader without an author page, or cancel to leave without signing in.",
+      "accept": "Yes, create page",
+      "decline": "No, stay as reader",
+      "cancel": "Cancel",
+      "creating": "Creating author page"
+    },
+    "editor": {
+      "title": "Create your author page",
+      "description": "Customize your profile before publishing it on Andromeda.",
+      "back": "Back"
+    },
+    "loading": {
+      "creatingPage": "Creating author page…",
+      "savingPreference": "Saving your preference…"
     }
   }
 }

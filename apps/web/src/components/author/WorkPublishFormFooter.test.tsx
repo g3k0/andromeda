@@ -1,8 +1,9 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderWithI18n } from "@/lib/i18n/test-utils";
 
 import { WorkPublishFormFooter } from "./WorkPublishFormFooter";
 import { createEmptyWorkPublishForm } from "@/lib/works/work-publish-form-state";
@@ -17,7 +18,7 @@ describe("WorkPublishFormFooter", () => {
     const onUpload = vi.fn();
     const onAcknowledgedChange = vi.fn();
 
-    render(
+    renderWithI18n(
       <WorkPublishFormFooter
         values={createEmptyWorkPublishForm()}
         errors={{}}
@@ -45,7 +46,7 @@ describe("WorkPublishFormFooter", () => {
   });
 
   it("enables upload when preview and acknowledgment are both ready", () => {
-    render(
+    renderWithI18n(
       <WorkPublishFormFooter
         values={createEmptyWorkPublishForm()}
         errors={{}}

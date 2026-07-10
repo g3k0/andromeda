@@ -96,6 +96,78 @@ export function getPublishExternalUrlGuidance(t: TranslateFn): string {
   return t("publish.guidance.externalUrl");
 }
 
+export function getPublishPreviewBeforeUploadGuidance(t: TranslateFn): string {
+  return t("publish.guidance.previewBeforeUpload");
+}
+
+export function getPublishImmutabilityAcknowledgment(t: TranslateFn): string {
+  return t("publish.acknowledgment.immutability");
+}
+
+export function buildWorkDescriptionPreviewFromImprint(
+  imprint: import("@/lib/ipfs/metadata-schema").WorkImprintMetadata,
+  t: TranslateFn,
+): string {
+  const parts: string[] = [imprint.back_cover_text];
+  const editionParts: string[] = [];
+
+  if (imprint.edition_kind === "first") {
+    editionParts.push(
+      t("publish.preview.marketplaceDescription.firstEdition", {
+        number: String(imprint.edition_number),
+      }),
+    );
+  } else {
+    editionParts.push(
+      t("publish.preview.marketplaceDescription.reprint", {
+        reprint: String(imprint.reprint_number),
+        number: String(imprint.edition_number),
+      }),
+    );
+  }
+
+  editionParts.push(
+    t("publish.preview.marketplaceDescription.published", {
+      date: imprint.publication_date,
+    }),
+  );
+
+  if (imprint.original_publication_date) {
+    editionParts.push(
+      t("publish.preview.marketplaceDescription.originallyPublished", {
+        date: imprint.original_publication_date,
+      }),
+    );
+  }
+
+  if (imprint.series_name) {
+    editionParts.push(
+      t("publish.preview.marketplaceDescription.seriesVolume", {
+        volume: String(imprint.series_volume),
+        series: imprint.series_name,
+      }),
+    );
+  }
+
+  if (imprint.language) {
+    editionParts.push(
+      t("publish.preview.marketplaceDescription.language", {
+        language: imprint.language,
+      }),
+    );
+  }
+
+  editionParts.push(
+    t("publish.preview.marketplaceDescription.author", {
+      address: imprint.author_address,
+    }),
+  );
+
+  parts.push(editionParts.join(" · "));
+
+  return parts.join("\n\n");
+}
+
 export function translateManuscriptFileError(
   t: TranslateFn,
   error: { code: string; params?: TranslationParams },

@@ -309,7 +309,8 @@
       "cover": "Imagen de portada para metadatos y listados. Formatos permitidos: PNG, JPEG, WebP. Tamaño máximo: {maxMb} MB.",
       "initialPrice": "Opcional. Deja en blanco para registrar la obra on-chain sin abrir ventas. Podrás poner copias a la venta o realizar subastas más adelante.",
       "maxCopies": "Copias numeradas a acuñar ({min}–{max}). Cada copia acuñada es un NFT numerado; los coleccionistas pueden valorar las copias de forma distinta — por ejemplo, la copia n.º 1 frente a la n.º 145.",
-      "externalUrl": "Enlace público opcional incluido en metadatos, como tu sitio web de autor."
+      "externalUrl": "Enlace público opcional incluido en metadatos, como tu sitio web de autor.",
+      "previewBeforeUpload": "Genera una vista previa de la edición antes de subirla. La vista previa muestra la portada, el colofón, el índice, el cuerpo del texto y las páginas finales tal como las verán los lectores."
     },
     "validation": {
       "title": {
@@ -380,7 +381,96 @@
       }
     },
     "errors": {
-      "connectWalletToPublish": "Conecta la cartera del autor ({authorAddress}) para publicar una obra."
+      "connectWalletToPublish": "Conecta la cartera del autor ({authorAddress}) para publicar una obra.",
+      "connectWalletAndFiles": "Conecta la cartera del autor y adjunta los archivos de portada y manuscrito.",
+      "previewFailed": "Error en la vista previa de la edición.",
+      "connectWalletToPublishShort": "Conecta la cartera del autor para publicar.",
+      "previewBeforeUpload": "Previsualiza la edición antes de subirla a IPFS.",
+      "confirmImmutability": "Confirma que has revisado la vista previa de la edición y aceptas la inmutabilidad on-chain.",
+      "uploadFailed": "Error al subir la obra.",
+      "connectWalletToRegister": "Conecta la cartera del autor para registrar la obra.",
+      "registerFailed": "Error en el registro on-chain.",
+      "manuscriptRequiredForPreview": "El archivo del manuscrito es obligatorio para la vista previa."
+    },
+    "loading": {
+      "uploading": "Subiendo obra cifrada…"
+    },
+    "preview": {
+      "sectionTitle": "Vista previa de la edición",
+      "sectionDescription": "Revisa la edición formateada antes de fijarla en IPFS.",
+      "ariaLabel": "Vista previa de la edición",
+      "coverAlt": "Portada de {title}",
+      "coverPlaceholder": "Imagen de portada",
+      "emptyBody": "No se encontró texto legible en este manuscrito.",
+      "unsupportedBinaryFormat": "La vista previa en vivo de la edición está disponible para manuscritos de texto plano y Markdown. Los formatos binarios se cifran y suben sin cambios.",
+      "unsupportedUtf8": "Este manuscrito no pudo decodificarse como texto UTF-8 para la vista previa. Se cifrará y subirá sin cambios.",
+      "pages": {
+        "cover": "Portada",
+        "titlePage": "Página de título",
+        "colophon": "Colofón",
+        "tableOfContents": "Índice",
+        "text": "Texto",
+        "backCover": "Contraportada",
+        "aboutAuthor": "Sobre el autor",
+        "marketplaceDescription": "Descripción para el mercado"
+      },
+      "colophon": {
+        "publicationDate": "Fecha de publicación",
+        "edition": "Edición",
+        "editionKind": "Tipo de edición",
+        "reprintNumber": "Número de reimpresión",
+        "originalPublication": "Publicación original",
+        "series": "Serie",
+        "seriesVolume": "Volumen de la serie",
+        "language": "Idioma",
+        "authorAddress": "Dirección del autor",
+        "firstEdition": "Primera edición",
+        "reprint": "Reimpresión"
+      },
+      "marketplaceDescription": {
+        "firstEdition": "Primera edición, edición {number}",
+        "reprint": "Reimpresión {reprint}, edición {number}",
+        "published": "publicada el {date}",
+        "originallyPublished": "publicada originalmente el {date}",
+        "seriesVolume": "Vol. {volume} de {series}",
+        "language": "Idioma: {language}",
+        "author": "Autor: {address}"
+      }
+    },
+    "metadataPreview": {
+      "title": "Vista previa de metadatos ACE"
+    },
+    "acknowledgment": {
+      "immutability": "He revisado la vista previa de la edición y entiendo que, una vez subida y acuñada, esta obra se vuelve inmutable on-chain y no puede modificarse."
+    },
+    "actions": {
+      "registerOnChain": "Registrar on-chain",
+      "previewEdition": "Vista previa de la edición",
+      "encrypting": "Cifrando…",
+      "pinningToIpfs": "Fijando en IPFS…",
+      "uploadToIpfs": "Subir a IPFS"
+    },
+    "success": {
+      "registered": "Obra registrada on-chain. Transacción: {txHash}"
+    }
+  },
+  "authorOnboarding": {
+    "prompt": {
+      "title": "¿Quieres crear tu página de autor?",
+      "description": "Puedes publicar tu perfil en Andromeda, continuar como lector sin página de autor o cancelar para salir sin iniciar sesión.",
+      "accept": "Sí, crear página",
+      "decline": "No, seguir como lector",
+      "cancel": "Cancelar",
+      "creating": "Creando página de autor"
+    },
+    "editor": {
+      "title": "Crea tu página de autor",
+      "description": "Personaliza tu perfil antes de publicarlo en Andromeda.",
+      "back": "Volver"
+    },
+    "loading": {
+      "creatingPage": "Creando página de autor…",
+      "savingPreference": "Guardando tu preferencia…"
     }
   }
 }

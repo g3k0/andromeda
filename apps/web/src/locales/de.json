@@ -309,7 +309,8 @@
       "cover": "Coverbild für Metadaten und Listings. Erlaubte Formate: PNG, JPEG, WebP. Maximale Größe: {maxMb} MB.",
       "initialPrice": "Optional. Leer lassen, um das Werk on-chain zu registrieren, ohne den Verkauf zu öffnen. Du kannst später Exemplare zum Verkauf anbieten oder Auktionen durchführen.",
       "maxCopies": "Zu prägende nummerierte Exemplare ({min}–{max}). Jedes geprägte Exemplar ist ein nummeriertes NFT; Sammler können Exemplare unterschiedlich bewerten — z. B. Exemplar Nr. 1 gegenüber Nr. 145.",
-      "externalUrl": "Optionaler öffentlicher Link in den Metadaten, z. B. deine Autoren-Website."
+      "externalUrl": "Optionaler öffentlicher Link in den Metadaten, z. B. deine Autoren-Website.",
+      "previewBeforeUpload": "Erstelle vor dem Upload eine Vorschau der Ausgabe. Die Vorschau zeigt Cover, Kolophon, Inhaltsverzeichnis, Fließtext und Anhangsseiten, wie Leser sie sehen werden."
     },
     "validation": {
       "title": {
@@ -380,7 +381,96 @@
       }
     },
     "errors": {
-      "connectWalletToPublish": "Verbinde die Autoren-Wallet ({authorAddress}), um ein Werk zu veröffentlichen."
+      "connectWalletToPublish": "Verbinde die Autoren-Wallet ({authorAddress}), um ein Werk zu veröffentlichen.",
+      "connectWalletAndFiles": "Verbinde die Autoren-Wallet und füge Cover- und Manuskriptdateien hinzu.",
+      "previewFailed": "Ausgabenvorschau fehlgeschlagen.",
+      "connectWalletToPublishShort": "Verbinde die Autoren-Wallet zum Veröffentlichen.",
+      "previewBeforeUpload": "Sieh dir die Ausgabe an, bevor du sie auf IPFS hochlädst.",
+      "confirmImmutability": "Bestätige, dass du die Ausgabenvorschau geprüft hast und die On-Chain-Unveränderlichkeit akzeptierst.",
+      "uploadFailed": "Upload des Werks fehlgeschlagen.",
+      "connectWalletToRegister": "Verbinde die Autoren-Wallet, um das Werk zu registrieren.",
+      "registerFailed": "On-Chain-Registrierung fehlgeschlagen.",
+      "manuscriptRequiredForPreview": "Manuskriptdatei ist für die Vorschau erforderlich."
+    },
+    "loading": {
+      "uploading": "Verschlüsseltes Werk wird hochgeladen…"
+    },
+    "preview": {
+      "sectionTitle": "Ausgabenvorschau",
+      "sectionDescription": "Prüfe die formatierte Ausgabe, bevor du sie auf IPFS pinnst.",
+      "ariaLabel": "Ausgabenvorschau",
+      "coverAlt": "Cover für {title}",
+      "coverPlaceholder": "Coverbild",
+      "emptyBody": "In diesem Manuskript wurde kein lesbarer Fließtext gefunden.",
+      "unsupportedBinaryFormat": "Die Live-Ausgabenvorschau ist für Klartext- und Markdown-Manuskripte verfügbar. Binärformate werden weiterhin verschlüsselt und unverändert hochgeladen.",
+      "unsupportedUtf8": "Dieses Manuskript konnte für die Vorschau nicht als UTF-8-Text dekodiert werden. Es wird weiterhin verschlüsselt und unverändert hochgeladen.",
+      "pages": {
+        "cover": "Cover",
+        "titlePage": "Titelseite",
+        "colophon": "Kolophon",
+        "tableOfContents": "Inhaltsverzeichnis",
+        "text": "Text",
+        "backCover": "Rückseite",
+        "aboutAuthor": "Über den Autor",
+        "marketplaceDescription": "Marktplatzbeschreibung"
+      },
+      "colophon": {
+        "publicationDate": "Erscheinungsdatum",
+        "edition": "Ausgabe",
+        "editionKind": "Ausgabenart",
+        "reprintNumber": "Nachdrucknummer",
+        "originalPublication": "Erstveröffentlichung",
+        "series": "Serie",
+        "seriesVolume": "Serienband",
+        "language": "Sprache",
+        "authorAddress": "Autorenadresse",
+        "firstEdition": "Erstausgabe",
+        "reprint": "Nachdruck"
+      },
+      "marketplaceDescription": {
+        "firstEdition": "Erstausgabe, Ausgabe {number}",
+        "reprint": "Nachdruck {reprint}, Ausgabe {number}",
+        "published": "erschienen am {date}",
+        "originallyPublished": "ursprünglich erschienen am {date}",
+        "seriesVolume": "Bd. {volume} von {series}",
+        "language": "Sprache: {language}",
+        "author": "Autor: {address}"
+      }
+    },
+    "metadataPreview": {
+      "title": "ACE-Metadatenvorschau"
+    },
+    "acknowledgment": {
+      "immutability": "Ich habe die Ausgabenvorschau geprüft und verstehe, dass dieses Werk nach dem Upload und Prägen on-chain unveränderlich wird und nicht mehr geändert werden kann."
+    },
+    "actions": {
+      "registerOnChain": "On-chain registrieren",
+      "previewEdition": "Ausgabe anzeigen",
+      "encrypting": "Verschlüsselung…",
+      "pinningToIpfs": "Auf IPFS pinnen…",
+      "uploadToIpfs": "Auf IPFS hochladen"
+    },
+    "success": {
+      "registered": "Werk on-chain registriert. Transaktion: {txHash}"
+    }
+  },
+  "authorOnboarding": {
+    "prompt": {
+      "title": "Möchtest du deine Autorenseite erstellen?",
+      "description": "Du kannst dein Profil auf Andromeda veröffentlichen, als Leser ohne Autorenseite fortfahren oder abbrechen, um ohne Anmeldung zu verlassen.",
+      "accept": "Ja, Seite erstellen",
+      "decline": "Nein, als Leser bleiben",
+      "cancel": "Abbrechen",
+      "creating": "Autorenseite wird erstellt"
+    },
+    "editor": {
+      "title": "Erstelle deine Autorenseite",
+      "description": "Passe dein Profil an, bevor du es auf Andromeda veröffentlichst.",
+      "back": "Zurück"
+    },
+    "loading": {
+      "creatingPage": "Autorenseite wird erstellt…",
+      "savingPreference": "Deine Präferenz wird gespeichert…"
     }
   }
 }

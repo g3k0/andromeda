@@ -17,7 +17,7 @@ export type ParsedManuscriptPreview =
   | {
       kind: "unsupported";
       format: string;
-      message: string;
+      code: string;
     };
 
 const MARKDOWN_HEADING = /^(#{1,6})\s+(.+)$/;
@@ -66,8 +66,7 @@ export function parseManuscriptTextForPreview(
     return {
       kind: "unsupported",
       format,
-      message:
-        "Live edition preview is available for plain text and Markdown manuscripts. Binary formats are still encrypted and uploaded unchanged.",
+      code: "publish.preview.unsupportedBinaryFormat",
     };
   }
 

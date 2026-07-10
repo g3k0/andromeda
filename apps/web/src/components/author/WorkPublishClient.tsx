@@ -76,7 +76,7 @@ export function WorkPublishClient({
     if (!canPublish || !coverImage || !manuscriptFile) {
       dispatch({
         type: "set_error_message",
-        message: "Connect the author wallet and attach cover and manuscript files.",
+        message: t("publish.errors.connectWalletAndFiles"),
       });
       return;
     }
@@ -104,14 +104,14 @@ export function WorkPublishClient({
         coverImage,
         manuscriptFile,
         coverImageUrl,
-      });
+      }, t);
 
       dispatch({ type: "edition_preview_ready", preview });
     } catch (error) {
       dispatch({
         type: "set_error_message",
         message:
-          error instanceof Error ? error.message : "Edition preview failed.",
+          error instanceof Error ? error.message : t("publish.errors.previewFailed"),
       });
     }
   }
@@ -123,7 +123,7 @@ export function WorkPublishClient({
     if (!canPublish || !coverImage || !manuscriptFile) {
       dispatch({
         type: "set_error_message",
-        message: "Connect the author wallet to publish.",
+        message: t("publish.errors.connectWalletToPublishShort"),
       });
       return;
     }
@@ -131,7 +131,7 @@ export function WorkPublishClient({
     if (!state.editionPreviewReady) {
       dispatch({
         type: "set_error_message",
-        message: "Preview the edition before uploading to IPFS.",
+        message: t("publish.errors.previewBeforeUpload"),
       });
       return;
     }
@@ -139,8 +139,7 @@ export function WorkPublishClient({
     if (!state.editionPreviewAcknowledged) {
       dispatch({
         type: "set_error_message",
-        message:
-          "Confirm that you reviewed the edition preview and accept on-chain immutability.",
+        message: t("publish.errors.confirmImmutability"),
       });
       return;
     }
@@ -178,12 +177,12 @@ export function WorkPublishClient({
         metadataUriRef.current = result.metadataUri;
         storeWorkContentKey(result.metadataUri, result.contentKey);
         dispatch({ type: "upload_success", metadata: result.metadata });
-      }, "Uploading encrypted work…");
+      }, t("publish.loading.uploading"));
     } catch (error) {
       dispatch({ type: "set_step", step: "error" });
       dispatch({
         type: "set_error_message",
-        message: error instanceof Error ? error.message : "Work upload failed.",
+        message: error instanceof Error ? error.message : t("publish.errors.uploadFailed"),
       });
     }
   }
@@ -198,7 +197,7 @@ export function WorkPublishClient({
     if (!canPublish) {
       dispatch({
         type: "set_error_message",
-        message: "Connect the author wallet to register the work.",
+        message: t("publish.errors.connectWalletToRegister"),
       });
       return;
     }
@@ -217,6 +216,10 @@ export function WorkPublishClient({
       dispatch({ type: "register_success", txHash: hash });
     } catch {
       dispatch({ type: "register_failed" });
+      dispatch({
+        type: "set_error_message",
+        message: t("publish.errors.registerFailed"),
+      });
     }
   }
 

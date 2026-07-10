@@ -309,7 +309,8 @@
       "cover": "Image de couverture pour les métadonnées et les annonces. Formats autorisés : PNG, JPEG, WebP. Taille maximale : {maxMb} Mo.",
       "initialPrice": "Facultatif. Laissez vide pour enregistrer l'œuvre on-chain sans ouvrir les ventes. Vous pourrez proposer des exemplaires à la vente ou organiser des enchères plus tard.",
       "maxCopies": "Exemplaires numérotés à frapper ({min}–{max}). Chaque exemplaire frappé est un NFT numéroté ; les collectionneurs peuvent valoriser différemment les exemplaires — par exemple, l'exemplaire n° 1 par rapport au n° 145.",
-      "externalUrl": "Lien public optionnel inclus dans les métadonnées, comme votre site d'auteur."
+      "externalUrl": "Lien public optionnel inclus dans les métadonnées, comme votre site d'auteur.",
+      "previewBeforeUpload": "Générez un aperçu de l'édition avant le téléversement. L'aperçu affiche la couverture, le colophon, la table des matières, le corps du texte et les pages de fin telles que les lecteurs les verront."
     },
     "validation": {
       "title": {
@@ -380,7 +381,96 @@
       }
     },
     "errors": {
-      "connectWalletToPublish": "Connectez le portefeuille auteur ({authorAddress}) pour publier une œuvre."
+      "connectWalletToPublish": "Connectez le portefeuille auteur ({authorAddress}) pour publier une œuvre.",
+      "connectWalletAndFiles": "Connectez le portefeuille auteur et joignez les fichiers de couverture et de manuscrit.",
+      "previewFailed": "Échec de l'aperçu de l'édition.",
+      "connectWalletToPublishShort": "Connectez le portefeuille auteur pour publier.",
+      "previewBeforeUpload": "Prévisualisez l'édition avant de téléverser sur IPFS.",
+      "confirmImmutability": "Confirmez que vous avez examiné l'aperçu de l'édition et acceptez l'immutabilité on-chain.",
+      "uploadFailed": "Échec du téléversement de l'œuvre.",
+      "connectWalletToRegister": "Connectez le portefeuille auteur pour enregistrer l'œuvre.",
+      "registerFailed": "Échec de l'enregistrement on-chain.",
+      "manuscriptRequiredForPreview": "Le fichier du manuscrit est obligatoire pour l'aperçu."
+    },
+    "loading": {
+      "uploading": "Téléversement de l'œuvre chiffrée…"
+    },
+    "preview": {
+      "sectionTitle": "Aperçu de l'édition",
+      "sectionDescription": "Vérifiez l'édition mise en forme avant de l'épingler sur IPFS.",
+      "ariaLabel": "Aperçu de l'édition",
+      "coverAlt": "Couverture de {title}",
+      "coverPlaceholder": "Image de couverture",
+      "emptyBody": "Aucun texte lisible n'a été trouvé dans ce manuscrit.",
+      "unsupportedBinaryFormat": "L'aperçu en direct de l'édition est disponible pour les manuscrits en texte brut et Markdown. Les formats binaires sont toujours chiffrés et téléversés inchangés.",
+      "unsupportedUtf8": "Ce manuscrit n'a pas pu être décodé en texte UTF-8 pour l'aperçu. Il sera tout de même chiffré et téléversé inchangé.",
+      "pages": {
+        "cover": "Couverture",
+        "titlePage": "Page de titre",
+        "colophon": "Colophon",
+        "tableOfContents": "Table des matières",
+        "text": "Texte",
+        "backCover": "Quatrième de couverture",
+        "aboutAuthor": "À propos de l'auteur",
+        "marketplaceDescription": "Description pour le marché"
+      },
+      "colophon": {
+        "publicationDate": "Date de publication",
+        "edition": "Édition",
+        "editionKind": "Type d'édition",
+        "reprintNumber": "Numéro de réimpression",
+        "originalPublication": "Publication originale",
+        "series": "Série",
+        "seriesVolume": "Volume de la série",
+        "language": "Langue",
+        "authorAddress": "Adresse de l'auteur",
+        "firstEdition": "Première édition",
+        "reprint": "Réimpression"
+      },
+      "marketplaceDescription": {
+        "firstEdition": "Première édition, édition {number}",
+        "reprint": "Réimpression {reprint}, édition {number}",
+        "published": "publiée le {date}",
+        "originallyPublished": "publiée à l'origine le {date}",
+        "seriesVolume": "Vol. {volume} de {series}",
+        "language": "Langue : {language}",
+        "author": "Auteur : {address}"
+      }
+    },
+    "metadataPreview": {
+      "title": "Aperçu des métadonnées ACE"
+    },
+    "acknowledgment": {
+      "immutability": "J'ai examiné l'aperçu de l'édition et je comprends qu'une fois téléversée et frappée, cette œuvre devient immuable on-chain et ne peut plus être modifiée."
+    },
+    "actions": {
+      "registerOnChain": "Enregistrer on-chain",
+      "previewEdition": "Aperçu de l'édition",
+      "encrypting": "Chiffrement…",
+      "pinningToIpfs": "Épinglage sur IPFS…",
+      "uploadToIpfs": "Téléverser sur IPFS"
+    },
+    "success": {
+      "registered": "Œuvre enregistrée on-chain. Transaction : {txHash}"
+    }
+  },
+  "authorOnboarding": {
+    "prompt": {
+      "title": "Voulez-vous créer votre page auteur ?",
+      "description": "Vous pouvez publier votre profil sur Andromeda, continuer en tant que lecteur sans page auteur, ou annuler pour partir sans vous connecter.",
+      "accept": "Oui, créer la page",
+      "decline": "Non, rester lecteur",
+      "cancel": "Annuler",
+      "creating": "Création de la page auteur"
+    },
+    "editor": {
+      "title": "Créez votre page auteur",
+      "description": "Personnalisez votre profil avant de le publier sur Andromeda.",
+      "back": "Retour"
+    },
+    "loading": {
+      "creatingPage": "Création de la page auteur…",
+      "savingPreference": "Enregistrement de votre préférence…"
     }
   }
 }

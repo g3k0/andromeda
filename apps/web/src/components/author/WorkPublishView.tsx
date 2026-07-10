@@ -1,6 +1,7 @@
 "use client";
 
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import type {
   WorkPublishFormErrors,
   WorkPublishFormValues,
@@ -57,6 +58,7 @@ export function WorkPublishView({
   onUpload,
   onRegister,
 }: WorkPublishViewProps) {
+  const { t } = useTranslation();
   const isBusy = step === "encrypting" || step === "uploading" || step === "registering";
   const isComplete = step === "success";
   const disabled = isBusy || isComplete;
@@ -91,9 +93,9 @@ export function WorkPublishView({
       {editionPreview ? (
         <div className="space-y-3">
           <div>
-            <h2 className="text-sm font-medium text-white">Edition preview</h2>
+            <h2 className="text-sm font-medium text-white">{t("publish.preview.sectionTitle")}</h2>
             <p className="mt-1 text-xs text-white/50">
-              Review the formatted edition before pinning it to IPFS.
+              {t("publish.preview.sectionDescription")}
             </p>
           </div>
           <WorkPublishBookPreview preview={editionPreview} />
