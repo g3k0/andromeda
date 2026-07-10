@@ -16,14 +16,14 @@ vi.mock("next/image", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({
+  useRouter: vi.fn(() => ({
     push: vi.fn(),
     replace: vi.fn(),
     back: vi.fn(),
     forward: vi.fn(),
     refresh: vi.fn(),
     prefetch: vi.fn(),
-  }),
+  })),
   usePathname: vi.fn(() => "/en"),
   useParams: vi.fn(() => ({ locale: "en" })),
 }));

@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "siteName": "Andromeda",
+    "siteDescription": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies."
+  },
+  "locales": {
+    "en": "English",
+    "fr": "Français",
+    "es": "Español",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "pt": "Português",
+    "zh": "中文",
+    "ja": "日本語"
+  }
+}
