@@ -1,3 +1,4 @@
+import type { TranslationParams } from "@/lib/i18n/types";
 import {
   ALLOWED_WORK_MANUSCRIPT_EXTENSIONS,
   isAllowedWorkManuscriptExtension,
@@ -8,9 +9,16 @@ import {
 
 export const MAX_MANUSCRIPT_FILENAME_LENGTH = 255;
 
+const MANUSCRIPT_FORMATS_LABEL = ALLOWED_WORK_MANUSCRIPT_EXTENSIONS.map((ext) =>
+  ext.slice(1).toUpperCase(),
+).join(", ");
+
 export class InvalidManuscriptFileError extends Error {
-  constructor(message: string) {
-    super(message);
+  constructor(
+    public readonly code: string,
+    public readonly params?: TranslationParams,
+  ) {
+    super(code);
     this.name = "InvalidManuscriptFileError";
   }
 }
@@ -64,13 +72,19 @@ function isValidUtf8Text(bytes: Uint8Array): boolean {
 
 function validateManuscriptFilename(filename: string): void {
   if (!filename.trim()) {
-    throw new InvalidManuscriptFileError("Manuscript filename is required.");
+    throw new InvalidManuscriptFileError(
+      "publish.validation.manuscriptFile.filenameRequired",
+    );
   }
   if (filename.length > MAX_MANUSCRIPT_FILENAME_LENGTH) {
-    throw new InvalidManuscriptFileError("Manuscript filename is too long.");
+    throw new InvalidManuscriptFileError(
+      "publish.validation.manuscriptFile.filenameTooLong",
+    );
   }
   if (/[\0/\\]/.test(filename) || filename.includes("..")) {
-    throw new InvalidManuscriptFileError("Manuscript filename is invalid.");
+    throw new InvalidManuscriptFileError(
+      "publish.validation.manuscriptFile.filenameInvalid",
+    );
   }
 }
 
@@ -89,7 +103,8 @@ function validateManuscriptMimeType(file: File, extension: string): void {
   }
 
   throw new InvalidManuscriptFileError(
-    `Allowed formats: ${ALLOWED_WORK_MANUSCRIPT_EXTENSIONS.map((ext) => ext.slice(1).toUpperCase()).join(", ")}.`,
+    "publish.validation.manuscriptFile.invalidFormat",
+    { formats: MANUSCRIPT_FORMATS_LABEL },
   );
 }
 
@@ -97,19 +112,21 @@ export function validateManuscriptFile(file: File): void {
   validateManuscriptFilename(file.name);
 
   if (file.size <= 0) {
-    throw new InvalidManuscriptFileError("Manuscript file is empty.");
+    throw new InvalidManuscriptFileError("publish.validation.manuscriptFile.empty");
   }
 
   if (file.size > MAX_WORK_MANUSCRIPT_BYTES) {
     throw new InvalidManuscriptFileError(
-      `Manuscript must be ${MAX_WORK_MANUSCRIPT_MB} MB or smaller.`,
+      "publish.validation.manuscriptFile.tooLarge",
+      { maxMb: String(MAX_WORK_MANUSCRIPT_MB) },
     );
   }
 
   const extension = getNormalizedExtension(file.name);
   if (!isAllowedWorkManuscriptExtension(extension)) {
     throw new InvalidManuscriptFileError(
-      `Allowed formats: ${ALLOWED_WORK_MANUSCRIPT_EXTENSIONS.map((ext) => ext.slice(1).toUpperCase()).join(", ")}.`,
+      "publish.validation.manuscriptFile.invalidFormat",
+      { formats: MANUSCRIPT_FORMATS_LABEL },
     );
   }
 
@@ -121,41 +138,52 @@ export function validateManuscriptBytes(bytes: Uint8Array, filename: string): vo
   const kind = resolveManuscriptKind(extension);
 
   if (!kind) {
-    throw new InvalidManuscriptFileError("Unsupported manuscript format.");
+    throw new InvalidManuscriptFileError(
+      "publish.validation.manuscriptFile.unsupported",
+    );
   }
 
   if (bytes.length > MAX_WORK_MANUSCRIPT_BYTES) {
     throw new InvalidManuscriptFileError(
-      `Manuscript must be ${MAX_WORK_MANUSCRIPT_MB} MB or smaller.`,
+      "publish.validation.manuscriptFile.tooLarge",
+      { maxMb: String(MAX_WORK_MANUSCRIPT_MB) },
     );
   }
 
   switch (kind) {
     case "pdf":
       if (!startsWithBytes(bytes, [0x25, 0x50, 0x44, 0x46])) {
-        throw new InvalidManuscriptFileError("File content does not match PDF format.");
+        throw new InvalidManuscriptFileError(
+          "publish.validation.manuscriptFile.contentMismatchPdf",
+        );
       }
       return;
     case "doc":
       if (!startsWithBytes(bytes, [0xd0, 0xcf, 0x11, 0xe0])) {
-        throw new InvalidManuscriptFileError("File content does not match DOC format.");
+        throw new InvalidManuscriptFileError(
+          "publish.validation.manuscriptFile.contentMismatchDoc",
+        );
       }
       return;
     case "docx":
       if (!startsWithBytes(bytes, [0x50, 0x4b, 0x03, 0x04])) {
-        throw new InvalidManuscriptFileError("File content does not match DOCX format.");
+        throw new InvalidManuscriptFileError(
+          "publish.validation.manuscriptFile.contentMismatchDocx",
+        );
       }
       return;
     case "rtf":
       if (!startsWithBytes(bytes, [0x7b, 0x5c, 0x72, 0x74, 0x66])) {
-        throw new InvalidManuscriptFileError("File content does not match RTF format.");
+        throw new InvalidManuscriptFileError(
+          "publish.validation.manuscriptFile.contentMismatchRtf",
+        );
       }
       return;
     case "markdown":
     case "text":
       if (!isValidUtf8Text(bytes)) {
         throw new InvalidManuscriptFileError(
-          "Text manuscripts must be valid UTF-8 without null bytes.",
+          "publish.validation.manuscriptFile.invalidUtf8",
         );
       }
   }
@@ -168,17 +196,20 @@ export async function readManuscriptFile(file: File): Promise<Uint8Array> {
   return bytes;
 }
 
-export function validateManuscriptFileForForm(file: File | null): string | null {
+export function validateManuscriptFileForForm(
+  file: File | null,
+  t: (key: string, params?: TranslationParams) => string,
+): string | null {
   if (!file) {
-    return "Manuscript file is required.";
+    return t("publish.validation.manuscriptFile.required");
   }
 
   try {
     validateManuscriptFile(file);
   } catch (error) {
     return error instanceof InvalidManuscriptFileError
-      ? error.message
-      : "Invalid manuscript file.";
+      ? t(error.code, error.params)
+      : t("publish.validation.manuscriptFile.invalid");
   }
 
   return null;

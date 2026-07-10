@@ -240,5 +240,147 @@
       "uploadFailed": "Impossibile caricare l'immagine.",
       "saveFailed": "Impossibile salvare il profilo."
     }
+  },
+  "publish": {
+    "title": "Pubblica un'opera",
+    "requiredFieldsNote": "I campi contrassegnati con * sono obbligatori.",
+    "backToAuthor": "← Torna alla pagina autore",
+    "meta": {
+      "title": "Pubblica opera | Andromeda",
+      "description": "Pubblica un'opera letteraria cifrata su Andromeda.",
+      "titleWithAuthor": "Pubblica opera | {name} | Andromeda",
+      "descriptionWithAuthor": "Pubblica un'opera cifrata come {name} su Andromeda."
+    },
+    "sections": {
+      "imprint": {
+        "legend": "Metadati dell'opera",
+        "description": "Dati di edizione memorizzati nei metadati pubblici, come la pagina di colophon di un'edizione stampata."
+      },
+      "pricing": {
+        "legend": "Prezzi ed edizioni"
+      }
+    },
+    "fields": {
+      "title": { "label": "Titolo" },
+      "manuscriptFile": { "label": "File del manoscritto" },
+      "coverImage": { "label": "Immagine di copertina" },
+      "publicationDate": { "label": "Data di pubblicazione" },
+      "editionNumber": { "label": "Numero di edizione" },
+      "editionKind": {
+        "label": "Tipo di edizione",
+        "options": {
+          "first": "Prima edizione",
+          "reprint": "Ristampa"
+        }
+      },
+      "reprintNumber": { "label": "Numero di ristampa" },
+      "seriesName": { "label": "Nome della serie" },
+      "seriesVolume": { "label": "Volume della serie" },
+      "language": {
+        "label": "Lingua",
+        "placeholder": "es. en, it"
+      },
+      "originalPublicationDate": { "label": "Data di prima pubblicazione" },
+      "backCoverText": { "label": "Testo di quarta di copertina" },
+      "aboutAuthor": { "label": "Informazioni sull'autore" },
+      "authorAddress": { "label": "Indirizzo pubblico dell'autore" },
+      "priceMatic": {
+        "label": "Prezzo di listino iniziale (MATIC)",
+        "placeholder": "Lascia vuoto per nessun prezzo iniziale"
+      },
+      "maxCopies": { "label": "Copie massime" },
+      "externalUrl": { "label": "URL esterno" }
+    },
+    "guidance": {
+      "intro": "Carica manoscritto e copertina, poi cifra e fissa l'opera su IPFS prima della registrazione on-chain.",
+      "title": "Titolo pubblico mostrato nei metadati e sui marketplace.",
+      "publicationDate": "Data di pubblicazione di questa edizione (data di pubblicazione del colophon).",
+      "editionNumber": "Numero di questa edizione (ad esempio, 1 per la prima edizione numerata).",
+      "editionKind": "Se si tratta della prima edizione o di una ristampa successiva dello stesso numero di edizione.",
+      "reprintNumber": "Quale ristampa si tratta quando il tipo di edizione è ristampa (ad esempio, 2 per la seconda ristampa).",
+      "seriesName": "Nome della serie o collezione, se l'opera ne fa parte.",
+      "seriesVolume": "Numero di volume all'interno della serie o collezione.",
+      "language": "Codice o nome della lingua facoltativo (ad esempio, en o Italiano) per i cataloghi.",
+      "originalPublicationDate": "Data facoltativa di prima pubblicazione quando questa edizione è stata pubblicata in seguito.",
+      "backCoverText": "Sinossi o testo promozionale per la quarta di copertina, come apparirebbe su un'edizione stampata.",
+      "aboutAuthor": "Breve nota biografica sull'autore, come stampata sulla quarta di copertina o sul colophon.",
+      "authorAddress": "Il tuo indirizzo wallet pubblico, memorizzato nei metadati come identità autoriale certificata.",
+      "manuscript": "Formati consentiti: {formats}. Dimensione massima: {maxMb} MB. Il file viene cifrato nel browser prima del caricamento.",
+      "cover": "Immagine di copertina per metadati e inserzioni. Formati consentiti: PNG, JPEG, WebP. Dimensione massima: {maxMb} MB.",
+      "initialPrice": "Facoltativo. Lascia vuoto per registrare l'opera on-chain senza aprire le vendite. Potrai mettere in vendita le copie o avviare aste in seguito.",
+      "maxCopies": "Copie numerate da coniare ({min}–{max}). Ogni copia coniata è un NFT numerato; i collezionisti possono valorizzare le copie in modo diverso — ad esempio, la copia n. 1 rispetto alla n. 145.",
+      "externalUrl": "Link pubblico facoltativo incluso nei metadati, come il tuo sito autore."
+    },
+    "validation": {
+      "title": {
+        "required": "Il titolo è obbligatorio.",
+        "maxLength": "Il titolo deve avere al massimo {max} caratteri.",
+        "invalidCharacters": "Il titolo contiene caratteri non validi."
+      },
+      "externalUrl": {
+        "tooLong": "L'URL esterno è troppo lungo.",
+        "invalidCharacters": "L'URL esterno contiene caratteri non validi.",
+        "invalidProtocol": "L'URL esterno deve usare HTTP o HTTPS.",
+        "invalid": "Inserisci un URL valido."
+      },
+      "maxCopies": {
+        "required": "Le copie massime sono obbligatorie.",
+        "wholeNumber": "Le copie massime devono essere un numero intero.",
+        "min": "Le copie massime devono essere almeno {min}.",
+        "max": "Le copie massime non possono superare {max}."
+      },
+      "priceMatic": {
+        "negative": "Il prezzo deve essere zero o maggiore.",
+        "invalid": "Inserisci un prezzo MATIC valido."
+      },
+      "coverImage": {
+        "required": "L'immagine di copertina è obbligatoria.",
+        "invalidFormat": "La copertina deve essere PNG, JPEG o WebP.",
+        "tooLarge": "L'immagine di copertina è troppo grande."
+      },
+      "date": {
+        "invalidFormat": "{label} deve usare il formato AAAA-MM-GG.",
+        "invalid": "{label} non è una data valida."
+      },
+      "field": {
+        "required": "{label} è obbligatorio.",
+        "maxLength": "{label} deve avere al massimo {max} caratteri.",
+        "invalidCharacters": "{label} contiene caratteri non validi."
+      },
+      "publicationDate": { "required": "La data di pubblicazione è obbligatoria." },
+      "editionNumber": {
+        "required": "Il numero di edizione è obbligatorio.",
+        "invalid": "Il numero di edizione deve essere un numero intero di almeno 1."
+      },
+      "editionKind": { "required": "Seleziona prima edizione o ristampa." },
+      "reprintNumber": {
+        "required": "Il numero di ristampa è obbligatorio.",
+        "invalid": "Il numero di ristampa deve essere un numero intero di almeno 1."
+      },
+      "seriesVolume": {
+        "requiredWithSeries": "Il volume della serie è obbligatorio quando è indicata una serie.",
+        "invalid": "Il volume della serie deve essere un numero intero di almeno 1.",
+        "requiresSeriesName": "Il volume della serie richiede un nome di serie."
+      },
+      "manuscriptFile": {
+        "required": "Il file del manoscritto è obbligatorio.",
+        "invalid": "File del manoscritto non valido.",
+        "filenameRequired": "Il nome del file del manoscritto è obbligatorio.",
+        "filenameTooLong": "Il nome del file del manoscritto è troppo lungo.",
+        "filenameInvalid": "Il nome del file del manoscritto non è valido.",
+        "empty": "Il file del manoscritto è vuoto.",
+        "tooLarge": "Il manoscritto deve essere di {maxMb} MB o meno.",
+        "invalidFormat": "Formati consentiti: {formats}.",
+        "unsupported": "Formato del manoscritto non supportato.",
+        "contentMismatchPdf": "Il contenuto del file non corrisponde al formato PDF.",
+        "contentMismatchDoc": "Il contenuto del file non corrisponde al formato DOC.",
+        "contentMismatchDocx": "Il contenuto del file non corrisponde al formato DOCX.",
+        "contentMismatchRtf": "Il contenuto del file non corrisponde al formato RTF.",
+        "invalidUtf8": "I manoscritti di testo devono essere UTF-8 valido senza byte nulli."
+      }
+    },
+    "errors": {
+      "connectWalletToPublish": "Connetti il wallet autore ({authorAddress}) per pubblicare un'opera."
+    }
   }
 }

@@ -240,5 +240,147 @@
       "uploadFailed": "Bild konnte nicht hochgeladen werden.",
       "saveFailed": "Profil konnte nicht gespeichert werden."
     }
+  },
+  "publish": {
+    "title": "Werk veröffentlichen",
+    "requiredFieldsNote": "Mit * markierte Felder sind Pflichtfelder.",
+    "backToAuthor": "← Zurück zur Autorenseite",
+    "meta": {
+      "title": "Werk veröffentlichen | Andromeda",
+      "description": "Veröffentliche ein verschlüsseltes literarisches Werk auf Andromeda.",
+      "titleWithAuthor": "Werk veröffentlichen | {name} | Andromeda",
+      "descriptionWithAuthor": "Veröffentliche ein verschlüsseltes Werk als {name} auf Andromeda."
+    },
+    "sections": {
+      "imprint": {
+        "legend": "Werk-Metadaten",
+        "description": "Impressumsangaben in öffentlichen Metadaten, wie die Kolophon-Seite einer gedruckten Ausgabe."
+      },
+      "pricing": {
+        "legend": "Preise und Ausgaben"
+      }
+    },
+    "fields": {
+      "title": { "label": "Titel" },
+      "manuscriptFile": { "label": "Manuskriptdatei" },
+      "coverImage": { "label": "Coverbild" },
+      "publicationDate": { "label": "Erscheinungsdatum" },
+      "editionNumber": { "label": "Ausgabennummer" },
+      "editionKind": {
+        "label": "Ausgabenart",
+        "options": {
+          "first": "Erstausgabe",
+          "reprint": "Nachdruck"
+        }
+      },
+      "reprintNumber": { "label": "Nachdrucknummer" },
+      "seriesName": { "label": "Serienname" },
+      "seriesVolume": { "label": "Serienband" },
+      "language": {
+        "label": "Sprache",
+        "placeholder": "z. B. en, it"
+      },
+      "originalPublicationDate": { "label": "Datum der Erstveröffentlichung" },
+      "backCoverText": { "label": "Klappentext" },
+      "aboutAuthor": { "label": "Über den Autor" },
+      "authorAddress": { "label": "Öffentliche Autorenadresse" },
+      "priceMatic": {
+        "label": "Anfangspreis (MATIC)",
+        "placeholder": "Leer lassen für keinen Anfangspreis"
+      },
+      "maxCopies": { "label": "Max. Exemplare" },
+      "externalUrl": { "label": "Externe URL" }
+    },
+    "guidance": {
+      "intro": "Lade Manuskript und Cover hoch, verschlüssele das Werk und pinne es auf IPFS, bevor du es on-chain registrierst.",
+      "title": "Öffentlicher Titel in Metadaten und auf Marktplätzen.",
+      "publicationDate": "Datum der Veröffentlichung dieser Ausgabe (Erscheinungsdatum im Kolophon).",
+      "editionNumber": "Nummer dieser Ausgabe (z. B. 1 für die erste nummerierte Ausgabe).",
+      "editionKind": "Ob es sich um die Erstausgabe oder einen späteren Nachdruck derselben Ausgabennummer handelt.",
+      "reprintNumber": "Welcher Nachdruck es ist, wenn die Ausgabenart Nachdruck ist (z. B. 2 für den zweiten Nachdruck).",
+      "seriesName": "Name der Serie oder Sammlung, falls das Werk zu einer gehört.",
+      "seriesVolume": "Bandnummer innerhalb der Serie oder Sammlung.",
+      "language": "Optionaler Sprachcode oder -name (z. B. en oder Italienisch) für Katalogeinträge.",
+      "originalPublicationDate": "Optionales Datum der Erstveröffentlichung, wenn diese Ausgabe später erschien.",
+      "backCoverText": "Synopsis oder Werbetext für die Rückseite des Covers, wie bei einer gedruckten Ausgabe.",
+      "aboutAuthor": "Kurze biografische Notiz über den Autor, wie auf dem Klappentext oder im Kolophon gedruckt.",
+      "authorAddress": "Deine öffentliche Wallet-Adresse, in Metadaten als zertifizierte Autorenidentität gespeichert.",
+      "manuscript": "Erlaubte Formate: {formats}. Maximale Größe: {maxMb} MB. Die Datei wird vor dem Upload in deinem Browser verschlüsselt.",
+      "cover": "Coverbild für Metadaten und Listings. Erlaubte Formate: PNG, JPEG, WebP. Maximale Größe: {maxMb} MB.",
+      "initialPrice": "Optional. Leer lassen, um das Werk on-chain zu registrieren, ohne den Verkauf zu öffnen. Du kannst später Exemplare zum Verkauf anbieten oder Auktionen durchführen.",
+      "maxCopies": "Zu prägende nummerierte Exemplare ({min}–{max}). Jedes geprägte Exemplar ist ein nummeriertes NFT; Sammler können Exemplare unterschiedlich bewerten — z. B. Exemplar Nr. 1 gegenüber Nr. 145.",
+      "externalUrl": "Optionaler öffentlicher Link in den Metadaten, z. B. deine Autoren-Website."
+    },
+    "validation": {
+      "title": {
+        "required": "Titel ist erforderlich.",
+        "maxLength": "Der Titel darf höchstens {max} Zeichen lang sein.",
+        "invalidCharacters": "Der Titel enthält ungültige Zeichen."
+      },
+      "externalUrl": {
+        "tooLong": "Die externe URL ist zu lang.",
+        "invalidCharacters": "Die externe URL enthält ungültige Zeichen.",
+        "invalidProtocol": "Die externe URL muss HTTP oder HTTPS verwenden.",
+        "invalid": "Gib eine gültige URL ein."
+      },
+      "maxCopies": {
+        "required": "Max. Exemplare ist erforderlich.",
+        "wholeNumber": "Max. Exemplare muss eine ganze Zahl sein.",
+        "min": "Max. Exemplare muss mindestens {min} sein.",
+        "max": "Max. Exemplare darf {max} nicht überschreiten."
+      },
+      "priceMatic": {
+        "negative": "Der Preis muss null oder größer sein.",
+        "invalid": "Gib einen gültigen MATIC-Preis ein."
+      },
+      "coverImage": {
+        "required": "Coverbild ist erforderlich.",
+        "invalidFormat": "Das Cover muss PNG, JPEG oder WebP sein.",
+        "tooLarge": "Das Coverbild ist zu groß."
+      },
+      "date": {
+        "invalidFormat": "{label} muss das Format JJJJ-MM-TT verwenden.",
+        "invalid": "{label} ist kein gültiges Datum."
+      },
+      "field": {
+        "required": "{label} ist erforderlich.",
+        "maxLength": "{label} darf höchstens {max} Zeichen lang sein.",
+        "invalidCharacters": "{label} enthält ungültige Zeichen."
+      },
+      "publicationDate": { "required": "Erscheinungsdatum ist erforderlich." },
+      "editionNumber": {
+        "required": "Ausgabennummer ist erforderlich.",
+        "invalid": "Die Ausgabennummer muss eine ganze Zahl von mindestens 1 sein."
+      },
+      "editionKind": { "required": "Wähle Erstausgabe oder Nachdruck." },
+      "reprintNumber": {
+        "required": "Nachdrucknummer ist erforderlich.",
+        "invalid": "Die Nachdrucknummer muss eine ganze Zahl von mindestens 1 sein."
+      },
+      "seriesVolume": {
+        "requiredWithSeries": "Serienband ist erforderlich, wenn eine Serie angegeben ist.",
+        "invalid": "Der Serienband muss eine ganze Zahl von mindestens 1 sein.",
+        "requiresSeriesName": "Der Serienband erfordert einen Seriennamen."
+      },
+      "manuscriptFile": {
+        "required": "Manuskriptdatei ist erforderlich.",
+        "invalid": "Ungültige Manuskriptdatei.",
+        "filenameRequired": "Dateiname des Manuskripts ist erforderlich.",
+        "filenameTooLong": "Dateiname des Manuskripts ist zu lang.",
+        "filenameInvalid": "Dateiname des Manuskripts ist ungültig.",
+        "empty": "Die Manuskriptdatei ist leer.",
+        "tooLarge": "Das Manuskript muss {maxMb} MB oder kleiner sein.",
+        "invalidFormat": "Erlaubte Formate: {formats}.",
+        "unsupported": "Nicht unterstütztes Manuskriptformat.",
+        "contentMismatchPdf": "Dateiinhalt entspricht nicht dem PDF-Format.",
+        "contentMismatchDoc": "Dateiinhalt entspricht nicht dem DOC-Format.",
+        "contentMismatchDocx": "Dateiinhalt entspricht nicht dem DOCX-Format.",
+        "contentMismatchRtf": "Dateiinhalt entspricht nicht dem RTF-Format.",
+        "invalidUtf8": "Textmanuskripte müssen gültiges UTF-8 ohne Null-Bytes sein."
+      }
+    },
+    "errors": {
+      "connectWalletToPublish": "Verbinde die Autoren-Wallet ({authorAddress}), um ein Werk zu veröffentlichen."
+    }
   }
 }

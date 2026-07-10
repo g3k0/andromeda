@@ -1,7 +1,11 @@
+"use client";
+
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { FormTextControl } from "@/components/form/FormTextControl";
 import { formErrorClassName } from "@/components/form/form-field-styles";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
+import { getPublishExternalUrlGuidance } from "@/lib/i18n/publish-messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { WORK_PUBLISH_FORM_GUIDANCE } from "@/lib/works/work-publish-form-guidance";
 import type {
   WorkPublishFormErrors,
@@ -45,6 +49,7 @@ export function WorkPublishFormFooter({
   onUpload,
   onRegister,
 }: WorkPublishFormFooterProps) {
+  const { t } = useTranslation();
   const canUpload =
     editionPreviewReady &&
     editionPreviewAcknowledged &&
@@ -62,9 +67,9 @@ export function WorkPublishFormFooter({
       <FormTextControl
         id="publish-work-external-url"
         name="externalUrl"
-        label="External URL"
+        label={t("publish.fields.externalUrl.label")}
         tooltipId="publish-work-external-url-tooltip"
-        tooltip={WORK_PUBLISH_FORM_GUIDANCE.externalUrl}
+        tooltip={getPublishExternalUrlGuidance(t)}
         error={errors.externalUrl}
         type="url"
         value={values.externalUrl}

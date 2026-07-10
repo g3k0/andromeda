@@ -2,8 +2,13 @@
 
 import { FormFileControl } from "@/components/form/FormFileControl";
 import { FormTextControl } from "@/components/form/FormTextControl";
+import {
+  getPublishCoverGuidance,
+  getPublishManuscriptGuidance,
+  getPublishTitleGuidance,
+} from "@/lib/i18n/publish-messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { WORK_MANUSCRIPT_UPLOAD_ACCEPT } from "@/lib/works/manuscript-upload-guidance";
-import { WORK_PUBLISH_FORM_GUIDANCE } from "@/lib/works/work-publish-form-guidance";
 import type {
   WorkPublishFormErrors,
   WorkPublishFormValues,
@@ -36,15 +41,17 @@ export function WorkPublishMetadataFields({
   onCoverImageChange,
   onManuscriptFileChange,
 }: WorkPublishMetadataFieldsProps) {
+  const { t } = useTranslation();
+
   return (
     <>
       <FormTextControl
         id="publish-work-title-input"
         name="name"
-        label="Title"
+        label={t("publish.fields.title.label")}
         required
         tooltipId="publish-work-title-tooltip"
-        tooltip={WORK_PUBLISH_FORM_GUIDANCE.title}
+        tooltip={getPublishTitleGuidance(t)}
         error={errors.name}
         type="text"
         value={values.name}
@@ -64,10 +71,10 @@ export function WorkPublishMetadataFields({
       <FormFileControl
         id="publish-work-manuscript"
         name="manuscriptFile"
-        label="Manuscript file"
+        label={t("publish.fields.manuscriptFile.label")}
         required
         tooltipId="publish-work-manuscript-tooltip"
-        tooltip={WORK_PUBLISH_FORM_GUIDANCE.manuscript}
+        tooltip={getPublishManuscriptGuidance(t)}
         error={errors.manuscriptFile}
         accept={WORK_MANUSCRIPT_UPLOAD_ACCEPT}
         disabled={disabled}
@@ -78,10 +85,10 @@ export function WorkPublishMetadataFields({
       <FormFileControl
         id="publish-work-cover"
         name="coverImage"
-        label="Cover image"
+        label={t("publish.fields.coverImage.label")}
         required
         tooltipId="publish-work-cover-tooltip"
-        tooltip={WORK_PUBLISH_FORM_GUIDANCE.cover}
+        tooltip={getPublishCoverGuidance(t)}
         error={errors.coverImage}
         accept={ALLOWED_WORK_COVER_MIME_TYPES.join(",")}
         disabled={disabled}

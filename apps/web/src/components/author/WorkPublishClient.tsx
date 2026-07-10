@@ -19,6 +19,7 @@ import {
   type WorkPublishFormValues,
 } from "@/lib/works/work-publish-form-state";
 import { useLoading } from "@/components/loading/LoadingProvider";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { WorkPublishView } from "./WorkPublishView";
 
 export type WorkPublishClientProps = {
@@ -34,6 +35,7 @@ export function WorkPublishClient({
   const { signMessageAsync } = useSignMessage();
   const { writeContractAsync } = useWriteContract();
   const { runWithLoading } = useLoading();
+  const { t } = useTranslation();
 
   const [state, dispatch] = useReducer(
     workPublishClientReducer,
@@ -83,6 +85,7 @@ export function WorkPublishClient({
       state.values,
       coverImage,
       manuscriptFile,
+      t,
     );
     dispatch({ type: "set_errors", errors: nextErrors });
     if (hasWorkPublishFormErrors(nextErrors)) {
@@ -146,6 +149,7 @@ export function WorkPublishClient({
       state.values,
       coverImage,
       manuscriptFile,
+      t,
     );
     dispatch({ type: "set_errors", errors: nextErrors });
     if (hasWorkPublishFormErrors(nextErrors)) {
@@ -219,7 +223,7 @@ export function WorkPublishClient({
   if (!canPublish) {
     return (
       <p className="text-sm text-white/70">
-        Connect the author wallet ({authorAddress}) to publish a work.
+        {t("publish.errors.connectWalletToPublish", { authorAddress })}
       </p>
     );
   }

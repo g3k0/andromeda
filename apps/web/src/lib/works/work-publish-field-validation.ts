@@ -1,5 +1,6 @@
 import { parseEther } from "viem";
 
+import type { TranslateFn } from "@/lib/i18n/translate";
 import {
   WORK_PUBLISH_MAX_MAX_COPIES,
   WORK_PUBLISH_MIN_MAX_COPIES,
@@ -14,65 +15,80 @@ export function containsUnsafeControlCharacters(value: string): boolean {
   return UNSAFE_CONTROL_CHARS.test(value);
 }
 
-export function validateWorkPublishName(name: string): string | null {
+export function validateWorkPublishName(name: string, t: TranslateFn): string | null {
   const trimmed = name.trim();
   if (!trimmed) {
-    return "Title is required.";
+    return t("publish.validation.title.required");
   }
   if (trimmed.length > WORK_PUBLISH_NAME_MAX_LENGTH) {
-    return `Title must be ${WORK_PUBLISH_NAME_MAX_LENGTH} characters or fewer.`;
+    return t("publish.validation.title.maxLength", {
+      max: String(WORK_PUBLISH_NAME_MAX_LENGTH),
+    });
   }
   if (containsUnsafeControlCharacters(trimmed)) {
-    return "Title contains invalid characters.";
+    return t("publish.validation.title.invalidCharacters");
   }
   return null;
 }
 
-export function validateWorkPublishExternalUrl(externalUrl: string): string | null {
+export function validateWorkPublishExternalUrl(
+  externalUrl: string,
+  t: TranslateFn,
+): string | null {
   const trimmed = externalUrl.trim();
   if (!trimmed) {
     return null;
   }
   if (trimmed.length > WORK_PUBLISH_EXTERNAL_URL_MAX_LENGTH) {
-    return "External URL is too long.";
+    return t("publish.validation.externalUrl.tooLong");
   }
   if (containsUnsafeControlCharacters(trimmed)) {
-    return "External URL contains invalid characters.";
+    return t("publish.validation.externalUrl.invalidCharacters");
   }
 
   try {
     const parsed = new URL(trimmed);
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      return "External URL must use HTTP or HTTPS.";
+      return t("publish.validation.externalUrl.invalidProtocol");
     }
   } catch {
-    return "Enter a valid URL.";
+    return t("publish.validation.externalUrl.invalid");
   }
 
   return null;
 }
 
-export function validateWorkPublishMaxCopies(maxCopies: string): string | null {
+export function validateWorkPublishMaxCopies(
+  maxCopies: string,
+  t: TranslateFn,
+): string | null {
   const trimmed = maxCopies.trim();
   if (!trimmed) {
-    return "Max copies is required.";
+    return t("publish.validation.maxCopies.required");
   }
 
   const parsed = Number(trimmed);
   if (!Number.isInteger(parsed)) {
-    return "Max copies must be a whole number.";
+    return t("publish.validation.maxCopies.wholeNumber");
   }
   if (parsed < WORK_PUBLISH_MIN_MAX_COPIES) {
-    return `Max copies must be at least ${WORK_PUBLISH_MIN_MAX_COPIES}.`;
+    return t("publish.validation.maxCopies.min", {
+      min: String(WORK_PUBLISH_MIN_MAX_COPIES),
+    });
   }
   if (parsed > WORK_PUBLISH_MAX_MAX_COPIES) {
-    return `Max copies cannot exceed ${WORK_PUBLISH_MAX_MAX_COPIES}.`;
+    return t("publish.validation.maxCopies.max", {
+      max: String(WORK_PUBLISH_MAX_MAX_COPIES),
+    });
   }
 
   return null;
 }
 
-export function validateWorkPublishPriceMatic(priceMatic: string): string | null {
+export function validateWorkPublishPriceMatic(
+  priceMatic: string,
+  t: TranslateFn,
+): string | null {
   const trimmed = priceMatic.trim();
   if (!trimmed) {
     return null;
@@ -81,10 +97,10 @@ export function validateWorkPublishPriceMatic(priceMatic: string): string | null
   try {
     const price = parseEther(trimmed);
     if (price < 0n) {
-      return "Price must be zero or greater.";
+      return t("publish.validation.priceMatic.negative");
     }
   } catch {
-    return "Enter a valid MATIC price.";
+    return t("publish.validation.priceMatic.invalid");
   }
 
   return null;

@@ -240,5 +240,147 @@
       "uploadFailed": "画像のアップロードに失敗しました。",
       "saveFailed": "プロフィールの保存に失敗しました。"
     }
+  },
+  "publish": {
+    "title": "作品を公開する",
+    "requiredFieldsNote": "* が付いた項目は必須です。",
+    "backToAuthor": "← 著者ページに戻る",
+    "meta": {
+      "title": "作品を公開 | Andromeda",
+      "description": "Andromeda で暗号化された文学作品を公開します。",
+      "titleWithAuthor": "作品を公開 | {name} | Andromeda",
+      "descriptionWithAuthor": "{name} として Andromeda で暗号化された作品を公開します。"
+    },
+    "sections": {
+      "imprint": {
+        "legend": "作品メタデータ",
+        "description": "公開メタデータに保存される版情報。紙の書籍の奥付ページに相当します。"
+      },
+      "pricing": {
+        "legend": "価格と版"
+      }
+    },
+    "fields": {
+      "title": { "label": "タイトル" },
+      "manuscriptFile": { "label": "原稿ファイル" },
+      "coverImage": { "label": "カバー画像" },
+      "publicationDate": { "label": "出版日" },
+      "editionNumber": { "label": "版番号" },
+      "editionKind": {
+        "label": "版の種類",
+        "options": {
+          "first": "初版",
+          "reprint": "重版"
+        }
+      },
+      "reprintNumber": { "label": "重版番号" },
+      "seriesName": { "label": "シリーズ名" },
+      "seriesVolume": { "label": "シリーズ巻数" },
+      "language": {
+        "label": "言語",
+        "placeholder": "例: en, it"
+      },
+      "originalPublicationDate": { "label": "初版発行日" },
+      "backCoverText": { "label": "帯・裏表紙テキスト" },
+      "aboutAuthor": { "label": "著者について" },
+      "authorAddress": { "label": "著者の公開アドレス" },
+      "priceMatic": {
+        "label": "初期定価（MATIC）",
+        "placeholder": "初期価格を設定しない場合は空欄"
+      },
+      "maxCopies": { "label": "最大部数" },
+      "externalUrl": { "label": "外部 URL" }
+    },
+    "guidance": {
+      "intro": "原稿とカバーをアップロードし、オンチェーン登録の前に作品を暗号化して IPFS にピン留めします。",
+      "title": "メタデータやマーケットプレイスに表示される公開タイトル。",
+      "publicationDate": "この版の出版日（奥付の出版日）。",
+      "editionNumber": "この版の番号（例: 最初の番号付き版は 1）。",
+      "editionKind": "初版か、同じ版番号の後の重版か。",
+      "reprintNumber": "版の種類が重版の場合、何刷目か（例: 2刷目なら 2）。",
+      "seriesName": "作品がシリーズや叢書に属する場合の名称。",
+      "seriesVolume": "シリーズや叢書内の巻番号。",
+      "language": "カタログ掲載用の任意の言語コードまたは名称（例: en や Italian）。",
+      "originalPublicationDate": "この版が後から出版された場合の、初版発行日（任意）。",
+      "backCoverText": "帯や裏表紙のあらすじや宣伝文。紙の版に載る内容と同様。",
+      "aboutAuthor": "著者の短い経歴。裏表紙や奥付に載る内容と同様。",
+      "authorAddress": "認証された著者 ID としてメタデータに保存される公開ウォレットアドレス。",
+      "manuscript": "対応形式: {formats}。最大サイズ: {maxMb} MB。アップロード前にブラウザで暗号化されます。",
+      "cover": "メタデータや一覧用のカバー画像。対応形式: PNG、JPEG、WebP。最大サイズ: {maxMb} MB。",
+      "initialPrice": "任意。空欄のままにすると販売を開始せずオンチェーン登録のみ行えます。後からコピーを販売したりオークションを開催したりできます。",
+      "maxCopies": "ミントする番号付きコピー（{min}–{max}）。ミントされた各コピーは番号付き NFT です。コレクターはコピーごとに価値を異なると見ることがあります（例: #1 と #145）。",
+      "externalUrl": "メタデータに含める任意の公開リンク（著者サイトなど）。"
+    },
+    "validation": {
+      "title": {
+        "required": "タイトルは必須です。",
+        "maxLength": "タイトルは {max} 文字以内にしてください。",
+        "invalidCharacters": "タイトルに無効な文字が含まれています。"
+      },
+      "externalUrl": {
+        "tooLong": "外部 URL が長すぎます。",
+        "invalidCharacters": "外部 URL に無効な文字が含まれています。",
+        "invalidProtocol": "外部 URL は HTTP または HTTPS を使用してください。",
+        "invalid": "有効な URL を入力してください。"
+      },
+      "maxCopies": {
+        "required": "最大部数は必須です。",
+        "wholeNumber": "最大部数は整数である必要があります。",
+        "min": "最大部数は {min} 以上である必要があります。",
+        "max": "最大部数は {max} を超えられません。"
+      },
+      "priceMatic": {
+        "negative": "価格は 0 以上である必要があります。",
+        "invalid": "有効な MATIC 価格を入力してください。"
+      },
+      "coverImage": {
+        "required": "カバー画像は必須です。",
+        "invalidFormat": "カバーは PNG、JPEG、または WebP である必要があります。",
+        "tooLarge": "カバー画像が大きすぎます。"
+      },
+      "date": {
+        "invalidFormat": "{label} は YYYY-MM-DD 形式である必要があります。",
+        "invalid": "{label} は有効な日付ではありません。"
+      },
+      "field": {
+        "required": "{label} は必須です。",
+        "maxLength": "{label} は {max} 文字以内にしてください。",
+        "invalidCharacters": "{label} に無効な文字が含まれています。"
+      },
+      "publicationDate": { "required": "出版日は必須です。" },
+      "editionNumber": {
+        "required": "版番号は必須です。",
+        "invalid": "版番号は 1 以上の整数である必要があります。"
+      },
+      "editionKind": { "required": "初版または重版を選択してください。" },
+      "reprintNumber": {
+        "required": "重版番号は必須です。",
+        "invalid": "重版番号は 1 以上の整数である必要があります。"
+      },
+      "seriesVolume": {
+        "requiredWithSeries": "シリーズを指定した場合、シリーズ巻数は必須です。",
+        "invalid": "シリーズ巻数は 1 以上の整数である必要があります。",
+        "requiresSeriesName": "シリーズ巻数にはシリーズ名が必要です。"
+      },
+      "manuscriptFile": {
+        "required": "原稿ファイルは必須です。",
+        "invalid": "無効な原稿ファイルです。",
+        "filenameRequired": "原稿のファイル名は必須です。",
+        "filenameTooLong": "原稿のファイル名が長すぎます。",
+        "filenameInvalid": "原稿のファイル名が無効です。",
+        "empty": "原稿ファイルが空です。",
+        "tooLarge": "原稿は {maxMb} MB 以下である必要があります。",
+        "invalidFormat": "対応形式: {formats}。",
+        "unsupported": "非対応の原稿形式です。",
+        "contentMismatchPdf": "ファイル内容が PDF 形式と一致しません。",
+        "contentMismatchDoc": "ファイル内容が DOC 形式と一致しません。",
+        "contentMismatchDocx": "ファイル内容が DOCX 形式と一致しません。",
+        "contentMismatchRtf": "ファイル内容が RTF 形式と一致しません。",
+        "invalidUtf8": "テキスト原稿はヌルバイトを含まない有効な UTF-8 である必要があります。"
+      }
+    },
+    "errors": {
+      "connectWalletToPublish": "作品を公開するには著者ウォレット（{authorAddress}）を接続してください。"
+    }
   }
 }

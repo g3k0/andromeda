@@ -240,5 +240,147 @@
       "uploadFailed": "Failed to upload image.",
       "saveFailed": "Failed to save profile."
     }
+  },
+  "publish": {
+    "title": "Publish a work",
+    "requiredFieldsNote": "Fields marked with * are required.",
+    "backToAuthor": "← Back to author page",
+    "meta": {
+      "title": "Publish work | Andromeda",
+      "description": "Publish an encrypted literary work on Andromeda.",
+      "titleWithAuthor": "Publish work | {name} | Andromeda",
+      "descriptionWithAuthor": "Publish an encrypted work as {name} on Andromeda."
+    },
+    "sections": {
+      "imprint": {
+        "legend": "Work metadata",
+        "description": "Imprint details stored in public metadata, like the colophon page of a printed edition."
+      },
+      "pricing": {
+        "legend": "Pricing & editions"
+      }
+    },
+    "fields": {
+      "title": { "label": "Title" },
+      "manuscriptFile": { "label": "Manuscript file" },
+      "coverImage": { "label": "Cover image" },
+      "publicationDate": { "label": "Publication date" },
+      "editionNumber": { "label": "Edition number" },
+      "editionKind": {
+        "label": "Edition kind",
+        "options": {
+          "first": "First edition",
+          "reprint": "Reprint"
+        }
+      },
+      "reprintNumber": { "label": "Reprint number" },
+      "seriesName": { "label": "Series name" },
+      "seriesVolume": { "label": "Series volume" },
+      "language": {
+        "label": "Language",
+        "placeholder": "e.g. en, it"
+      },
+      "originalPublicationDate": { "label": "Original publication date" },
+      "backCoverText": { "label": "Back cover text" },
+      "aboutAuthor": { "label": "About the author" },
+      "authorAddress": { "label": "Author public address" },
+      "priceMatic": {
+        "label": "Initial list price (MATIC)",
+        "placeholder": "Leave blank for no initial price"
+      },
+      "maxCopies": { "label": "Max copies" },
+      "externalUrl": { "label": "External URL" }
+    },
+    "guidance": {
+      "intro": "Upload your manuscript and cover, then encrypt and pin the work to IPFS before on-chain registration.",
+      "title": "Public title shown in metadata and on marketplaces.",
+      "publicationDate": "Date this edition was published (colophon publication date).",
+      "editionNumber": "Number of this edition (for example, 1 for the first numbered edition).",
+      "editionKind": "Whether this is the first edition or a later reprint of the same edition number.",
+      "reprintNumber": "Which reprint this is when the edition kind is reprint (for example, 2 for the second reprint).",
+      "seriesName": "Name of the series or collection, if the work belongs to one.",
+      "seriesVolume": "Volume number within the series or collection.",
+      "language": "Optional language code or name (for example, en or Italian) for catalogue listings.",
+      "originalPublicationDate": "Optional date of first publication when this edition was published later.",
+      "backCoverText": "Synopsis or promotional text for the back cover (quarta di copertina), as it would appear on a printed edition.",
+      "aboutAuthor": "Short biographical note about the author, as printed on the back cover or colophon.",
+      "authorAddress": "Your public wallet address, stored in metadata as the certified author identity.",
+      "manuscript": "Allowed formats: {formats}. Maximum size: {maxMb} MB. The file is encrypted in your browser before upload.",
+      "cover": "Cover image for metadata and listings. Allowed formats: PNG, JPEG, WebP. Maximum size: {maxMb} MB.",
+      "initialPrice": "Optional. Leave blank to register the work on-chain without opening sales. You can list copies for sale or run auctions later.",
+      "maxCopies": "Numbered copies to mint ({min}–{max}). Each minted copy is a numbered NFT; collectors may value copies differently—for example, copy #1 versus copy #145.",
+      "externalUrl": "Optional public link included in metadata, such as your author website."
+    },
+    "validation": {
+      "title": {
+        "required": "Title is required.",
+        "maxLength": "Title must be {max} characters or fewer.",
+        "invalidCharacters": "Title contains invalid characters."
+      },
+      "externalUrl": {
+        "tooLong": "External URL is too long.",
+        "invalidCharacters": "External URL contains invalid characters.",
+        "invalidProtocol": "External URL must use HTTP or HTTPS.",
+        "invalid": "Enter a valid URL."
+      },
+      "maxCopies": {
+        "required": "Max copies is required.",
+        "wholeNumber": "Max copies must be a whole number.",
+        "min": "Max copies must be at least {min}.",
+        "max": "Max copies cannot exceed {max}."
+      },
+      "priceMatic": {
+        "negative": "Price must be zero or greater.",
+        "invalid": "Enter a valid MATIC price."
+      },
+      "coverImage": {
+        "required": "Cover image is required.",
+        "invalidFormat": "Cover must be PNG, JPEG, or WebP.",
+        "tooLarge": "Cover image is too large."
+      },
+      "date": {
+        "invalidFormat": "{label} must use YYYY-MM-DD.",
+        "invalid": "{label} is not a valid date."
+      },
+      "field": {
+        "required": "{label} is required.",
+        "maxLength": "{label} must be {max} characters or fewer.",
+        "invalidCharacters": "{label} contains invalid characters."
+      },
+      "publicationDate": { "required": "Publication date is required." },
+      "editionNumber": {
+        "required": "Edition number is required.",
+        "invalid": "Edition number must be a whole number of at least 1."
+      },
+      "editionKind": { "required": "Select first edition or reprint." },
+      "reprintNumber": {
+        "required": "Reprint number is required.",
+        "invalid": "Reprint number must be a whole number of at least 1."
+      },
+      "seriesVolume": {
+        "requiredWithSeries": "Series volume is required when a series is specified.",
+        "invalid": "Series volume must be a whole number of at least 1.",
+        "requiresSeriesName": "Series volume requires a series name."
+      },
+      "manuscriptFile": {
+        "required": "Manuscript file is required.",
+        "invalid": "Invalid manuscript file.",
+        "filenameRequired": "Manuscript filename is required.",
+        "filenameTooLong": "Manuscript filename is too long.",
+        "filenameInvalid": "Manuscript filename is invalid.",
+        "empty": "Manuscript file is empty.",
+        "tooLarge": "Manuscript must be {maxMb} MB or smaller.",
+        "invalidFormat": "Allowed formats: {formats}.",
+        "unsupported": "Unsupported manuscript format.",
+        "contentMismatchPdf": "File content does not match PDF format.",
+        "contentMismatchDoc": "File content does not match DOC format.",
+        "contentMismatchDocx": "File content does not match DOCX format.",
+        "contentMismatchRtf": "File content does not match RTF format.",
+        "invalidUtf8": "Text manuscripts must be valid UTF-8 without null bytes."
+      }
+    },
+    "errors": {
+      "connectWalletToPublish": "Connect the author wallet ({authorAddress}) to publish a work."
+    }
   }
 }

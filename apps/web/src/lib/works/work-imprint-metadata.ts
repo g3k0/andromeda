@@ -1,5 +1,7 @@
 import type { WorkImprintMetadata } from "@/lib/ipfs/metadata-schema";
 import { workImprintMetadataSchema } from "@/lib/ipfs/metadata-schema";
+import type { TranslateFn } from "@/lib/i18n/translate";
+import { getPublishFieldLabel } from "@/lib/i18n/publish-messages";
 
 import { containsUnsafeControlCharacters } from "./work-publish-field-validation";
 
@@ -44,16 +46,20 @@ function parseOptionalPositiveInteger(value: string): number | undefined {
   return parsed;
 }
 
-function validateOptionalIsoDate(value: string, label: string): string | null {
+function validateOptionalIsoDate(
+  value: string,
+  label: string,
+  t: TranslateFn,
+): string | null {
   const trimmed = value.trim();
   if (!trimmed) {
     return null;
   }
   if (!ISO_DATE_PATTERN.test(trimmed)) {
-    return `${label} must use YYYY-MM-DD.`;
+    return t("publish.validation.date.invalidFormat", { label });
   }
   if (Number.isNaN(Date.parse(`${trimmed}T00:00:00.000Z`))) {
-    return `${label} is not a valid date.`;
+    return t("publish.validation.date.invalid", { label });
   }
   return null;
 }
@@ -62,16 +68,20 @@ function validateRequiredTextField(
   value: string,
   label: string,
   maxLength: number,
+  t: TranslateFn,
 ): string | null {
   const trimmed = value.trim();
   if (!trimmed) {
-    return `${label} is required.`;
+    return t("publish.validation.field.required", { label });
   }
   if (trimmed.length > maxLength) {
-    return `${label} must be ${maxLength} characters or fewer.`;
+    return t("publish.validation.field.maxLength", {
+      label,
+      max: String(maxLength),
+    });
   }
   if (containsUnsafeControlCharacters(trimmed)) {
-    return `${label} contains invalid characters.`;
+    return t("publish.validation.field.invalidCharacters", { label });
   }
   return null;
 }
@@ -80,59 +90,67 @@ function validateOptionalTextField(
   value: string,
   label: string,
   maxLength: number,
+  t: TranslateFn,
 ): string | null {
   const trimmed = value.trim();
   if (!trimmed) {
     return null;
   }
   if (trimmed.length > maxLength) {
-    return `${label} must be ${maxLength} characters or fewer.`;
+    return t("publish.validation.field.maxLength", {
+      label,
+      max: String(maxLength),
+    });
   }
   if (containsUnsafeControlCharacters(trimmed)) {
-    return `${label} contains invalid characters.`;
+    return t("publish.validation.field.invalidCharacters", { label });
   }
   return null;
 }
 
 export function validateWorkPublishImprintForm(
   values: WorkPublishImprintFormValues,
+  t: TranslateFn,
 ): WorkPublishImprintFormErrors {
   const errors: WorkPublishImprintFormErrors = {};
 
+  const publicationDateLabel = getPublishFieldLabel(t, "publicationDate");
   const publicationDateError = validateOptionalIsoDate(
     values.publicationDate,
-    "Publication date",
+    publicationDateLabel,
+    t,
   );
   if (!values.publicationDate.trim()) {
-    errors.publicationDate = "Publication date is required.";
+    errors.publicationDate = t("publish.validation.publicationDate.required");
   } else if (publicationDateError) {
     errors.publicationDate = publicationDateError;
   }
 
   const editionNumber = parseOptionalPositiveInteger(values.editionNumber);
   if (!values.editionNumber.trim()) {
-    errors.editionNumber = "Edition number is required.";
+    errors.editionNumber = t("publish.validation.editionNumber.required");
   } else if (Number.isNaN(editionNumber)) {
-    errors.editionNumber = "Edition number must be a whole number of at least 1.";
+    errors.editionNumber = t("publish.validation.editionNumber.invalid");
   }
 
   if (values.editionKind !== "first" && values.editionKind !== "reprint") {
-    errors.editionKind = "Select first edition or reprint.";
+    errors.editionKind = t("publish.validation.editionKind.required");
   }
 
   if (values.editionKind === "reprint") {
     const reprintNumber = parseOptionalPositiveInteger(values.reprintNumber);
     if (!values.reprintNumber.trim()) {
-      errors.reprintNumber = "Reprint number is required.";
+      errors.reprintNumber = t("publish.validation.reprintNumber.required");
     } else if (Number.isNaN(reprintNumber)) {
-      errors.reprintNumber = "Reprint number must be a whole number of at least 1.";
+      errors.reprintNumber = t("publish.validation.reprintNumber.invalid");
     }
   }
 
   const seriesNameError = validateOptionalTextField(
     values.seriesName,
-    "Series name",
+    getPublishFieldLabel(t, "seriesName"),
     WORK_PUBLISH_SERIES_NAME_MAX_LENGTH,
+    t,
   );
   if (seriesNameError) {
     errors.seriesName = seriesNameError;
@@ -141,18 +159,19 @@ export function validateWorkPublishImprintForm(
   if (values.seriesName.trim()) {
     const seriesVolume = parseOptionalPositiveInteger(values.seriesVolume);
     if (!values.seriesVolume.trim()) {
-      errors.seriesVolume = "Series volume is required when a series is specified.";
+      errors.seriesVolume = t("publish.validation.seriesVolume.requiredWithSeries");
     } else if (Number.isNaN(seriesVolume)) {
-      errors.seriesVolume = "Series volume must be a whole number of at least 1.";
+      errors.seriesVolume = t("publish.validation.seriesVolume.invalid");
     }
   } else if (values.seriesVolume.trim()) {
-    errors.seriesVolume = "Series volume requires a series name.";
+    errors.seriesVolume = t("publish.validation.seriesVolume.requiresSeriesName");
   }
 
   const languageError = validateOptionalTextField(
     values.language,
-    "Language",
+    getPublishFieldLabel(t, "language"),
     WORK_PUBLISH_LANGUAGE_MAX_LENGTH,
+    t,
   );
   if (languageError) {
     errors.language = languageError;
@@ -160,7 +179,8 @@ export function validateWorkPublishImprintForm(
 
   const originalPublicationDateError = validateOptionalIsoDate(
     values.originalPublicationDate,
-    "Original publication date",
+    getPublishFieldLabel(t, "originalPublicationDate"),
+    t,
   );
   if (originalPublicationDateError) {
     errors.originalPublicationDate = originalPublicationDateError;
@@ -168,8 +188,9 @@ export function validateWorkPublishImprintForm(
 
   const backCoverTextError = validateRequiredTextField(
     values.backCoverText,
-    "Back cover text",
+    getPublishFieldLabel(t, "backCoverText"),
     WORK_PUBLISH_BACK_COVER_TEXT_MAX_LENGTH,
+    t,
   );
   if (backCoverTextError) {
     errors.backCoverText = backCoverTextError;
@@ -177,8 +198,9 @@ export function validateWorkPublishImprintForm(
 
   const aboutAuthorError = validateRequiredTextField(
     values.aboutAuthor,
-    "About the author",
+    getPublishFieldLabel(t, "aboutAuthor"),
     WORK_PUBLISH_ABOUT_AUTHOR_MAX_LENGTH,
+    t,
   );
   if (aboutAuthorError) {
     errors.aboutAuthor = aboutAuthorError;
