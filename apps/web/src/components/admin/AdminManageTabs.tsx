@@ -5,31 +5,31 @@ import { usePathname } from "next/navigation";
 
 import { stripLocalePrefix } from "@/lib/i18n/routing";
 import { useLocalizedHref } from "@/lib/i18n/use-localized-href";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
-const MANAGE_TABS = [
-  { href: "/admin/users", label: "Users" },
-  { href: "/admin/roles", label: "Roles" },
+const MANAGE_TAB_HREFS = [
+  { href: "/admin/users", labelKey: "admin.tabs.users" },
+  { href: "/admin/roles", labelKey: "admin.tabs.roles" },
 ] as const;
 
 export function AdminManageTabs() {
   const pathname = usePathname();
   const localizedHref = useLocalizedHref();
+  const { t } = useTranslation();
   const logicalPathname = stripLocalePrefix(pathname);
 
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Manage users and roles</h1>
-        <p className="text-sm text-white/60">
-          Manage platform accounts, roles and permissions.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t("admin.manage.title")}</h1>
+        <p className="text-sm text-white/60">{t("admin.manage.subtitle")}</p>
       </div>
 
       <nav
-        aria-label="Admin management sections"
+        aria-label={t("admin.tabs.ariaLabel")}
         className="flex gap-2 border-b border-white/10"
       >
-        {MANAGE_TABS.map((tab) => {
+        {MANAGE_TAB_HREFS.map((tab) => {
           const active = logicalPathname === tab.href;
           return (
             <Link
@@ -43,7 +43,7 @@ export function AdminManageTabs() {
                   : "border-transparent text-white/60 hover:text-white",
               ].join(" ")}
             >
-              {tab.label}
+              {t(tab.labelKey)}
             </Link>
           );
         })}

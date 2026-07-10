@@ -472,5 +472,42 @@
       "creatingPage": "A criar página de autor…",
       "savingPreference": "A guardar a sua preferência…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Painel de administração",
+      "subtitle": "Gerir obras, autores e definições da plataforma.",
+      "cards": {
+        "manageUsers": {
+          "title": "Gerir utilizadores e funções",
+          "body": "Gerir contas, funções e estado da plataforma."
+        },
+        "works": {
+          "title": "Obras",
+          "body": "Rever e selecionar obras publicadas."
+        },
+        "authors": {
+          "title": "Autores",
+          "body": "Verificar e gerir certificações de autores."
+        },
+        "sales": {
+          "title": "Vendas",
+          "body": "Monitorizar cópias cunhadas e receitas."
+        },
+        "settings": {
+          "title": "Definições",
+          "body": "Configurar parâmetros da plataforma."
+        }
+      }
+    },
+    "manage": {
+      "title": "Gerir utilizadores e funções",
+      "subtitle": "Gerir contas, funções e permissões da plataforma."
+    },
+    "tabs": {
+      "users": "Utilizadores",
+      "roles": "Funções",
+      "ariaLabel": "Secções de gestão administrativa"
+    }
   }
 }

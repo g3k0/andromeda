@@ -472,5 +472,42 @@
       "creatingPage": "Creazione pagina autore…",
       "savingPreference": "Salvataggio della preferenza…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard di amministrazione",
+      "subtitle": "Gestisci opere, autori e impostazioni della piattaforma.",
+      "cards": {
+        "manageUsers": {
+          "title": "Gestisci utenti e ruoli",
+          "body": "Gestisci account, ruoli e stato della piattaforma."
+        },
+        "works": {
+          "title": "Opere",
+          "body": "Rivedi e seleziona le opere pubblicate."
+        },
+        "authors": {
+          "title": "Autori",
+          "body": "Verifica e gestisci le certificazioni degli autori."
+        },
+        "sales": {
+          "title": "Vendite",
+          "body": "Monitora copie mintate e ricavi."
+        },
+        "settings": {
+          "title": "Impostazioni",
+          "body": "Configura i parametri della piattaforma."
+        }
+      }
+    },
+    "manage": {
+      "title": "Gestisci utenti e ruoli",
+      "subtitle": "Gestisci account, ruoli e permessi della piattaforma."
+    },
+    "tabs": {
+      "users": "Utenti",
+      "roles": "Ruoli",
+      "ariaLabel": "Sezioni di gestione amministrativa"
+    }
   }
 }

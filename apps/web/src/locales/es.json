@@ -472,5 +472,42 @@
       "creatingPage": "Creando página de autor…",
       "savingPreference": "Guardando tu preferencia…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Panel de administración",
+      "subtitle": "Gestiona obras, autores y ajustes de la plataforma.",
+      "cards": {
+        "manageUsers": {
+          "title": "Gestionar usuarios y roles",
+          "body": "Gestiona cuentas, roles y estado de la plataforma."
+        },
+        "works": {
+          "title": "Obras",
+          "body": "Revisa y selecciona obras publicadas."
+        },
+        "authors": {
+          "title": "Autores",
+          "body": "Verifica y gestiona las certificaciones de autores."
+        },
+        "sales": {
+          "title": "Ventas",
+          "body": "Supervisa copias minteadas e ingresos."
+        },
+        "settings": {
+          "title": "Ajustes",
+          "body": "Configura los parámetros de la plataforma."
+        }
+      }
+    },
+    "manage": {
+      "title": "Gestionar usuarios y roles",
+      "subtitle": "Gestiona cuentas, roles y permisos de la plataforma."
+    },
+    "tabs": {
+      "users": "Usuarios",
+      "roles": "Roles",
+      "ariaLabel": "Secciones de gestión administrativa"
+    }
   }
 }

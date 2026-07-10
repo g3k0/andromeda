@@ -472,5 +472,42 @@
       "creatingPage": "正在创建作者页面…",
       "savingPreference": "正在保存您的偏好…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "管理后台",
+      "subtitle": "管理作品、作者及平台设置。",
+      "cards": {
+        "manageUsers": {
+          "title": "管理用户和角色",
+          "body": "管理平台账户、角色及状态。"
+        },
+        "works": {
+          "title": "作品",
+          "body": "审核和筛选已发布的作品。"
+        },
+        "authors": {
+          "title": "作者",
+          "body": "验证并管理作者认证。"
+        },
+        "sales": {
+          "title": "销售",
+          "body": "监控已铸造副本及收入。"
+        },
+        "settings": {
+          "title": "设置",
+          "body": "配置平台参数。"
+        }
+      }
+    },
+    "manage": {
+      "title": "管理用户和角色",
+      "subtitle": "管理平台账户、角色及权限。"
+    },
+    "tabs": {
+      "users": "用户",
+      "roles": "角色",
+      "ariaLabel": "管理后台区域"
+    }
   }
 }

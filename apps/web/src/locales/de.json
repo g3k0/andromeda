@@ -472,5 +472,42 @@
       "creatingPage": "Autorenseite wird erstellt…",
       "savingPreference": "Deine Präferenz wird gespeichert…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin-Dashboard",
+      "subtitle": "Werke, Autoren und Plattformeinstellungen verwalten.",
+      "cards": {
+        "manageUsers": {
+          "title": "Benutzer und Rollen verwalten",
+          "body": "Plattformkonten, Rollen und Status verwalten."
+        },
+        "works": {
+          "title": "Werke",
+          "body": "Veröffentlichte Werke prüfen und kuratieren."
+        },
+        "authors": {
+          "title": "Autoren",
+          "body": "Autorenzertifizierungen prüfen und verwalten."
+        },
+        "sales": {
+          "title": "Verkäufe",
+          "body": "Geminte Exemplare und Einnahmen überwachen."
+        },
+        "settings": {
+          "title": "Einstellungen",
+          "body": "Plattformparameter konfigurieren."
+        }
+      }
+    },
+    "manage": {
+      "title": "Benutzer und Rollen verwalten",
+      "subtitle": "Plattformkonten, Rollen und Berechtigungen verwalten."
+    },
+    "tabs": {
+      "users": "Benutzer",
+      "roles": "Rollen",
+      "ariaLabel": "Bereiche der Admin-Verwaltung"
+    }
   }
 }

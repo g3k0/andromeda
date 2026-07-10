@@ -472,5 +472,42 @@
       "creatingPage": "Creating author page…",
       "savingPreference": "Saving your preference…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin dashboard",
+      "subtitle": "Manage works, authors and platform settings.",
+      "cards": {
+        "manageUsers": {
+          "title": "Manage users and roles",
+          "body": "Manage platform accounts, roles and status."
+        },
+        "works": {
+          "title": "Works",
+          "body": "Review and curate published works."
+        },
+        "authors": {
+          "title": "Authors",
+          "body": "Verify and manage author certifications."
+        },
+        "sales": {
+          "title": "Sales",
+          "body": "Monitor minted copies and revenue."
+        },
+        "settings": {
+          "title": "Settings",
+          "body": "Configure platform parameters."
+        }
+      }
+    },
+    "manage": {
+      "title": "Manage users and roles",
+      "subtitle": "Manage platform accounts, roles and permissions."
+    },
+    "tabs": {
+      "users": "Users",
+      "roles": "Roles",
+      "ariaLabel": "Admin management sections"
+    }
   }
 }
