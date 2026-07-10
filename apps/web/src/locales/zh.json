@@ -1,7 +1,11 @@
 {
   "meta": {
     "siteName": "Andromeda",
-    "siteDescription": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies."
+    "siteDescription": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies.",
+    "catalog": {
+      "title": "目录 | Andromeda",
+      "description": "浏览 Andromeda 上的作者认证文学版本。"
+    }
   },
   "locales": {
     "en": "English",
@@ -39,5 +43,19 @@
     "processing": "处理中…",
     "loading": "加载中…",
     "loadingAria": "加载中"
+  },
+  "catalog": {
+    "title": "目录",
+    "subtitle": "浏览 Andromeda 上可用的作者认证版本。",
+    "empty": "尚未发布任何作品。",
+    "noCover": "无封面",
+    "coverAlt": "{title} 的封面",
+    "openEdition": "打开版本",
+    "soldOut": "已售罄",
+    "copiesLeft": "剩余 {count} 份"
+  },
+  "library": {
+    "copyNumber": "副本 #{number}",
+    "copyNumberOf": "副本 #{number} / {total}"
   }
 }

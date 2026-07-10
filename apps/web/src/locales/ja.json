@@ -1,7 +1,11 @@
 {
   "meta": {
     "siteName": "Andromeda",
-    "siteDescription": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies."
+    "siteDescription": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies.",
+    "catalog": {
+      "title": "カタログ | Andromeda",
+      "description": "Andromeda で著者認証された文学版を閲覧する。"
+    }
   },
   "locales": {
     "en": "English",
@@ -39,5 +43,19 @@
     "processing": "処理中…",
     "loading": "読み込み中…",
     "loadingAria": "読み込み中"
+  },
+  "catalog": {
+    "title": "カタログ",
+    "subtitle": "Andromeda で利用可能な著者認証版を閲覧する。",
+    "empty": "まだ作品は公開されていません。",
+    "noCover": "カバーなし",
+    "coverAlt": "{title} のカバー",
+    "openEdition": "版を開く",
+    "soldOut": "完売",
+    "copiesLeft": "残り {count} 部"
+  },
+  "library": {
+    "copyNumber": "コピー #{number}",
+    "copyNumberOf": "コピー #{number} / {total}"
   }
 }

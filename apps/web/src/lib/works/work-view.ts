@@ -11,20 +11,11 @@ export type WorkView = {
   description: string;
   coverImageUrl: string | null;
   priceLabel: string;
-  availabilityLabel: string;
+  remainingCopies: string | null;
+  soldOut: boolean;
   author: `0x${string}`;
   active: boolean;
 };
-
-function availabilityLabel(dto: PublicWorkDto): string {
-  if (dto.remainingCopies === null) {
-    return "Open edition";
-  }
-  if (dto.soldOut) {
-    return "Sold out";
-  }
-  return `${dto.remainingCopies} copies left`;
-}
 
 export function buildWorkView(
   dto: PublicWorkDto,
@@ -39,7 +30,8 @@ export function buildWorkView(
       ? toGatewayUrl(metadata.image, gatewayBaseUrl)
       : null,
     priceLabel: formatWorkPrice(BigInt(dto.price)),
-    availabilityLabel: availabilityLabel(dto),
+    remainingCopies: dto.remainingCopies,
+    soldOut: dto.soldOut,
     author: dto.author,
     active: dto.active,
   };

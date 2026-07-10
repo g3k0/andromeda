@@ -55,5 +55,19 @@
     "processing": "Processing…",
     "loading": "Loading…",
     "loadingAria": "Loading"
+  },
+  "catalog": {
+    "title": "Catalog",
+    "subtitle": "Browse author-certified editions available on Andromeda.",
+    "empty": "No works have been published yet.",
+    "noCover": "No cover",
+    "coverAlt": "Cover for {title}",
+    "openEdition": "Open edition",
+    "soldOut": "Sold out",
+    "copiesLeft": "{count} copies left"
+  },
+  "library": {
+    "copyNumber": "Copy #{number}",
+    "copyNumberOf": "Copy #{number} / {total}"
   }
 }
