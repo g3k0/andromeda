@@ -5,6 +5,10 @@
     "catalog": {
       "title": "Catalogo | Andromeda",
       "description": "Sfoglia le edizioni letterarie certificate dall'autore su Andromeda."
+    },
+    "library": {
+      "title": "Libreria | Andromeda",
+      "description": "Le copie letterarie che possiedi su Andromeda."
     }
   },
   "locales": {
@@ -55,6 +59,19 @@
     "copiesLeft": "{count} copie rimaste"
   },
   "library": {
+    "title": "La tua libreria",
+    "subtitle": "Ogni copia che possiedi, pronta da leggere nel tuo browser.",
+    "loading": "Caricamento della tua libreria…",
+    "loadingAria": "Caricamento della tua libreria",
+    "connectWallet": "Connetti il wallet per vedere le copie che possiedi.",
+    "emptyBefore": "Non possiedi ancora nessuna copia. Sfoglia il",
+    "emptyAfter": "per acquistarne una.",
+    "emptyCatalogLink": "catalogo",
+    "workNumber": "Opera #{workId}",
+    "tokenNumber": "Token #{tokenId}",
+    "readLink": "Leggi →",
+    "loadError": "Impossibile caricare la tua libreria.",
+    "copyFallback": "Copia",
     "copyNumber": "Copia n. {number}",
     "copyNumberOf": "Copia n. {number} / {total}"
   }

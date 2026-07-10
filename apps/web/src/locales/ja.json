@@ -5,6 +5,10 @@
     "catalog": {
       "title": "カタログ | Andromeda",
       "description": "Andromeda で著者認証された文学版を閲覧する。"
+    },
+    "library": {
+      "title": "ライブラリ | Andromeda",
+      "description": "Andromeda で所有している文学コピー。"
     }
   },
   "locales": {
@@ -55,6 +59,19 @@
     "copiesLeft": "残り {count} 部"
   },
   "library": {
+    "title": "あなたのライブラリ",
+    "subtitle": "所有するすべてのコピーを、ブラウザですぐにお読みいただけます。",
+    "loading": "ライブラリを読み込み中…",
+    "loadingAria": "ライブラリを読み込み中",
+    "connectWallet": "ウォレットを接続すると、所有しているコピーが表示されます。",
+    "emptyBefore": "まだコピーを所有していません。",
+    "emptyAfter": "を閲覧して購入してください。",
+    "emptyCatalogLink": "カタログ",
+    "workNumber": "作品 #{workId}",
+    "tokenNumber": "トークン #{tokenId}",
+    "readLink": "読む →",
+    "loadError": "ライブラリの読み込みに失敗しました。",
+    "copyFallback": "コピー",
     "copyNumber": "コピー #{number}",
     "copyNumberOf": "コピー #{number} / {total}"
   }

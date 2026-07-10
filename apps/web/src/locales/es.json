@@ -5,6 +5,10 @@
     "catalog": {
       "title": "Catálogo | Andromeda",
       "description": "Explora ediciones literarias certificadas por el autor en Andromeda."
+    },
+    "library": {
+      "title": "Biblioteca | Andromeda",
+      "description": "Los ejemplares literarios que posees en Andromeda."
     }
   },
   "locales": {
@@ -55,6 +59,19 @@
     "copiesLeft": "Quedan {count} ejemplares"
   },
   "library": {
+    "title": "Tu biblioteca",
+    "subtitle": "Cada ejemplar que posees, listo para leer en tu navegador.",
+    "loading": "Cargando tu biblioteca…",
+    "loadingAria": "Cargando tu biblioteca",
+    "connectWallet": "Conecta tu billetera para ver los ejemplares que posees.",
+    "emptyBefore": "Aún no posees ningún ejemplar. Explora el",
+    "emptyAfter": "para comprar uno.",
+    "emptyCatalogLink": "catálogo",
+    "workNumber": "Obra #{workId}",
+    "tokenNumber": "Token #{tokenId}",
+    "readLink": "Leer →",
+    "loadError": "No se pudo cargar tu biblioteca.",
+    "copyFallback": "Copia",
     "copyNumber": "Copia n.º {number}",
     "copyNumberOf": "Copia n.º {number} / {total}"
   }

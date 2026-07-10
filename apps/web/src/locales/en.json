@@ -67,6 +67,19 @@
     "copiesLeft": "{count} copies left"
   },
   "library": {
+    "title": "Your library",
+    "subtitle": "Every copy you own, ready to read in your browser.",
+    "loading": "Loading your library…",
+    "loadingAria": "Loading your library",
+    "connectWallet": "Connect your wallet to see the copies you own.",
+    "emptyBefore": "You don't own any copies yet. Browse the",
+    "emptyAfter": "to buy one.",
+    "emptyCatalogLink": "catalog",
+    "workNumber": "Work #{workId}",
+    "tokenNumber": "Token #{tokenId}",
+    "readLink": "Read →",
+    "loadError": "Failed to load your library.",
+    "copyFallback": "Copy",
     "copyNumber": "Copy #{number}",
     "copyNumberOf": "Copy #{number} / {total}"
   }

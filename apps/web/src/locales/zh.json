@@ -5,6 +5,10 @@
     "catalog": {
       "title": "目录 | Andromeda",
       "description": "浏览 Andromeda 上的作者认证文学版本。"
+    },
+    "library": {
+      "title": "图书馆 | Andromeda",
+      "description": "您在 Andromeda 上拥有的文学副本。"
     }
   },
   "locales": {
@@ -55,6 +59,19 @@
     "copiesLeft": "剩余 {count} 份"
   },
   "library": {
+    "title": "您的图书馆",
+    "subtitle": "您拥有的每一份副本，随时在浏览器中阅读。",
+    "loading": "正在加载您的图书馆…",
+    "loadingAria": "正在加载您的图书馆",
+    "connectWallet": "连接钱包以查看您拥有的副本。",
+    "emptyBefore": "您尚未拥有任何副本。浏览",
+    "emptyAfter": "购买一份。",
+    "emptyCatalogLink": "目录",
+    "workNumber": "作品 #{workId}",
+    "tokenNumber": "代币 #{tokenId}",
+    "readLink": "阅读 →",
+    "loadError": "加载您的图书馆失败。",
+    "copyFallback": "副本",
     "copyNumber": "副本 #{number}",
     "copyNumberOf": "副本 #{number} / {total}"
   }
