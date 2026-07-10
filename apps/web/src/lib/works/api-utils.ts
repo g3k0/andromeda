@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 
-import { mapWorkErrorToMessage, mapWorkErrorToStatus } from "./api-errors";
+import { buildApiErrorBody } from "@/lib/api/error-response";
+import {
+  mapWorkErrorToCode,
+  mapWorkErrorToMessage,
+  mapWorkErrorToParams,
+  mapWorkErrorToStatus,
+} from "./api-errors";
 
 export function jsonResponse(
   body: unknown,
@@ -12,7 +18,12 @@ export function jsonResponse(
 
 export function workErrorResponse(error: unknown): NextResponse {
   const status = mapWorkErrorToStatus(error);
-  const message =
-    status >= 500 ? "Unexpected server error." : mapWorkErrorToMessage(error);
-  return jsonResponse({ error: message }, status);
+  const body = buildApiErrorBody(
+    error,
+    mapWorkErrorToStatus,
+    mapWorkErrorToMessage,
+    mapWorkErrorToCode,
+    mapWorkErrorToParams,
+  );
+  return jsonResponse(body, status);
 }

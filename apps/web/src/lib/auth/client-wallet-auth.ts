@@ -1,3 +1,8 @@
+import {
+  ApiClientError,
+  parseApiErrorBody,
+} from "@/lib/i18n/api-error-messages";
+
 export type SignMessageFn = (args: {
   message: string;
 }) => Promise<`0x${string}`>;
@@ -16,7 +21,12 @@ export async function createSignedWalletPayload(
     `/api/auth/message?address=${encodeURIComponent(address)}`,
   );
   if (!response.ok) {
-    throw new Error("Failed to create wallet authentication message.");
+    const body = (await response.json().catch(() => null)) as unknown;
+    const parsed = parseApiErrorBody(body);
+    if (parsed) {
+      throw new ApiClientError(parsed.code, parsed.params);
+    }
+    throw new ApiClientError("wallet_auth_message_failed");
   }
 
   const { message } = (await response.json()) as { message: string };

@@ -1,5 +1,7 @@
 import type { SignMessageFn } from "@/lib/auth/client-wallet-auth";
 import type { WalletSessionStatus } from "@/lib/auth/wallet-session";
+import { WalletAuthExpiredError } from "@/lib/auth/errors";
+import { translateClientError } from "@/lib/i18n/api-error-messages";
 import type { TranslateFn } from "@/lib/i18n/translate";
 
 export type EnsureAdminSessionDeps = {
@@ -32,8 +34,14 @@ export async function ensureAdminSession(
 }
 
 export function adminSessionErrorMessage(error: unknown, t: TranslateFn): string {
-  if (error instanceof Error && error.message.includes("expired")) {
+  if (error instanceof WalletAuthExpiredError) {
     return t("admin.session.expired");
   }
+
+  const translated = translateClientError(t, error);
+  if (translated !== t("api.errors.unexpected")) {
+    return translated;
+  }
+
   return t("admin.session.authorizeFailed");
 }

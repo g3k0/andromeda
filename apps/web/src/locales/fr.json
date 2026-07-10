@@ -628,5 +628,43 @@
       "rolesWrite": "Gérer les rôles",
       "rolesDelete": "Supprimer les rôles"
     }
+  },
+  "api": {
+    "errors": {
+      "invalidPayload": "Corps de requête invalide.",
+      "walletAuthFailed": "L'authentification du portefeuille a échoué.",
+      "walletAuthExpired": "Votre session de portefeuille a expiré. Veuillez confirmer à nouveau dans votre portefeuille.",
+      "notAuthorized": "Non autorisé.",
+      "rateLimited": "Trop de requêtes. Veuillez réessayer plus tard.",
+      "authorProfileExists": "Le profil d'auteur existe déjà.",
+      "authorProfileNotFound": "Profil d'auteur introuvable.",
+      "invalidAddress": "Adresse Ethereum invalide.",
+      "userNotFound": "Utilisateur introuvable.",
+      "userExists": "Un utilisateur avec cette adresse existe déjà.",
+      "userSuspended": "Ce compte utilisateur est suspendu.",
+      "invalidPermissionOverrides": "Remplacements de permissions invalides.",
+      "roleNotFound": "Rôle introuvable.",
+      "roleExists": "Un rôle avec ce slug existe déjà.",
+      "roleInUse": "Le rôle {slug} est assigné à {count} utilisateur(s). Réassignez-les avant de supprimer.",
+      "invalidRoleSlug": "Slug de rôle invalide.",
+      "invalidRolePermissions": "Permissions de rôle invalides.",
+      "systemRoleMutation": "Les rôles système ne peuvent pas être modifiés.",
+      "adminRoleLockout": "Impossible de supprimer le dernier rôle administrateur.",
+      "invalidWorkId": "Identifiant d'œuvre invalide.",
+      "invalidOwnerAddress": "Adresse du propriétaire invalide.",
+      "workUploadValidation": "{detail}",
+      "forbiddenContentKey": "Les clés de contenu ne doivent jamais être envoyées au serveur.",
+      "ipfsMetadataValidation": "Les métadonnées générées ont échoué à la validation de sécurité.",
+      "unexpected": "Une erreur s'est produite. Veuillez réessayer.",
+      "walletAuthMessageFailed": "Échec de la création du message d'authentification du portefeuille."
+    }
+  },
+  "routeGuard": {
+    "routeNotFound": "Route introuvable",
+    "reconnectingWallet": "Reconnexion du portefeuille…",
+    "connectWalletToContinue": "Connectez votre portefeuille pour continuer.",
+    "checkingAccess": "Vérification de l'accès…",
+    "accessDeniedTitle": "Accès refusé",
+    "accessDeniedDescription": "Vous n'êtes pas autorisé à accéder à {pageName}."
   }
 }

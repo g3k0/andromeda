@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/auth/rate-limit";
 import { buildRateLimitKey } from "@/lib/auth/rate-limit-key";
 import { getTrustedClientIp } from "@/lib/auth/trusted-client-ip";
-import { mapUserErrorToMessage, mapUserErrorToStatus } from "./api-errors";
+import { buildApiErrorBody } from "@/lib/api/error-response";
+import { mapUserErrorToCode, mapUserErrorToMessage, mapUserErrorToStatus } from "./api-errors";
 
 export function jsonResponse(
   body: unknown,
@@ -14,9 +15,13 @@ export function jsonResponse(
 
 export function errorResponse(error: unknown): NextResponse {
   const status = mapUserErrorToStatus(error);
-  const message =
-    status >= 500 ? "Unexpected server error." : mapUserErrorToMessage(error);
-  return jsonResponse({ error: message }, status);
+  const body = buildApiErrorBody(
+    error,
+    mapUserErrorToStatus,
+    mapUserErrorToMessage,
+    mapUserErrorToCode,
+  );
+  return jsonResponse(body, status);
 }
 
 export function getRequestRateLimitKey(
@@ -32,7 +37,13 @@ export async function enforceRateLimit(
 ): Promise<NextResponse | null> {
   const allowed = await checkRateLimit(getRequestRateLimitKey(request, scope));
   if (!allowed) {
-    return jsonResponse({ error: "Too many requests." }, 429);
+    return jsonResponse(
+      {
+        error: "Too many requests.",
+        code: "rate_limited",
+      },
+      429,
+    );
   }
   return null;
 }

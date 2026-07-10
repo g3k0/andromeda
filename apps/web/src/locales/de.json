@@ -628,5 +628,43 @@
       "rolesWrite": "Rollen verwalten",
       "rolesDelete": "Rollen löschen"
     }
+  },
+  "api": {
+    "errors": {
+      "invalidPayload": "Ungültige Anfrage-Nutzlast.",
+      "walletAuthFailed": "Wallet-Authentifizierung fehlgeschlagen.",
+      "walletAuthExpired": "Ihre Wallet-Sitzung ist abgelaufen. Bitte bestätigen Sie erneut in Ihrer Wallet.",
+      "notAuthorized": "Nicht autorisiert.",
+      "rateLimited": "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
+      "authorProfileExists": "Autorenprofil existiert bereits.",
+      "authorProfileNotFound": "Autorenprofil nicht gefunden.",
+      "invalidAddress": "Ungültige Ethereum-Adresse.",
+      "userNotFound": "Benutzer nicht gefunden.",
+      "userExists": "Ein Benutzer mit dieser Adresse existiert bereits.",
+      "userSuspended": "Dieses Benutzerkonto ist gesperrt.",
+      "invalidPermissionOverrides": "Ungültige Berechtigungsüberschreibungen.",
+      "roleNotFound": "Rolle nicht gefunden.",
+      "roleExists": "Eine Rolle mit diesem Slug existiert bereits.",
+      "roleInUse": "Rolle {slug} ist {count} Benutzer(n) zugewiesen. Weisen Sie sie neu zu, bevor Sie löschen.",
+      "invalidRoleSlug": "Ungültiger Rollen-Slug.",
+      "invalidRolePermissions": "Ungültige Rollenberechtigungen.",
+      "systemRoleMutation": "Systemrollen können nicht geändert werden.",
+      "adminRoleLockout": "Die letzte Admin-Rolle kann nicht entfernt werden.",
+      "invalidWorkId": "Ungültige Werk-ID.",
+      "invalidOwnerAddress": "Ungültige Besitzeradresse.",
+      "workUploadValidation": "{detail}",
+      "forbiddenContentKey": "Inhaltsschlüssel dürfen niemals an den Server gesendet werden.",
+      "ipfsMetadataValidation": "Generierte Metadaten haben die Sicherheitsvalidierung nicht bestanden.",
+      "unexpected": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "walletAuthMessageFailed": "Wallet-Authentifizierungsnachricht konnte nicht erstellt werden."
+    }
+  },
+  "routeGuard": {
+    "routeNotFound": "Route nicht gefunden",
+    "reconnectingWallet": "Wallet wird erneut verbunden…",
+    "connectWalletToContinue": "Verbinde dein Wallet, um fortzufahren.",
+    "checkingAccess": "Zugriff wird überprüft…",
+    "accessDeniedTitle": "Zugriff verweigert",
+    "accessDeniedDescription": "Du bist nicht berechtigt, auf {pageName} zuzugreifen."
   }
 }

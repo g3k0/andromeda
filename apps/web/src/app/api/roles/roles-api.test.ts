@@ -199,7 +199,8 @@ describe("roles API", () => {
 
     expect(deleteResponse.status).toBe(409);
     const json = await deleteResponse.json();
-    expect(json.error).toContain("assigned to 1 user");
+    expect(json.code).toBe("role_in_use");
+    expect(json.params).toEqual({ slug: "moderator", count: 1 });
     expect(await RoleModel.exists({ slug: "moderator" })).not.toBeNull();
   });
 

@@ -628,5 +628,43 @@
       "rolesWrite": "ロールを管理",
       "rolesDelete": "ロールを削除"
     }
+  },
+  "api": {
+    "errors": {
+      "invalidPayload": "リクエストのペイロードが無効です。",
+      "walletAuthFailed": "ウォレット認証に失敗しました。",
+      "walletAuthExpired": "ウォレットのセッションが期限切れです。ウォレットで再度確認してください。",
+      "notAuthorized": "認可されていません。",
+      "rateLimited": "リクエストが多すぎます。しばらくしてから再度お試しください。",
+      "authorProfileExists": "著者プロフィールは既に存在します。",
+      "authorProfileNotFound": "著者プロフィールが見つかりません。",
+      "invalidAddress": "無効なEthereumアドレスです。",
+      "userNotFound": "ユーザーが見つかりません。",
+      "userExists": "このアドレスのユーザーは既に存在します。",
+      "userSuspended": "このユーザーアカウントは停止されています。",
+      "invalidPermissionOverrides": "無効な権限オーバーライドです。",
+      "roleNotFound": "ロールが見つかりません。",
+      "roleExists": "このslugのロールは既に存在します。",
+      "roleInUse": "ロール {slug} は {count} 人のユーザーに割り当てられています。削除する前に再割り当てしてください。",
+      "invalidRoleSlug": "無効なロールslugです。",
+      "invalidRolePermissions": "無効なロール権限です。",
+      "systemRoleMutation": "システムロールは変更できません。",
+      "adminRoleLockout": "最後の管理者ロールは削除できません。",
+      "invalidWorkId": "無効な作品IDです。",
+      "invalidOwnerAddress": "無効な所有者アドレスです。",
+      "workUploadValidation": "{detail}",
+      "forbiddenContentKey": "コンテンツキーをサーバーに送信してはいけません。",
+      "ipfsMetadataValidation": "生成されたメタデータがセキュリティ検証に失敗しました。",
+      "unexpected": "問題が発生しました。もう一度お試しください。",
+      "walletAuthMessageFailed": "ウォレット認証メッセージの作成に失敗しました。"
+    }
+  },
+  "routeGuard": {
+    "routeNotFound": "ルートが見つかりません",
+    "reconnectingWallet": "ウォレットを再接続中…",
+    "connectWalletToContinue": "続行するにはウォレットを接続してください。",
+    "checkingAccess": "アクセスを確認中…",
+    "accessDeniedTitle": "アクセス拒否",
+    "accessDeniedDescription": "{pageName} にアクセスする権限がありません。"
   }
 }

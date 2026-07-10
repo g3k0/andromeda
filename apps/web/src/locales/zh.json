@@ -628,5 +628,43 @@
       "rolesWrite": "管理角色",
       "rolesDelete": "删除角色"
     }
+  },
+  "api": {
+    "errors": {
+      "invalidPayload": "请求体无效。",
+      "walletAuthFailed": "钱包认证失败。",
+      "walletAuthExpired": "您的钱包会话已过期。请在钱包中再次确认。",
+      "notAuthorized": "未授权。",
+      "rateLimited": "请求过多。请稍后再试。",
+      "authorProfileExists": "作者资料已存在。",
+      "authorProfileNotFound": "未找到作者资料。",
+      "invalidAddress": "无效的以太坊地址。",
+      "userNotFound": "未找到用户。",
+      "userExists": "该地址的用户已存在。",
+      "userSuspended": "此用户账户已被暂停。",
+      "invalidPermissionOverrides": "无效的权限覆盖。",
+      "roleNotFound": "未找到角色。",
+      "roleExists": "使用该 slug 的角色已存在。",
+      "roleInUse": "角色 {slug} 已分配给 {count} 位用户。删除前请先重新分配。",
+      "invalidRoleSlug": "无效的角色 slug。",
+      "invalidRolePermissions": "无效的角色权限。",
+      "systemRoleMutation": "系统角色无法修改。",
+      "adminRoleLockout": "无法删除最后一个管理员角色。",
+      "invalidWorkId": "无效的作品 ID。",
+      "invalidOwnerAddress": "无效的持有者地址。",
+      "workUploadValidation": "{detail}",
+      "forbiddenContentKey": "内容密钥绝不能发送到服务器。",
+      "ipfsMetadataValidation": "生成的元数据未通过安全验证。",
+      "unexpected": "出了点问题。请重试。",
+      "walletAuthMessageFailed": "创建钱包认证消息失败。"
+    }
+  },
+  "routeGuard": {
+    "routeNotFound": "找不到路由",
+    "reconnectingWallet": "正在重新连接钱包…",
+    "connectWalletToContinue": "连接钱包以继续。",
+    "checkingAccess": "正在检查访问权限…",
+    "accessDeniedTitle": "访问被拒绝",
+    "accessDeniedDescription": "您无权访问 {pageName}。"
   }
 }

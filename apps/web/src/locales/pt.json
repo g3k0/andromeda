@@ -628,5 +628,43 @@
       "rolesWrite": "Gerir funções",
       "rolesDelete": "Eliminar funções"
     }
+  },
+  "api": {
+    "errors": {
+      "invalidPayload": "Payload do pedido inválido.",
+      "walletAuthFailed": "A autenticação da carteira falhou.",
+      "walletAuthExpired": "A sua sessão da carteira expirou. Confirme novamente na sua carteira.",
+      "notAuthorized": "Não autorizado.",
+      "rateLimited": "Demasiados pedidos. Tente novamente mais tarde.",
+      "authorProfileExists": "O perfil de autor já existe.",
+      "authorProfileNotFound": "Perfil de autor não encontrado.",
+      "invalidAddress": "Endereço Ethereum inválido.",
+      "userNotFound": "Utilizador não encontrado.",
+      "userExists": "Já existe um utilizador com este endereço.",
+      "userSuspended": "Esta conta de utilizador está suspensa.",
+      "invalidPermissionOverrides": "Substituições de permissões inválidas.",
+      "roleNotFound": "Função não encontrada.",
+      "roleExists": "Já existe uma função com este slug.",
+      "roleInUse": "A função {slug} está atribuída a {count} utilizador(es). Reatribua-os antes de eliminar.",
+      "invalidRoleSlug": "Slug de função inválido.",
+      "invalidRolePermissions": "Permissões de função inválidas.",
+      "systemRoleMutation": "As funções de sistema não podem ser modificadas.",
+      "adminRoleLockout": "Não é possível remover a última função de administrador.",
+      "invalidWorkId": "ID de obra inválido.",
+      "invalidOwnerAddress": "Endereço do proprietário inválido.",
+      "workUploadValidation": "{detail}",
+      "forbiddenContentKey": "As chaves de conteúdo nunca devem ser enviadas ao servidor.",
+      "ipfsMetadataValidation": "Os metadados gerados falharam na validação de segurança.",
+      "unexpected": "Algo correu mal. Tente novamente.",
+      "walletAuthMessageFailed": "Falha ao criar a mensagem de autenticação da carteira."
+    }
+  },
+  "routeGuard": {
+    "routeNotFound": "Rota não encontrada",
+    "reconnectingWallet": "A reconectar carteira…",
+    "connectWalletToContinue": "Ligue a sua carteira para continuar.",
+    "checkingAccess": "A verificar acesso…",
+    "accessDeniedTitle": "Acesso negado",
+    "accessDeniedDescription": "Não tem autorização para aceder a {pageName}."
   }
 }

@@ -628,5 +628,43 @@
       "rolesWrite": "Gestionar roles",
       "rolesDelete": "Eliminar roles"
     }
+  },
+  "api": {
+    "errors": {
+      "invalidPayload": "Cuerpo de solicitud inválido.",
+      "walletAuthFailed": "La autenticación del monedero ha fallado.",
+      "walletAuthExpired": "Su sesión del monedero ha expirado. Confirme de nuevo en su monedero.",
+      "notAuthorized": "No autorizado.",
+      "rateLimited": "Demasiadas solicitudes. Inténtelo de nuevo más tarde.",
+      "authorProfileExists": "El perfil de autor ya existe.",
+      "authorProfileNotFound": "Perfil de autor no encontrado.",
+      "invalidAddress": "Dirección Ethereum inválida.",
+      "userNotFound": "Usuario no encontrado.",
+      "userExists": "Ya existe un usuario con esta dirección.",
+      "userSuspended": "Esta cuenta de usuario está suspendida.",
+      "invalidPermissionOverrides": "Anulaciones de permisos inválidas.",
+      "roleNotFound": "Rol no encontrado.",
+      "roleExists": "Ya existe un rol con este slug.",
+      "roleInUse": "El rol {slug} está asignado a {count} usuario(s). Reasígnelos antes de eliminar.",
+      "invalidRoleSlug": "Slug de rol inválido.",
+      "invalidRolePermissions": "Permisos de rol inválidos.",
+      "systemRoleMutation": "Los roles del sistema no se pueden modificar.",
+      "adminRoleLockout": "No se puede eliminar el último rol de administrador.",
+      "invalidWorkId": "Identificador de obra inválido.",
+      "invalidOwnerAddress": "Dirección del propietario inválida.",
+      "workUploadValidation": "{detail}",
+      "forbiddenContentKey": "Las claves de contenido nunca deben enviarse al servidor.",
+      "ipfsMetadataValidation": "Los metadatos generados no pasaron la validación de seguridad.",
+      "unexpected": "Algo salió mal. Inténtelo de nuevo.",
+      "walletAuthMessageFailed": "Error al crear el mensaje de autenticación del monedero."
+    }
+  },
+  "routeGuard": {
+    "routeNotFound": "Ruta no encontrada",
+    "reconnectingWallet": "Reconectando cartera…",
+    "connectWalletToContinue": "Conecta tu cartera para continuar.",
+    "checkingAccess": "Comprobando acceso…",
+    "accessDeniedTitle": "Acceso denegado",
+    "accessDeniedDescription": "No tienes autorización para acceder a {pageName}."
   }
 }
