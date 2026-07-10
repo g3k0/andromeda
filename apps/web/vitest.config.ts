@@ -43,6 +43,8 @@ export default defineConfig({
         "src/components/auth/**/*.tsx",
         "src/components/admin/**/*.ts",
         "src/components/admin/**/*.tsx",
+        "src/components/i18n/**/*.ts",
+        "src/components/i18n/**/*.tsx",
         "src/components/WalletButton.tsx",
         "src/components/notifications/**/*.tsx",
         "src/lib/users/UserSnapshotProvider.tsx",
