@@ -34,5 +34,10 @@
   },
   "notifications": {
     "walletDisconnected": "Billetera desconectada."
+  },
+  "common": {
+    "processing": "Procesando…",
+    "loading": "Cargando…",
+    "loadingAria": "Cargando"
   }
 }

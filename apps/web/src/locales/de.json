@@ -34,5 +34,10 @@
   },
   "notifications": {
     "walletDisconnected": "Wallet getrennt."
+  },
+  "common": {
+    "processing": "Verarbeitung…",
+    "loading": "Laden…",
+    "loadingAria": "Laden"
   }
 }

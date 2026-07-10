@@ -13,6 +13,7 @@ import {
   incrementLoadingCount,
   isLoadingActive,
 } from "@/lib/loading/loading-state";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { LoadingOverlay } from "./LoadingOverlay";
 
 type LoadingContextValue = {
@@ -23,12 +24,13 @@ type LoadingContextValue = {
 const LoadingContext = createContext<LoadingContextValue | null>(null);
 
 export function LoadingProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const [pendingCount, setPendingCount] = useState(0);
-  const [label, setLabel] = useState("Processing…");
+  const [label, setLabel] = useState(() => t("common.processing"));
 
   const runWithLoading = useCallback(
-    async <T,>(task: () => Promise<T>, nextLabel = "Processing…"): Promise<T> => {
-      setLabel(nextLabel);
+    async <T,>(task: () => Promise<T>, nextLabel?: string): Promise<T> => {
+      setLabel(nextLabel ?? t("common.processing"));
       setPendingCount((current) => incrementLoadingCount(current));
       try {
         return await task();
@@ -36,7 +38,7 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
         setPendingCount((current) => decrementLoadingCount(current));
       }
     },
-    [],
+    [t],
   );
 
   const value = useMemo(

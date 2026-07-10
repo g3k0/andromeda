@@ -34,5 +34,10 @@
   },
   "notifications": {
     "walletDisconnected": "钱包已断开连接。"
+  },
+  "common": {
+    "processing": "处理中…",
+    "loading": "加载中…",
+    "loadingAria": "加载中"
   }
 }

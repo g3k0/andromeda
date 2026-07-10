@@ -102,9 +102,9 @@ export function RoleMenuDropdown({
           }}
         >
           {isLoggingOut ? (
-            <LoadingSpinner size="sm" label="Logging out" />
+            <LoadingSpinner size="sm" label={t("roleMenu.loggingOut")} />
           ) : null}
-          Logout
+          {t("roleMenu.logout")}
         </button>
       </div>
     </details>

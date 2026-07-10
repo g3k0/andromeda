@@ -34,5 +34,10 @@
   },
   "notifications": {
     "walletDisconnected": "Carteira desligada."
+  },
+  "common": {
+    "processing": "A processar…",
+    "loading": "A carregar…",
+    "loadingAria": "A carregar"
   }
 }

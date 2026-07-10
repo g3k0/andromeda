@@ -50,5 +50,10 @@
   },
   "notifications": {
     "walletDisconnected": "Wallet disconnected."
+  },
+  "common": {
+    "processing": "Processing…",
+    "loading": "Loading…",
+    "loadingAria": "Loading"
   }
 }

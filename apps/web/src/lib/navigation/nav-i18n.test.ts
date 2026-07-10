@@ -16,6 +16,13 @@ const ROLE_MENU_KEYS = [
   "roleMenu.becomeAuthor",
   "roleMenu.manageUsers",
   "roleMenu.logout",
+  "roleMenu.loggingOut",
+] as const;
+
+const COMMON_KEYS = [
+  "common.processing",
+  "common.loading",
+  "common.loadingAria",
 ] as const;
 
 describe("navigation i18n keys", () => {
@@ -34,6 +41,17 @@ describe("navigation i18n keys", () => {
     "resolves role menu labels for locale %s",
     (locale) => {
       for (const key of ROLE_MENU_KEYS) {
+        const label = translate(locale, key);
+        expect(label).not.toMatch(/^\[missing:/);
+        expect(label.length).toBeGreaterThan(0);
+      }
+    },
+  );
+
+  it.each(SUPPORTED_LOCALE_CODES)(
+    "resolves common shell labels for locale %s",
+    (locale) => {
+      for (const key of COMMON_KEYS) {
         const label = translate(locale, key);
         expect(label).not.toMatch(/^\[missing:/);
         expect(label.length).toBeGreaterThan(0);

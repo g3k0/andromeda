@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { SiteHeader } from "@/components/SiteHeader";
-import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { LocaleDocumentLang } from "@/lib/i18n/LocaleDocumentLang";
 import {
   SUPPORTED_LOCALE_CODES,
@@ -35,11 +34,9 @@ export default async function LocaleLayout({
   return (
     <>
       <LocaleDocumentLang locale={locale} />
-      <Providers>
-        <I18nProvider locale={locale}>
-          <SiteHeader />
-          <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
-        </I18nProvider>
+      <Providers locale={locale}>
+        <SiteHeader />
+        <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
       </Providers>
     </>
   );
