@@ -1,4 +1,5 @@
 import { normalizeAddress } from "@/lib/authors/address";
+import type { TranslateFn } from "@/lib/i18n/translate";
 import type { AdminUserRow } from "./admin-users-mappers";
 import type { UserStatus } from "./types";
 import { USER_STATUSES } from "./types";
@@ -57,14 +58,17 @@ export function createDefaultCreateUserFormState(): CreateUserFormState {
   };
 }
 
-export function validateCreateUserAddress(value: string): string | null {
+export function validateCreateUserAddress(
+  value: string,
+  t: TranslateFn,
+): string | null {
   const trimmed = value.trim();
   if (!trimmed) {
-    return "Wallet address is required.";
+    return t("admin.users.validation.addressRequired");
   }
 
   if (!normalizeAddress(trimmed)) {
-    return "Invalid Ethereum address.";
+    return t("admin.users.validation.addressInvalid");
   }
 
   return null;
@@ -73,15 +77,16 @@ export function validateCreateUserAddress(value: string): string | null {
 export function validateCreateUserForm(
   form: CreateUserFormState,
   existingAddresses: readonly string[],
+  t: TranslateFn,
 ): string | null {
-  const addressError = validateCreateUserAddress(form.targetAddress);
+  const addressError = validateCreateUserAddress(form.targetAddress, t);
   if (addressError) {
     return addressError;
   }
 
   const normalized = normalizeAddress(form.targetAddress.trim());
   if (normalized && existingAddresses.includes(normalized)) {
-    return "A user with this address already exists.";
+    return t("admin.users.validation.addressExists");
   }
 
   return null;

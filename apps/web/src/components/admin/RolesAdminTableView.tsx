@@ -1,4 +1,11 @@
+"use client";
+
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
+import {
+  formatAdminRoleUserCount,
+  getPermissionLabel,
+} from "@/lib/i18n/admin-messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import {
   canDeleteRole,
   roleDeleteBlockedReason,
@@ -8,6 +15,7 @@ import {
 } from "@/lib/roles/admin-roles-state";
 import { USER_PERMISSIONS } from "@/lib/users/types";
 import type { UserPermission } from "@/lib/users/types";
+import type { TranslateFn } from "@/lib/i18n/translate";
 
 export type RolesAdminTableViewProps = {
   rows: AdminRoleRow[];
@@ -41,10 +49,12 @@ function PermissionCheckboxes({
   selected,
   onToggle,
   idPrefix,
+  t,
 }: {
   selected: readonly UserPermission[];
   onToggle: (permission: UserPermission) => void;
   idPrefix: string;
+  t: TranslateFn;
 }) {
   return (
     <div className="grid gap-2 sm:grid-cols-2">
@@ -59,7 +69,7 @@ function PermissionCheckboxes({
             onChange={() => onToggle(permission)}
             className="rounded border-white/20 bg-white/5"
           />
-          <span className="font-mono text-xs">{permission}</span>
+          <span className="text-xs">{getPermissionLabel(t, permission)}</span>
         </label>
       ))}
     </div>
@@ -86,10 +96,12 @@ export function RolesAdminTableView({
   onDeleteRow,
   isRowDirty,
 }: RolesAdminTableViewProps) {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-16">
-        <LoadingSpinner size="lg" label="Loading roles" />
+        <LoadingSpinner size="lg" label={t("admin.roles.loadingAria")} />
       </div>
     );
   }
@@ -98,17 +110,15 @@ export function RolesAdminTableView({
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">Roles administration</h2>
-          <p className="text-sm text-white/60">
-            Configure role names, descriptions and permission sets.
-          </p>
+          <h2 className="text-xl font-semibold tracking-tight">{t("admin.roles.title")}</h2>
+          <p className="text-sm text-white/60">{t("admin.roles.subtitle")}</p>
         </div>
         <button
           type="button"
           onClick={onToggleCreateForm}
           className="rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark"
         >
-          {showCreateForm ? "Cancel" : "+ Add role"}
+          {showCreateForm ? t("admin.actions.cancel") : t("admin.roles.addRole")}
         </button>
       </div>
 
@@ -131,7 +141,7 @@ export function RolesAdminTableView({
         >
           <div className="grid gap-4 sm:grid-cols-3">
             <label className="space-y-1">
-              <span className="text-sm text-white/60">Slug</span>
+              <span className="text-sm text-white/60">{t("admin.roles.fields.slug")}</span>
               <input
                 type="text"
                 value={createForm.slug}
@@ -143,7 +153,7 @@ export function RolesAdminTableView({
             </label>
 
             <label className="space-y-1">
-              <span className="text-sm text-white/60">Name</span>
+              <span className="text-sm text-white/60">{t("admin.roles.fields.name")}</span>
               <input
                 type="text"
                 value={createForm.name}
@@ -155,7 +165,7 @@ export function RolesAdminTableView({
             </label>
 
             <label className="space-y-1 sm:col-span-1">
-              <span className="text-sm text-white/60">Description</span>
+              <span className="text-sm text-white/60">{t("admin.roles.fields.description")}</span>
               <input
                 type="text"
                 value={createForm.description}
@@ -168,11 +178,12 @@ export function RolesAdminTableView({
           </div>
 
           <div>
-            <p className="mb-2 text-sm text-white/60">Permissions</p>
+            <p className="mb-2 text-sm text-white/60">{t("admin.roles.fields.permissions")}</p>
             <PermissionCheckboxes
               idPrefix="create"
               selected={createForm.permissions}
               onToggle={onCreatePermissionToggle}
+              t={t}
             />
           </div>
 
@@ -187,21 +198,23 @@ export function RolesAdminTableView({
             disabled={isCreating}
             className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isCreating ? <LoadingSpinner size="sm" label="Creating role" /> : null}
-            Create role
+            {isCreating ? (
+              <LoadingSpinner size="sm" label={t("admin.roles.creatingAria")} />
+            ) : null}
+            {t("admin.roles.createRole")}
           </button>
         </form>
       ) : null}
 
       {rows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-white/10 px-6 py-12 text-center">
-          <p className="text-white/70">No roles yet.</p>
+          <p className="text-white/70">{t("admin.roles.empty")}</p>
           <button
             type="button"
             onClick={onToggleCreateForm}
             className="mt-4 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark"
           >
-            Add the first role
+            {t("admin.roles.addFirstRole")}
           </button>
         </div>
       ) : (
@@ -209,6 +222,7 @@ export function RolesAdminTableView({
           {rows.map((row, index) => {
             const draft = drafts[index];
             const dirty = draft ? isRowDirty(row, draft) : false;
+            const deleteBlockedReason = roleDeleteBlockedReason(row, t);
 
             return (
               <article
@@ -226,12 +240,12 @@ export function RolesAdminTableView({
                       </h3>
                       {row.isSystem ? (
                         <span className="rounded-full border border-white/20 px-2 py-0.5 text-xs text-white/70">
-                          System
+                          {t("admin.roles.systemBadge")}
                         </span>
                       ) : null}
                     </div>
                     <p className="text-xs text-white/50">
-                      {row.userCount} user{row.userCount === 1 ? "" : "s"}
+                      {formatAdminRoleUserCount(t, row.userCount)}
                     </p>
                   </div>
 
@@ -242,7 +256,9 @@ export function RolesAdminTableView({
                       onClick={() => onSaveRow(row.slug)}
                       className="rounded-md border border-white/10 px-3 py-1 text-xs font-medium text-white/80 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      {savingSlug === row.slug ? "Saving…" : "Save"}
+                      {savingSlug === row.slug
+                        ? t("admin.actions.saving")
+                        : t("admin.actions.save")}
                     </button>
                     {canDeleteRole(row) ? (
                       <button
@@ -251,14 +267,16 @@ export function RolesAdminTableView({
                         onClick={() => onDeleteRow(row.slug)}
                         className="rounded-md border border-red-400/30 px-3 py-1 text-xs font-medium text-red-300 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        {deletingSlug === row.slug ? "Deleting…" : "Delete"}
+                        {deletingSlug === row.slug
+                          ? t("admin.actions.deleting")
+                          : t("admin.actions.delete")}
                       </button>
-                    ) : roleDeleteBlockedReason(row) ? (
+                    ) : deleteBlockedReason ? (
                       <span
                         className="rounded-md border border-white/10 px-3 py-1 text-xs text-white/50"
-                        title={roleDeleteBlockedReason(row) ?? undefined}
+                        title={deleteBlockedReason}
                       >
-                        Delete unavailable
+                        {t("admin.roles.deleteUnavailable")}
                       </span>
                     ) : null}
                   </div>
@@ -266,7 +284,7 @@ export function RolesAdminTableView({
 
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <label className="space-y-1">
-                    <span className="text-sm text-white/60">Name</span>
+                    <span className="text-sm text-white/60">{t("admin.roles.fields.name")}</span>
                     <input
                       type="text"
                       value={draft?.name ?? row.name}
@@ -278,7 +296,7 @@ export function RolesAdminTableView({
                   </label>
 
                   <label className="space-y-1">
-                    <span className="text-sm text-white/60">Description</span>
+                    <span className="text-sm text-white/60">{t("admin.roles.fields.description")}</span>
                     <input
                       type="text"
                       value={draft?.description ?? row.description ?? ""}
@@ -295,7 +313,7 @@ export function RolesAdminTableView({
                 </div>
 
                 <div className="mt-4">
-                  <p className="mb-2 text-sm text-white/60">Permissions</p>
+                  <p className="mb-2 text-sm text-white/60">{t("admin.roles.fields.permissions")}</p>
                   {draft ? (
                     <PermissionCheckboxes
                       idPrefix={row.slug}
@@ -303,6 +321,7 @@ export function RolesAdminTableView({
                       onToggle={(permission) =>
                         onDraftPermissionToggle(row.slug, permission)
                       }
+                      t={t}
                     />
                   ) : null}
                 </div>

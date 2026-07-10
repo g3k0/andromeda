@@ -472,5 +472,161 @@
       "creatingPage": "Création de la page auteur…",
       "savingPreference": "Enregistrement de votre préférence…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Tableau de bord d'administration",
+      "subtitle": "Gérez les œuvres, les auteurs et les paramètres de la plateforme.",
+      "cards": {
+        "manageUsers": {
+          "title": "Gérer les utilisateurs et les rôles",
+          "body": "Gérez les comptes, les rôles et le statut de la plateforme."
+        },
+        "works": {
+          "title": "Œuvres",
+          "body": "Examinez et sélectionnez les œuvres publiées."
+        },
+        "authors": {
+          "title": "Auteurs",
+          "body": "Vérifiez et gérez les certifications d'auteurs."
+        },
+        "sales": {
+          "title": "Ventes",
+          "body": "Suivez les exemplaires mintés et les revenus."
+        },
+        "settings": {
+          "title": "Paramètres",
+          "body": "Configurez les paramètres de la plateforme."
+        }
+      }
+    },
+    "manage": {
+      "title": "Gérer les utilisateurs et les rôles",
+      "subtitle": "Gérez les comptes, les rôles et les permissions de la plateforme."
+    },
+    "tabs": {
+      "users": "Utilisateurs",
+      "roles": "Rôles",
+      "ariaLabel": "Sections de gestion administrative"
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "delete": "Supprimer",
+      "deleting": "Suppression…",
+      "cancel": "Annuler"
+    },
+    "session": {
+      "expired": "Votre session d'administration a expiré. Veuillez confirmer à nouveau dans votre portefeuille.",
+      "authorizeFailed": "Échec de l'autorisation d'accès administrateur. Confirmez dans votre portefeuille pour continuer."
+    },
+    "users": {
+      "title": "Administration des utilisateurs",
+      "subtitle": "Gérez les comptes, les rôles et le statut de la plateforme.",
+      "loadingAria": "Chargement des utilisateurs",
+      "creatingAria": "Création d'un utilisateur",
+      "createUser": "Créer un utilisateur",
+      "addUser": "+ Ajouter un utilisateur",
+      "addFirstUser": "Ajouter le premier utilisateur",
+      "empty": "Aucun utilisateur pour l'instant.",
+      "actionsColumn": "Actions",
+      "confirmDelete": "Supprimer l'utilisateur {address} ? Cette action est irréversible.",
+      "fields": {
+        "walletAddress": "Adresse du portefeuille",
+        "role": "Rôle",
+        "status": "Statut"
+      },
+      "columns": {
+        "address": "Adresse",
+        "role": "Rôle",
+        "status": "Statut",
+        "createdAt": "Créé le"
+      },
+      "status": {
+        "active": "Actif",
+        "suspended": "Suspendu",
+        "pending": "En attente"
+      },
+      "validation": {
+        "addressRequired": "L'adresse du portefeuille est requise.",
+        "addressInvalid": "Adresse Ethereum invalide.",
+        "addressExists": "Un utilisateur avec cette adresse existe déjà."
+      },
+      "notifications": {
+        "created": "Utilisateur créé.",
+        "updated": "Utilisateur mis à jour.",
+        "deleted": "Utilisateur supprimé."
+      },
+      "errors": {
+        "createFailed": "Échec de la création de l'utilisateur.",
+        "updateFailed": "Échec de la mise à jour de l'utilisateur.",
+        "deleteFailed": "Échec de la suppression de l'utilisateur."
+      },
+      "loading": {
+        "creating": "Création de l'utilisateur…",
+        "saving": "Enregistrement de l'utilisateur…",
+        "deleting": "Suppression de l'utilisateur…"
+      }
+    },
+    "roles": {
+      "title": "Administration des rôles",
+      "subtitle": "Configurez les noms, descriptions et jeux de permissions des rôles.",
+      "loadingAria": "Chargement des rôles",
+      "creatingAria": "Création d'un rôle",
+      "createRole": "Créer un rôle",
+      "addRole": "+ Ajouter un rôle",
+      "addFirstRole": "Ajouter le premier rôle",
+      "empty": "Aucun rôle pour l'instant.",
+      "systemBadge": "Système",
+      "userCountSingular": "{count} utilisateur",
+      "userCountPlural": "{count} utilisateurs",
+      "deleteUnavailable": "Suppression indisponible",
+      "confirmDelete": "Supprimer le rôle {slug} ? Cette action est irréversible.",
+      "fields": {
+        "slug": "Slug",
+        "name": "Nom",
+        "description": "Description",
+        "permissions": "Permissions"
+      },
+      "validation": {
+        "slugRequired": "Le slug du rôle est requis.",
+        "slugInvalid": "Slug de rôle invalide. Utilisez 2 à 32 lettres minuscules, chiffres ou tirets.",
+        "slugExists": "Un rôle avec ce slug existe déjà.",
+        "nameRequired": "Le nom du rôle est requis.",
+        "permissionsRequired": "Sélectionnez au moins une permission."
+      },
+      "deleteBlocked": {
+        "system": "Les rôles système ne peuvent pas être supprimés.",
+        "assigned": "Le rôle est assigné à {count} utilisateur(s). Réassignez-les avant de supprimer."
+      },
+      "notifications": {
+        "created": "Rôle créé.",
+        "updated": "Rôle mis à jour.",
+        "deleted": "Rôle supprimé."
+      },
+      "errors": {
+        "createFailed": "Échec de la création du rôle.",
+        "updateFailed": "Échec de la mise à jour du rôle.",
+        "deleteFailed": "Échec de la suppression du rôle."
+      },
+      "loading": {
+        "creating": "Création du rôle…",
+        "saving": "Enregistrement du rôle…",
+        "deleting": "Suppression du rôle…"
+      }
+    },
+    "permissions": {
+      "pagesRead": "Lire les pages",
+      "authorsWriteOwn": "Modifier son propre profil d'auteur",
+      "authorsWriteAny": "Modifier n'importe quel profil d'auteur",
+      "authorsDeleteAny": "Supprimer n'importe quel profil d'auteur",
+      "usersRead": "Voir les utilisateurs",
+      "usersWrite": "Gérer les utilisateurs",
+      "usersDelete": "Supprimer les utilisateurs",
+      "adminAccess": "Accéder à la zone d'administration",
+      "rolesRead": "Voir les rôles",
+      "rolesWrite": "Gérer les rôles",
+      "rolesDelete": "Supprimer les rôles"
+    }
   }
 }

@@ -472,5 +472,161 @@
       "creatingPage": "Autorenseite wird erstellt…",
       "savingPreference": "Deine Präferenz wird gespeichert…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin-Dashboard",
+      "subtitle": "Werke, Autoren und Plattformeinstellungen verwalten.",
+      "cards": {
+        "manageUsers": {
+          "title": "Benutzer und Rollen verwalten",
+          "body": "Plattformkonten, Rollen und Status verwalten."
+        },
+        "works": {
+          "title": "Werke",
+          "body": "Veröffentlichte Werke prüfen und kuratieren."
+        },
+        "authors": {
+          "title": "Autoren",
+          "body": "Autorenzertifizierungen prüfen und verwalten."
+        },
+        "sales": {
+          "title": "Verkäufe",
+          "body": "Geminte Exemplare und Einnahmen überwachen."
+        },
+        "settings": {
+          "title": "Einstellungen",
+          "body": "Plattformparameter konfigurieren."
+        }
+      }
+    },
+    "manage": {
+      "title": "Benutzer und Rollen verwalten",
+      "subtitle": "Plattformkonten, Rollen und Berechtigungen verwalten."
+    },
+    "tabs": {
+      "users": "Benutzer",
+      "roles": "Rollen",
+      "ariaLabel": "Bereiche der Admin-Verwaltung"
+    },
+    "actions": {
+      "save": "Speichern",
+      "saving": "Speichern…",
+      "delete": "Löschen",
+      "deleting": "Löschen…",
+      "cancel": "Abbrechen"
+    },
+    "session": {
+      "expired": "Ihre Admin-Sitzung ist abgelaufen. Bitte bestätigen Sie erneut in Ihrer Wallet.",
+      "authorizeFailed": "Admin-Zugriff konnte nicht autorisiert werden. Bestätigen Sie in Ihrer Wallet, um fortzufahren."
+    },
+    "users": {
+      "title": "Benutzerverwaltung",
+      "subtitle": "Plattformkonten, Rollen und Status verwalten.",
+      "loadingAria": "Benutzer werden geladen",
+      "creatingAria": "Benutzer wird erstellt",
+      "createUser": "Benutzer erstellen",
+      "addUser": "+ Benutzer hinzufügen",
+      "addFirstUser": "Ersten Benutzer hinzufügen",
+      "empty": "Noch keine Benutzer.",
+      "actionsColumn": "Aktionen",
+      "confirmDelete": "Benutzer {address} löschen? Dies kann nicht rückgängig gemacht werden.",
+      "fields": {
+        "walletAddress": "Wallet-Adresse",
+        "role": "Rolle",
+        "status": "Status"
+      },
+      "columns": {
+        "address": "Adresse",
+        "role": "Rolle",
+        "status": "Status",
+        "createdAt": "Erstellt"
+      },
+      "status": {
+        "active": "Aktiv",
+        "suspended": "Gesperrt",
+        "pending": "Ausstehend"
+      },
+      "validation": {
+        "addressRequired": "Wallet-Adresse ist erforderlich.",
+        "addressInvalid": "Ungültige Ethereum-Adresse.",
+        "addressExists": "Ein Benutzer mit dieser Adresse existiert bereits."
+      },
+      "notifications": {
+        "created": "Benutzer erstellt.",
+        "updated": "Benutzer aktualisiert.",
+        "deleted": "Benutzer gelöscht."
+      },
+      "errors": {
+        "createFailed": "Benutzer konnte nicht erstellt werden.",
+        "updateFailed": "Benutzer konnte nicht aktualisiert werden.",
+        "deleteFailed": "Benutzer konnte nicht gelöscht werden."
+      },
+      "loading": {
+        "creating": "Benutzer wird erstellt…",
+        "saving": "Benutzer wird gespeichert…",
+        "deleting": "Benutzer wird gelöscht…"
+      }
+    },
+    "roles": {
+      "title": "Rollenverwaltung",
+      "subtitle": "Rollennamen, Beschreibungen und Berechtigungssätze konfigurieren.",
+      "loadingAria": "Rollen werden geladen",
+      "creatingAria": "Rolle wird erstellt",
+      "createRole": "Rolle erstellen",
+      "addRole": "+ Rolle hinzufügen",
+      "addFirstRole": "Erste Rolle hinzufügen",
+      "empty": "Noch keine Rollen.",
+      "systemBadge": "System",
+      "userCountSingular": "{count} Benutzer",
+      "userCountPlural": "{count} Benutzer",
+      "deleteUnavailable": "Löschen nicht verfügbar",
+      "confirmDelete": "Rolle {slug} löschen? Dies kann nicht rückgängig gemacht werden.",
+      "fields": {
+        "slug": "Slug",
+        "name": "Name",
+        "description": "Beschreibung",
+        "permissions": "Berechtigungen"
+      },
+      "validation": {
+        "slugRequired": "Rollen-Slug ist erforderlich.",
+        "slugInvalid": "Ungültiger Rollen-Slug. Verwenden Sie 2–32 Kleinbuchstaben, Ziffern oder Bindestriche.",
+        "slugExists": "Eine Rolle mit diesem Slug existiert bereits.",
+        "nameRequired": "Rollenname ist erforderlich.",
+        "permissionsRequired": "Wählen Sie mindestens eine Berechtigung aus."
+      },
+      "deleteBlocked": {
+        "system": "Systemrollen können nicht gelöscht werden.",
+        "assigned": "Die Rolle ist {count} Benutzer(n) zugewiesen. Weisen Sie sie neu zu, bevor Sie löschen."
+      },
+      "notifications": {
+        "created": "Rolle erstellt.",
+        "updated": "Rolle aktualisiert.",
+        "deleted": "Rolle gelöscht."
+      },
+      "errors": {
+        "createFailed": "Rolle konnte nicht erstellt werden.",
+        "updateFailed": "Rolle konnte nicht aktualisiert werden.",
+        "deleteFailed": "Rolle konnte nicht gelöscht werden."
+      },
+      "loading": {
+        "creating": "Rolle wird erstellt…",
+        "saving": "Rolle wird gespeichert…",
+        "deleting": "Rolle wird gelöscht…"
+      }
+    },
+    "permissions": {
+      "pagesRead": "Seiten lesen",
+      "authorsWriteOwn": "Eigenes Autorenprofil bearbeiten",
+      "authorsWriteAny": "Beliebiges Autorenprofil bearbeiten",
+      "authorsDeleteAny": "Beliebiges Autorenprofil löschen",
+      "usersRead": "Benutzer anzeigen",
+      "usersWrite": "Benutzer verwalten",
+      "usersDelete": "Benutzer löschen",
+      "adminAccess": "Admin-Bereich aufrufen",
+      "rolesRead": "Rollen anzeigen",
+      "rolesWrite": "Rollen verwalten",
+      "rolesDelete": "Rollen löschen"
+    }
   }
 }

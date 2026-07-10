@@ -1,4 +1,5 @@
 import type { UserPermission } from "@/lib/users/types";
+import type { TranslateFn } from "@/lib/i18n/translate";
 import type { RoleWithUserCount } from "./types";
 import { isValidRoleSlug } from "./types";
 
@@ -104,22 +105,23 @@ export function createDefaultCreateRoleFormState(): CreateRoleFormState {
 export function validateCreateRoleForm(
   form: CreateRoleFormState,
   existingSlugs: readonly string[],
+  t: TranslateFn,
 ): string | null {
   const slug = form.slug.trim().toLowerCase();
   if (!slug) {
-    return "Role slug is required.";
+    return t("admin.roles.validation.slugRequired");
   }
   if (!isValidRoleSlug(slug)) {
-    return "Invalid role slug. Use 2–32 lowercase letters, numbers, or hyphens.";
+    return t("admin.roles.validation.slugInvalid");
   }
   if (existingSlugs.includes(slug)) {
-    return "A role with this slug already exists.";
+    return t("admin.roles.validation.slugExists");
   }
   if (!form.name.trim()) {
-    return "Role name is required.";
+    return t("admin.roles.validation.nameRequired");
   }
   if (form.permissions.length === 0) {
-    return "Select at least one permission.";
+    return t("admin.roles.validation.permissionsRequired");
   }
   return null;
 }
@@ -138,12 +140,17 @@ export function canDeleteRole(row: AdminRoleRow): boolean {
   return !row.isSystem && row.userCount === 0;
 }
 
-export function roleDeleteBlockedReason(row: AdminRoleRow): string | null {
+export function roleDeleteBlockedReason(
+  row: AdminRoleRow,
+  t: TranslateFn,
+): string | null {
   if (row.isSystem) {
-    return "System roles cannot be deleted.";
+    return t("admin.roles.deleteBlocked.system");
   }
   if (row.userCount > 0) {
-    return `Role is assigned to ${row.userCount} user(s). Reassign them before deleting.`;
+    return t("admin.roles.deleteBlocked.assigned", {
+      count: String(row.userCount),
+    });
   }
   return null;
 }

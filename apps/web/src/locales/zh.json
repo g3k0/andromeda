@@ -472,5 +472,161 @@
       "creatingPage": "正在创建作者页面…",
       "savingPreference": "正在保存您的偏好…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "管理后台",
+      "subtitle": "管理作品、作者及平台设置。",
+      "cards": {
+        "manageUsers": {
+          "title": "管理用户和角色",
+          "body": "管理平台账户、角色及状态。"
+        },
+        "works": {
+          "title": "作品",
+          "body": "审核和筛选已发布的作品。"
+        },
+        "authors": {
+          "title": "作者",
+          "body": "验证并管理作者认证。"
+        },
+        "sales": {
+          "title": "销售",
+          "body": "监控已铸造副本及收入。"
+        },
+        "settings": {
+          "title": "设置",
+          "body": "配置平台参数。"
+        }
+      }
+    },
+    "manage": {
+      "title": "管理用户和角色",
+      "subtitle": "管理平台账户、角色及权限。"
+    },
+    "tabs": {
+      "users": "用户",
+      "roles": "角色",
+      "ariaLabel": "管理后台区域"
+    },
+    "actions": {
+      "save": "保存",
+      "saving": "保存中…",
+      "delete": "删除",
+      "deleting": "删除中…",
+      "cancel": "取消"
+    },
+    "session": {
+      "expired": "您的管理会话已过期。请在钱包中重新确认。",
+      "authorizeFailed": "管理访问授权失败。请在钱包中确认以继续。"
+    },
+    "users": {
+      "title": "用户管理",
+      "subtitle": "管理平台账户、角色及状态。",
+      "loadingAria": "正在加载用户",
+      "creatingAria": "正在创建用户",
+      "createUser": "创建用户",
+      "addUser": "+ 添加用户",
+      "addFirstUser": "添加第一个用户",
+      "empty": "尚无用户。",
+      "actionsColumn": "操作",
+      "confirmDelete": "删除用户 {address}？此操作无法撤销。",
+      "fields": {
+        "walletAddress": "钱包地址",
+        "role": "角色",
+        "status": "状态"
+      },
+      "columns": {
+        "address": "地址",
+        "role": "角色",
+        "status": "状态",
+        "createdAt": "创建时间"
+      },
+      "status": {
+        "active": "活跃",
+        "suspended": "已暂停",
+        "pending": "待处理"
+      },
+      "validation": {
+        "addressRequired": "钱包地址为必填项。",
+        "addressInvalid": "无效的以太坊地址。",
+        "addressExists": "该地址的用户已存在。"
+      },
+      "notifications": {
+        "created": "用户已创建。",
+        "updated": "用户已更新。",
+        "deleted": "用户已删除。"
+      },
+      "errors": {
+        "createFailed": "创建用户失败。",
+        "updateFailed": "更新用户失败。",
+        "deleteFailed": "删除用户失败。"
+      },
+      "loading": {
+        "creating": "正在创建用户…",
+        "saving": "正在保存用户…",
+        "deleting": "正在删除用户…"
+      }
+    },
+    "roles": {
+      "title": "角色管理",
+      "subtitle": "配置角色名称、描述及权限集合。",
+      "loadingAria": "正在加载角色",
+      "creatingAria": "正在创建角色",
+      "createRole": "创建角色",
+      "addRole": "+ 添加角色",
+      "addFirstRole": "添加第一个角色",
+      "empty": "尚无角色。",
+      "systemBadge": "系统",
+      "userCountSingular": "{count} 位用户",
+      "userCountPlural": "{count} 位用户",
+      "deleteUnavailable": "无法删除",
+      "confirmDelete": "删除角色 {slug}？此操作无法撤销。",
+      "fields": {
+        "slug": "Slug",
+        "name": "名称",
+        "description": "描述",
+        "permissions": "权限"
+      },
+      "validation": {
+        "slugRequired": "角色 slug 为必填项。",
+        "slugInvalid": "无效的角色 slug。请使用 2–32 个小写字母、数字或连字符。",
+        "slugExists": "该 slug 的角色已存在。",
+        "nameRequired": "角色名称为必填项。",
+        "permissionsRequired": "请至少选择一项权限。"
+      },
+      "deleteBlocked": {
+        "system": "系统角色无法删除。",
+        "assigned": "该角色已分配给 {count} 位用户。删除前请先重新分配。"
+      },
+      "notifications": {
+        "created": "角色已创建。",
+        "updated": "角色已更新。",
+        "deleted": "角色已删除。"
+      },
+      "errors": {
+        "createFailed": "创建角色失败。",
+        "updateFailed": "更新角色失败。",
+        "deleteFailed": "删除角色失败。"
+      },
+      "loading": {
+        "creating": "正在创建角色…",
+        "saving": "正在保存角色…",
+        "deleting": "正在删除角色…"
+      }
+    },
+    "permissions": {
+      "pagesRead": "读取页面",
+      "authorsWriteOwn": "编辑自己的作者资料",
+      "authorsWriteAny": "编辑任意作者资料",
+      "authorsDeleteAny": "删除任意作者资料",
+      "usersRead": "查看用户",
+      "usersWrite": "管理用户",
+      "usersDelete": "删除用户",
+      "adminAccess": "访问管理后台",
+      "rolesRead": "查看角色",
+      "rolesWrite": "管理角色",
+      "rolesDelete": "删除角色"
+    }
   }
 }

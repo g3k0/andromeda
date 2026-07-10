@@ -472,5 +472,161 @@
       "creatingPage": "著者ページを作成中…",
       "savingPreference": "設定を保存中…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "管理ダッシュボード",
+      "subtitle": "作品、著者、プラットフォーム設定を管理します。",
+      "cards": {
+        "manageUsers": {
+          "title": "ユーザーとロールを管理",
+          "body": "プラットフォームのアカウント、ロール、ステータスを管理します。"
+        },
+        "works": {
+          "title": "作品",
+          "body": "公開された作品を確認・キュレーションします。"
+        },
+        "authors": {
+          "title": "著者",
+          "body": "著者認証を確認・管理します。"
+        },
+        "sales": {
+          "title": "販売",
+          "body": "ミントされたコピーと収益を監視します。"
+        },
+        "settings": {
+          "title": "設定",
+          "body": "プラットフォームのパラメータを設定します。"
+        }
+      }
+    },
+    "manage": {
+      "title": "ユーザーとロールを管理",
+      "subtitle": "プラットフォームのアカウント、ロール、権限を管理します。"
+    },
+    "tabs": {
+      "users": "ユーザー",
+      "roles": "ロール",
+      "ariaLabel": "管理セクション"
+    },
+    "actions": {
+      "save": "保存",
+      "saving": "保存中…",
+      "delete": "削除",
+      "deleting": "削除中…",
+      "cancel": "キャンセル"
+    },
+    "session": {
+      "expired": "管理セッションの有効期限が切れました。ウォレットで再度確認してください。",
+      "authorizeFailed": "管理アクセスの認可に失敗しました。続行するにはウォレットで確認してください。"
+    },
+    "users": {
+      "title": "ユーザー管理",
+      "subtitle": "プラットフォームのアカウント、ロール、ステータスを管理します。",
+      "loadingAria": "ユーザーを読み込み中",
+      "creatingAria": "ユーザーを作成中",
+      "createUser": "ユーザーを作成",
+      "addUser": "+ ユーザーを追加",
+      "addFirstUser": "最初のユーザーを追加",
+      "empty": "ユーザーはまだいません。",
+      "actionsColumn": "操作",
+      "confirmDelete": "ユーザー {address} を削除しますか？この操作は元に戻せません。",
+      "fields": {
+        "walletAddress": "ウォレットアドレス",
+        "role": "ロール",
+        "status": "ステータス"
+      },
+      "columns": {
+        "address": "アドレス",
+        "role": "ロール",
+        "status": "ステータス",
+        "createdAt": "作成日"
+      },
+      "status": {
+        "active": "有効",
+        "suspended": "停止中",
+        "pending": "保留中"
+      },
+      "validation": {
+        "addressRequired": "ウォレットアドレスは必須です。",
+        "addressInvalid": "無効な Ethereum アドレスです。",
+        "addressExists": "このアドレスのユーザーは既に存在します。"
+      },
+      "notifications": {
+        "created": "ユーザーを作成しました。",
+        "updated": "ユーザーを更新しました。",
+        "deleted": "ユーザーを削除しました。"
+      },
+      "errors": {
+        "createFailed": "ユーザーの作成に失敗しました。",
+        "updateFailed": "ユーザーの更新に失敗しました。",
+        "deleteFailed": "ユーザーの削除に失敗しました。"
+      },
+      "loading": {
+        "creating": "ユーザーを作成中…",
+        "saving": "ユーザーを保存中…",
+        "deleting": "ユーザーを削除中…"
+      }
+    },
+    "roles": {
+      "title": "ロール管理",
+      "subtitle": "ロール名、説明、権限セットを設定します。",
+      "loadingAria": "ロールを読み込み中",
+      "creatingAria": "ロールを作成中",
+      "createRole": "ロールを作成",
+      "addRole": "+ ロールを追加",
+      "addFirstRole": "最初のロールを追加",
+      "empty": "ロールはまだありません。",
+      "systemBadge": "システム",
+      "userCountSingular": "{count} ユーザー",
+      "userCountPlural": "{count} ユーザー",
+      "deleteUnavailable": "削除できません",
+      "confirmDelete": "ロール {slug} を削除しますか？この操作は元に戻せません。",
+      "fields": {
+        "slug": "Slug",
+        "name": "名前",
+        "description": "説明",
+        "permissions": "権限"
+      },
+      "validation": {
+        "slugRequired": "ロール slug は必須です。",
+        "slugInvalid": "無効なロール slug です。2〜32 文字の小文字、数字、またはハイフンを使用してください。",
+        "slugExists": "この slug のロールは既に存在します。",
+        "nameRequired": "ロール名は必須です。",
+        "permissionsRequired": "少なくとも 1 つの権限を選択してください。"
+      },
+      "deleteBlocked": {
+        "system": "システムロールは削除できません。",
+        "assigned": "このロールは {count} 人のユーザーに割り当てられています。削除する前に再割り当てしてください。"
+      },
+      "notifications": {
+        "created": "ロールを作成しました。",
+        "updated": "ロールを更新しました。",
+        "deleted": "ロールを削除しました。"
+      },
+      "errors": {
+        "createFailed": "ロールの作成に失敗しました。",
+        "updateFailed": "ロールの更新に失敗しました。",
+        "deleteFailed": "ロールの削除に失敗しました。"
+      },
+      "loading": {
+        "creating": "ロールを作成中…",
+        "saving": "ロールを保存中…",
+        "deleting": "ロールを削除中…"
+      }
+    },
+    "permissions": {
+      "pagesRead": "ページを閲覧",
+      "authorsWriteOwn": "自分の著者プロフィールを編集",
+      "authorsWriteAny": "任意の著者プロフィールを編集",
+      "authorsDeleteAny": "任意の著者プロフィールを削除",
+      "usersRead": "ユーザーを表示",
+      "usersWrite": "ユーザーを管理",
+      "usersDelete": "ユーザーを削除",
+      "adminAccess": "管理エリアにアクセス",
+      "rolesRead": "ロールを表示",
+      "rolesWrite": "ロールを管理",
+      "rolesDelete": "ロールを削除"
+    }
   }
 }

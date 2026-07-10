@@ -472,5 +472,161 @@
       "creatingPage": "A criar página de autor…",
       "savingPreference": "A guardar a sua preferência…"
     }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Painel de administração",
+      "subtitle": "Gerir obras, autores e definições da plataforma.",
+      "cards": {
+        "manageUsers": {
+          "title": "Gerir utilizadores e funções",
+          "body": "Gerir contas, funções e estado da plataforma."
+        },
+        "works": {
+          "title": "Obras",
+          "body": "Rever e selecionar obras publicadas."
+        },
+        "authors": {
+          "title": "Autores",
+          "body": "Verificar e gerir certificações de autores."
+        },
+        "sales": {
+          "title": "Vendas",
+          "body": "Monitorizar cópias cunhadas e receitas."
+        },
+        "settings": {
+          "title": "Definições",
+          "body": "Configurar parâmetros da plataforma."
+        }
+      }
+    },
+    "manage": {
+      "title": "Gerir utilizadores e funções",
+      "subtitle": "Gerir contas, funções e permissões da plataforma."
+    },
+    "tabs": {
+      "users": "Utilizadores",
+      "roles": "Funções",
+      "ariaLabel": "Secções de gestão administrativa"
+    },
+    "actions": {
+      "save": "Guardar",
+      "saving": "A guardar…",
+      "delete": "Eliminar",
+      "deleting": "A eliminar…",
+      "cancel": "Cancelar"
+    },
+    "session": {
+      "expired": "A sua sessão de administração expirou. Confirme novamente na sua carteira.",
+      "authorizeFailed": "Falha ao autorizar o acesso de administração. Confirme na sua carteira para continuar."
+    },
+    "users": {
+      "title": "Administração de utilizadores",
+      "subtitle": "Gerir contas, funções e estado da plataforma.",
+      "loadingAria": "A carregar utilizadores",
+      "creatingAria": "A criar utilizador",
+      "createUser": "Criar utilizador",
+      "addUser": "+ Adicionar utilizador",
+      "addFirstUser": "Adicionar o primeiro utilizador",
+      "empty": "Ainda não há utilizadores.",
+      "actionsColumn": "Ações",
+      "confirmDelete": "Eliminar o utilizador {address}? Esta ação não pode ser desfeita.",
+      "fields": {
+        "walletAddress": "Endereço da carteira",
+        "role": "Função",
+        "status": "Estado"
+      },
+      "columns": {
+        "address": "Endereço",
+        "role": "Função",
+        "status": "Estado",
+        "createdAt": "Criado"
+      },
+      "status": {
+        "active": "Ativo",
+        "suspended": "Suspenso",
+        "pending": "Pendente"
+      },
+      "validation": {
+        "addressRequired": "O endereço da carteira é obrigatório.",
+        "addressInvalid": "Endereço Ethereum inválido.",
+        "addressExists": "Já existe um utilizador com este endereço."
+      },
+      "notifications": {
+        "created": "Utilizador criado.",
+        "updated": "Utilizador atualizado.",
+        "deleted": "Utilizador eliminado."
+      },
+      "errors": {
+        "createFailed": "Falha ao criar o utilizador.",
+        "updateFailed": "Falha ao atualizar o utilizador.",
+        "deleteFailed": "Falha ao eliminar o utilizador."
+      },
+      "loading": {
+        "creating": "A criar utilizador…",
+        "saving": "A guardar utilizador…",
+        "deleting": "A eliminar utilizador…"
+      }
+    },
+    "roles": {
+      "title": "Administração de funções",
+      "subtitle": "Configure nomes, descrições e conjuntos de permissões das funções.",
+      "loadingAria": "A carregar funções",
+      "creatingAria": "A criar função",
+      "createRole": "Criar função",
+      "addRole": "+ Adicionar função",
+      "addFirstRole": "Adicionar a primeira função",
+      "empty": "Ainda não há funções.",
+      "systemBadge": "Sistema",
+      "userCountSingular": "{count} utilizador",
+      "userCountPlural": "{count} utilizadores",
+      "deleteUnavailable": "Eliminação indisponível",
+      "confirmDelete": "Eliminar a função {slug}? Esta ação não pode ser anulada.",
+      "fields": {
+        "slug": "Slug",
+        "name": "Nome",
+        "description": "Descrição",
+        "permissions": "Permissões"
+      },
+      "validation": {
+        "slugRequired": "O slug da função é obrigatório.",
+        "slugInvalid": "Slug de função inválido. Use 2–32 letras minúsculas, números ou hífens.",
+        "slugExists": "Já existe uma função com este slug.",
+        "nameRequired": "O nome da função é obrigatório.",
+        "permissionsRequired": "Selecione pelo menos uma permissão."
+      },
+      "deleteBlocked": {
+        "system": "As funções de sistema não podem ser eliminadas.",
+        "assigned": "A função está atribuída a {count} utilizador(es). Reatribua-os antes de eliminar."
+      },
+      "notifications": {
+        "created": "Função criada.",
+        "updated": "Função atualizada.",
+        "deleted": "Função eliminada."
+      },
+      "errors": {
+        "createFailed": "Falha ao criar a função.",
+        "updateFailed": "Falha ao atualizar a função.",
+        "deleteFailed": "Falha ao eliminar a função."
+      },
+      "loading": {
+        "creating": "A criar função…",
+        "saving": "A guardar função…",
+        "deleting": "A eliminar função…"
+      }
+    },
+    "permissions": {
+      "pagesRead": "Ler páginas",
+      "authorsWriteOwn": "Editar o próprio perfil de autor",
+      "authorsWriteAny": "Editar qualquer perfil de autor",
+      "authorsDeleteAny": "Eliminar qualquer perfil de autor",
+      "usersRead": "Ver utilizadores",
+      "usersWrite": "Gerir utilizadores",
+      "usersDelete": "Eliminar utilizadores",
+      "adminAccess": "Aceder à área de administração",
+      "rolesRead": "Ver funções",
+      "rolesWrite": "Gerir funções",
+      "rolesDelete": "Eliminar funções"
+    }
   }
 }

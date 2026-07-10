@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { renderWithI18n } from "@/lib/i18n/test-utils";
+import { cleanup, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AdminUserRow } from "@/lib/users/admin-users-mappers";
@@ -32,7 +33,7 @@ function renderView(overrides: Partial<Parameters<typeof UsersAdminTableView>[0]
   const rows = overrides.rows ?? [buildRow()];
   const drafts = overrides.drafts ?? rows.map(createAdminUserRowDraft);
 
-  return render(
+  return renderWithI18n(
     <UsersAdminTableView
       roleOptions={ROLE_OPTIONS}
       rows={rows}
