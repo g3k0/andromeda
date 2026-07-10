@@ -26,5 +26,13 @@
     "manageUsers": "管理用户和角色",
     "logout": "退出登录",
     "loggingOut": "正在退出"
+  },
+  "wallet": {
+    "connect": "连接钱包",
+    "connecting": "连接中…",
+    "connectingAria": "正在连接钱包"
+  },
+  "notifications": {
+    "walletDisconnected": "钱包已断开连接。"
   }
 }

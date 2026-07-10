@@ -26,5 +26,13 @@
     "manageUsers": "ユーザーとロールを管理",
     "logout": "ログアウト",
     "loggingOut": "ログアウト中"
+  },
+  "wallet": {
+    "connect": "ウォレットを接続",
+    "connecting": "接続中…",
+    "connectingAria": "ウォレットを接続中"
+  },
+  "notifications": {
+    "walletDisconnected": "ウォレットが切断されました。"
   }
 }

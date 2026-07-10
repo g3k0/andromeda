@@ -26,5 +26,13 @@
     "manageUsers": "Gerir utilizadores e funções",
     "logout": "Terminar sessão",
     "loggingOut": "A terminar sessão"
+  },
+  "wallet": {
+    "connect": "Ligar carteira",
+    "connecting": "A ligar…",
+    "connectingAria": "A ligar carteira"
+  },
+  "notifications": {
+    "walletDisconnected": "Carteira desligada."
   }
 }

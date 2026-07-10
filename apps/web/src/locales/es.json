@@ -26,5 +26,13 @@
     "manageUsers": "Gestionar usuarios y roles",
     "logout": "Cerrar sesión",
     "loggingOut": "Cerrando sesión"
+  },
+  "wallet": {
+    "connect": "Conectar billetera",
+    "connecting": "Conectando…",
+    "connectingAria": "Conectando billetera"
+  },
+  "notifications": {
+    "walletDisconnected": "Billetera desconectada."
   }
 }

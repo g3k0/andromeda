@@ -26,5 +26,13 @@
     "manageUsers": "Gestisci utenti e ruoli",
     "logout": "Esci",
     "loggingOut": "Disconnessione in corso"
+  },
+  "wallet": {
+    "connect": "Connetti wallet",
+    "connecting": "Connessione…",
+    "connectingAria": "Connessione wallet"
+  },
+  "notifications": {
+    "walletDisconnected": "Wallet disconnesso."
   }
 }

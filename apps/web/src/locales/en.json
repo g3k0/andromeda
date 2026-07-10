@@ -42,5 +42,13 @@
     "manageUsers": "Manage users and roles",
     "logout": "Logout",
     "loggingOut": "Logging out"
+  },
+  "wallet": {
+    "connect": "Connect Wallet",
+    "connecting": "Connecting…",
+    "connectingAria": "Connecting wallet"
+  },
+  "notifications": {
+    "walletDisconnected": "Wallet disconnected."
   }
 }

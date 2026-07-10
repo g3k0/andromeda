@@ -26,5 +26,13 @@
     "manageUsers": "Benutzer und Rollen verwalten",
     "logout": "Abmelden",
     "loggingOut": "Abmeldung läuft"
+  },
+  "wallet": {
+    "connect": "Wallet verbinden",
+    "connecting": "Verbindung…",
+    "connectingAria": "Wallet wird verbunden"
+  },
+  "notifications": {
+    "walletDisconnected": "Wallet getrennt."
   }
 }

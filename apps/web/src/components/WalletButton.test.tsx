@@ -2,6 +2,7 @@
 
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { WalletButton } from "./WalletButton";
 
 vi.mock("wagmi", () => ({
@@ -31,7 +32,11 @@ describe("WalletButton", () => {
       isPending: false,
     } as unknown as ReturnType<typeof useConnect>);
 
-    const { container } = render(<WalletButton />);
+    const { container } = render(
+      <I18nProvider locale="en">
+        <WalletButton />
+      </I18nProvider>,
+    );
 
     expect(container).toBeEmptyDOMElement();
   });
@@ -47,7 +52,11 @@ describe("WalletButton", () => {
       isPending: false,
     } as unknown as ReturnType<typeof useConnect>);
 
-    render(<WalletButton />);
+    render(
+      <I18nProvider locale="en">
+        <WalletButton />
+      </I18nProvider>,
+    );
 
     expect(
       screen.getByRole("button", { name: /connect wallet/i }),

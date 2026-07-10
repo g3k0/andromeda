@@ -26,5 +26,13 @@
     "manageUsers": "Gérer les utilisateurs et les rôles",
     "logout": "Déconnexion",
     "loggingOut": "Déconnexion en cours"
+  },
+  "wallet": {
+    "connect": "Connecter le portefeuille",
+    "connecting": "Connexion…",
+    "connectingAria": "Connexion du portefeuille"
+  },
+  "notifications": {
+    "walletDisconnected": "Portefeuille déconnecté."
   }
 }
