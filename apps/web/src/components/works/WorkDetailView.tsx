@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+import { useTranslation } from "@/lib/i18n/use-translation";
 import type { WorkView } from "@/lib/works/work-view";
 
 export function WorkDetailView({
@@ -10,13 +13,15 @@ export function WorkDetailView({
   view: WorkView;
   children?: ReactNode;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="grid gap-8 md:grid-cols-[minmax(0,320px)_1fr]">
       <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5">
         {view.coverImageUrl ? (
           <Image
             src={view.coverImageUrl}
-            alt={`Cover for ${view.title}`}
+            alt={t("work.coverAlt", { title: view.title })}
             width={320}
             height={480}
             unoptimized
@@ -24,7 +29,7 @@ export function WorkDetailView({
           />
         ) : (
           <div className="flex aspect-[2/3] w-full items-center justify-center text-xs text-white/40">
-            No cover
+            {t("work.noCover")}
           </div>
         )}
       </div>
@@ -32,7 +37,9 @@ export function WorkDetailView({
       <div className="space-y-5">
         <header className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">{view.title}</h1>
-          <p className="break-all text-xs text-white/50">by {view.author}</p>
+          <p className="break-all text-xs text-white/50">
+            {t("work.byAuthor", { author: view.author })}
+          </p>
         </header>
 
         {view.description ? (

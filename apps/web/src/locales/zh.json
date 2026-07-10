@@ -152,5 +152,48 @@
     "donationsDisclaimer": "可使用钱包支持的任何 EVM 兼容网络或代币；发送前请核实目标地址。",
     "openTitle": "向所有人开放",
     "openBody": "本页面公开可见。无需连接钱包即可了解 Andromeda——无论您是读者、作者还是随意浏览。"
+  },
+  "work": {
+    "byAuthor": "作者：{author}",
+    "noCover": "无封面",
+    "coverAlt": "{title} 封面",
+    "metaTitle": "作品 #{workId} | Andromeda",
+    "metaDescription": "Andromeda 上经作者认证的数字文学版本。",
+    "metaNotFoundTitle": "作品 | Andromeda"
+  },
+  "mint": {
+    "buyCopy": "购买副本",
+    "confirmInWallet": "请在钱包中确认…",
+    "deployingTba": "正在设置代币账户…",
+    "pinningEnvelope": "正在准备阅读密钥…",
+    "copyMinted": "副本已铸造",
+    "soldOut": "已售罄",
+    "successMessage": "副本 #{tokenId} 铸造成功。",
+    "tokenAccount": "代币账户：{address}",
+    "transaction": "交易：{hash}",
+    "connectWallet": "连接钱包以购买副本。",
+    "notAvailable": "此版本暂不可用。",
+    "mintFailed": "副本铸造未能完成。",
+    "txFailed": "铸造交易失败。"
+  },
+  "reader": {
+    "metaTitle": "阅读 | Andromeda",
+    "metaDescription": "在浏览器中解密并阅读您拥有的副本。",
+    "heading": "正在阅读 {copyLabel}",
+    "workEdition": "作品 #{workId} · {editionLabel}",
+    "editionOf": "共 {size} 版",
+    "openEdition": "开放版本",
+    "tokenFallback": "代币 #{tokenId}",
+    "connectWallet": "连接钱包以阅读此副本。",
+    "verifyingOwnership": "正在验证所有权…",
+    "verifyingOwnershipAria": "正在验证所有权",
+    "ownersOnly": "仅副本所有者可以阅读。",
+    "decrypting": "正在解密…",
+    "decryptRead": "解密并阅读",
+    "signHint": "系统将要求您签署一条消息。密钥保留在浏览器中——服务器永远不会看到解密后的文本。",
+    "envelopeUnavailable": "此副本的阅读密钥尚不可用。",
+    "metadataLoadFailed": "无法加载作品元数据。",
+    "contentLoadFailed": "无法加载加密内容。",
+    "decryptFailed": "无法解密此副本。"
   }
 }

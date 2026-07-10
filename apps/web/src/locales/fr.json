@@ -152,5 +152,48 @@
     "donationsDisclaimer": "Tout réseau ou jeton compatible EVM que votre portefeuille prend en charge peut être utilisé ; vérifiez l'adresse de destination avant d'envoyer.",
     "openTitle": "Ouvert à tous",
     "openBody": "Cette page est publique. Vous pouvez découvrir Andromeda sans connecter de portefeuille — que vous soyez lecteur, auteur ou simple visiteur."
+  },
+  "work": {
+    "byAuthor": "par {author}",
+    "noCover": "Pas de couverture",
+    "coverAlt": "Couverture de {title}",
+    "metaTitle": "Œuvre #{workId} | Andromeda",
+    "metaDescription": "Une édition littéraire certifiée par l'auteur sur Andromeda.",
+    "metaNotFoundTitle": "Œuvre | Andromeda"
+  },
+  "mint": {
+    "buyCopy": "Acheter un exemplaire",
+    "confirmInWallet": "Confirmer dans le portefeuille…",
+    "deployingTba": "Configuration du compte de jeton…",
+    "pinningEnvelope": "Préparation de votre clé de lecture…",
+    "copyMinted": "Exemplaire frappé",
+    "soldOut": "Épuisé",
+    "successMessage": "Exemplaire #{tokenId} frappé avec succès.",
+    "tokenAccount": "Compte de jeton : {address}",
+    "transaction": "Transaction : {hash}",
+    "connectWallet": "Connectez un portefeuille pour acheter un exemplaire.",
+    "notAvailable": "Cette édition n'est pas disponible.",
+    "mintFailed": "Échec de la frappe de l'exemplaire.",
+    "txFailed": "La transaction de frappe a échoué."
+  },
+  "reader": {
+    "metaTitle": "Lire | Andromeda",
+    "metaDescription": "Lisez un exemplaire que vous possédez, déchiffré dans votre navigateur.",
+    "heading": "Lecture de {copyLabel}",
+    "workEdition": "Œuvre #{workId} · {editionLabel}",
+    "editionOf": "Édition sur {size}",
+    "openEdition": "Édition ouverte",
+    "tokenFallback": "jeton #{tokenId}",
+    "connectWallet": "Connectez votre portefeuille pour lire cet exemplaire.",
+    "verifyingOwnership": "Vérification de la propriété…",
+    "verifyingOwnershipAria": "Vérification de la propriété",
+    "ownersOnly": "Seul le propriétaire de cet exemplaire peut le lire.",
+    "decrypting": "Déchiffrement…",
+    "decryptRead": "Déchiffrer et lire",
+    "signHint": "Il vous sera demandé de signer un message. Votre clé reste dans votre navigateur — le serveur ne voit jamais le texte déchiffré.",
+    "envelopeUnavailable": "La clé de lecture de cet exemplaire n'est pas encore disponible.",
+    "metadataLoadFailed": "Échec du chargement des métadonnées de l'œuvre.",
+    "contentLoadFailed": "Échec du chargement du contenu chiffré.",
+    "decryptFailed": "Échec du déchiffrement de cet exemplaire."
   }
 }

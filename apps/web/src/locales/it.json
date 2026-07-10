@@ -152,5 +152,48 @@
     "donationsDisclaimer": "Si può usare qualsiasi rete o token compatibile EVM supportato dal tuo wallet; verifica l'indirizzo di destinazione prima di inviare.",
     "openTitle": "Aperto a tutti",
     "openBody": "Questa pagina è pubblica. Puoi conoscere Andromeda senza connettere un wallet — che tu sia lettore, autore o semplicemente in esplorazione."
+  },
+  "work": {
+    "byAuthor": "di {author}",
+    "noCover": "Nessuna copertina",
+    "coverAlt": "Copertina di {title}",
+    "metaTitle": "Opera #{workId} | Andromeda",
+    "metaDescription": "Un'edizione letteraria certificata dall'autore su Andromeda.",
+    "metaNotFoundTitle": "Opera | Andromeda"
+  },
+  "mint": {
+    "buyCopy": "Acquista una copia",
+    "confirmInWallet": "Conferma nel wallet…",
+    "deployingTba": "Configurazione dell'account token…",
+    "pinningEnvelope": "Preparazione della chiave di lettura…",
+    "copyMinted": "Copia coniata",
+    "soldOut": "Esaurito",
+    "successMessage": "Copia #{tokenId} coniata con successo.",
+    "tokenAccount": "Account token: {address}",
+    "transaction": "Transazione: {hash}",
+    "connectWallet": "Connetti un wallet per acquistare una copia.",
+    "notAvailable": "Questa edizione non è disponibile.",
+    "mintFailed": "Impossibile completare la coniazione della copia.",
+    "txFailed": "Transazione di coniazione fallita."
+  },
+  "reader": {
+    "metaTitle": "Leggi | Andromeda",
+    "metaDescription": "Leggi una copia che possiedi, decifrata nel tuo browser.",
+    "heading": "Lettura di {copyLabel}",
+    "workEdition": "Opera #{workId} · {editionLabel}",
+    "editionOf": "Edizione di {size}",
+    "openEdition": "Edizione aperta",
+    "tokenFallback": "token #{tokenId}",
+    "connectWallet": "Connetti il wallet per leggere questa copia.",
+    "verifyingOwnership": "Verifica della proprietà…",
+    "verifyingOwnershipAria": "Verifica della proprietà",
+    "ownersOnly": "Solo il proprietario di questa copia può leggerla.",
+    "decrypting": "Decifratura…",
+    "decryptRead": "Decifra e leggi",
+    "signHint": "Ti verrà chiesto di firmare un messaggio. La tua chiave resta nel browser — il server non vede mai il testo decifrato.",
+    "envelopeUnavailable": "La chiave di lettura per questa copia non è ancora disponibile.",
+    "metadataLoadFailed": "Impossibile caricare i metadati dell'opera.",
+    "contentLoadFailed": "Impossibile caricare il contenuto cifrato.",
+    "decryptFailed": "Impossibile decifrare questa copia."
   }
 }

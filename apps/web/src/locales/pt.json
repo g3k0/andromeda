@@ -152,5 +152,48 @@
     "donationsDisclaimer": "Qualquer rede ou token compatível com EVM que a sua carteira suporte pode ser usado; verifique o endereço de destino antes de enviar.",
     "openTitle": "Aberto a todos",
     "openBody": "Esta página é pública. Pode conhecer a Andromeda sem ligar uma carteira — seja leitor, autor ou apenas a explorar."
+  },
+  "work": {
+    "byAuthor": "de {author}",
+    "noCover": "Sem capa",
+    "coverAlt": "Capa de {title}",
+    "metaTitle": "Obra #{workId} | Andromeda",
+    "metaDescription": "Uma edição literária certificada pelo autor na Andromeda.",
+    "metaNotFoundTitle": "Obra | Andromeda"
+  },
+  "mint": {
+    "buyCopy": "Comprar um exemplar",
+    "confirmInWallet": "Confirmar na carteira…",
+    "deployingTba": "A configurar a conta de token…",
+    "pinningEnvelope": "A preparar a chave de leitura…",
+    "copyMinted": "Exemplar cunhado",
+    "soldOut": "Esgotado",
+    "successMessage": "Exemplar #{tokenId} cunhado com sucesso.",
+    "tokenAccount": "Conta de token: {address}",
+    "transaction": "Transação: {hash}",
+    "connectWallet": "Ligue uma carteira para comprar um exemplar.",
+    "notAvailable": "Esta edição não está disponível.",
+    "mintFailed": "Não foi possível concluir a cunhagem do exemplar.",
+    "txFailed": "A transação de cunhagem falhou."
+  },
+  "reader": {
+    "metaTitle": "Ler | Andromeda",
+    "metaDescription": "Leia um exemplar que possui, desencriptado no seu navegador.",
+    "heading": "A ler {copyLabel}",
+    "workEdition": "Obra #{workId} · {editionLabel}",
+    "editionOf": "Edição de {size}",
+    "openEdition": "Edição aberta",
+    "tokenFallback": "token #{tokenId}",
+    "connectWallet": "Ligue a sua carteira para ler este exemplar.",
+    "verifyingOwnership": "A verificar propriedade…",
+    "verifyingOwnershipAria": "A verificar propriedade",
+    "ownersOnly": "Apenas o proprietário deste exemplar pode lê-lo.",
+    "decrypting": "A desencriptar…",
+    "decryptRead": "Desencriptar e ler",
+    "signHint": "Ser-lhe-á pedido que assine uma mensagem. A sua chave permanece no navegador — o servidor nunca vê o texto desencriptado.",
+    "envelopeUnavailable": "A chave de leitura deste exemplar ainda não está disponível.",
+    "metadataLoadFailed": "Não foi possível carregar os metadados da obra.",
+    "contentLoadFailed": "Não foi possível carregar o conteúdo encriptado.",
+    "decryptFailed": "Não foi possível desencriptar este exemplar."
   }
 }

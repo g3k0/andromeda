@@ -152,5 +152,48 @@
     "donationsDisclaimer": "Jedes EVM-kompatible Netzwerk oder Token, das deine Wallet unterstützt, kann verwendet werden; überprüfe die Zieladresse vor dem Senden.",
     "openTitle": "Offen für alle",
     "openBody": "Diese Seite ist öffentlich. Du kannst Andromeda kennenlernen, ohne eine Wallet zu verbinden — ob du Leser, Autor oder nur neugierig bist."
+  },
+  "work": {
+    "byAuthor": "von {author}",
+    "noCover": "Kein Cover",
+    "coverAlt": "Cover für {title}",
+    "metaTitle": "Werk #{workId} | Andromeda",
+    "metaDescription": "Eine vom Autor zertifizierte literarische Ausgabe auf Andromeda.",
+    "metaNotFoundTitle": "Werk | Andromeda"
+  },
+  "mint": {
+    "buyCopy": "Exemplar kaufen",
+    "confirmInWallet": "In der Wallet bestätigen…",
+    "deployingTba": "Token-Konto wird eingerichtet…",
+    "pinningEnvelope": "Lese-Schlüssel wird vorbereitet…",
+    "copyMinted": "Exemplar geprägt",
+    "soldOut": "Ausverkauft",
+    "successMessage": "Exemplar #{tokenId} erfolgreich geprägt.",
+    "tokenAccount": "Token-Konto: {address}",
+    "transaction": "Transaktion: {hash}",
+    "connectWallet": "Verbinde eine Wallet, um ein Exemplar zu kaufen.",
+    "notAvailable": "Diese Ausgabe ist nicht verfügbar.",
+    "mintFailed": "Prägung des Exemplars konnte nicht abgeschlossen werden.",
+    "txFailed": "Prägungstransaktion fehlgeschlagen."
+  },
+  "reader": {
+    "metaTitle": "Lesen | Andromeda",
+    "metaDescription": "Lese ein Exemplar, das du besitzt, entschlüsselt in deinem Browser.",
+    "heading": "Lese {copyLabel}",
+    "workEdition": "Werk #{workId} · {editionLabel}",
+    "editionOf": "Ausgabe von {size}",
+    "openEdition": "Offene Ausgabe",
+    "tokenFallback": "Token #{tokenId}",
+    "connectWallet": "Verbinde deine Wallet, um dieses Exemplar zu lesen.",
+    "verifyingOwnership": "Eigentum wird überprüft…",
+    "verifyingOwnershipAria": "Eigentum wird überprüft",
+    "ownersOnly": "Nur der Besitzer dieses Exemplars kann es lesen.",
+    "decrypting": "Entschlüsseln…",
+    "decryptRead": "Entschlüsseln & lesen",
+    "signHint": "Du wirst aufgefordert, eine Nachricht zu signieren. Dein Schlüssel bleibt in deinem Browser — der Server sieht niemals den entschlüsselten Text.",
+    "envelopeUnavailable": "Der Lese-Schlüssel für dieses Exemplar ist noch nicht verfügbar.",
+    "metadataLoadFailed": "Metadaten des Werks konnten nicht geladen werden.",
+    "contentLoadFailed": "Verschlüsselter Inhalt konnte nicht geladen werden.",
+    "decryptFailed": "Dieses Exemplar konnte nicht entschlüsselt werden."
   }
 }

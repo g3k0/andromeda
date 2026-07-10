@@ -152,5 +152,48 @@
     "donationsDisclaimer": "ウォレットがサポートする EVM 互換ネットワークまたはトークンを使用できます。送金前に宛先アドレスを確認してください。",
     "openTitle": "誰でも利用可能",
     "openBody": "このページは公開されています。ウォレットを接続しなくても Andromeda について知ることができます——読者でも著者でも、ただ閲覧しているだけでも。"
+  },
+  "work": {
+    "byAuthor": "著者：{author}",
+    "noCover": "表紙なし",
+    "coverAlt": "{title} の表紙",
+    "metaTitle": "作品 #{workId} | Andromeda",
+    "metaDescription": "Andromeda 上の著者認証済み文学版。",
+    "metaNotFoundTitle": "作品 | Andromeda"
+  },
+  "mint": {
+    "buyCopy": "コピーを購入",
+    "confirmInWallet": "ウォレットで確認…",
+    "deployingTba": "トークンアカウントを設定中…",
+    "pinningEnvelope": "読書キーを準備中…",
+    "copyMinted": "コピーをミントしました",
+    "soldOut": "売り切れ",
+    "successMessage": "コピー #{tokenId} のミントに成功しました。",
+    "tokenAccount": "トークンアカウント：{address}",
+    "transaction": "トランザクション：{hash}",
+    "connectWallet": "コピーを購入するにはウォレットを接続してください。",
+    "notAvailable": "この版は利用できません。",
+    "mintFailed": "コピーのミントを完了できませんでした。",
+    "txFailed": "ミントトランザクションが失敗しました。"
+  },
+  "reader": {
+    "metaTitle": "読む | Andromeda",
+    "metaDescription": "所有するコピーをブラウザで復号して読みます。",
+    "heading": "{copyLabel} を読む",
+    "workEdition": "作品 #{workId} · {editionLabel}",
+    "editionOf": "全 {size} 版",
+    "openEdition": "オープンエディション",
+    "tokenFallback": "トークン #{tokenId}",
+    "connectWallet": "このコピーを読むにはウォレットを接続してください。",
+    "verifyingOwnership": "所有権を確認中…",
+    "verifyingOwnershipAria": "所有権を確認中",
+    "ownersOnly": "このコピーの所有者のみが読めます。",
+    "decrypting": "復号中…",
+    "decryptRead": "復号して読む",
+    "signHint": "メッセージへの署名を求められます。キーはブラウザ内に留まります——サーバーは復号されたテキストを見ることはありません。",
+    "envelopeUnavailable": "このコピーの読書キーはまだ利用できません。",
+    "metadataLoadFailed": "作品のメタデータを読み込めませんでした。",
+    "contentLoadFailed": "暗号化されたコンテンツを読み込めませんでした。",
+    "decryptFailed": "このコピーを復号できませんでした。"
   }
 }

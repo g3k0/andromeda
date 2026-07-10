@@ -152,5 +152,48 @@
     "donationsDisclaimer": "Any EVM-compatible network or token your wallet supports may be used; verify the destination address before sending.",
     "openTitle": "Open to everyone",
     "openBody": "This page is public. You can learn about Andromeda without connecting a wallet — whether you are a reader, an author, or just browsing."
+  },
+  "work": {
+    "byAuthor": "by {author}",
+    "noCover": "No cover",
+    "coverAlt": "Cover for {title}",
+    "metaTitle": "Work #{workId} | Andromeda",
+    "metaDescription": "An author-certified literary edition on Andromeda.",
+    "metaNotFoundTitle": "Work | Andromeda"
+  },
+  "mint": {
+    "buyCopy": "Buy a copy",
+    "confirmInWallet": "Confirm in wallet…",
+    "deployingTba": "Setting up token account…",
+    "pinningEnvelope": "Preparing your reading key…",
+    "copyMinted": "Copy minted",
+    "soldOut": "Sold out",
+    "successMessage": "Copy #{tokenId} minted successfully.",
+    "tokenAccount": "Token account: {address}",
+    "transaction": "Transaction: {hash}",
+    "connectWallet": "Connect a wallet to buy a copy.",
+    "notAvailable": "This edition is not available.",
+    "mintFailed": "Failed to finish minting the copy.",
+    "txFailed": "Mint transaction failed."
+  },
+  "reader": {
+    "metaTitle": "Read | Andromeda",
+    "metaDescription": "Read a copy you own, decrypted in your browser.",
+    "heading": "Reading {copyLabel}",
+    "workEdition": "Work #{workId} · {editionLabel}",
+    "editionOf": "Edition of {size}",
+    "openEdition": "Open edition",
+    "tokenFallback": "token #{tokenId}",
+    "connectWallet": "Connect your wallet to read this copy.",
+    "verifyingOwnership": "Verifying ownership…",
+    "verifyingOwnershipAria": "Verifying ownership",
+    "ownersOnly": "Only the owner of this copy can read it.",
+    "decrypting": "Decrypting…",
+    "decryptRead": "Decrypt & read",
+    "signHint": "You will be asked to sign a message. Your key stays in your browser — the server never sees the decrypted text.",
+    "envelopeUnavailable": "The reading key for this copy is not available yet.",
+    "metadataLoadFailed": "Failed to load work metadata.",
+    "contentLoadFailed": "Failed to load encrypted content.",
+    "decryptFailed": "Failed to decrypt this copy."
   }
 }

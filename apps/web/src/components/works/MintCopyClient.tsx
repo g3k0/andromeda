@@ -28,6 +28,7 @@ import {
   getWorkAvailability,
 } from "@/lib/works/mint-copy-tx";
 import { extractMintedTokenId } from "@/lib/works/mint-receipt";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 import { MintCopyView } from "./MintCopyView";
 
@@ -37,6 +38,7 @@ export type MintCopyClientProps = {
 };
 
 export function MintCopyClient({ work, title }: MintCopyClientProps) {
+  const { t } = useTranslation();
   const { address, isConnected } = useAccount();
   const { writeContractAsync } = useWriteContract();
   const { sendTransactionAsync } = useSendTransaction();
@@ -99,21 +101,21 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
           message:
             error instanceof Error
               ? error.message
-              : "Failed to finish minting the copy.",
+              : t("mint.mintFailed"),
         });
       }
     }
 
     void setupTokenAccount();
-  }, [receipt, state.step, address, workId, sendTransactionAsync]);
+  }, [receipt, state.step, address, workId, sendTransactionAsync, t]);
 
   async function handleMint() {
     if (!isConnected || !address) {
-      dispatch({ type: "mint_failed", message: "Connect a wallet to buy a copy." });
+      dispatch({ type: "mint_failed", message: t("mint.connectWallet") });
       return;
     }
     if (!availability.saleOpen) {
-      dispatch({ type: "mint_failed", message: "This edition is not available." });
+      dispatch({ type: "mint_failed", message: t("mint.notAvailable") });
       return;
     }
 
@@ -132,7 +134,7 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
       dispatch({
         type: "mint_failed",
         message:
-          error instanceof Error ? error.message : "Mint transaction failed.",
+          error instanceof Error ? error.message : t("mint.txFailed"),
       });
     }
   }

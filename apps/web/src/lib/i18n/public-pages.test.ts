@@ -18,6 +18,12 @@ const ABOUT_KEYS = [
   "about.openTitle",
 ] as const;
 
+const FLOW_KEYS = [
+  "work.metaTitle",
+  "mint.buyCopy",
+  "reader.decryptRead",
+] as const;
+
 describe("public page i18n keys", () => {
   it.each(SUPPORTED_LOCALE_CODES)("resolves home keys for locale %s", (locale) => {
     for (const key of HOME_KEYS) {
@@ -34,4 +40,15 @@ describe("public page i18n keys", () => {
       expect(label.length).toBeGreaterThan(0);
     }
   });
+
+  it.each(SUPPORTED_LOCALE_CODES)(
+    "resolves work mint and reader keys for locale %s",
+    (locale) => {
+      for (const key of FLOW_KEYS) {
+        const label = translate(locale, key);
+        expect(label).not.toMatch(/^\[missing:/);
+        expect(label.length).toBeGreaterThan(0);
+      }
+    },
+  );
 });

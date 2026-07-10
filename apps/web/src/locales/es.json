@@ -152,5 +152,48 @@
     "donationsDisclaimer": "Se puede usar cualquier red o token compatible con EVM que tu billetera soporte; verifica la dirección de destino antes de enviar.",
     "openTitle": "Abierto a todos",
     "openBody": "Esta página es pública. Puedes conocer Andromeda sin conectar una billetera — seas lector, autor o simplemente estés explorando."
+  },
+  "work": {
+    "byAuthor": "de {author}",
+    "noCover": "Sin portada",
+    "coverAlt": "Portada de {title}",
+    "metaTitle": "Obra #{workId} | Andromeda",
+    "metaDescription": "Una edición literaria certificada por el autor en Andromeda.",
+    "metaNotFoundTitle": "Obra | Andromeda"
+  },
+  "mint": {
+    "buyCopy": "Comprar un ejemplar",
+    "confirmInWallet": "Confirmar en la billetera…",
+    "deployingTba": "Configurando la cuenta de token…",
+    "pinningEnvelope": "Preparando tu clave de lectura…",
+    "copyMinted": "Ejemplar acuñado",
+    "soldOut": "Agotado",
+    "successMessage": "Ejemplar #{tokenId} acuñado correctamente.",
+    "tokenAccount": "Cuenta de token: {address}",
+    "transaction": "Transacción: {hash}",
+    "connectWallet": "Conecta una billetera para comprar un ejemplar.",
+    "notAvailable": "Esta edición no está disponible.",
+    "mintFailed": "No se pudo completar la acuñación del ejemplar.",
+    "txFailed": "La transacción de acuñación falló."
+  },
+  "reader": {
+    "metaTitle": "Leer | Andromeda",
+    "metaDescription": "Lee un ejemplar que posees, descifrado en tu navegador.",
+    "heading": "Leyendo {copyLabel}",
+    "workEdition": "Obra #{workId} · {editionLabel}",
+    "editionOf": "Edición de {size}",
+    "openEdition": "Edición abierta",
+    "tokenFallback": "token #{tokenId}",
+    "connectWallet": "Conecta tu billetera para leer este ejemplar.",
+    "verifyingOwnership": "Verificando propiedad…",
+    "verifyingOwnershipAria": "Verificando propiedad",
+    "ownersOnly": "Solo el propietario de este ejemplar puede leerlo.",
+    "decrypting": "Descifrando…",
+    "decryptRead": "Descifrar y leer",
+    "signHint": "Se te pedirá firmar un mensaje. Tu clave permanece en tu navegador — el servidor nunca ve el texto descifrado.",
+    "envelopeUnavailable": "La clave de lectura de este ejemplar aún no está disponible.",
+    "metadataLoadFailed": "No se pudieron cargar los metadatos de la obra.",
+    "contentLoadFailed": "No se pudo cargar el contenido cifrado.",
+    "decryptFailed": "No se pudo descifrar este ejemplar."
   }
 }
