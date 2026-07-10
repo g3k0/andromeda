@@ -43,6 +43,20 @@ const ADMIN_KEYS = [
   "admin.permissions.adminAccess",
 ] as const;
 
+const API_ERROR_KEYS = [
+  "api.errors.notAuthorized",
+  "api.errors.rateLimited",
+  "api.errors.roleInUse",
+  "api.errors.unexpected",
+] as const;
+
+const ROUTE_GUARD_KEYS = [
+  "routeGuard.routeNotFound",
+  "routeGuard.connectWalletToContinue",
+  "routeGuard.accessDeniedTitle",
+  "routeGuard.accessDeniedDescription",
+] as const;
+
 describe("navigation i18n keys", () => {
   it.each(SUPPORTED_LOCALE_CODES)(
     "resolves nav labels for locale %s",
@@ -81,6 +95,28 @@ describe("navigation i18n keys", () => {
     "resolves admin labels for locale %s",
     (locale) => {
       for (const key of ADMIN_KEYS) {
+        const label = translate(locale, key);
+        expect(label).not.toMatch(/^\[missing:/);
+        expect(label.length).toBeGreaterThan(0);
+      }
+    },
+  );
+
+  it.each(SUPPORTED_LOCALE_CODES)(
+    "resolves API error labels for locale %s",
+    (locale) => {
+      for (const key of API_ERROR_KEYS) {
+        const label = translate(locale, key);
+        expect(label).not.toMatch(/^\[missing:/);
+        expect(label.length).toBeGreaterThan(0);
+      }
+    },
+  );
+
+  it.each(SUPPORTED_LOCALE_CODES)(
+    "resolves route guard labels for locale %s",
+    (locale) => {
+      for (const key of ROUTE_GUARD_KEYS) {
         const label = translate(locale, key);
         expect(label).not.toMatch(/^\[missing:/);
         expect(label.length).toBeGreaterThan(0);

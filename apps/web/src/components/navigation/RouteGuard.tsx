@@ -43,7 +43,7 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
   if (!route) {
     return (
       <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-8 text-center">
-        <h1 className="text-xl font-semibold">Route not found</h1>
+        <h1 className="text-xl font-semibold">{t("routeGuard.routeNotFound")}</h1>
       </div>
     );
   }
@@ -51,7 +51,7 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
   if (isReconnecting) {
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center">
-        <p className="text-sm text-white/60">Reconnecting wallet…</p>
+        <p className="text-sm text-white/60">{t("routeGuard.reconnectingWallet")}</p>
       </div>
     );
   }
@@ -61,7 +61,7 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
       <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center">
         <h1 className="text-xl font-semibold">{t(route.labelKey)}</h1>
         <p className="mt-2 text-sm text-white/60">
-          Connect your wallet to continue.
+          {t("routeGuard.connectWalletToContinue")}
         </p>
         <div className="mt-4 flex justify-center">
           <WalletButton />
@@ -73,7 +73,7 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
   if (allowed === null) {
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center">
-        <p className="text-sm text-white/60">Checking access…</p>
+        <p className="text-sm text-white/60">{t("routeGuard.checkingAccess")}</p>
       </div>
     );
   }
@@ -81,9 +81,11 @@ export function RouteGuard({ routeId, children }: RouteGuardProps) {
   if (!allowed) {
     return (
       <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-8 text-center">
-        <h1 className="text-xl font-semibold">Access denied</h1>
+        <h1 className="text-xl font-semibold">{t("routeGuard.accessDeniedTitle")}</h1>
         <p className="mt-2 text-sm text-white/60">
-          You are not authorized to access {t(route.labelKey)}.
+          {t("routeGuard.accessDeniedDescription", {
+            pageName: t(route.labelKey),
+          })}
         </p>
       </div>
     );

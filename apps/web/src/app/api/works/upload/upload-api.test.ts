@@ -188,6 +188,6 @@ describe("works upload API", () => {
 
     expect(response.status).toBe(422);
     const json = await response.json();
-    expect(json.error).toMatch(/content keys/i);
+    expect(json.code).toBe("forbidden_content_key");
   });
 });

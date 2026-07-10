@@ -20,6 +20,7 @@ import {
 } from "@/lib/works/work-publish-form-state";
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { useTranslation } from "@/lib/i18n/use-translation";
+import { translateClientError } from "@/lib/i18n/api-error-messages";
 import { WorkPublishView } from "./WorkPublishView";
 
 export type WorkPublishClientProps = {
@@ -110,8 +111,7 @@ export function WorkPublishClient({
     } catch (error) {
       dispatch({
         type: "set_error_message",
-        message:
-          error instanceof Error ? error.message : t("publish.errors.previewFailed"),
+        message: translateClientError(t, error),
       });
     }
   }
@@ -182,7 +182,7 @@ export function WorkPublishClient({
       dispatch({ type: "set_step", step: "error" });
       dispatch({
         type: "set_error_message",
-        message: error instanceof Error ? error.message : t("publish.errors.uploadFailed"),
+        message: translateClientError(t, error),
       });
     }
   }

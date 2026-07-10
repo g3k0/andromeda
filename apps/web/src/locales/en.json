@@ -628,5 +628,43 @@
       "rolesWrite": "Manage roles",
       "rolesDelete": "Delete roles"
     }
+  },
+  "api": {
+    "errors": {
+      "invalidPayload": "Invalid request payload.",
+      "walletAuthFailed": "Wallet authentication failed.",
+      "walletAuthExpired": "Your wallet session expired. Please confirm again in your wallet.",
+      "notAuthorized": "Not authorized.",
+      "rateLimited": "Too many requests. Please try again later.",
+      "authorProfileExists": "Author profile already exists.",
+      "authorProfileNotFound": "Author profile not found.",
+      "invalidAddress": "Invalid Ethereum address.",
+      "userNotFound": "User not found.",
+      "userExists": "A user with this address already exists.",
+      "userSuspended": "This user account is suspended.",
+      "invalidPermissionOverrides": "Invalid permission overrides.",
+      "roleNotFound": "Role not found.",
+      "roleExists": "A role with this slug already exists.",
+      "roleInUse": "Role {slug} is assigned to {count} user(s). Reassign them before deleting.",
+      "invalidRoleSlug": "Invalid role slug.",
+      "invalidRolePermissions": "Invalid role permissions.",
+      "systemRoleMutation": "System roles cannot be modified.",
+      "adminRoleLockout": "Cannot remove the last admin role.",
+      "invalidWorkId": "Invalid work id.",
+      "invalidOwnerAddress": "Invalid owner address.",
+      "workUploadValidation": "{detail}",
+      "forbiddenContentKey": "Content keys must never be sent to the server.",
+      "ipfsMetadataValidation": "Generated metadata failed security validation.",
+      "unexpected": "Something went wrong. Please try again.",
+      "walletAuthMessageFailed": "Failed to create wallet authentication message."
+    }
+  },
+  "routeGuard": {
+    "routeNotFound": "Route not found",
+    "reconnectingWallet": "Reconnecting wallet…",
+    "connectWalletToContinue": "Connect your wallet to continue.",
+    "checkingAccess": "Checking access…",
+    "accessDeniedTitle": "Access denied",
+    "accessDeniedDescription": "You are not authorized to access {pageName}."
   }
 }

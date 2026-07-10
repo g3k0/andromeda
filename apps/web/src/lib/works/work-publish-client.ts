@@ -2,6 +2,10 @@ import { generateContentKey } from "@/lib/content-crypto/ace-spec";
 import { encryptContent } from "@/lib/content-crypto/content-cipher";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 import type { SignedWalletPayload } from "@/lib/auth/client-wallet-auth";
+import {
+  ApiClientError,
+  parseApiErrorBody,
+} from "@/lib/i18n/api-error-messages";
 
 import { readManuscriptFile } from "./manuscript-upload";
 import type { WorkPublishFormValues } from "./work-publish-form-state";
@@ -57,10 +61,12 @@ export async function uploadWorkPublishPayload(
   });
 
   if (!response.ok) {
-    const body = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null;
-    throw new Error(body?.error ?? "Work upload failed.");
+    const body = (await response.json().catch(() => null)) as unknown;
+    const parsed = parseApiErrorBody(body);
+    if (parsed) {
+      throw new ApiClientError(parsed.code, parsed.params);
+    }
+    throw new ApiClientError("unexpected");
   }
 
   const json = (await response.json()) as {

@@ -4,6 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
 
 import { useTranslation } from "@/lib/i18n/use-translation";
+import {
+  ApiClientError,
+  parseApiErrorBody,
+  translateClientError,
+} from "@/lib/i18n/api-error-messages";
 import type { LibraryCopyDto } from "@/lib/works/library-service";
 
 import { LibraryList } from "./LibraryList";
@@ -11,7 +16,12 @@ import { LibraryList } from "./LibraryList";
 async function fetchLibraryCopies(address: string): Promise<LibraryCopyDto[]> {
   const response = await fetch(`/api/library/${address}`);
   if (!response.ok) {
-    throw new Error("library.loadError");
+    const body = (await response.json().catch(() => null)) as unknown;
+    const parsed = parseApiErrorBody(body);
+    if (parsed) {
+      throw new ApiClientError(parsed.code, parsed.params);
+    }
+    throw new ApiClientError("unexpected");
   }
   const body = (await response.json()) as { copies: LibraryCopyDto[] };
   return body.copies;
@@ -35,13 +45,7 @@ export function LibraryClient() {
     );
   }
 
-  const errorMessage = error
-    ? error instanceof Error && error.message === "library.loadError"
-      ? t("library.loadError")
-      : error instanceof Error
-        ? error.message
-        : t("library.loadError")
-    : null;
+  const errorMessage = error ? translateClientError(t, error) : null;
 
   return (
     <LibraryList

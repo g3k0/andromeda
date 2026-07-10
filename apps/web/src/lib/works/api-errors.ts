@@ -1,4 +1,10 @@
-import { mapAuthorErrorToMessage, mapAuthorErrorToStatus } from "@/lib/authors/api-errors";
+import type { ApiErrorCode } from "@/lib/i18n/api-error-codes";
+import type { TranslationParams } from "@/lib/i18n/types";
+import {
+  mapAuthorErrorToCode,
+  mapAuthorErrorToMessage,
+  mapAuthorErrorToStatus,
+} from "@/lib/authors/api-errors";
 import { IpfsConfigError, IpfsMetadataValidationError } from "@/lib/ipfs/errors";
 
 import {
@@ -57,4 +63,35 @@ export function mapWorkErrorToMessage(error: unknown): string {
   }
 
   return mapAuthorErrorToMessage(error);
+}
+
+export function mapWorkErrorToCode(error: unknown): ApiErrorCode {
+  if (error instanceof InvalidWorkIdParamError) {
+    return "invalid_work_id";
+  }
+
+  if (error instanceof InvalidOwnerAddressError) {
+    return "invalid_owner_address";
+  }
+
+  if (error instanceof WorkUploadValidationError) {
+    return "work_upload_validation";
+  }
+
+  if (error instanceof ForbiddenContentKeyError) {
+    return "forbidden_content_key";
+  }
+
+  if (error instanceof IpfsMetadataValidationError) {
+    return "ipfs_metadata_validation";
+  }
+
+  return mapAuthorErrorToCode(error);
+}
+
+export function mapWorkErrorToParams(error: unknown): TranslationParams | undefined {
+  if (error instanceof WorkUploadValidationError) {
+    return { detail: error.message };
+  }
+  return undefined;
 }

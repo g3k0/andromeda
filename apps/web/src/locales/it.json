@@ -628,5 +628,43 @@
       "rolesWrite": "Gestire ruoli",
       "rolesDelete": "Eliminare ruoli"
     }
+  },
+  "api": {
+    "errors": {
+      "invalidPayload": "Payload della richiesta non valido.",
+      "walletAuthFailed": "Autenticazione del wallet non riuscita.",
+      "walletAuthExpired": "La sessione del wallet è scaduta. Conferma di nuovo nel tuo wallet.",
+      "notAuthorized": "Non autorizzato.",
+      "rateLimited": "Troppe richieste. Riprova più tardi.",
+      "authorProfileExists": "Il profilo autore esiste già.",
+      "authorProfileNotFound": "Profilo autore non trovato.",
+      "invalidAddress": "Indirizzo Ethereum non valido.",
+      "userNotFound": "Utente non trovato.",
+      "userExists": "Esiste già un utente con questo indirizzo.",
+      "userSuspended": "Questo account utente è sospeso.",
+      "invalidPermissionOverrides": "Override dei permessi non validi.",
+      "roleNotFound": "Ruolo non trovato.",
+      "roleExists": "Esiste già un ruolo con questo slug.",
+      "roleInUse": "Il ruolo {slug} è assegnato a {count} utente/i. Riassegnali prima di eliminare.",
+      "invalidRoleSlug": "Slug del ruolo non valido.",
+      "invalidRolePermissions": "Permessi del ruolo non validi.",
+      "systemRoleMutation": "I ruoli di sistema non possono essere modificati.",
+      "adminRoleLockout": "Impossibile rimuovere l'ultimo ruolo admin.",
+      "invalidWorkId": "ID opera non valido.",
+      "invalidOwnerAddress": "Indirizzo del proprietario non valido.",
+      "workUploadValidation": "{detail}",
+      "forbiddenContentKey": "Le chiavi di contenuto non devono mai essere inviate al server.",
+      "ipfsMetadataValidation": "I metadati generati non hanno superato la validazione di sicurezza.",
+      "unexpected": "Qualcosa è andato storto. Riprova.",
+      "walletAuthMessageFailed": "Impossibile creare il messaggio di autenticazione del wallet."
+    }
+  },
+  "routeGuard": {
+    "routeNotFound": "Percorso non trovato",
+    "reconnectingWallet": "Riconnessione del wallet…",
+    "connectWalletToContinue": "Connetti il wallet per continuare.",
+    "checkingAccess": "Verifica dell'accesso…",
+    "accessDeniedTitle": "Accesso negato",
+    "accessDeniedDescription": "Non sei autorizzato ad accedere a {pageName}."
   }
 }

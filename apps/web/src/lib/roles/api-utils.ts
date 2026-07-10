@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { enforceRateLimit as enforceUserRateLimit } from "@/lib/users/api-utils";
-import { mapRoleErrorToMessage, mapRoleErrorToStatus } from "./api-errors";
+import { buildApiErrorBody } from "@/lib/api/error-response";
+import {
+  mapRoleErrorToCode,
+  mapRoleErrorToMessage,
+  mapRoleErrorToParams,
+  mapRoleErrorToStatus,
+} from "./api-errors";
 
 export function jsonResponse(
   body: unknown,
@@ -12,9 +18,14 @@ export function jsonResponse(
 
 export function errorResponse(error: unknown): NextResponse {
   const status = mapRoleErrorToStatus(error);
-  const message =
-    status >= 500 ? "Unexpected server error." : mapRoleErrorToMessage(error);
-  return jsonResponse({ error: message }, status);
+  const body = buildApiErrorBody(
+    error,
+    mapRoleErrorToStatus,
+    mapRoleErrorToMessage,
+    mapRoleErrorToCode,
+    mapRoleErrorToParams,
+  );
+  return jsonResponse(body, status);
 }
 
 export async function enforceRateLimit(
