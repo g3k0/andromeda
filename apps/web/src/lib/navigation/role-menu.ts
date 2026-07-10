@@ -16,11 +16,6 @@ export const PROFILE_SETTINGS_MENU_ITEM: RoleMenuItem = {
   label: "Profile settings",
 };
 
-export const CHANGE_LANGUAGE_MENU_ITEM: RoleMenuItem = {
-  id: "change-language",
-  label: "Change language",
-};
-
 export const BECOME_AUTHOR_MENU_ITEM: RoleMenuItem = {
   id: "become-author",
   label: "Become author",
@@ -42,7 +37,7 @@ export function shouldShowManageUsersMenuItem(context: RoleMenuContext): boolean
 }
 
 export function getRoleMenuItems(context: RoleMenuContext): RoleMenuItem[] {
-  const items = [PROFILE_SETTINGS_MENU_ITEM, CHANGE_LANGUAGE_MENU_ITEM];
+  const items = [PROFILE_SETTINGS_MENU_ITEM];
 
   if (shouldShowManageUsersMenuItem(context)) {
     items.push(MANAGE_USERS_MENU_ITEM);

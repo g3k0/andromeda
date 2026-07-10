@@ -1,12 +1,28 @@
 import type { Metadata } from "next";
 
 import { DonationSection } from "@/components/about/DonationSection";
+import { buildLocalizedPageMetadata } from "@/lib/i18n/page-metadata";
+import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
 
-export const metadata: Metadata = {
-  title: "About — Andromeda",
-  description:
-    "How Andromeda works for authors and readers: no platform fees, author-controlled editions, and direct sales on-chain.",
+type AboutPageProps = {
+  params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({
+  params,
+}: AboutPageProps): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  if (!isSupportedLocale(localeParam)) {
+    return {};
+  }
+
+  return buildLocalizedPageMetadata(
+    localeParam as SupportedLocale,
+    "/about",
+    "meta.about.title",
+    "meta.about.description",
+  );
+}
 
 export default function AboutPage() {
   return (

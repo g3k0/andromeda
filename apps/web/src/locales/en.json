@@ -1,7 +1,23 @@
 {
   "meta": {
     "siteName": "Andromeda",
-    "siteDescription": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies."
+    "siteDescription": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies.",
+    "home": {
+      "title": "Andromeda — Read, own and collect literary works on-chain",
+      "description": "Andromeda turns every book into an author-certified NFT. Writers publish and sell directly to readers, and readers truly own the editions they buy."
+    },
+    "catalog": {
+      "title": "Catalog | Andromeda",
+      "description": "Browse author-certified literary editions on Andromeda."
+    },
+    "library": {
+      "title": "Library | Andromeda",
+      "description": "The literary copies you own on Andromeda."
+    },
+    "about": {
+      "title": "About — Andromeda",
+      "description": "How Andromeda works for authors and readers: no platform fees, author-controlled editions, and direct sales on-chain."
+    }
   },
   "locales": {
     "en": "English",

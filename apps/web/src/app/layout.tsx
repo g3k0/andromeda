@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import { resolveSiteBaseUrl } from "@/lib/i18n/seo";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(resolveSiteBaseUrl()),
   title: "Andromeda",
   description:
     "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies.",

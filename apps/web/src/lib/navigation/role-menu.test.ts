@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissions";
 import {
   BECOME_AUTHOR_MENU_ITEM,
-  CHANGE_LANGUAGE_MENU_ITEM,
   MANAGE_USERS_MENU_ITEM,
   PROFILE_SETTINGS_MENU_ITEM,
   getRoleMenuItems,
@@ -58,16 +57,13 @@ describe("role menu", () => {
   it("builds role-specific menu items", () => {
     expect(getRoleMenuItems(menuContext("reader", "Reader"))).toEqual([
       PROFILE_SETTINGS_MENU_ITEM,
-      CHANGE_LANGUAGE_MENU_ITEM,
       BECOME_AUTHOR_MENU_ITEM,
     ]);
     expect(getRoleMenuItems(menuContext("author", "Author"))).toEqual([
       PROFILE_SETTINGS_MENU_ITEM,
-      CHANGE_LANGUAGE_MENU_ITEM,
     ]);
     expect(getRoleMenuItems(menuContext("admin", "Admin"))).toEqual([
       PROFILE_SETTINGS_MENU_ITEM,
-      CHANGE_LANGUAGE_MENU_ITEM,
       MANAGE_USERS_MENU_ITEM,
     ]);
   });
