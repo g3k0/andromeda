@@ -8,6 +8,7 @@ import { AdminManageTabs } from "./AdminManageTabs";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/en/admin/users",
+  useParams: () => ({ locale: "en" }),
 }));
 
 vi.mock("next/link", () => ({

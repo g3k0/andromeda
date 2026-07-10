@@ -1,12 +1,13 @@
 /** @vitest-environment jsdom */
 
 import { cleanup, render, screen } from "@testing-library/react";
+import { useParams } from "next/navigation";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { I18nProvider } from "./I18nProvider";
 import { LocalizedLink } from "./LocalizedLink";
-
 import type { SupportedLocale } from "./locales";
+
+const mockedUseParams = vi.mocked(useParams);
 
 vi.mock("next/link", () => ({
   default: ({
@@ -19,16 +20,14 @@ vi.mock("next/link", () => ({
 }));
 
 function renderLink(locale: SupportedLocale, href: string) {
-  return render(
-    <I18nProvider locale={locale}>
-      <LocalizedLink href={href}>Go</LocalizedLink>
-    </I18nProvider>,
-  );
+  mockedUseParams.mockReturnValue({ locale });
+  return render(<LocalizedLink href={href}>Go</LocalizedLink>);
 }
 
 describe("LocalizedLink", () => {
   afterEach(() => {
     cleanup();
+    mockedUseParams.mockReturnValue({ locale: "en" });
   });
 
   it("prefixes logical paths with the active locale", () => {
