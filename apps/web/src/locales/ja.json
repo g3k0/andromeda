@@ -195,5 +195,282 @@
     "metadataLoadFailed": "作品のメタデータを読み込めませんでした。",
     "contentLoadFailed": "暗号化されたコンテンツを読み込めませんでした。",
     "decryptFailed": "このコピーを復号できませんでした。"
+  },
+  "authorProfile": {
+    "publicAddress": "公開アドレス",
+    "edit": "編集",
+    "publishWork": "作品を公開",
+    "backToLibrary": "ライブラリに戻る",
+    "invalidAddressTitle": "無効なウォレットアドレス",
+    "invalidAddressDescription": "URL に有効な Ethereum アドレスが含まれていません。",
+    "notFoundTitle": "著者ページが見つかりません",
+    "notFoundDescription": "このウォレットアドレスにはまだ著者プロフィールがありません。",
+    "loadingPage": "著者ページを読み込み中…",
+    "indexTitle": "著者ページ",
+    "indexConnectWallet": "ウォレットを接続して、著者ページを開くか作成してください。",
+    "onboardingTitle": "著者ページを作成",
+    "onboardingDescription": "ダイアログで著者ページを作成するか、読者として続行してください。",
+    "readerModeTitle": "読者モード",
+    "readerModeDescription": "読者として閲覧中です。ウォレット接続時のオンボーディングで、後から著者ページを作成できます。",
+    "adminEditing": "管理者として編集中",
+    "authorName": "著者名",
+    "bio": "プロフィール",
+    "profileImage": "プロフィール画像",
+    "savingProfile": "プロフィールを保存中",
+    "saving": "保存中…",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "savingProfileOverlay": "プロフィールを保存中…",
+    "guidance": {
+      "avatarUpload": "対応形式：{formats}。最大サイズ：{maxKb} KB。",
+      "bio": "著者ページに表示される任意の公開プロフィール。経歴、ジャンル、リンクなどをプレーンテキストで記載してください。"
+    },
+    "validation": {
+      "displayNameRequired": "表示名は必須です。",
+      "displayNameMaxLength": "表示名は {max} 文字以内にしてください。",
+      "displayNameInvalidChars": "表示名に無効な文字が含まれています。",
+      "invalidImage": "無効なプロフィール画像です。",
+      "avatarFormat": "対応形式：{formats}。",
+      "avatarMaxSize": "最大サイズ：{maxKb} KB。",
+      "avatarReadFailed": "画像ファイルを読み込めませんでした。",
+      "bioMaxLength": "プロフィールは {max} 文字以内にしてください。",
+      "bioInvalidChars": "プロフィールに無効な文字が含まれています。"
+    },
+    "errors": {
+      "uploadFailed": "画像のアップロードに失敗しました。",
+      "saveFailed": "プロフィールの保存に失敗しました。"
+    }
+  },
+  "publish": {
+    "title": "作品を公開する",
+    "requiredFieldsNote": "* が付いた項目は必須です。",
+    "backToAuthor": "← 著者ページに戻る",
+    "meta": {
+      "title": "作品を公開 | Andromeda",
+      "description": "Andromeda で暗号化された文学作品を公開します。",
+      "titleWithAuthor": "作品を公開 | {name} | Andromeda",
+      "descriptionWithAuthor": "{name} として Andromeda で暗号化された作品を公開します。"
+    },
+    "sections": {
+      "imprint": {
+        "legend": "作品メタデータ",
+        "description": "公開メタデータに保存される版情報。紙の書籍の奥付ページに相当します。"
+      },
+      "pricing": {
+        "legend": "価格と版"
+      }
+    },
+    "fields": {
+      "title": { "label": "タイトル" },
+      "manuscriptFile": { "label": "原稿ファイル" },
+      "coverImage": { "label": "カバー画像" },
+      "publicationDate": { "label": "出版日" },
+      "editionNumber": { "label": "版番号" },
+      "editionKind": {
+        "label": "版の種類",
+        "options": {
+          "first": "初版",
+          "reprint": "重版"
+        }
+      },
+      "reprintNumber": { "label": "重版番号" },
+      "seriesName": { "label": "シリーズ名" },
+      "seriesVolume": { "label": "シリーズ巻数" },
+      "language": {
+        "label": "言語",
+        "placeholder": "例: en, it"
+      },
+      "originalPublicationDate": { "label": "初版発行日" },
+      "backCoverText": { "label": "帯・裏表紙テキスト" },
+      "aboutAuthor": { "label": "著者について" },
+      "authorAddress": { "label": "著者の公開アドレス" },
+      "priceMatic": {
+        "label": "初期定価（MATIC）",
+        "placeholder": "初期価格を設定しない場合は空欄"
+      },
+      "maxCopies": { "label": "最大部数" },
+      "externalUrl": { "label": "外部 URL" }
+    },
+    "guidance": {
+      "intro": "原稿とカバーをアップロードし、オンチェーン登録の前に作品を暗号化して IPFS にピン留めします。",
+      "title": "メタデータやマーケットプレイスに表示される公開タイトル。",
+      "publicationDate": "この版の出版日（奥付の出版日）。",
+      "editionNumber": "この版の番号（例: 最初の番号付き版は 1）。",
+      "editionKind": "初版か、同じ版番号の後の重版か。",
+      "reprintNumber": "版の種類が重版の場合、何刷目か（例: 2刷目なら 2）。",
+      "seriesName": "作品がシリーズや叢書に属する場合の名称。",
+      "seriesVolume": "シリーズや叢書内の巻番号。",
+      "language": "カタログ掲載用の任意の言語コードまたは名称（例: en や Italian）。",
+      "originalPublicationDate": "この版が後から出版された場合の、初版発行日（任意）。",
+      "backCoverText": "帯や裏表紙のあらすじや宣伝文。紙の版に載る内容と同様。",
+      "aboutAuthor": "著者の短い経歴。裏表紙や奥付に載る内容と同様。",
+      "authorAddress": "認証された著者 ID としてメタデータに保存される公開ウォレットアドレス。",
+      "manuscript": "対応形式: {formats}。最大サイズ: {maxMb} MB。アップロード前にブラウザで暗号化されます。",
+      "cover": "メタデータや一覧用のカバー画像。対応形式: PNG、JPEG、WebP。最大サイズ: {maxMb} MB。",
+      "initialPrice": "任意。空欄のままにすると販売を開始せずオンチェーン登録のみ行えます。後からコピーを販売したりオークションを開催したりできます。",
+      "maxCopies": "ミントする番号付きコピー（{min}–{max}）。ミントされた各コピーは番号付き NFT です。コレクターはコピーごとに価値を異なると見ることがあります（例: #1 と #145）。",
+      "externalUrl": "メタデータに含める任意の公開リンク（著者サイトなど）。",
+      "previewBeforeUpload": "アップロード前に版のプレビューを生成します。プレビューには、読者が目にする表紙、奥付、目次、本文、後付が表示されます。"
+    },
+    "validation": {
+      "title": {
+        "required": "タイトルは必須です。",
+        "maxLength": "タイトルは {max} 文字以内にしてください。",
+        "invalidCharacters": "タイトルに無効な文字が含まれています。"
+      },
+      "externalUrl": {
+        "tooLong": "外部 URL が長すぎます。",
+        "invalidCharacters": "外部 URL に無効な文字が含まれています。",
+        "invalidProtocol": "外部 URL は HTTP または HTTPS を使用してください。",
+        "invalid": "有効な URL を入力してください。"
+      },
+      "maxCopies": {
+        "required": "最大部数は必須です。",
+        "wholeNumber": "最大部数は整数である必要があります。",
+        "min": "最大部数は {min} 以上である必要があります。",
+        "max": "最大部数は {max} を超えられません。"
+      },
+      "priceMatic": {
+        "negative": "価格は 0 以上である必要があります。",
+        "invalid": "有効な MATIC 価格を入力してください。"
+      },
+      "coverImage": {
+        "required": "カバー画像は必須です。",
+        "invalidFormat": "カバーは PNG、JPEG、または WebP である必要があります。",
+        "tooLarge": "カバー画像が大きすぎます。"
+      },
+      "date": {
+        "invalidFormat": "{label} は YYYY-MM-DD 形式である必要があります。",
+        "invalid": "{label} は有効な日付ではありません。"
+      },
+      "field": {
+        "required": "{label} は必須です。",
+        "maxLength": "{label} は {max} 文字以内にしてください。",
+        "invalidCharacters": "{label} に無効な文字が含まれています。"
+      },
+      "publicationDate": { "required": "出版日は必須です。" },
+      "editionNumber": {
+        "required": "版番号は必須です。",
+        "invalid": "版番号は 1 以上の整数である必要があります。"
+      },
+      "editionKind": { "required": "初版または重版を選択してください。" },
+      "reprintNumber": {
+        "required": "重版番号は必須です。",
+        "invalid": "重版番号は 1 以上の整数である必要があります。"
+      },
+      "seriesVolume": {
+        "requiredWithSeries": "シリーズを指定した場合、シリーズ巻数は必須です。",
+        "invalid": "シリーズ巻数は 1 以上の整数である必要があります。",
+        "requiresSeriesName": "シリーズ巻数にはシリーズ名が必要です。"
+      },
+      "manuscriptFile": {
+        "required": "原稿ファイルは必須です。",
+        "invalid": "無効な原稿ファイルです。",
+        "filenameRequired": "原稿のファイル名は必須です。",
+        "filenameTooLong": "原稿のファイル名が長すぎます。",
+        "filenameInvalid": "原稿のファイル名が無効です。",
+        "empty": "原稿ファイルが空です。",
+        "tooLarge": "原稿は {maxMb} MB 以下である必要があります。",
+        "invalidFormat": "対応形式: {formats}。",
+        "unsupported": "非対応の原稿形式です。",
+        "contentMismatchPdf": "ファイル内容が PDF 形式と一致しません。",
+        "contentMismatchDoc": "ファイル内容が DOC 形式と一致しません。",
+        "contentMismatchDocx": "ファイル内容が DOCX 形式と一致しません。",
+        "contentMismatchRtf": "ファイル内容が RTF 形式と一致しません。",
+        "invalidUtf8": "テキスト原稿はヌルバイトを含まない有効な UTF-8 である必要があります。"
+      }
+    },
+    "errors": {
+      "connectWalletToPublish": "作品を公開するには著者ウォレット（{authorAddress}）を接続してください。",
+      "connectWalletAndFiles": "著者ウォレットを接続し、カバーと原稿ファイルを添付してください。",
+      "previewFailed": "版のプレビューに失敗しました。",
+      "connectWalletToPublishShort": "公開するには著者ウォレットを接続してください。",
+      "previewBeforeUpload": "IPFS にアップロードする前に版をプレビューしてください。",
+      "confirmImmutability": "版のプレビューを確認し、オンチェーンの不変性に同意したことを確認してください。",
+      "uploadFailed": "作品のアップロードに失敗しました。",
+      "connectWalletToRegister": "作品を登録するには著者ウォレットを接続してください。",
+      "registerFailed": "オンチェーン登録に失敗しました。",
+      "manuscriptRequiredForPreview": "プレビューには原稿ファイルが必要です。"
+    },
+    "loading": {
+      "uploading": "暗号化された作品をアップロード中…"
+    },
+    "preview": {
+      "sectionTitle": "版のプレビュー",
+      "sectionDescription": "IPFS にピン留めする前に、整形された版を確認してください。",
+      "ariaLabel": "版のプレビュー",
+      "coverAlt": "{title} のカバー",
+      "coverPlaceholder": "カバー画像",
+      "emptyBody": "この原稿に読み取り可能な本文は見つかりませんでした。",
+      "unsupportedBinaryFormat": "プレーンテキストおよび Markdown 原稿では版のライブプレビューが利用できます。バイナリ形式は引き続き暗号化され、そのままアップロードされます。",
+      "unsupportedUtf8": "この原稿はプレビュー用に UTF-8 テキストとしてデコードできませんでした。引き続き暗号化され、そのままアップロードされます。",
+      "pages": {
+        "cover": "表紙",
+        "titlePage": "タイトルページ",
+        "colophon": "奥付",
+        "tableOfContents": "目次",
+        "text": "本文",
+        "backCover": "裏表紙",
+        "aboutAuthor": "著者について",
+        "marketplaceDescription": "マーケットプレイス説明"
+      },
+      "colophon": {
+        "publicationDate": "出版日",
+        "edition": "版",
+        "editionKind": "版の種類",
+        "reprintNumber": "重版番号",
+        "originalPublication": "初版発行",
+        "series": "シリーズ",
+        "seriesVolume": "シリーズ巻数",
+        "language": "言語",
+        "authorAddress": "著者アドレス",
+        "firstEdition": "初版",
+        "reprint": "重版"
+      },
+      "marketplaceDescription": {
+        "firstEdition": "初版、版 {number}",
+        "reprint": "重版 {reprint}、版 {number}",
+        "published": "{date} 出版",
+        "originallyPublished": "初版 {date} 出版",
+        "seriesVolume": "{series} 第 {volume} 巻",
+        "language": "言語: {language}",
+        "author": "著者: {address}"
+      }
+    },
+    "metadataPreview": {
+      "title": "ACE メタデータプレビュー"
+    },
+    "acknowledgment": {
+      "immutability": "版のプレビューを確認し、アップロードおよびミント後はこの作品がオンチェーンで不変となり変更できないことを理解しました。"
+    },
+    "actions": {
+      "registerOnChain": "オンチェーン登録",
+      "previewEdition": "版をプレビュー",
+      "encrypting": "暗号化中…",
+      "pinningToIpfs": "IPFS にピン留め中…",
+      "uploadToIpfs": "IPFS にアップロード"
+    },
+    "success": {
+      "registered": "作品をオンチェーン登録しました。トランザクション: {txHash}"
+    }
+  },
+  "authorOnboarding": {
+    "prompt": {
+      "title": "著者ページを作成しますか？",
+      "description": "Andromeda でプロフィールを公開する、著者ページなしで読者として続ける、またはキャンセルしてサインインせずに終了する、いずれかを選べます。",
+      "accept": "はい、ページを作成",
+      "decline": "いいえ、読者のまま",
+      "cancel": "キャンセル",
+      "creating": "著者ページを作成中"
+    },
+    "editor": {
+      "title": "著者ページを作成",
+      "description": "Andromeda で公開する前にプロフィールをカスタマイズしてください。",
+      "back": "戻る"
+    },
+    "loading": {
+      "creatingPage": "著者ページを作成中…",
+      "savingPreference": "設定を保存中…"
+    }
   }
 }

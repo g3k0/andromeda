@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createTranslateFn } from "@/lib/i18n/translate";
 
 import {
   createEmptyWorkPublishForm,
@@ -11,6 +12,7 @@ import { buildAcePublicMetadata } from "./publish-service";
 import { parseWorkImprintFromFormValues } from "./work-imprint-metadata";
 
 const AUTHOR = "0xabcdef0123456789abcdef0123456789abcdef01";
+const t = createTranslateFn("en");
 
 function validPublishFormValues() {
   return {
@@ -26,7 +28,7 @@ function validPublishFormValues() {
 
 describe("validateWorkPublishForm", () => {
   it("requires title, imprint metadata, manuscript, and cover", () => {
-    const errors = validateWorkPublishForm(createEmptyWorkPublishForm(), null, null);
+    const errors = validateWorkPublishForm(createEmptyWorkPublishForm(), null, null, t);
     expect(hasWorkPublishFormErrors(errors)).toBe(true);
     expect(errors.name).toBeTruthy();
     expect(errors.publicationDate).toBeTruthy();
@@ -51,6 +53,7 @@ describe("validateWorkPublishForm", () => {
       },
       cover,
       manuscript,
+      t,
     );
     expect(hasWorkPublishFormErrors(errors)).toBe(false);
   });
@@ -70,6 +73,7 @@ describe("validateWorkPublishForm", () => {
       },
       cover,
       manuscript,
+      t,
     );
     expect(errors.priceMatic).toBeUndefined();
     expect(hasWorkPublishFormErrors(errors)).toBe(false);
@@ -114,6 +118,7 @@ describe("validateWorkPublishForm max copies", () => {
       },
       cover,
       manuscript,
+      t,
     );
     expect(zeroErrors.maxCopies).toBe("Max copies must be at least 1.");
 
@@ -124,6 +129,7 @@ describe("validateWorkPublishForm max copies", () => {
       },
       cover,
       manuscript,
+      t,
     );
     expect(overLimitErrors.maxCopies).toBe("Max copies cannot exceed 500.");
   });

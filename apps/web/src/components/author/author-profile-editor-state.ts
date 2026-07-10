@@ -5,6 +5,7 @@ import {
   sanitizeBioInput,
   validateAuthorBio,
 } from "@/lib/authors/author-bio-validation";
+import type { TranslateFn } from "@/lib/i18n/translate";
 import type { AuthorProfile } from "@/lib/authors/types";
 import {
   InvalidAvatarFileError,
@@ -57,21 +58,29 @@ export function applyBioInput(value: string): string {
   return sanitizeBioInput(value);
 }
 
-export function validateDisplayName(value: string): string | null {
+export function validateDisplayName(
+  value: string,
+  t: TranslateFn,
+): string | null {
   const trimmed = value.trim();
   if (!trimmed) {
-    return "Display name is required.";
+    return t("authorProfile.validation.displayNameRequired");
   }
   if (trimmed.length > AUTHOR_DISPLAY_NAME_MAX_LENGTH) {
-    return `Display name must be ${AUTHOR_DISPLAY_NAME_MAX_LENGTH} characters or fewer.`;
+    return t("authorProfile.validation.displayNameMaxLength", {
+      max: String(AUTHOR_DISPLAY_NAME_MAX_LENGTH),
+    });
   }
   if (DISPLAY_NAME_INVALID_CHARACTERS.test(value)) {
-    return "Display name contains invalid characters.";
+    return t("authorProfile.validation.displayNameInvalidChars");
   }
   return null;
 }
 
-export function validateAvatarUrl(avatarUrl: string | null): string | null {
+export function validateAvatarUrl(
+  avatarUrl: string | null,
+  t: TranslateFn,
+): string | null {
   if (!avatarUrl) {
     return null;
   }
@@ -81,25 +90,26 @@ export function validateAvatarUrl(avatarUrl: string | null): string | null {
     return null;
   } catch (error) {
     return error instanceof InvalidAvatarFileError
-      ? error.message
-      : "Invalid image.";
+      ? t(error.code, error.params)
+      : t("authorProfile.validation.invalidImage");
   }
 }
 
 export function buildSavePayload(
   state: EditorFormState,
+  t: TranslateFn,
 ): { payload: AuthorProfileEditorSaveInput; error: null } | { payload: null; error: string } {
-  const displayNameError = validateDisplayName(state.displayName);
+  const displayNameError = validateDisplayName(state.displayName, t);
   if (displayNameError) {
     return { payload: null, error: displayNameError };
   }
 
-  const avatarError = validateAvatarUrl(state.avatarUrl);
+  const avatarError = validateAvatarUrl(state.avatarUrl, t);
   if (avatarError) {
     return { payload: null, error: avatarError };
   }
 
-  const bioError = validateAuthorBio(state.bio);
+  const bioError = validateAuthorBio(state.bio, t);
   if (bioError) {
     return { payload: null, error: bioError };
   }

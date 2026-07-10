@@ -47,8 +47,7 @@ describe("parseManuscriptTextForPreview", () => {
     expect(parsed).toEqual({
       kind: "unsupported",
       format: "PDF",
-      message:
-        "Live edition preview is available for plain text and Markdown manuscripts. Binary formats are still encrypted and uploaded unchanged.",
+      code: "publish.preview.unsupportedBinaryFormat",
     });
   });
 });

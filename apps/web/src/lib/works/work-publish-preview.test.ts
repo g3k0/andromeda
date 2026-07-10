@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createTranslateFn } from "@/lib/i18n/translate";
 
 import {
   buildWorkPublishEditionPreview,
@@ -7,6 +8,7 @@ import {
 import { createEmptyWorkPublishForm } from "./work-publish-form-state";
 
 const AUTHOR = "0xabcdef0123456789abcdef0123456789abcdef01";
+const t = createTranslateFn("en");
 
 function validFormValues() {
   return {
@@ -22,7 +24,7 @@ function validFormValues() {
 
 describe("formatImprintColophon", () => {
   it("formats imprint metadata as colophon lines", () => {
-    expect(formatImprintColophon(validFormValues(), AUTHOR)).toEqual([
+    expect(formatImprintColophon(validFormValues(), AUTHOR, t)).toEqual([
       { label: "Publication date", value: "2026-06-01" },
       { label: "Edition", value: "1" },
       { label: "Edition kind", value: "First edition" },
@@ -46,7 +48,7 @@ describe("buildWorkPublishEditionPreview", () => {
       coverImage: null,
       manuscriptFile: manuscript,
       coverImageUrl: "blob:cover",
-    });
+    }, t);
 
     expect(preview.title).toBe("The Star Gate");
     expect(preview.authorLabel).toBe("Jane Doe");

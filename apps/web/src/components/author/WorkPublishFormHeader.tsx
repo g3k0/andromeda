@@ -1,14 +1,19 @@
-import { WORK_PUBLISH_FORM_GUIDANCE } from "@/lib/works/work-publish-form-guidance";
+"use client";
+
+import { useTranslation } from "@/lib/i18n/use-translation";
+import { getPublishIntroGuidance } from "@/lib/i18n/publish-messages";
 
 export function WorkPublishFormHeader() {
+  const { t } = useTranslation();
+
   return (
     <div>
       <h1 id="publish-work-title" className="text-2xl font-semibold text-white">
-        Publish a work
+        {t("publish.title")}
       </h1>
-      <p className="mt-1 text-sm text-white/60">{WORK_PUBLISH_FORM_GUIDANCE.intro}</p>
+      <p className="mt-1 text-sm text-white/60">{getPublishIntroGuidance(t)}</p>
       <p className="mt-2 text-xs text-white/50">
-        Fields marked with <span className="text-red-400">*</span> are required.
+        {t("publish.requiredFieldsNote")}
       </p>
     </div>
   );

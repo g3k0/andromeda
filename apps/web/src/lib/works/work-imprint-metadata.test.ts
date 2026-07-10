@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createTranslateFn } from "@/lib/i18n/translate";
 
 import {
   buildWorkDescriptionFromImprint,
@@ -9,6 +10,7 @@ import {
 } from "./work-imprint-metadata";
 
 const AUTHOR = "0xabcdef0123456789abcdef0123456789abcdef01";
+const t = createTranslateFn("en");
 
 const SAMPLE_IMPRINT_FORM = {
   publicationDate: "2026-06-01",
@@ -25,7 +27,7 @@ const SAMPLE_IMPRINT_FORM = {
 
 describe("work imprint metadata", () => {
   it("validates required imprint fields", () => {
-    expect(validateWorkPublishImprintForm(createEmptyWorkPublishImprintForm())).toMatchObject({
+    expect(validateWorkPublishImprintForm(createEmptyWorkPublishImprintForm(), t)).toMatchObject({
       publicationDate: "Publication date is required.",
       backCoverText: "Back cover text is required.",
       aboutAuthor: "About the author is required.",
@@ -38,7 +40,7 @@ describe("work imprint metadata", () => {
         editionKind: "reprint",
         backCoverText: "Blurb.",
         aboutAuthor: "Bio.",
-      }).reprintNumber,
+      }, t).reprintNumber,
     ).toBe("Reprint number is required.");
   });
 

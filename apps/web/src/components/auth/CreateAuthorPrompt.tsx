@@ -1,4 +1,7 @@
+"use client";
+
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
+import { useTranslation } from "@/lib/i18n/use-translation";
 
 export type CreateAuthorPromptProps = {
   open: boolean;
@@ -23,6 +26,8 @@ export function CreateAuthorPrompt({
   disabled = false,
   loading = false,
 }: CreateAuthorPromptProps) {
+  const { t } = useTranslation();
+
   if (!open) {
     return null;
   }
@@ -42,11 +47,10 @@ export function CreateAuthorPrompt({
           id="create-author-prompt-title"
           className="text-xl font-semibold tracking-tight text-white"
         >
-          Do you want to create your author page?
+          {t("authorOnboarding.prompt.title")}
         </h2>
         <p className="text-sm text-white/60">
-          You can publish your profile on Andromeda, continue as a reader
-          without an author page, or cancel to leave without signing in.
+          {t("authorOnboarding.prompt.description")}
         </p>
       </div>
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -56,8 +60,10 @@ export function CreateAuthorPrompt({
           disabled={disabled || loading}
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? <LoadingSpinner size="sm" label="Creating author page" /> : null}
-          Yes, create page
+          {loading ? (
+            <LoadingSpinner size="sm" label={t("authorOnboarding.prompt.creating")} />
+          ) : null}
+          {t("authorOnboarding.prompt.accept")}
         </button>
         <button
           type="button"
@@ -65,7 +71,7 @@ export function CreateAuthorPrompt({
           disabled={disabled || loading}
           className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          No, stay as reader
+          {t("authorOnboarding.prompt.decline")}
         </button>
       </div>
       <div className="text-center">
@@ -75,7 +81,7 @@ export function CreateAuthorPrompt({
           disabled={disabled || loading}
           className="text-sm text-white/50 underline-offset-4 hover:text-white/70 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Cancel
+          {t("authorOnboarding.prompt.cancel")}
         </button>
       </div>
     </dialog>

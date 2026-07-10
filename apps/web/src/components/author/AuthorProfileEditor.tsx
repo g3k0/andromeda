@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import type { AuthorProfile } from "@/lib/authors/types";
+import { translateAvatarFileError } from "@/lib/i18n/author-profile-messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import {
   applyBioInput,
   applyDisplayNameInput,
@@ -36,6 +38,7 @@ export function AuthorProfileEditor({
   onCancel,
   cancelLabel,
 }: AuthorProfileEditorProps) {
+  const { t } = useTranslation();
   const [form, setForm] = useState<EditorFormState>(() =>
     createEditorFormState(profile),
   );
@@ -56,8 +59,8 @@ export function AuthorProfileEditor({
     } catch (error) {
       const avatarError =
         error instanceof InvalidAvatarFileError
-          ? error.message
-          : "Failed to upload image.";
+          ? translateAvatarFileError(t, error)
+          : t("authorProfile.errors.uploadFailed");
 
       setForm((current) => ({
         ...current,
@@ -68,9 +71,9 @@ export function AuthorProfileEditor({
   }
 
   async function handleSubmit() {
-    const displayNameError = validateDisplayName(form.displayName);
-    const bioError = validateAuthorBio(form.bio);
-    const result = buildSavePayload(form);
+    const displayNameError = validateDisplayName(form.displayName, t);
+    const bioError = validateAuthorBio(form.bio, t);
+    const result = buildSavePayload(form, t);
     if (!result.payload) {
       setForm((current) => ({
         ...current,
@@ -91,7 +94,7 @@ export function AuthorProfileEditor({
     } catch {
       setForm((current) => ({
         ...current,
-        errorMessage: "Failed to save profile.",
+        errorMessage: t("authorProfile.errors.saveFailed"),
       }));
     } finally {
       setForm((current) => ({ ...current, isSaving: false }));
@@ -117,7 +120,7 @@ export function AuthorProfileEditor({
         setForm((current) => ({
           ...current,
           displayName: nextDisplayName,
-          displayNameError: validateDisplayName(nextDisplayName),
+          displayNameError: validateDisplayName(nextDisplayName, t),
           errorMessage: null,
         }));
       }}
@@ -126,7 +129,7 @@ export function AuthorProfileEditor({
         setForm((current) => ({
           ...current,
           bio: nextBio,
-          bioError: validateAuthorBio(nextBio),
+          bioError: validateAuthorBio(nextBio, t),
           errorMessage: null,
         }));
       }}

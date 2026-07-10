@@ -32,9 +32,14 @@ describe("validateManuscriptFile", () => {
   });
 
   it("rejects empty files", () => {
-    expect(() =>
-      validateManuscriptFile(createFile(new Uint8Array(), "novel.txt", "text/plain")),
-    ).toThrow(/empty/i);
+    try {
+      validateManuscriptFile(createFile(new Uint8Array(), "novel.txt", "text/plain"));
+    } catch (error) {
+      expect(error).toBeInstanceOf(InvalidManuscriptFileError);
+      expect((error as InvalidManuscriptFileError).code).toBe(
+        "publish.validation.manuscriptFile.empty",
+      );
+    }
   });
 
   it("rejects files above the manuscript size limit", () => {
@@ -43,15 +48,27 @@ describe("validateManuscriptFile", () => {
       value: MAX_WORK_MANUSCRIPT_BYTES + 1,
     });
 
-    expect(() => validateManuscriptFile(file)).toThrow(/32 MB/i);
+    try {
+      validateManuscriptFile(file);
+    } catch (error) {
+      expect(error).toBeInstanceOf(InvalidManuscriptFileError);
+      expect((error as InvalidManuscriptFileError).code).toBe(
+        "publish.validation.manuscriptFile.tooLarge",
+      );
+    }
   });
 
   it("rejects invalid filenames", () => {
-    expect(() =>
+    try {
       validateManuscriptFile(
         createFile(new TextEncoder().encode("Chapter 1"), "../novel.txt", "text/plain"),
-      ),
-    ).toThrow(/filename/i);
+      );
+    } catch (error) {
+      expect(error).toBeInstanceOf(InvalidManuscriptFileError);
+      expect((error as InvalidManuscriptFileError).code).toBe(
+        "publish.validation.manuscriptFile.filenameInvalid",
+      );
+    }
   });
 });
 
@@ -59,7 +76,9 @@ describe("validateManuscriptBytes", () => {
   it("validates PDF magic bytes", () => {
     const bytes = new TextEncoder().encode("%PDF-1.7 sample");
     expect(() => validateManuscriptBytes(bytes, "book.pdf")).not.toThrow();
-    expect(() => validateManuscriptBytes(bytes, "book.docx")).toThrow(/DOCX/i);
+    expect(() => validateManuscriptBytes(bytes, "book.docx")).toThrow(
+      InvalidManuscriptFileError,
+    );
   });
 
   it("validates DOCX zip magic bytes", () => {
@@ -74,7 +93,14 @@ describe("validateManuscriptBytes", () => {
 
   it("rejects text files with invalid UTF-8", () => {
     const bytes = Uint8Array.from([0xff, 0xfe, 0x00]);
-    expect(() => validateManuscriptBytes(bytes, "book.txt")).toThrow(/UTF-8/i);
+    try {
+      validateManuscriptBytes(bytes, "book.txt");
+    } catch (error) {
+      expect(error).toBeInstanceOf(InvalidManuscriptFileError);
+      expect((error as InvalidManuscriptFileError).code).toBe(
+        "publish.validation.manuscriptFile.invalidUtf8",
+      );
+    }
   });
 });
 

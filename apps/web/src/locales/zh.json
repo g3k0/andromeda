@@ -195,5 +195,282 @@
     "metadataLoadFailed": "无法加载作品元数据。",
     "contentLoadFailed": "无法加载加密内容。",
     "decryptFailed": "无法解密此副本。"
+  },
+  "authorProfile": {
+    "publicAddress": "公开地址",
+    "edit": "编辑",
+    "publishWork": "发布作品",
+    "backToLibrary": "返回图书馆",
+    "invalidAddressTitle": "无效的钱包地址",
+    "invalidAddressDescription": "URL 中不包含有效的以太坊地址。",
+    "notFoundTitle": "未找到作者页面",
+    "notFoundDescription": "此钱包地址尚无作者资料。",
+    "loadingPage": "正在加载作者页面…",
+    "indexTitle": "作者页面",
+    "indexConnectWallet": "连接钱包以打开或创建您的作者页面。",
+    "onboardingTitle": "创建您的作者页面",
+    "onboardingDescription": "使用对话框创建作者页面，或以读者身份继续。",
+    "readerModeTitle": "读者模式",
+    "readerModeDescription": "您当前以读者身份浏览。连接钱包后，可在引导提示中稍后创建作者页面。",
+    "adminEditing": "以管理员身份编辑",
+    "authorName": "作者名称",
+    "bio": "简介",
+    "profileImage": "头像",
+    "savingProfile": "正在保存资料",
+    "saving": "保存中…",
+    "save": "保存",
+    "cancel": "取消",
+    "savingProfileOverlay": "正在保存资料…",
+    "guidance": {
+      "avatarUpload": "允许的格式：{formats}。最大大小：{maxKb} KB。",
+      "bio": "可选的公开简介，显示在您的作者页面上。请以纯文本分享背景、体裁或链接。"
+    },
+    "validation": {
+      "displayNameRequired": "显示名称为必填项。",
+      "displayNameMaxLength": "显示名称不得超过 {max} 个字符。",
+      "displayNameInvalidChars": "显示名称包含无效字符。",
+      "invalidImage": "无效的头像。",
+      "avatarFormat": "允许的格式：{formats}。",
+      "avatarMaxSize": "最大大小：{maxKb} KB。",
+      "avatarReadFailed": "无法读取图片文件。",
+      "bioMaxLength": "简介不得超过 {max} 个字符。",
+      "bioInvalidChars": "简介包含无效字符。"
+    },
+    "errors": {
+      "uploadFailed": "图片上传失败。",
+      "saveFailed": "资料保存失败。"
+    }
+  },
+  "publish": {
+    "title": "发布作品",
+    "requiredFieldsNote": "标有 * 的字段为必填项。",
+    "backToAuthor": "← 返回作者页面",
+    "meta": {
+      "title": "发布作品 | Andromeda",
+      "description": "在 Andromeda 上发布加密文学作品。",
+      "titleWithAuthor": "发布作品 | {name} | Andromeda",
+      "descriptionWithAuthor": "以 {name} 的身份在 Andromeda 上发布加密作品。"
+    },
+    "sections": {
+      "imprint": {
+        "legend": "作品元数据",
+        "description": "存储在公开元数据中的版本信息，如同印刷版版权页的刊行信息。"
+      },
+      "pricing": {
+        "legend": "定价与版本"
+      }
+    },
+    "fields": {
+      "title": { "label": "标题" },
+      "manuscriptFile": { "label": "手稿文件" },
+      "coverImage": { "label": "封面图片" },
+      "publicationDate": { "label": "出版日期" },
+      "editionNumber": { "label": "版次编号" },
+      "editionKind": {
+        "label": "版本类型",
+        "options": {
+          "first": "首版",
+          "reprint": "重印"
+        }
+      },
+      "reprintNumber": { "label": "重印次数" },
+      "seriesName": { "label": "系列名称" },
+      "seriesVolume": { "label": "系列卷号" },
+      "language": {
+        "label": "语言",
+        "placeholder": "例如 en、it"
+      },
+      "originalPublicationDate": { "label": "首次出版日期" },
+      "backCoverText": { "label": "封底文字" },
+      "aboutAuthor": { "label": "作者简介" },
+      "authorAddress": { "label": "作者公开地址" },
+      "priceMatic": {
+        "label": "初始定价（MATIC）",
+        "placeholder": "留空表示不设初始价格"
+      },
+      "maxCopies": { "label": "最大副本数" },
+      "externalUrl": { "label": "外部链接" }
+    },
+    "guidance": {
+      "intro": "上传手稿和封面，然后在链上注册前将作品加密并固定到 IPFS。",
+      "title": "在元数据和市场列表中显示的公开标题。",
+      "publicationDate": "本版出版日期（版权页出版日期）。",
+      "editionNumber": "本版次编号（例如首版编号为 1）。",
+      "editionKind": "是首版还是同一版次编号的后续重印。",
+      "reprintNumber": "当版本类型为重印时，表示第几次重印（例如 2 表示第二次重印）。",
+      "seriesName": "若作品属于某系列或合集，填写系列或合集名称。",
+      "seriesVolume": "系列或合集中的卷号。",
+      "language": "可选的语言代码或名称（例如 en 或 Italian），用于目录列表。",
+      "originalPublicationDate": "若本版晚于首次出版，可填写首次出版日期。",
+      "backCoverText": "封底简介或宣传文字，如同印刷版封底所示。",
+      "aboutAuthor": "作者简介短注，如同印刷版封底或版权页所示。",
+      "authorAddress": "您的公开钱包地址，作为认证作者身份存储在元数据中。",
+      "manuscript": "允许的格式：{formats}。最大大小：{maxMb} MB。文件在上传前会在浏览器中加密。",
+      "cover": "用于元数据和列表的封面图片。允许的格式：PNG、JPEG、WebP。最大大小：{maxMb} MB。",
+      "initialPrice": "可选。留空可在链上注册作品而不开放销售。之后可挂牌出售副本或进行拍卖。",
+      "maxCopies": "待铸造的编号副本（{min}–{max}）。每个铸造副本均为编号 NFT；收藏者可能对不同编号赋予不同价值——例如第 1 号副本与第 145 号副本。",
+      "externalUrl": "元数据中包含的可选公开链接，例如您的作者网站。",
+      "previewBeforeUpload": "上传前生成版本预览。预览将显示封面、版权页、目录、正文和后记，与读者所见一致。"
+    },
+    "validation": {
+      "title": {
+        "required": "标题为必填项。",
+        "maxLength": "标题不得超过 {max} 个字符。",
+        "invalidCharacters": "标题包含无效字符。"
+      },
+      "externalUrl": {
+        "tooLong": "外部链接过长。",
+        "invalidCharacters": "外部链接包含无效字符。",
+        "invalidProtocol": "外部链接必须使用 HTTP 或 HTTPS。",
+        "invalid": "请输入有效的 URL。"
+      },
+      "maxCopies": {
+        "required": "最大副本数为必填项。",
+        "wholeNumber": "最大副本数必须为整数。",
+        "min": "最大副本数至少为 {min}。",
+        "max": "最大副本数不能超过 {max}。"
+      },
+      "priceMatic": {
+        "negative": "价格必须为零或更大。",
+        "invalid": "请输入有效的 MATIC 价格。"
+      },
+      "coverImage": {
+        "required": "封面图片为必填项。",
+        "invalidFormat": "封面必须为 PNG、JPEG 或 WebP 格式。",
+        "tooLarge": "封面图片过大。"
+      },
+      "date": {
+        "invalidFormat": "{label} 必须使用 YYYY-MM-DD 格式。",
+        "invalid": "{label} 不是有效日期。"
+      },
+      "field": {
+        "required": "{label} 为必填项。",
+        "maxLength": "{label} 不得超过 {max} 个字符。",
+        "invalidCharacters": "{label} 包含无效字符。"
+      },
+      "publicationDate": { "required": "出版日期为必填项。" },
+      "editionNumber": {
+        "required": "版次编号为必填项。",
+        "invalid": "版次编号必须为不小于 1 的整数。"
+      },
+      "editionKind": { "required": "请选择首版或重印。" },
+      "reprintNumber": {
+        "required": "重印次数为必填项。",
+        "invalid": "重印次数必须为不小于 1 的整数。"
+      },
+      "seriesVolume": {
+        "requiredWithSeries": "指定系列时必须填写系列卷号。",
+        "invalid": "系列卷号必须为不小于 1 的整数。",
+        "requiresSeriesName": "系列卷号需要填写系列名称。"
+      },
+      "manuscriptFile": {
+        "required": "手稿文件为必填项。",
+        "invalid": "无效的手稿文件。",
+        "filenameRequired": "手稿文件名为必填项。",
+        "filenameTooLong": "手稿文件名过长。",
+        "filenameInvalid": "手稿文件名无效。",
+        "empty": "手稿文件为空。",
+        "tooLarge": "手稿必须为 {maxMb} MB 或更小。",
+        "invalidFormat": "允许的格式：{formats}。",
+        "unsupported": "不支持的手稿格式。",
+        "contentMismatchPdf": "文件内容与 PDF 格式不匹配。",
+        "contentMismatchDoc": "文件内容与 DOC 格式不匹配。",
+        "contentMismatchDocx": "文件内容与 DOCX 格式不匹配。",
+        "contentMismatchRtf": "文件内容与 RTF 格式不匹配。",
+        "invalidUtf8": "文本文稿必须为不含空字节的有效 UTF-8。"
+      }
+    },
+    "errors": {
+      "connectWalletToPublish": "请连接作者钱包（{authorAddress}）以发布作品。",
+      "connectWalletAndFiles": "请连接作者钱包并附上封面和手稿文件。",
+      "previewFailed": "版本预览失败。",
+      "connectWalletToPublishShort": "请连接作者钱包以发布。",
+      "previewBeforeUpload": "上传到 IPFS 前请先预览版本。",
+      "confirmImmutability": "请确认您已审阅版本预览并接受链上不可变性。",
+      "uploadFailed": "作品上传失败。",
+      "connectWalletToRegister": "请连接作者钱包以注册作品。",
+      "registerFailed": "链上注册失败。",
+      "manuscriptRequiredForPreview": "预览需要手稿文件。"
+    },
+    "loading": {
+      "uploading": "正在上传加密作品…"
+    },
+    "preview": {
+      "sectionTitle": "版本预览",
+      "sectionDescription": "在固定到 IPFS 之前审阅格式化后的版本。",
+      "ariaLabel": "版本预览",
+      "coverAlt": "{title} 的封面",
+      "coverPlaceholder": "封面图片",
+      "emptyBody": "此手稿中未找到可读的正文。",
+      "unsupportedBinaryFormat": "纯文本和 Markdown 手稿可进行实时版本预览。二进制格式仍会加密并按原样上传。",
+      "unsupportedUtf8": "此手稿无法解码为 UTF-8 文本进行预览，仍将加密并按原样上传。",
+      "pages": {
+        "cover": "封面",
+        "titlePage": "书名页",
+        "colophon": "版权页",
+        "tableOfContents": "目录",
+        "text": "正文",
+        "backCover": "封底",
+        "aboutAuthor": "作者简介",
+        "marketplaceDescription": "市场描述"
+      },
+      "colophon": {
+        "publicationDate": "出版日期",
+        "edition": "版次",
+        "editionKind": "版本类型",
+        "reprintNumber": "重印次数",
+        "originalPublication": "首次出版",
+        "series": "系列",
+        "seriesVolume": "系列卷号",
+        "language": "语言",
+        "authorAddress": "作者地址",
+        "firstEdition": "首版",
+        "reprint": "重印"
+      },
+      "marketplaceDescription": {
+        "firstEdition": "首版，第 {number} 版",
+        "reprint": "第 {reprint} 次重印，第 {number} 版",
+        "published": "出版于 {date}",
+        "originallyPublished": "首次出版于 {date}",
+        "seriesVolume": "{series} 第 {volume} 卷",
+        "language": "语言：{language}",
+        "author": "作者：{address}"
+      }
+    },
+    "metadataPreview": {
+      "title": "ACE 元数据预览"
+    },
+    "acknowledgment": {
+      "immutability": "我已审阅版本预览，并理解作品上传并铸造后将在链上不可更改。"
+    },
+    "actions": {
+      "registerOnChain": "链上注册",
+      "previewEdition": "预览版本",
+      "encrypting": "正在加密…",
+      "pinningToIpfs": "正在固定到 IPFS…",
+      "uploadToIpfs": "上传到 IPFS"
+    },
+    "success": {
+      "registered": "作品已链上注册。交易：{txHash}"
+    }
+  },
+  "authorOnboarding": {
+    "prompt": {
+      "title": "要创建您的作者页面吗？",
+      "description": "您可以在 Andromeda 上发布个人资料、继续以读者身份浏览而不创建作者页面，或取消以不登录离开。",
+      "accept": "是，创建页面",
+      "decline": "否，继续作为读者",
+      "cancel": "取消",
+      "creating": "正在创建作者页面"
+    },
+    "editor": {
+      "title": "创建您的作者页面",
+      "description": "在 Andromeda 上发布前自定义您的个人资料。",
+      "back": "返回"
+    },
+    "loading": {
+      "creatingPage": "正在创建作者页面…",
+      "savingPreference": "正在保存您的偏好…"
+    }
   }
 }

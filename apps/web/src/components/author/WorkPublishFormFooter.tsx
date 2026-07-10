@@ -1,8 +1,11 @@
+"use client";
+
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { FormTextControl } from "@/components/form/FormTextControl";
 import { formErrorClassName } from "@/components/form/form-field-styles";
+import { getPublishExternalUrlGuidance, getPublishImmutabilityAcknowledgment, getPublishPreviewBeforeUploadGuidance } from "@/lib/i18n/publish-messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
-import { WORK_PUBLISH_FORM_GUIDANCE } from "@/lib/works/work-publish-form-guidance";
 import type {
   WorkPublishFormErrors,
   WorkPublishFormValues,
@@ -45,6 +48,7 @@ export function WorkPublishFormFooter({
   onUpload,
   onRegister,
 }: WorkPublishFormFooterProps) {
+  const { t } = useTranslation();
   const canUpload =
     editionPreviewReady &&
     editionPreviewAcknowledged &&
@@ -52,9 +56,9 @@ export function WorkPublishFormFooter({
     !isComplete;
 
   const uploadDisabledReason = !editionPreviewReady
-    ? WORK_PUBLISH_FORM_GUIDANCE.previewBeforeUpload
+    ? getPublishPreviewBeforeUploadGuidance(t)
     : !editionPreviewAcknowledged
-      ? WORK_PUBLISH_FORM_GUIDANCE.editionPreviewAcknowledgment
+      ? getPublishImmutabilityAcknowledgment(t)
       : undefined;
 
   return (
@@ -62,9 +66,9 @@ export function WorkPublishFormFooter({
       <FormTextControl
         id="publish-work-external-url"
         name="externalUrl"
-        label="External URL"
+        label={t("publish.fields.externalUrl.label")}
         tooltipId="publish-work-external-url-tooltip"
-        tooltip={WORK_PUBLISH_FORM_GUIDANCE.externalUrl}
+        tooltip={getPublishExternalUrlGuidance(t)}
         error={errors.externalUrl}
         type="url"
         value={values.externalUrl}
@@ -73,7 +77,7 @@ export function WorkPublishFormFooter({
 
       {metadataPreview ? (
         <div className="space-y-2">
-          <h2 className="text-sm font-medium text-white">ACE metadata preview</h2>
+          <h2 className="text-sm font-medium text-white">{t("publish.metadataPreview.title")}</h2>
           <pre className="max-h-64 overflow-auto rounded-lg border border-white/10 bg-black/40 p-3 text-xs text-white/80">
             {formatMetadataPreview(metadataPreview)}
           </pre>
@@ -88,7 +92,7 @@ export function WorkPublishFormFooter({
 
       {step === "success" && txHash ? (
         <p className="text-sm text-emerald-400">
-          Work registered on-chain. Transaction: {txHash}
+          {t("publish.success.registered", { txHash })}
         </p>
       ) : null}
 
@@ -107,7 +111,7 @@ export function WorkPublishFormFooter({
             className="mt-0.5 size-4 shrink-0 accent-andromeda"
           />
           <span>
-            {WORK_PUBLISH_FORM_GUIDANCE.editionPreviewAcknowledgment}
+            {getPublishImmutabilityAcknowledgment(t)}
             <span className="text-red-400"> *</span>
           </span>
         </label>
@@ -122,7 +126,7 @@ export function WorkPublishFormFooter({
             className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {step === "registering" ? <LoadingSpinner size="sm" /> : null}
-            Register on-chain
+            {t("publish.actions.registerOnChain")}
           </button>
         ) : (
           <>
@@ -132,7 +136,7 @@ export function WorkPublishFormFooter({
               onClick={onPreviewEdition}
               className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              Preview edition
+              {t("publish.actions.previewEdition")}
             </button>
             <button
               type="button"
@@ -145,17 +149,17 @@ export function WorkPublishFormFooter({
                 <LoadingSpinner size="sm" />
               ) : null}
               {step === "encrypting"
-                ? "Encrypting…"
+                ? t("publish.actions.encrypting")
                 : step === "uploading"
-                  ? "Pinning to IPFS…"
-                  : "Upload to IPFS"}
+                  ? t("publish.actions.pinningToIpfs")
+                  : t("publish.actions.uploadToIpfs")}
             </button>
           </>
         )}
       </div>
 
       {!editionPreviewReady && step !== "ready" && step !== "registering" && step !== "success" ? (
-        <p className="text-xs text-white/50">{WORK_PUBLISH_FORM_GUIDANCE.previewBeforeUpload}</p>
+        <p className="text-xs text-white/50">{getPublishPreviewBeforeUploadGuidance(t)}</p>
       ) : null}
     </>
   );

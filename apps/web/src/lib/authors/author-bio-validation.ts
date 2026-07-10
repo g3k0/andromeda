@@ -1,4 +1,5 @@
 import { AUTHOR_BIO_MAX_LENGTH } from "./field-limits";
+import type { TranslateFn } from "@/lib/i18n/translate";
 
 const UNSAFE_BIO_CONTROL_CHARS = /[\0-\x08\x0B\x0C\x0E-\x1F\x7F]/;
 
@@ -12,16 +13,18 @@ export function sanitizeBioInput(value: string): string {
     .slice(0, AUTHOR_BIO_MAX_LENGTH);
 }
 
-export function validateAuthorBio(bio: string): string | null {
+export function validateAuthorBio(bio: string, t: TranslateFn): string | null {
   const trimmed = bio.trim();
   if (!trimmed) {
     return null;
   }
   if (trimmed.length > AUTHOR_BIO_MAX_LENGTH) {
-    return `Bio must be ${AUTHOR_BIO_MAX_LENGTH} characters or fewer.`;
+    return t("authorProfile.validation.bioMaxLength", {
+      max: String(AUTHOR_BIO_MAX_LENGTH),
+    });
   }
   if (containsUnsafeBioControlCharacters(trimmed)) {
-    return "Bio contains invalid characters.";
+    return t("authorProfile.validation.bioInvalidChars");
   }
   return null;
 }

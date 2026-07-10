@@ -1,5 +1,11 @@
+"use client";
+
 import { FormTextControl } from "@/components/form/FormTextControl";
-import { WORK_PUBLISH_FORM_GUIDANCE } from "@/lib/works/work-publish-form-guidance";
+import {
+  getPublishInitialPriceGuidance,
+  getPublishMaxCopiesGuidance,
+} from "@/lib/i18n/publish-messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import type {
   WorkPublishFormErrors,
   WorkPublishFormValues,
@@ -22,35 +28,39 @@ export function WorkPublishPricingSection({
   disabled,
   onFieldChange,
 }: WorkPublishPricingSectionProps) {
+  const { t } = useTranslation();
+
   return (
     <fieldset
       disabled={disabled}
       className="space-y-4 rounded-lg border border-white/10 p-4"
     >
-      <legend className="px-1 text-sm font-medium text-white">Pricing & editions</legend>
+      <legend className="px-1 text-sm font-medium text-white">
+        {t("publish.sections.pricing.legend")}
+      </legend>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FormTextControl
           id="publish-work-price"
           name="priceMatic"
-          label="Initial list price (MATIC)"
+          label={t("publish.fields.priceMatic.label")}
           tooltipId="publish-work-price-tooltip"
-          tooltip={WORK_PUBLISH_FORM_GUIDANCE.initialPrice}
+          tooltip={getPublishInitialPriceGuidance(t)}
           error={errors.priceMatic}
           type="text"
           inputMode="decimal"
           value={values.priceMatic}
-          placeholder="Leave blank for no initial price"
+          placeholder={t("publish.fields.priceMatic.placeholder")}
           onChange={(event) => onFieldChange("priceMatic", event.target.value)}
         />
 
         <FormTextControl
           id="publish-work-max-copies"
           name="maxCopies"
-          label="Max copies"
+          label={t("publish.fields.maxCopies.label")}
           required
           tooltipId="publish-work-max-copies-tooltip"
-          tooltip={WORK_PUBLISH_FORM_GUIDANCE.maxCopies}
+          tooltip={getPublishMaxCopiesGuidance(t)}
           error={errors.maxCopies}
           type="number"
           min={WORK_PUBLISH_MIN_MAX_COPIES}

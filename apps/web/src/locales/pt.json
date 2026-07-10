@@ -195,5 +195,282 @@
     "metadataLoadFailed": "Não foi possível carregar os metadados da obra.",
     "contentLoadFailed": "Não foi possível carregar o conteúdo encriptado.",
     "decryptFailed": "Não foi possível desencriptar este exemplar."
+  },
+  "authorProfile": {
+    "publicAddress": "Endereço público",
+    "edit": "Editar",
+    "publishWork": "Publicar obra",
+    "backToLibrary": "Voltar à biblioteca",
+    "invalidAddressTitle": "Endereço de carteira inválido",
+    "invalidAddressDescription": "O URL não contém um endereço Ethereum válido.",
+    "notFoundTitle": "Página de autor não encontrada",
+    "notFoundDescription": "Ainda não existe um perfil de autor para este endereço de carteira.",
+    "loadingPage": "A carregar página de autor…",
+    "indexTitle": "Página de autor",
+    "indexConnectWallet": "Ligue a sua carteira para abrir ou criar a sua página de autor.",
+    "onboardingTitle": "Crie a sua página de autor",
+    "onboardingDescription": "Use a caixa de diálogo para criar a sua página de autor ou continuar como leitor.",
+    "readerModeTitle": "Modo leitor",
+    "readerModeDescription": "Está a navegar como leitor. Poderá criar uma página de autor mais tarde a partir do convite de integração quando se ligar.",
+    "adminEditing": "A editar como administrador",
+    "authorName": "Nome do autor",
+    "bio": "Biografia",
+    "profileImage": "Imagem de perfil",
+    "savingProfile": "A guardar perfil",
+    "saving": "A guardar…",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "savingProfileOverlay": "A guardar perfil…",
+    "guidance": {
+      "avatarUpload": "Formatos permitidos: {formats}. Tamanho máximo: {maxKb} KB.",
+      "bio": "Biografia pública opcional mostrada na sua página de autor. Partilhe o seu percurso, géneros ou links em texto simples."
+    },
+    "validation": {
+      "displayNameRequired": "O nome de exibição é obrigatório.",
+      "displayNameMaxLength": "O nome de exibição deve ter no máximo {max} caracteres.",
+      "displayNameInvalidChars": "O nome de exibição contém caracteres inválidos.",
+      "invalidImage": "Imagem de perfil inválida.",
+      "avatarFormat": "Formatos permitidos: {formats}.",
+      "avatarMaxSize": "Tamanho máximo: {maxKb} KB.",
+      "avatarReadFailed": "Não foi possível ler o ficheiro de imagem.",
+      "bioMaxLength": "A biografia deve ter no máximo {max} caracteres.",
+      "bioInvalidChars": "A biografia contém caracteres inválidos."
+    },
+    "errors": {
+      "uploadFailed": "Não foi possível carregar a imagem.",
+      "saveFailed": "Não foi possível guardar o perfil."
+    }
+  },
+  "publish": {
+    "title": "Publicar uma obra",
+    "requiredFieldsNote": "Os campos marcados com * são obrigatórios.",
+    "backToAuthor": "← Voltar à página do autor",
+    "meta": {
+      "title": "Publicar obra | Andromeda",
+      "description": "Publique uma obra literária encriptada na Andromeda.",
+      "titleWithAuthor": "Publicar obra | {name} | Andromeda",
+      "descriptionWithAuthor": "Publique uma obra encriptada como {name} na Andromeda."
+    },
+    "sections": {
+      "imprint": {
+        "legend": "Metadados da obra",
+        "description": "Dados de edição armazenados em metadados públicos, como a página de colofão de uma edição impressa."
+      },
+      "pricing": {
+        "legend": "Preços e edições"
+      }
+    },
+    "fields": {
+      "title": { "label": "Título" },
+      "manuscriptFile": { "label": "Ficheiro do manuscrito" },
+      "coverImage": { "label": "Imagem de capa" },
+      "publicationDate": { "label": "Data de publicação" },
+      "editionNumber": { "label": "Número da edição" },
+      "editionKind": {
+        "label": "Tipo de edição",
+        "options": {
+          "first": "Primeira edição",
+          "reprint": "Reimpressão"
+        }
+      },
+      "reprintNumber": { "label": "Número da reimpressão" },
+      "seriesName": { "label": "Nome da série" },
+      "seriesVolume": { "label": "Volume da série" },
+      "language": {
+        "label": "Idioma",
+        "placeholder": "ex. en, it"
+      },
+      "originalPublicationDate": { "label": "Data de publicação original" },
+      "backCoverText": { "label": "Texto da contracapa" },
+      "aboutAuthor": { "label": "Sobre o autor" },
+      "authorAddress": { "label": "Endereço público do autor" },
+      "priceMatic": {
+        "label": "Preço de tabela inicial (MATIC)",
+        "placeholder": "Deixar em branco para sem preço inicial"
+      },
+      "maxCopies": { "label": "Cópias máximas" },
+      "externalUrl": { "label": "URL externa" }
+    },
+    "guidance": {
+      "intro": "Carregue o manuscrito e a capa, depois encripte e fixe a obra no IPFS antes do registo on-chain.",
+      "title": "Título público mostrado nos metadados e nos mercados.",
+      "publicationDate": "Data em que esta edição foi publicada (data de publicação do colofão).",
+      "editionNumber": "Número desta edição (por exemplo, 1 para a primeira edição numerada).",
+      "editionKind": "Se se trata da primeira edição ou de uma reimpressão posterior do mesmo número de edição.",
+      "reprintNumber": "Qual reimpressão é quando o tipo de edição é reimpressão (por exemplo, 2 para a segunda reimpressão).",
+      "seriesName": "Nome da série ou coleção, se a obra pertencer a uma.",
+      "seriesVolume": "Número do volume dentro da série ou coleção.",
+      "language": "Código ou nome de idioma opcional (por exemplo, en ou Italiano) para listagens de catálogo.",
+      "originalPublicationDate": "Data opcional da primeira publicação quando esta edição foi publicada mais tarde.",
+      "backCoverText": "Sinopse ou texto promocional para a contracapa, como apareceria numa edição impressa.",
+      "aboutAuthor": "Breve nota biográfica sobre o autor, como impressa na contracapa ou no colofão.",
+      "authorAddress": "O seu endereço de carteira público, armazenado nos metadados como identidade de autor certificada.",
+      "manuscript": "Formatos permitidos: {formats}. Tamanho máximo: {maxMb} MB. O ficheiro é encriptado no seu navegador antes do carregamento.",
+      "cover": "Imagem de capa para metadados e listagens. Formatos permitidos: PNG, JPEG, WebP. Tamanho máximo: {maxMb} MB.",
+      "initialPrice": "Opcional. Deixe em branco para registar a obra on-chain sem abrir vendas. Poderá listar cópias para venda ou realizar leilões mais tarde.",
+      "maxCopies": "Cópias numeradas a cunhar ({min}–{max}). Cada cópia cunhada é um NFT numerado; os colecionadores podem valorizar as cópias de forma diferente — por exemplo, a cópia n.º 1 face à n.º 145.",
+      "externalUrl": "Ligação pública opcional incluída nos metadados, como o seu site de autor.",
+      "previewBeforeUpload": "Gere uma pré-visualização da edição antes do carregamento. A pré-visualização mostra a capa, o colofão, o índice, o texto e as páginas finais tal como os leitores as verão."
+    },
+    "validation": {
+      "title": {
+        "required": "O título é obrigatório.",
+        "maxLength": "O título deve ter no máximo {max} caracteres.",
+        "invalidCharacters": "O título contém caracteres inválidos."
+      },
+      "externalUrl": {
+        "tooLong": "A URL externa é demasiado longa.",
+        "invalidCharacters": "A URL externa contém caracteres inválidos.",
+        "invalidProtocol": "A URL externa deve usar HTTP ou HTTPS.",
+        "invalid": "Introduza um URL válido."
+      },
+      "maxCopies": {
+        "required": "As cópias máximas são obrigatórias.",
+        "wholeNumber": "As cópias máximas devem ser um número inteiro.",
+        "min": "As cópias máximas devem ser pelo menos {min}.",
+        "max": "As cópias máximas não podem exceder {max}."
+      },
+      "priceMatic": {
+        "negative": "O preço deve ser zero ou superior.",
+        "invalid": "Introduza um preço MATIC válido."
+      },
+      "coverImage": {
+        "required": "A imagem de capa é obrigatória.",
+        "invalidFormat": "A capa deve ser PNG, JPEG ou WebP.",
+        "tooLarge": "A imagem de capa é demasiado grande."
+      },
+      "date": {
+        "invalidFormat": "{label} deve usar o formato AAAA-MM-DD.",
+        "invalid": "{label} não é uma data válida."
+      },
+      "field": {
+        "required": "{label} é obrigatório.",
+        "maxLength": "{label} deve ter no máximo {max} caracteres.",
+        "invalidCharacters": "{label} contém caracteres inválidos."
+      },
+      "publicationDate": { "required": "A data de publicação é obrigatória." },
+      "editionNumber": {
+        "required": "O número da edição é obrigatório.",
+        "invalid": "O número da edição deve ser um número inteiro de pelo menos 1."
+      },
+      "editionKind": { "required": "Selecione primeira edição ou reimpressão." },
+      "reprintNumber": {
+        "required": "O número da reimpressão é obrigatório.",
+        "invalid": "O número da reimpressão deve ser um número inteiro de pelo menos 1."
+      },
+      "seriesVolume": {
+        "requiredWithSeries": "O volume da série é obrigatório quando uma série é indicada.",
+        "invalid": "O volume da série deve ser um número inteiro de pelo menos 1.",
+        "requiresSeriesName": "O volume da série requer um nome de série."
+      },
+      "manuscriptFile": {
+        "required": "O ficheiro do manuscrito é obrigatório.",
+        "invalid": "Ficheiro de manuscrito inválido.",
+        "filenameRequired": "O nome do ficheiro do manuscrito é obrigatório.",
+        "filenameTooLong": "O nome do ficheiro do manuscrito é demasiado longo.",
+        "filenameInvalid": "O nome do ficheiro do manuscrito é inválido.",
+        "empty": "O ficheiro do manuscrito está vazio.",
+        "tooLarge": "O manuscrito deve ter {maxMb} MB ou menos.",
+        "invalidFormat": "Formatos permitidos: {formats}.",
+        "unsupported": "Formato de manuscrito não suportado.",
+        "contentMismatchPdf": "O conteúdo do ficheiro não corresponde ao formato PDF.",
+        "contentMismatchDoc": "O conteúdo do ficheiro não corresponde ao formato DOC.",
+        "contentMismatchDocx": "O conteúdo do ficheiro não corresponde ao formato DOCX.",
+        "contentMismatchRtf": "O conteúdo do ficheiro não corresponde ao formato RTF.",
+        "invalidUtf8": "Manuscritos de texto devem ser UTF-8 válido sem bytes nulos."
+      }
+    },
+    "errors": {
+      "connectWalletToPublish": "Ligue a carteira do autor ({authorAddress}) para publicar uma obra.",
+      "connectWalletAndFiles": "Ligue a carteira do autor e anexe os ficheiros de capa e manuscrito.",
+      "previewFailed": "Falha na pré-visualização da edição.",
+      "connectWalletToPublishShort": "Ligue a carteira do autor para publicar.",
+      "previewBeforeUpload": "Pré-visualize a edição antes de carregar para o IPFS.",
+      "confirmImmutability": "Confirme que reviu a pré-visualização da edição e aceita a imutabilidade on-chain.",
+      "uploadFailed": "Falha no carregamento da obra.",
+      "connectWalletToRegister": "Ligue a carteira do autor para registar a obra.",
+      "registerFailed": "Falha no registo on-chain.",
+      "manuscriptRequiredForPreview": "O ficheiro do manuscrito é obrigatório para a pré-visualização."
+    },
+    "loading": {
+      "uploading": "A carregar obra encriptada…"
+    },
+    "preview": {
+      "sectionTitle": "Pré-visualização da edição",
+      "sectionDescription": "Reveja a edição formatada antes de a fixar no IPFS.",
+      "ariaLabel": "Pré-visualização da edição",
+      "coverAlt": "Capa de {title}",
+      "coverPlaceholder": "Imagem de capa",
+      "emptyBody": "Não foi encontrado texto legível neste manuscrito.",
+      "unsupportedBinaryFormat": "A pré-visualização em direto da edição está disponível para manuscritos em texto simples e Markdown. Os formatos binários continuam a ser encriptados e carregados sem alterações.",
+      "unsupportedUtf8": "Este manuscrito não pôde ser descodificado como texto UTF-8 para pré-visualização. Será encriptado e carregado sem alterações.",
+      "pages": {
+        "cover": "Capa",
+        "titlePage": "Página de título",
+        "colophon": "Colofão",
+        "tableOfContents": "Índice",
+        "text": "Texto",
+        "backCover": "Contracapa",
+        "aboutAuthor": "Sobre o autor",
+        "marketplaceDescription": "Descrição para o mercado"
+      },
+      "colophon": {
+        "publicationDate": "Data de publicação",
+        "edition": "Edição",
+        "editionKind": "Tipo de edição",
+        "reprintNumber": "Número da reimpressão",
+        "originalPublication": "Publicação original",
+        "series": "Série",
+        "seriesVolume": "Volume da série",
+        "language": "Idioma",
+        "authorAddress": "Endereço do autor",
+        "firstEdition": "Primeira edição",
+        "reprint": "Reimpressão"
+      },
+      "marketplaceDescription": {
+        "firstEdition": "Primeira edição, edição {number}",
+        "reprint": "Reimpressão {reprint}, edição {number}",
+        "published": "publicada em {date}",
+        "originallyPublished": "publicada originalmente em {date}",
+        "seriesVolume": "Vol. {volume} de {series}",
+        "language": "Idioma: {language}",
+        "author": "Autor: {address}"
+      }
+    },
+    "metadataPreview": {
+      "title": "Pré-visualização de metadados ACE"
+    },
+    "acknowledgment": {
+      "immutability": "Revisei a pré-visualização da edição e compreendo que, uma vez carregada e cunhada, esta obra torna-se imutável on-chain e não pode ser modificada."
+    },
+    "actions": {
+      "registerOnChain": "Registar on-chain",
+      "previewEdition": "Pré-visualizar edição",
+      "encrypting": "A encriptar…",
+      "pinningToIpfs": "A fixar no IPFS…",
+      "uploadToIpfs": "Carregar para o IPFS"
+    },
+    "success": {
+      "registered": "Obra registada on-chain. Transação: {txHash}"
+    }
+  },
+  "authorOnboarding": {
+    "prompt": {
+      "title": "Quer criar a sua página de autor?",
+      "description": "Pode publicar o seu perfil na Andromeda, continuar como leitor sem página de autor ou cancelar para sair sem iniciar sessão.",
+      "accept": "Sim, criar página",
+      "decline": "Não, ficar como leitor",
+      "cancel": "Cancelar",
+      "creating": "A criar página de autor"
+    },
+    "editor": {
+      "title": "Crie a sua página de autor",
+      "description": "Personalize o seu perfil antes de o publicar na Andromeda.",
+      "back": "Voltar"
+    },
+    "loading": {
+      "creatingPage": "A criar página de autor…",
+      "savingPreference": "A guardar a sua preferência…"
+    }
   }
 }

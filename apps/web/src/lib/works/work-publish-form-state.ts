@@ -1,6 +1,7 @@
 import { parseEther } from "viem";
 
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
+import { createTranslateFn, type TranslateFn } from "@/lib/i18n/translate";
 
 import { WorkUploadValidationError } from "./errors";
 import { validateManuscriptFileForForm } from "./manuscript-upload";
@@ -54,41 +55,42 @@ export function validateWorkPublishForm(
   values: WorkPublishFormValues,
   coverImage: File | null,
   manuscriptFile: File | null,
+  t: TranslateFn,
 ): WorkPublishFormErrors {
   const errors: WorkPublishFormErrors = {};
 
-  const nameError = validateWorkPublishName(values.name);
+  const nameError = validateWorkPublishName(values.name, t);
   if (nameError) {
     errors.name = nameError;
   }
 
-  const imprintErrors = validateWorkPublishImprintForm(values);
+  const imprintErrors = validateWorkPublishImprintForm(values, t);
   Object.assign(errors, imprintErrors);
 
-  const manuscriptError = validateManuscriptFileForForm(manuscriptFile);
+  const manuscriptError = validateManuscriptFileForForm(manuscriptFile, t);
   if (manuscriptError) {
     errors.manuscriptFile = manuscriptError;
   }
 
   if (!coverImage) {
-    errors.coverImage = "Cover image is required.";
+    errors.coverImage = t("publish.validation.coverImage.required");
   } else if (!ALLOWED_WORK_COVER_MIME_TYPES.includes(coverImage.type as never)) {
-    errors.coverImage = "Cover must be PNG, JPEG, or WebP.";
+    errors.coverImage = t("publish.validation.coverImage.invalidFormat");
   } else if (coverImage.size > MAX_WORK_COVER_BYTES) {
-    errors.coverImage = "Cover image is too large.";
+    errors.coverImage = t("publish.validation.coverImage.tooLarge");
   }
 
-  const priceError = validateWorkPublishPriceMatic(values.priceMatic);
+  const priceError = validateWorkPublishPriceMatic(values.priceMatic, t);
   if (priceError) {
     errors.priceMatic = priceError;
   }
 
-  const maxCopiesError = validateWorkPublishMaxCopies(values.maxCopies);
+  const maxCopiesError = validateWorkPublishMaxCopies(values.maxCopies, t);
   if (maxCopiesError) {
     errors.maxCopies = maxCopiesError;
   }
 
-  const externalUrlError = validateWorkPublishExternalUrl(values.externalUrl);
+  const externalUrlError = validateWorkPublishExternalUrl(values.externalUrl, t);
   if (externalUrlError) {
     errors.externalUrl = externalUrlError;
   }
@@ -115,6 +117,7 @@ export function formatMetadataPreview(metadata: AcePublicMetadata): string {
 }
 
 export function assertCoverImageReady(coverImage: File | null): asserts coverImage is File {
+  const t = createTranslateFn("en");
   const errors = validateWorkPublishForm(
     {
       ...createEmptyWorkPublishForm(),
@@ -125,6 +128,7 @@ export function assertCoverImageReady(coverImage: File | null): asserts coverIma
     },
     coverImage,
     new File(["chapter"], "novel.txt", { type: "text/plain" }),
+    t,
   );
 
   if (errors.coverImage) {

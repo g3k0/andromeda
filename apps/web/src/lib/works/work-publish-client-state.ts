@@ -144,7 +144,6 @@ export function workPublishClientReducer(
       return {
         ...state,
         step: "ready",
-        errorMessage: "On-chain registration failed.",
       };
     default:
       return state;

@@ -78,7 +78,7 @@ function AuthorOnboardingDialogFlow({
       applySnapshot(nextSnapshot);
       requestUserSnapshotRefresh(nextSnapshot);
       onNavigate(authorPagePath(address));
-    }, "Creating author page…");
+    }, t("authorOnboarding.loading.creatingPage"));
 
   const handleDecline = () =>
     void runWithLoading(async () => {
@@ -89,7 +89,7 @@ function AuthorOnboardingDialogFlow({
       });
       applySnapshot(nextSnapshot);
       requestUserSnapshotRefresh(nextSnapshot);
-    }, "Saving your preference…");
+    }, t("authorOnboarding.loading.savingPreference"));
 
   const handleCancel = () => {
     disconnect();

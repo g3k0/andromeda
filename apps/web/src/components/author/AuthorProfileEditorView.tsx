@@ -1,16 +1,19 @@
+"use client";
+
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { FormTextareaControl } from "@/components/form/FormTextareaControl";
 import {
   AUTHOR_BIO_MAX_LENGTH,
   AUTHOR_DISPLAY_NAME_MAX_LENGTH,
 } from "@/lib/authors/field-limits";
-import { AUTHOR_FORM_GUIDANCE } from "@/lib/authors/author-form-guidance";
+import {
+  getAuthorAvatarUploadGuidance,
+  getAuthorBioGuidance,
+} from "@/lib/i18n/author-profile-messages";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { AuthorProfileIdentitySection } from "./AuthorProfileIdentitySection";
-import {
-  AVATAR_UPLOAD_MIME_ACCEPT,
-  getAuthorAvatarUploadGuidance,
-} from "./author-avatar-upload-guidance";
+import { AVATAR_UPLOAD_MIME_ACCEPT } from "./author-avatar-upload-guidance";
 import type { EditorFormState } from "./author-profile-editor-state";
 
 export type AuthorProfileEditorViewProps = {
@@ -34,8 +37,10 @@ export function AuthorProfileEditorView({
   onAvatarFileSelect,
   onSubmit,
   onCancel,
-  cancelLabel = "Cancel",
+  cancelLabel,
 }: AuthorProfileEditorViewProps) {
+  const { t } = useTranslation();
+
   return (
     <form
       onSubmit={(event) => {
@@ -46,7 +51,7 @@ export function AuthorProfileEditorView({
     >
       {isAdminEditingOther ? (
         <p className="rounded-lg border border-andromeda-light/30 bg-andromeda/10 px-3 py-1 text-xs font-medium text-andromeda-light">
-          Editing as administrator
+          {t("authorProfile.adminEditing")}
         </p>
       ) : null}
 
@@ -55,7 +60,7 @@ export function AuthorProfileEditorView({
         avatarAlt={form.displayName || profile.displayName}
       >
         <label htmlFor="author-display-name" className="block space-y-1">
-          <span className="text-sm text-white/60">Author name</span>
+          <span className="text-sm text-white/60">{t("authorProfile.authorName")}</span>
           <input
             id="author-display-name"
             type="text"
@@ -79,7 +84,7 @@ export function AuthorProfileEditorView({
           ) : null}
         </label>
         <div className="space-y-1">
-          <span className="text-sm text-white/60">Public address</span>
+          <span className="text-sm text-white/60">{t("authorProfile.publicAddress")}</span>
           <p className="break-all font-mono text-sm text-white/60">
             {profile.address}
           </p>
@@ -87,9 +92,9 @@ export function AuthorProfileEditorView({
         <FormTextareaControl
           id="author-bio"
           name="bio"
-          label="Bio"
+          label={t("authorProfile.bio")}
           tooltipId="author-bio-tooltip"
-          tooltip={AUTHOR_FORM_GUIDANCE.bio}
+          tooltip={getAuthorBioGuidance(t)}
           error={form.bioError ?? undefined}
           value={form.bio}
           maxLength={AUTHOR_BIO_MAX_LENGTH}
@@ -101,7 +106,7 @@ export function AuthorProfileEditorView({
       <div className="w-full space-y-4">
         <div className="space-y-1 text-left">
           <label className="block space-y-1">
-            <span className="text-sm text-white/60">Profile image</span>
+            <span className="text-sm text-white/60">{t("authorProfile.profileImage")}</span>
             <input
               type="file"
               accept={AVATAR_UPLOAD_MIME_ACCEPT}
@@ -114,7 +119,7 @@ export function AuthorProfileEditorView({
             />
           </label>
           <p className="text-xs leading-relaxed text-white/50">
-            {getAuthorAvatarUploadGuidance()}
+            {getAuthorAvatarUploadGuidance(t)}
           </p>
           {form.avatarError ? (
             <p
@@ -140,9 +145,9 @@ export function AuthorProfileEditorView({
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white hover:bg-andromeda-dark disabled:opacity-50"
           >
             {form.isSaving ? (
-              <LoadingSpinner size="sm" label="Saving profile" />
+              <LoadingSpinner size="sm" label={t("authorProfile.savingProfile")} />
             ) : null}
-            {form.isSaving ? "Saving…" : "Save"}
+            {form.isSaving ? t("authorProfile.saving") : t("authorProfile.save")}
           </button>
           <button
             type="button"
@@ -150,7 +155,7 @@ export function AuthorProfileEditorView({
             disabled={form.isSaving}
             className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5 disabled:opacity-50"
           >
-            {cancelLabel}
+            {cancelLabel ?? t("authorProfile.cancel")}
           </button>
         </div>
       </div>

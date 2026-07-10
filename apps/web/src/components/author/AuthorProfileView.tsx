@@ -1,5 +1,8 @@
+"use client";
+
 import type { AuthorProfile } from "@/lib/authors/types";
 import { LocalizedLink } from "@/lib/i18n/LocalizedLink";
+import { useTranslation } from "@/lib/i18n/use-translation";
 import { AuthorProfileIdentitySection } from "./AuthorProfileIdentitySection";
 
 export type AuthorProfileViewProps = {
@@ -13,6 +16,7 @@ export function AuthorProfileView({
   audience = "visitor",
   onEditClick,
 }: AuthorProfileViewProps) {
+  const { t } = useTranslation();
   const isOwnerView = audience === "owner";
 
   return (
@@ -25,7 +29,7 @@ export function AuthorProfileView({
           {profile.displayName}
         </h1>
         <div className="space-y-1">
-          <span className="text-sm text-white/60">Public address</span>
+          <span className="text-sm text-white/60">{t("authorProfile.publicAddress")}</span>
           <p className="break-all font-mono text-sm text-white/60">
             {profile.address}
           </p>
@@ -42,7 +46,7 @@ export function AuthorProfileView({
           onClick={onEditClick}
           className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/5"
         >
-          Edit
+          {t("authorProfile.edit")}
         </button>
       ) : null}
       {isOwnerView ? (
@@ -51,7 +55,7 @@ export function AuthorProfileView({
             href={`/author/${profile.address}/publish`}
             className="inline-flex items-center justify-center rounded-lg bg-andromeda px-6 py-3 text-base font-semibold text-white shadow-lg shadow-andromeda/25 transition-colors hover:bg-andromeda-dark"
           >
-            Publish work
+            {t("authorProfile.publishWork")}
           </LocalizedLink>
         </div>
       ) : null}
