@@ -1,7 +1,8 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderWithI18n } from "@/lib/i18n/test-utils";
 import {
   AuthorPageInvalidAddress,
   AuthorPageNotFound,
@@ -24,7 +25,7 @@ describe("AuthorPageStatusMessage", () => {
   });
 
   it("renders title, description, and library link", () => {
-    render(
+    renderWithI18n(
       <AuthorPageStatusMessage
         title="Test title"
         description="Test description"
@@ -35,7 +36,7 @@ describe("AuthorPageStatusMessage", () => {
     expect(screen.getByText("Test description")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Back to Library" })).toHaveAttribute(
       "href",
-      "/",
+      "/en",
     );
   });
 });
@@ -46,7 +47,7 @@ describe("AuthorPageInvalidAddress", () => {
   });
 
   it("shows an invalid address message", () => {
-    render(<AuthorPageInvalidAddress />);
+    renderWithI18n(<AuthorPageInvalidAddress />);
     expect(screen.getByRole("heading", { name: "Invalid wallet address" })).toBeInTheDocument();
   });
 });
@@ -58,7 +59,7 @@ describe("AuthorPageNotFound", () => {
 
   it("shows not found copy and the normalized address", () => {
     const address = "0xabcdef0123456789abcdef0123456789abcdef01";
-    render(<AuthorPageNotFound address={address} />);
+    renderWithI18n(<AuthorPageNotFound address={address} />);
 
     expect(screen.getByRole("heading", { name: "Author page not found" })).toBeInTheDocument();
     expect(screen.getByText(address)).toBeInTheDocument();

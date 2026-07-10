@@ -3,6 +3,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissions";
 
 vi.mock("next/link", () => ({
@@ -30,12 +31,14 @@ function renderMenu(roleSlug: "admin" | "author" | "reader") {
   } as const;
 
   return render(
-    <RoleMenuDropdown
-      roleSlug={roleSlug}
-      roleName={labels[roleSlug]}
-      permissions={defaultPermissionsForRoleSlug(roleSlug)}
-      onLogout={vi.fn()}
-    />,
+    <I18nProvider locale="en">
+      <RoleMenuDropdown
+        roleSlug={roleSlug}
+        roleName={labels[roleSlug]}
+        permissions={defaultPermissionsForRoleSlug(roleSlug)}
+        onLogout={vi.fn()}
+      />
+    </I18nProvider>,
   );
 }
 
@@ -81,15 +84,17 @@ describe("RoleMenuDropdown", () => {
     const user = userEvent.setup();
 
     render(
-      <div>
-        <button type="button">Outside</button>
-        <RoleMenuDropdown
-          roleSlug="author"
-          roleName="Author"
-          permissions={defaultPermissionsForRoleSlug("author")}
-          onLogout={vi.fn()}
-        />
-      </div>,
+      <I18nProvider locale="en">
+        <div>
+          <button type="button">Outside</button>
+          <RoleMenuDropdown
+            roleSlug="author"
+            roleName="Author"
+            permissions={defaultPermissionsForRoleSlug("author")}
+            onLogout={vi.fn()}
+          />
+        </div>
+      </I18nProvider>,
     );
 
     const menu = screen.getByRole("group");
@@ -109,7 +114,7 @@ describe("RoleMenuDropdown", () => {
 
     expect(
       screen.getByRole("menuitem", { name: "Manage users and roles" }),
-    ).toHaveAttribute("href", "/admin/users");
+    ).toHaveAttribute("href", "/en/admin/users");
   });
 
   it("calls onLogout when the user selects logout", async () => {
@@ -117,12 +122,14 @@ describe("RoleMenuDropdown", () => {
     const onLogout = vi.fn();
 
     render(
-      <RoleMenuDropdown
-        roleSlug="admin"
-        roleName="Admin"
-        permissions={defaultPermissionsForRoleSlug("admin")}
-        onLogout={onLogout}
-      />,
+      <I18nProvider locale="en">
+        <RoleMenuDropdown
+          roleSlug="admin"
+          roleName="Admin"
+          permissions={defaultPermissionsForRoleSlug("admin")}
+          onLogout={onLogout}
+        />
+      </I18nProvider>,
     );
 
     await user.click(screen.getByText("Admin"));

@@ -14,6 +14,7 @@ import {
   authorPagePath,
   buildDraftAuthorProfile,
 } from "@/lib/authors/onboarding";
+import { useLocalizedHref } from "@/lib/i18n/use-localized-href";
 import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
 import { requestUserSnapshotRefresh } from "@/lib/users/user-snapshot-sync";
 import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
@@ -39,6 +40,7 @@ function AuthorOnboardingDialogFlow({
   onNavigate,
 }: AuthorOnboardingDialogFlowProps) {
   const router = useRouter();
+  const localizedHref = useLocalizedHref();
   const { notify } = useNotifications();
   const { signMessageAsync } = useSignMessage();
   const { applySnapshot } = useUserSnapshot();
@@ -51,7 +53,7 @@ function AuthorOnboardingDialogFlow({
           variant: "info",
           message: WALLET_DISCONNECTED_MESSAGE,
         });
-        router.push("/");
+        router.push(localizedHref("/"));
       },
     },
   });

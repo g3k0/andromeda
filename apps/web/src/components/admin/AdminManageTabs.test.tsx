@@ -3,10 +3,11 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { I18nProvider } from "@/lib/i18n/I18nProvider";
 import { AdminManageTabs } from "./AdminManageTabs";
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/admin/users",
+  usePathname: () => "/en/admin/users",
 }));
 
 vi.mock("next/link", () => ({
@@ -30,7 +31,11 @@ describe("AdminManageTabs", () => {
   });
 
   it("renders management tabs with active users link", () => {
-    render(<AdminManageTabs />);
+    render(
+      <I18nProvider locale="en">
+        <AdminManageTabs />
+      </I18nProvider>,
+    );
 
     expect(screen.getByText("Manage users and roles")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Users" })).toHaveAttribute(
@@ -39,7 +44,7 @@ describe("AdminManageTabs", () => {
     );
     expect(screen.getByRole("link", { name: "Roles" })).toHaveAttribute(
       "href",
-      "/admin/roles",
+      "/en/admin/roles",
     );
   });
 });

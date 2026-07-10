@@ -1,11 +1,11 @@
 import Image from "next/image";
-import Link from "next/link";
 
+import { LocalizedLink } from "@/lib/i18n/LocalizedLink";
 import type { WorkView } from "@/lib/works/work-view";
 
 export function WorkSummaryCard({ view }: { view: WorkView }) {
   return (
-    <Link
+    <LocalizedLink
       href={`/works/${view.workId}`}
       className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 transition hover:border-white/25"
     >
@@ -33,6 +33,6 @@ export function WorkSummaryCard({ view }: { view: WorkView }) {
           {view.priceLabel} · {view.availabilityLabel}
         </p>
       </div>
-    </Link>
+    </LocalizedLink>
   );
 }

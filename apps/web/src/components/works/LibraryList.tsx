@@ -1,7 +1,6 @@
-import Link from "next/link";
-
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { formErrorClassName } from "@/components/form/form-field-styles";
+import { LocalizedLink } from "@/lib/i18n/LocalizedLink";
 import type { LibraryCopyDto } from "@/lib/works/library-service";
 import { formatCopyLabel } from "@/lib/works/token-metadata";
 
@@ -40,9 +39,9 @@ export function LibraryList({ copies, loading, error }: LibraryListProps) {
     return (
       <p className="rounded-xl border border-white/10 bg-white/5 p-6 text-sm text-white/60">
         You don&apos;t own any copies yet. Browse the{" "}
-        <Link href="/works" className="text-andromeda-light hover:underline">
+        <LocalizedLink href="/works" className="text-andromeda-light hover:underline">
           catalog
-        </Link>{" "}
+        </LocalizedLink>{" "}
         to buy one.
       </p>
     );
@@ -51,7 +50,7 @@ export function LibraryList({ copies, loading, error }: LibraryListProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {copies.map((copy) => (
-        <Link
+        <LocalizedLink
           key={copy.tokenId}
           href={`/read/${copy.tokenId}`}
           className="flex flex-col gap-1 rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/25"
@@ -63,7 +62,7 @@ export function LibraryList({ copies, loading, error }: LibraryListProps) {
             {copyLabel(copy)} · Token #{copy.tokenId}
           </span>
           <span className="mt-2 text-sm text-andromeda-light">Read →</span>
-        </Link>
+        </LocalizedLink>
       ))}
     </div>
   );

@@ -1,7 +1,8 @@
 /** @vitest-environment jsdom */
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderWithI18n } from "@/lib/i18n/test-utils";
 import type { AuthorProfile } from "@/lib/authors/types";
 import { AuthorProfileView } from "./AuthorProfileView";
 import { AuthorPublicPage } from "./AuthorPublicPage";
@@ -38,20 +39,20 @@ describe("AuthorPublicPage", () => {
   });
 
   it("renders AuthorProfileView when profile is ready", () => {
-    render(<AuthorPublicPage state={{ status: "ready", profile }} />);
+    renderWithI18n(<AuthorPublicPage state={{ status: "ready", profile }} />);
 
     expect(screen.getByRole("heading", { name: "Jane Doe" })).toBeInTheDocument();
     expect(screen.getByText(ADDRESS)).toBeInTheDocument();
   });
 
   it("renders invalid address UI", () => {
-    render(<AuthorPublicPage state={{ status: "invalid_address" }} />);
+    renderWithI18n(<AuthorPublicPage state={{ status: "invalid_address" }} />);
 
     expect(screen.getByRole("heading", { name: "Invalid wallet address" })).toBeInTheDocument();
   });
 
   it("renders not found UI with address", () => {
-    render(
+    renderWithI18n(
       <AuthorPublicPage state={{ status: "not_found", address: ADDRESS }} />,
     );
 

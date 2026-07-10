@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useDisconnect } from "wagmi";
 import { revokeWalletSessionAction } from "@/app/actions/wallet-session";
 import { useNotifications } from "@/components/notifications/NotificationProvider";
+import { useLocalizedHref } from "@/lib/i18n/use-localized-href";
+import { useLocale } from "@/lib/i18n/use-locale";
 import { buildHeaderNavLinks } from "@/lib/navigation/header-nav";
 import { WALLET_DISCONNECTED_MESSAGE } from "@/lib/notifications/messages";
 import { useUserSnapshot } from "@/lib/users/use-user-snapshot";
@@ -12,6 +14,8 @@ import { RoleMenuDropdown } from "@/components/RoleMenuDropdown";
 
 export function SiteHeaderNav() {
   const router = useRouter();
+  const locale = useLocale();
+  const localizedHref = useLocalizedHref();
   const { notify } = useNotifications();
   const { snapshot } = useUserSnapshot();
   const { disconnect, isPending: isLoggingOut } = useDisconnect({
@@ -21,7 +25,7 @@ export function SiteHeaderNav() {
           variant: "info",
           message: WALLET_DISCONNECTED_MESSAGE,
         });
-        router.push("/");
+        router.push(localizedHref("/"));
       },
     },
   });
@@ -31,7 +35,7 @@ export function SiteHeaderNav() {
     hasAuthorProfile: snapshot?.hasAuthorProfile ?? false,
     isConnected: snapshot?.isConnected ?? false,
     snapshot,
-  });
+  }, locale);
 
   return (
     <>

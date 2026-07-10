@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { resolveAdminLayoutAuth } from "@/lib/auth/resolve-admin-layout-auth";
 import { RouteGuard } from "@/components/navigation/RouteGuard";
+import { getRequestLocale } from "@/lib/i18n/server-locale";
+import { localizedPath } from "@/lib/i18n/routing";
 
 export default async function AdminLayout({
   children,
@@ -20,7 +22,8 @@ export default async function AdminLayout({
   }
 
   if (!isAuthorized) {
-    redirect("/");
+    const locale = await getRequestLocale();
+    redirect(localizedPath(locale, "/"));
   }
 
   return <RouteGuard routeId="admin">{children}</RouteGuard>;

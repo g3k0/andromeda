@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
+import { useLocalizedHref } from "@/lib/i18n/use-localized-href";
 import {
   MANAGE_USERS_MENU_ITEM,
   MANAGE_USERS_PATH,
@@ -31,6 +32,7 @@ export function RoleMenuDropdown({
   isLoggingOut = false,
 }: RoleMenuDropdownProps) {
   const menuContext: RoleMenuContext = { roleSlug, roleName, permissions };
+  const localizedHref = useLocalizedHref();
   const menuId = `role-menu-${roleSlug}`;
 
   return (
@@ -65,7 +67,7 @@ export function RoleMenuDropdown({
           item.id === MANAGE_USERS_MENU_ITEM.id ? (
             <Link
               key={item.id}
-              href={MANAGE_USERS_PATH}
+              href={localizedHref(MANAGE_USERS_PATH)}
               role="menuitem"
               onClick={(event) => closeParentDetails(event.currentTarget)}
               className="block w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white"

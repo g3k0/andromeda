@@ -9,6 +9,7 @@ import {
   buildAuthorizedNavLinks,
   canAccessPage,
   canShowRouteInNav,
+  getRouteByHref,
   matchApiRoute,
   userFromSnapshot,
 } from "./route-guard";
@@ -32,6 +33,12 @@ describe("route guard", () => {
       id: "authors-update",
     });
     expect(matchApiRoute("GET", "/api/authors/0xabc")).toBeUndefined();
+  });
+
+  it("resolves routes from locale-prefixed hrefs", () => {
+    expect(getRouteByHref("/it/works")).toBeDefined();
+    expect(getRouteByHref("/it/works")?.id).toBe("catalog");
+    expect(getRouteByHref("/en/library")?.id).toBe("library");
   });
 
   it("allows public read pages without a connected wallet", () => {
