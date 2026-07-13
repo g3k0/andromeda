@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ForbiddenContentKeyError } from "./errors";
+import { MINIMAL_PNG_BYTES } from "./cover-image-validation";
 import { parseWorkUploadFiles } from "./upload-form";
 import { parseWorkUploadFields } from "./upload-schemas";
 
@@ -36,7 +37,7 @@ function createUploadFormData(
   );
   formData.set(
     "coverImage",
-    new Blob([new Uint8Array([4, 5, 6])], { type: "image/png" }),
+    new Blob([MINIMAL_PNG_BYTES], { type: "image/png" }),
   );
 
   for (const [key, value] of Object.entries(extra)) {
@@ -89,6 +90,18 @@ describe("parseWorkUploadFiles", () => {
     const files = await parseWorkUploadFiles(createUploadFormData());
     expect(files.ciphertext).toEqual(new Uint8Array([1, 2, 3]));
     expect(files.coverMimeType).toBe("image/png");
+  });
+
+  it("rejects cover bytes that do not match the declared MIME type", async () => {
+    const formData = createUploadFormData();
+    formData.set(
+      "coverImage",
+      new Blob([new Uint8Array([9, 8, 7])], { type: "image/png" }),
+    );
+
+    await expect(parseWorkUploadFiles(formData)).rejects.toThrow(
+      /Cover image content does not match/,
+    );
   });
 
   it("rejects unsupported cover MIME types", async () => {

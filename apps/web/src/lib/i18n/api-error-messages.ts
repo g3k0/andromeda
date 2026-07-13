@@ -33,6 +33,8 @@ const API_ERROR_I18N_KEYS: Record<ApiErrorCode, string> = {
   invalid_work_id: "api.errors.invalidWorkId",
   invalid_owner_address: "api.errors.invalidOwnerAddress",
   work_upload_validation: "api.errors.workUploadValidation",
+  work_upload_metadata_exists: "api.errors.workUploadMetadataExists",
+  work_upload_duplicate: "api.errors.workUploadDuplicate",
   forbidden_content_key: "api.errors.forbiddenContentKey",
   ipfs_metadata_validation: "api.errors.ipfsMetadataValidation",
   unexpected: "api.errors.unexpected",

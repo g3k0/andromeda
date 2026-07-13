@@ -3,6 +3,7 @@ import "server-only";
 import { getContractAddress } from "@/lib/config/public-env";
 import { verifySignedMutation } from "@/lib/authors/mutation-handler";
 import { getAuthorService } from "@/lib/authors/server";
+import { getUserService } from "@/lib/users/server";
 import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
 import {
   getErc6551RegistryAddress,
@@ -11,9 +12,12 @@ import {
 
 import { assertCanPublishWork } from "./authorize";
 import { publishWorkToIpfs } from "./publish-service";
-import type { PublishWorkResult } from "./types";
+import type { WorkUploadMutationResult } from "./types";
+import { assertNoDuplicateWorkUpload } from "./work-upload-duplicate";
 import { parseWorkUploadFiles } from "./upload-form";
 import { parseWorkUploadFields } from "./upload-schemas";
+import { assertWorkUploadWalletRateLimit } from "./work-upload-rate-limit";
+import { getWorkUploadService } from "./work-upload-server";
 
 export type WorkUploadMutationDeps = {
   ipfs: IpfsStoragePort;
@@ -22,16 +26,33 @@ export type WorkUploadMutationDeps = {
 export async function runWorkUploadMutation(
   formData: FormData,
   deps: WorkUploadMutationDeps,
-): Promise<PublishWorkResult> {
+  request: Request,
+): Promise<WorkUploadMutationResult> {
   const fields = parseWorkUploadFields(formData);
-  const files = await parseWorkUploadFiles(formData);
   const signer = await verifySignedMutation(fields);
+  await assertWorkUploadWalletRateLimit(request, signer);
 
-  const authorService = await getAuthorService();
+  const userService = await getUserService();
+  const signerUser = await userService.getAuthenticatedByAddress(signer);
+  if (signerUser) {
+    userService.assertActive(signerUser);
+  }
+
+  const [files, authorService] = await Promise.all([
+    parseWorkUploadFiles(formData),
+    getAuthorService(),
+  ]);
   const hasAuthorProfile = await authorService.hasAuthorProfile(fields.address);
   assertCanPublishWork(signer, fields.address, hasAuthorProfile);
 
-  return publishWorkToIpfs(deps.ipfs, {
+  const uploadService = await getWorkUploadService();
+  const existingUploads = await uploadService.listByAuthor(fields.address);
+  assertNoDuplicateWorkUpload(existingUploads, {
+    name: fields.name,
+    workImprint: fields.imprint,
+  });
+
+  const published = await publishWorkToIpfs(deps.ipfs, {
     ciphertext: files.ciphertext,
     coverImage: files.coverImage,
     name: fields.name,
@@ -41,4 +62,20 @@ export async function runWorkUploadMutation(
     registryAddress: getErc6551RegistryAddress(),
     externalUrl: fields.externalUrl,
   });
+
+  const upload = await uploadService.createUpload({
+    author: fields.address,
+    name: fields.name,
+    metadataURI: published.metadataUri,
+    metadataCid: published.metadataPin.cid,
+    contentCid: published.contentPin.cid,
+    coverCid: published.coverPin.cid,
+    externalUrl: fields.externalUrl,
+    workImprint: fields.imprint,
+  });
+
+  return {
+    ...published,
+    upload,
+  };
 }

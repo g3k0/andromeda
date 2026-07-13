@@ -1,7 +1,7 @@
 import { getAddress, isAddress } from "viem";
 
 import { InvalidOwnerAddressError, InvalidWorkIdParamError } from "./errors";
-import type { TokenRecord, WorkRecord } from "./types";
+import type { TokenRecord, WorkRecord, WorkUploadRecord } from "./types";
 
 /** Public, JSON-safe projection of a work — never includes ciphertext or `K`. */
 export type PublicWorkDto = {
@@ -81,4 +81,43 @@ export function parseOwnerParam(value: string): `0x${string}` {
     throw new InvalidOwnerAddressError(value);
   }
   return getAddress(value);
+}
+
+/** Public projection of an author work upload (no ciphertext or content keys). */
+export type PublicWorkUploadDto = {
+  id: string;
+  author: `0x${string}`;
+  name: string;
+  metadataURI: string;
+  metadataCid: string;
+  contentCid: string;
+  coverCid: string;
+  externalUrl: string | null;
+  workImprint: WorkUploadRecord["workImprint"];
+  status: WorkUploadRecord["status"];
+  workId: string | null;
+  registeredAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export function toPublicWorkUploadDto(
+  upload: WorkUploadRecord,
+): PublicWorkUploadDto {
+  return {
+    id: upload.id,
+    author: upload.author,
+    name: upload.name,
+    metadataURI: upload.metadataURI,
+    metadataCid: upload.metadataCid,
+    contentCid: upload.contentCid,
+    coverCid: upload.coverCid,
+    externalUrl: upload.externalUrl,
+    workImprint: upload.workImprint,
+    status: upload.status,
+    workId: upload.workId,
+    registeredAt: upload.registeredAt,
+    createdAt: upload.createdAt,
+    updatedAt: upload.updatedAt,
+  };
 }

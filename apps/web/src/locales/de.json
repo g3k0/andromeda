@@ -27,7 +27,8 @@
     "de": "Deutsch",
     "pt": "Português",
     "zh": "中文",
-    "ja": "日本語"
+    "ja": "日本語",
+    "ru": "Русский"
   },
   "nav": {
     "catalog": "Katalog",
@@ -653,6 +654,8 @@
       "invalidWorkId": "Ungültige Werk-ID.",
       "invalidOwnerAddress": "Ungültige Besitzeradresse.",
       "workUploadValidation": "{detail}",
+      "workUploadMetadataExists": "Work upload metadata already exists.",
+      "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "Inhaltsschlüssel dürfen niemals an den Server gesendet werden.",
       "ipfsMetadataValidation": "Generierte Metadaten haben die Sicherheitsvalidierung nicht bestanden.",
       "unexpected": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",

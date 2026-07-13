@@ -8,7 +8,51 @@ import type {
   UserStatus,
 } from "@/lib/users/types";
 import { defaultUserPreferences, isUserPermission } from "@/lib/users/types";
-import type { TokenRecord, WorkRecord } from "@/lib/works/types";
+import type { TokenRecord, WorkRecord, WorkUploadRecord } from "@/lib/works/types";
+import type { WorkImprintMetadata } from "@/lib/ipfs/metadata-schema";
+
+export type WorkImprintDocumentLike = {
+  publication_date: string;
+  edition_number: number;
+  edition_kind: "first" | "reprint";
+  reprint_number?: number | null;
+  series_name?: string | null;
+  series_volume?: number | null;
+  language?: string | null;
+  original_publication_date?: string | null;
+  back_cover_text: string;
+  about_author: string;
+  author_address: string;
+};
+
+function normalizeWorkImprint(imprint: WorkImprintDocumentLike): WorkImprintMetadata {
+  const normalized: WorkImprintMetadata = {
+    publication_date: imprint.publication_date,
+    edition_number: imprint.edition_number,
+    edition_kind: imprint.edition_kind,
+    back_cover_text: imprint.back_cover_text,
+    about_author: imprint.about_author,
+    author_address: getAddress(imprint.author_address),
+  };
+
+  if (imprint.reprint_number != null) {
+    normalized.reprint_number = imprint.reprint_number;
+  }
+  if (imprint.series_name) {
+    normalized.series_name = imprint.series_name;
+  }
+  if (imprint.series_volume != null) {
+    normalized.series_volume = imprint.series_volume;
+  }
+  if (imprint.language) {
+    normalized.language = imprint.language;
+  }
+  if (imprint.original_publication_date) {
+    normalized.original_publication_date = imprint.original_publication_date;
+  }
+
+  return normalized;
+}
 
 export type AuthorDocumentLike = {
   address: string;
@@ -143,6 +187,42 @@ export function toUser(doc: UserDocumentLike): User {
     ),
     preferences: toUserPreferences(doc.preferences),
     metadata: doc.metadata ?? {},
+    createdAt: doc.createdAt.toISOString(),
+    updatedAt: doc.updatedAt.toISOString(),
+  };
+}
+
+export type WorkUploadDocumentLike = {
+  _id: { toString(): string };
+  author: string;
+  name: string;
+  metadataURI: string;
+  metadataCid: string;
+  contentCid: string;
+  coverCid: string;
+  externalUrl?: string | null;
+  workImprint: WorkImprintDocumentLike;
+  status: "uploaded" | "registered";
+  workId?: string | null;
+  registeredAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export function toWorkUploadRecord(doc: WorkUploadDocumentLike): WorkUploadRecord {
+  return {
+    id: doc._id.toString(),
+    author: getAddress(doc.author),
+    name: doc.name,
+    metadataURI: doc.metadataURI,
+    metadataCid: doc.metadataCid,
+    contentCid: doc.contentCid,
+    coverCid: doc.coverCid,
+    externalUrl: doc.externalUrl ?? null,
+    workImprint: normalizeWorkImprint(doc.workImprint),
+    status: doc.status,
+    workId: doc.workId ?? null,
+    registeredAt: doc.registeredAt ? doc.registeredAt.toISOString() : null,
     createdAt: doc.createdAt.toISOString(),
     updatedAt: doc.updatedAt.toISOString(),
   };

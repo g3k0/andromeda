@@ -56,3 +56,19 @@ export class MintEnvelopeError extends WorkMintError {
     this.name = "MintEnvelopeError";
   }
 }
+
+export class WorkUploadMetadataExistsError extends WorkPublishError {
+  constructor(public readonly metadataCid: string) {
+    super("Work upload metadata already exists.");
+    this.name = "WorkUploadMetadataExistsError";
+  }
+}
+
+export class WorkUploadDuplicateError extends WorkPublishError {
+  constructor(public readonly name: string) {
+    super(
+      "This work was already uploaded. Submit a reprint edition to publish another version.",
+    );
+    this.name = "WorkUploadDuplicateError";
+  }
+}

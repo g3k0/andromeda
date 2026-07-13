@@ -9,7 +9,8 @@ export type SupportedLocale =
   | "de"
   | "pt"
   | "zh"
-  | "ja";
+  | "ja"
+  | "ru";
 
 export type LocaleDefinition = {
   code: SupportedLocale;
@@ -31,6 +32,7 @@ export const SUPPORTED_LOCALES: readonly LocaleDefinition[] = [
   { code: "pt", label: "Português", flag: "🇵🇹", hreflang: "pt" },
   { code: "zh", label: "中文", flag: "🇨🇳", hreflang: "zh-Hans" },
   { code: "ja", label: "日本語", flag: "🇯🇵", hreflang: "ja" },
+  { code: "ru", label: "Русский", flag: "🇷🇺", hreflang: "ru" },
 ] as const;
 
 export const SUPPORTED_LOCALE_CODES: readonly SupportedLocale[] =

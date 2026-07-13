@@ -42,6 +42,7 @@ describe("buildAlternateLanguages", () => {
       pt: "/pt/works",
       "zh-Hans": "/zh/works",
       ja: "/ja/works",
+      ru: "/ru/works",
       "x-default": `/${DEFAULT_LOCALE}/works`,
     });
   });

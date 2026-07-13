@@ -5,6 +5,7 @@ import fr from "@/locales/fr.json";
 import it from "@/locales/it.json";
 import ja from "@/locales/ja.json";
 import pt from "@/locales/pt.json";
+import ru from "@/locales/ru.json";
 import zh from "@/locales/zh.json";
 
 import { DEFAULT_LOCALE, type SupportedLocale } from "./locales";
@@ -18,6 +19,7 @@ const catalogs: Partial<Record<SupportedLocale, MessageTree>> = {
   it: it as MessageTree,
   ja: ja as MessageTree,
   pt: pt as MessageTree,
+  ru: ru as MessageTree,
   zh: zh as MessageTree,
 };
 

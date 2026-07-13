@@ -16,6 +16,8 @@ export type SyncChainEventsOptions = {
   maxRangeSize?: bigint;
   /** Contract deployment block used to skip empty history on the first run. */
   startBlock?: bigint;
+  /** Marks off-chain upload metadata when a work is registered on-chain. */
+  onWorkRegistered?: (metadataURI: string, workId: string) => Promise<void>;
 };
 
 export type SyncChainEventsResult = {
@@ -76,7 +78,9 @@ export async function syncChainEvents(
       });
       throw error;
     }
-    const result = await handleChainLogs(repositories, logs);
+    const result = await handleChainLogs(repositories, logs, {
+      onWorkRegistered: options.onWorkRegistered,
+    });
     processedEvents += result.processed;
     await repositories.chainSync.setLastProcessedBlock(range.toBlock);
   }

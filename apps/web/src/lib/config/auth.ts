@@ -11,6 +11,10 @@ const DEFAULT_WALLET_AUTH_NONCE_TTL_MINUTES = 5;
 const DEFAULT_RATE_LIMIT_MAX_REQUESTS = 30;
 const DEFAULT_RATE_LIMIT_WINDOW_MS = 60_000;
 const DEFAULT_AUTH_MESSAGE_RATE_LIMIT = 10;
+const DEFAULT_WORK_UPLOAD_IP_RATE_LIMIT_MAX_REQUESTS = 10;
+const DEFAULT_WORK_UPLOAD_IP_RATE_LIMIT_WINDOW_MS = 60_000;
+const DEFAULT_WORK_UPLOAD_WALLET_RATE_LIMIT_MAX_REQUESTS = 5;
+const DEFAULT_WORK_UPLOAD_WALLET_RATE_LIMIT_WINDOW_MS = 3_600_000;
 
 export function getWalletSessionTtlMs(): number {
   const minutes =
@@ -45,5 +49,33 @@ export function getRateLimitWindowMs(): number {
 export function getAuthMessageRateLimit(): number {
   return (
     getServerEnv().AUTH_MESSAGE_RATE_LIMIT ?? DEFAULT_AUTH_MESSAGE_RATE_LIMIT
+  );
+}
+
+export function getWorkUploadIpRateLimitMaxRequests(): number {
+  return (
+    getServerEnv().WORK_UPLOAD_IP_RATE_LIMIT_MAX_REQUESTS ??
+    DEFAULT_WORK_UPLOAD_IP_RATE_LIMIT_MAX_REQUESTS
+  );
+}
+
+export function getWorkUploadIpRateLimitWindowMs(): number {
+  return (
+    getServerEnv().WORK_UPLOAD_IP_RATE_LIMIT_WINDOW_MS ??
+    DEFAULT_WORK_UPLOAD_IP_RATE_LIMIT_WINDOW_MS
+  );
+}
+
+export function getWorkUploadWalletRateLimitMaxRequests(): number {
+  return (
+    getServerEnv().WORK_UPLOAD_WALLET_RATE_LIMIT_MAX_REQUESTS ??
+    DEFAULT_WORK_UPLOAD_WALLET_RATE_LIMIT_MAX_REQUESTS
+  );
+}
+
+export function getWorkUploadWalletRateLimitWindowMs(): number {
+  return (
+    getServerEnv().WORK_UPLOAD_WALLET_RATE_LIMIT_WINDOW_MS ??
+    DEFAULT_WORK_UPLOAD_WALLET_RATE_LIMIT_WINDOW_MS
   );
 }

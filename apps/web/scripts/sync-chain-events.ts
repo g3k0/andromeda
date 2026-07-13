@@ -16,6 +16,7 @@ import {
 } from "@/lib/config/env";
 import { createMongoIndexerRepositories } from "@/lib/works/adapters/create-indexer-repositories";
 import { syncChainEvents } from "@/lib/indexer/chain-indexer";
+import { markWorkUploadRegistered } from "@/lib/works/work-upload-indexer-hook";
 
 loadEnvConfig(process.cwd());
 
@@ -30,6 +31,7 @@ async function main() {
 
   const result = await syncChainEvents(client, repositories, {
     startBlock: getChainIndexerStartBlock(),
+    onWorkRegistered: markWorkUploadRegistered,
   });
 
   if (result.processedRanges === 0) {
