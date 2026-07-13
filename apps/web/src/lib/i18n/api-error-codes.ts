@@ -21,6 +21,7 @@ export const API_ERROR_CODES = [
   "invalid_work_id",
   "invalid_owner_address",
   "work_upload_validation",
+  "work_upload_metadata_exists",
   "forbidden_content_key",
   "ipfs_metadata_validation",
   "unexpected",

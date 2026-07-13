@@ -98,3 +98,39 @@ export type UpsertTokenInput = {
   envelopeCid?: string | null;
   metadataURI?: string | null;
 };
+
+export const WORK_UPLOAD_STATUSES = ["uploaded", "registered"] as const;
+export type WorkUploadStatus = (typeof WORK_UPLOAD_STATUSES)[number];
+
+/** Off-chain record of a work upload (IPFS metadata pinned by the author). */
+export type WorkUploadRecord = {
+  id: string;
+  author: `0x${string}`;
+  name: string;
+  metadataURI: string;
+  metadataCid: string;
+  contentCid: string;
+  coverCid: string;
+  externalUrl: string | null;
+  workImprint: WorkImprintMetadata;
+  status: WorkUploadStatus;
+  workId: string | null;
+  registeredAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateWorkUploadInput = {
+  author: string;
+  name: string;
+  metadataURI: string;
+  metadataCid: string;
+  contentCid: string;
+  coverCid: string;
+  externalUrl?: string;
+  workImprint: WorkImprintMetadata;
+};
+
+export type WorkUploadMutationResult = PublishWorkResult & {
+  upload: WorkUploadRecord;
+};

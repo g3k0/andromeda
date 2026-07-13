@@ -2,6 +2,7 @@ import { parseEventLogs, zeroAddress, type Log } from "viem";
 
 import { andromedaWorksAbi } from "@/lib/chain/contract";
 import type { IndexerRepositories } from "@/lib/works/ports/work-repository";
+import { getWorkUploadService } from "@/lib/works/work-upload-server";
 
 export type AndromedaChainEvent =
   | {
@@ -134,6 +135,15 @@ async function applyEvent(
         maxCopies: event.maxCopies,
         active: true,
       });
+      try {
+        const uploadService = await getWorkUploadService();
+        await uploadService.markRegistered(
+          event.metadataURI,
+          event.workId.toString(),
+        );
+      } catch {
+        // Upload metadata persistence is best-effort for the indexer path.
+      }
       return;
     case "WorkStatusChanged":
       await repositories.works.setActive(event.workId, event.active);

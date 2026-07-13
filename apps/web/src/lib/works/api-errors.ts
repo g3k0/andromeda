@@ -12,6 +12,7 @@ import {
   ForbiddenContentKeyError,
   InvalidOwnerAddressError,
   InvalidWorkIdParamError,
+  WorkUploadMetadataExistsError,
   WorkUploadValidationError,
 } from "./errors";
 
@@ -29,6 +30,10 @@ export function mapWorkErrorToStatus(error: unknown): number {
     error instanceof IpfsMetadataValidationError
   ) {
     return 422;
+  }
+
+  if (error instanceof WorkUploadMetadataExistsError) {
+    return 409;
   }
 
   if (error instanceof IpfsConfigError) {
@@ -57,6 +62,10 @@ export function mapWorkErrorToMessage(error: unknown): string {
 
   if (error instanceof ForbiddenContentKeyError) {
     return "Content keys must never be sent to the server.";
+  }
+
+  if (error instanceof WorkUploadMetadataExistsError) {
+    return "Work upload metadata already exists.";
   }
 
   if (error instanceof IpfsMetadataValidationError) {
@@ -89,6 +98,10 @@ export function mapWorkErrorToCode(error: unknown): ApiErrorCode {
 
   if (error instanceof ForbiddenContentKeyError) {
     return "forbidden_content_key";
+  }
+
+  if (error instanceof WorkUploadMetadataExistsError) {
+    return "work_upload_metadata_exists";
   }
 
   if (error instanceof IpfsMetadataValidationError) {

@@ -654,6 +654,7 @@
       "invalidWorkId": "Identifiant d'œuvre invalide.",
       "invalidOwnerAddress": "Adresse du propriétaire invalide.",
       "workUploadValidation": "{detail}",
+      "workUploadMetadataExists": "Work upload metadata already exists.",
       "forbiddenContentKey": "Les clés de contenu ne doivent jamais être envoyées au serveur.",
       "ipfsMetadataValidation": "Les métadonnées générées ont échoué à la validation de sécurité.",
       "unexpected": "Une erreur s'est produite. Veuillez réessayer.",

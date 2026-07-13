@@ -8,7 +8,8 @@ import type {
   UserStatus,
 } from "@/lib/users/types";
 import { defaultUserPreferences, isUserPermission } from "@/lib/users/types";
-import type { TokenRecord, WorkRecord } from "@/lib/works/types";
+import type { TokenRecord, WorkRecord, WorkUploadRecord } from "@/lib/works/types";
+import type { WorkImprintMetadata } from "@/lib/ipfs/metadata-schema";
 
 export type AuthorDocumentLike = {
   address: string;
@@ -143,6 +144,42 @@ export function toUser(doc: UserDocumentLike): User {
     ),
     preferences: toUserPreferences(doc.preferences),
     metadata: doc.metadata ?? {},
+    createdAt: doc.createdAt.toISOString(),
+    updatedAt: doc.updatedAt.toISOString(),
+  };
+}
+
+export type WorkUploadDocumentLike = {
+  _id: { toString(): string };
+  author: string;
+  name: string;
+  metadataURI: string;
+  metadataCid: string;
+  contentCid: string;
+  coverCid: string;
+  externalUrl?: string | null;
+  workImprint: WorkImprintMetadata;
+  status: "uploaded" | "registered";
+  workId?: string | null;
+  registeredAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export function toWorkUploadRecord(doc: WorkUploadDocumentLike): WorkUploadRecord {
+  return {
+    id: doc._id.toString(),
+    author: getAddress(doc.author),
+    name: doc.name,
+    metadataURI: doc.metadataURI,
+    metadataCid: doc.metadataCid,
+    contentCid: doc.contentCid,
+    coverCid: doc.coverCid,
+    externalUrl: doc.externalUrl ?? null,
+    workImprint: doc.workImprint,
+    status: doc.status,
+    workId: doc.workId ?? null,
+    registeredAt: doc.registeredAt ? doc.registeredAt.toISOString() : null,
     createdAt: doc.createdAt.toISOString(),
     updatedAt: doc.updatedAt.toISOString(),
   };

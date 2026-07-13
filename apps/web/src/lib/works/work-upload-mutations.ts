@@ -12,10 +12,11 @@ import {
 
 import { assertCanPublishWork } from "./authorize";
 import { publishWorkToIpfs } from "./publish-service";
-import type { PublishWorkResult } from "./types";
+import type { WorkUploadMutationResult } from "./types";
 import { parseWorkUploadFiles } from "./upload-form";
 import { parseWorkUploadFields } from "./upload-schemas";
 import { assertWorkUploadWalletRateLimit } from "./work-upload-rate-limit";
+import { getWorkUploadService } from "./work-upload-server";
 
 export type WorkUploadMutationDeps = {
   ipfs: IpfsStoragePort;
@@ -25,7 +26,7 @@ export async function runWorkUploadMutation(
   formData: FormData,
   deps: WorkUploadMutationDeps,
   request: Request,
-): Promise<PublishWorkResult> {
+): Promise<WorkUploadMutationResult> {
   const fields = parseWorkUploadFields(formData);
   const signer = await verifySignedMutation(fields);
   await assertWorkUploadWalletRateLimit(request, signer);
@@ -41,7 +42,7 @@ export async function runWorkUploadMutation(
   const hasAuthorProfile = await authorService.hasAuthorProfile(fields.address);
   assertCanPublishWork(signer, fields.address, hasAuthorProfile);
 
-  return publishWorkToIpfs(deps.ipfs, {
+  const published = await publishWorkToIpfs(deps.ipfs, {
     ciphertext: files.ciphertext,
     coverImage: files.coverImage,
     name: fields.name,
@@ -51,4 +52,21 @@ export async function runWorkUploadMutation(
     registryAddress: getErc6551RegistryAddress(),
     externalUrl: fields.externalUrl,
   });
+
+  const uploadService = await getWorkUploadService();
+  const upload = await uploadService.createUpload({
+    author: fields.address,
+    name: fields.name,
+    metadataURI: published.metadataUri,
+    metadataCid: published.metadataPin.cid,
+    contentCid: published.contentPin.cid,
+    coverCid: published.coverPin.cid,
+    externalUrl: fields.externalUrl,
+    workImprint: fields.imprint,
+  });
+
+  return {
+    ...published,
+    upload,
+  };
 }

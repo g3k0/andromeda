@@ -654,6 +654,7 @@
       "invalidWorkId": "Ungültige Werk-ID.",
       "invalidOwnerAddress": "Ungültige Besitzeradresse.",
       "workUploadValidation": "{detail}",
+      "workUploadMetadataExists": "Work upload metadata already exists.",
       "forbiddenContentKey": "Inhaltsschlüssel dürfen niemals an den Server gesendet werden.",
       "ipfsMetadataValidation": "Generierte Metadaten haben die Sicherheitsvalidierung nicht bestanden.",
       "unexpected": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",

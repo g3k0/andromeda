@@ -654,6 +654,7 @@
       "invalidWorkId": "無効な作品IDです。",
       "invalidOwnerAddress": "無効な所有者アドレスです。",
       "workUploadValidation": "{detail}",
+      "workUploadMetadataExists": "Work upload metadata already exists.",
       "forbiddenContentKey": "コンテンツキーをサーバーに送信してはいけません。",
       "ipfsMetadataValidation": "生成されたメタデータがセキュリティ検証に失敗しました。",
       "unexpected": "問題が発生しました。もう一度お試しください。",

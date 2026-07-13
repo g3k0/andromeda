@@ -654,6 +654,7 @@
       "invalidWorkId": "无效的作品 ID。",
       "invalidOwnerAddress": "无效的持有者地址。",
       "workUploadValidation": "{detail}",
+      "workUploadMetadataExists": "Work upload metadata already exists.",
       "forbiddenContentKey": "内容密钥绝不能发送到服务器。",
       "ipfsMetadataValidation": "生成的元数据未通过安全验证。",
       "unexpected": "出了点问题。请重试。",

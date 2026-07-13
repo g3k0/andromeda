@@ -21,6 +21,7 @@ import {
   useInMemoryWalletAuthStoreForTests,
 } from "@/lib/auth/verify-wallet";
 import { AuthorModel } from "@/lib/db/models/author.model";
+import { WorkUploadModel } from "@/lib/db/models/work-upload.model";
 import { RateLimitBucketModel } from "@/lib/db/models/rate-limit-bucket.model";
 import { RoleModel } from "@/lib/db/models/role.model";
 import { UserModel } from "@/lib/db/models/user.model";
@@ -40,6 +41,9 @@ import { MINIMAL_PNG_BYTES } from "@/lib/works/cover-image-validation";
 
 import { POST } from "./route";
 import { setIpfsStorageForTests } from "@/lib/works/ipfs-server";
+import {
+  resetWorkUploadServiceForTests,
+} from "@/lib/works/work-upload-server";
 
 const AUTHOR = privateKeyToAccount(generatePrivateKey());
 const AUTHOR_ADDRESS = AUTHOR.address.toLowerCase();
@@ -114,6 +118,7 @@ describe("works upload API", () => {
     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS =
       "0x3333333333333333333333333333333333333333";
     resetMongoConnectionForTests();
+    resetWorkUploadServiceForTests();
     resetAuthorServiceForTests();
     resetUserServiceForTests();
     await seedApiSystemRoles();
@@ -134,6 +139,7 @@ describe("works upload API", () => {
     resetRateLimitsForTests();
     useInMemoryRateLimitsForTests();
     setIpfsStorageForTests(null);
+    resetWorkUploadServiceForTests();
     resetAuthorServiceForTests();
     resetUserServiceForTests();
     resetRoleServiceForTests();
@@ -141,6 +147,7 @@ describe("works upload API", () => {
     process.env.MONGODB_URI = memoryServer!.getUri();
     await connectMongo();
     await AuthorModel.deleteMany({});
+    await WorkUploadModel.deleteMany({});
     await UserModel.deleteMany({});
     await RoleModel.deleteMany({});
     await RateLimitBucketModel.deleteMany({});
@@ -176,6 +183,12 @@ describe("works upload API", () => {
     expect(json.metadata.ace.encrypted_content).toMatch(/^ipfs:\/\//);
     expect(json.metadata.name).toBe("The Star Gate");
     expect(json.metadata.work_imprint.publication_date).toBe("2026-06-01");
+    expect(json.upload.author.toLowerCase()).toBe(AUTHOR_ADDRESS);
+    expect(json.upload.metadataCid).toBe(json.metadataCid);
+
+    const stored = await WorkUploadModel.find({ author: AUTHOR_ADDRESS }).lean();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]?.metadataCid).toBe(json.metadataCid);
   });
 
   it("rejects contentKey in the upload payload", async () => {
