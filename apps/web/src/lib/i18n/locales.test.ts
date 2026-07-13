@@ -9,11 +9,12 @@ import {
 } from "./locales";
 
 describe("locales registry", () => {
-  it("lists eight supported locales with unique codes", () => {
-    expect(SUPPORTED_LOCALES).toHaveLength(8);
-    expect(new Set(SUPPORTED_LOCALE_CODES).size).toBe(8);
+  it("lists nine supported locales with unique codes", () => {
+    expect(SUPPORTED_LOCALES).toHaveLength(9);
+    expect(new Set(SUPPORTED_LOCALE_CODES).size).toBe(9);
     expect(SUPPORTED_LOCALE_CODES).toContain("en");
     expect(SUPPORTED_LOCALE_CODES).toContain("ja");
+    expect(SUPPORTED_LOCALE_CODES).toContain("ru");
   });
 
   it("defaults to English", () => {
