@@ -8,7 +8,6 @@ import type { IndexerRepositories } from "@/lib/works/ports/work-repository";
 
 import { handleChainLogs } from "./chain-event-handler";
 import { computeBlockRanges, resolveLastProcessedBlock } from "./sync-cursor";
-import { markWorkUploadRegistered } from "@/lib/works/work-upload-indexer-hook";
 
 const DEFAULT_MAX_RANGE_SIZE = 2_000n;
 
@@ -17,6 +16,8 @@ export type SyncChainEventsOptions = {
   maxRangeSize?: bigint;
   /** Contract deployment block used to skip empty history on the first run. */
   startBlock?: bigint;
+  /** Marks off-chain upload metadata when a work is registered on-chain. */
+  onWorkRegistered?: (metadataURI: string, workId: string) => Promise<void>;
 };
 
 export type SyncChainEventsResult = {
@@ -78,7 +79,7 @@ export async function syncChainEvents(
       throw error;
     }
     const result = await handleChainLogs(repositories, logs, {
-      onWorkRegistered: markWorkUploadRegistered,
+      onWorkRegistered: options.onWorkRegistered,
     });
     processedEvents += result.processed;
     await repositories.chainSync.setLastProcessedBlock(range.toBlock);
