@@ -189,8 +189,10 @@ export async function handleChainLogs(
   options: HandleChainLogsOptions = {},
 ): Promise<HandleChainLogsResult> {
   const ordered = decodeAndromedaEvents(logs);
-  for (const { event } of ordered) {
-    await applyEvent(repositories, event, options.onWorkRegistered);
-  }
+  await ordered.reduce(
+    (chain, { event }) =>
+      chain.then(() => applyEvent(repositories, event, options.onWorkRegistered)),
+    Promise.resolve(),
+  );
   return { processed: ordered.length };
 }

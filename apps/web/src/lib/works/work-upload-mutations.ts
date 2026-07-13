@@ -38,8 +38,10 @@ export async function runWorkUploadMutation(
     userService.assertActive(signerUser);
   }
 
-  const files = await parseWorkUploadFiles(formData);
-  const authorService = await getAuthorService();
+  const [files, authorService] = await Promise.all([
+    parseWorkUploadFiles(formData),
+    getAuthorService(),
+  ]);
   const hasAuthorProfile = await authorService.hasAuthorProfile(fields.address);
   assertCanPublishWork(signer, fields.address, hasAuthorProfile);
 
