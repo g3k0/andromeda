@@ -9,6 +9,7 @@ import {
   verifyAlchemySignature,
 } from "@/lib/indexer/webhook-signature";
 import { createMongoIndexerRepositories } from "@/lib/works/adapters/create-indexer-repositories";
+import { markWorkUploadRegistered } from "@/lib/works/work-upload-indexer-hook";
 
 export async function POST(request: Request): Promise<Response> {
   const signingKey = getAlchemyNotifySigningKey();
@@ -37,7 +38,9 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     const repositories = await createMongoIndexerRepositories();
-    const result = await handleChainLogs(repositories, logs);
+    const result = await handleChainLogs(repositories, logs, {
+      onWorkRegistered: markWorkUploadRegistered,
+    });
     return NextResponse.json({ ok: true, processed: result.processed });
   } catch (error) {
     logServerError("chain.webhook", "process_failed", error, {

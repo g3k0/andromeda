@@ -50,6 +50,7 @@ describe("MongoWorkUploadRepository", () => {
     resetMongoConnectionForTests();
     process.env.MONGODB_URI = memoryServer!.getUri();
     await connectMongo();
+    await WorkUploadModel.syncIndexes();
     repository = new MongoWorkUploadRepository();
   });
 

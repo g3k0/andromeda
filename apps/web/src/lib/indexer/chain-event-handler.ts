@@ -2,7 +2,6 @@ import { parseEventLogs, zeroAddress, type Log } from "viem";
 
 import { andromedaWorksAbi } from "@/lib/chain/contract";
 import type { IndexerRepositories } from "@/lib/works/ports/work-repository";
-import { getWorkUploadService } from "@/lib/works/work-upload-server";
 
 export type AndromedaChainEvent =
   | {
@@ -124,6 +123,7 @@ export function decodeAndromedaEvents(
 async function applyEvent(
   repositories: IndexerRepositories,
   event: AndromedaChainEvent,
+  onWorkRegistered?: (metadataURI: string, workId: string) => Promise<void>,
 ): Promise<void> {
   switch (event.kind) {
     case "WorkRegistered":
@@ -135,14 +135,12 @@ async function applyEvent(
         maxCopies: event.maxCopies,
         active: true,
       });
-      try {
-        const uploadService = await getWorkUploadService();
-        await uploadService.markRegistered(
-          event.metadataURI,
-          event.workId.toString(),
-        );
-      } catch {
-        // Upload metadata persistence is best-effort for the indexer path.
+      if (onWorkRegistered) {
+        try {
+          await onWorkRegistered(event.metadataURI, event.workId.toString());
+        } catch {
+          // Upload metadata persistence is best-effort for the indexer path.
+        }
       }
       return;
     case "WorkStatusChanged":
@@ -180,14 +178,19 @@ export type HandleChainLogsResult = {
   processed: number;
 };
 
+export type HandleChainLogsOptions = {
+  onWorkRegistered?: (metadataURI: string, workId: string) => Promise<void>;
+};
+
 /** Applies decoded AndromedaWorks logs to the projection repositories (idempotent). */
 export async function handleChainLogs(
   repositories: IndexerRepositories,
   logs: readonly Log[],
+  options: HandleChainLogsOptions = {},
 ): Promise<HandleChainLogsResult> {
   const ordered = decodeAndromedaEvents(logs);
   for (const { event } of ordered) {
-    await applyEvent(repositories, event);
+    await applyEvent(repositories, event, options.onWorkRegistered);
   }
   return { processed: ordered.length };
 }
