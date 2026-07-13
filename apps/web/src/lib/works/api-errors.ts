@@ -12,6 +12,7 @@ import {
   ForbiddenContentKeyError,
   InvalidOwnerAddressError,
   InvalidWorkIdParamError,
+  WorkUploadDuplicateError,
   WorkUploadMetadataExistsError,
   WorkUploadValidationError,
 } from "./errors";
@@ -33,6 +34,10 @@ export function mapWorkErrorToStatus(error: unknown): number {
   }
 
   if (error instanceof WorkUploadMetadataExistsError) {
+    return 409;
+  }
+
+  if (error instanceof WorkUploadDuplicateError) {
     return 409;
   }
 
@@ -66,6 +71,10 @@ export function mapWorkErrorToMessage(error: unknown): string {
 
   if (error instanceof WorkUploadMetadataExistsError) {
     return "Work upload metadata already exists.";
+  }
+
+  if (error instanceof WorkUploadDuplicateError) {
+    return error.message;
   }
 
   if (error instanceof IpfsMetadataValidationError) {
@@ -102,6 +111,10 @@ export function mapWorkErrorToCode(error: unknown): ApiErrorCode {
 
   if (error instanceof WorkUploadMetadataExistsError) {
     return "work_upload_metadata_exists";
+  }
+
+  if (error instanceof WorkUploadDuplicateError) {
+    return "work_upload_duplicate";
   }
 
   if (error instanceof IpfsMetadataValidationError) {

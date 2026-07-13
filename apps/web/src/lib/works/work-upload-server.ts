@@ -10,12 +10,12 @@ import { InMemoryWorkUploadRepository } from "./testing/in-memory-work-upload-re
 let cachedService: WorkUploadService | null = null;
 let testRepository: InMemoryWorkUploadRepository | null = null;
 
-function useInMemoryRepositoryForTests(): boolean {
+function shouldUseInMemoryRepositoryForTests(): boolean {
   return process.env.VITEST === "true" && !process.env.MONGODB_URI;
 }
 
 export async function getWorkUploadService(): Promise<WorkUploadService> {
-  if (useInMemoryRepositoryForTests()) {
+  if (shouldUseInMemoryRepositoryForTests()) {
     if (!testRepository) {
       testRepository = new InMemoryWorkUploadRepository();
     }

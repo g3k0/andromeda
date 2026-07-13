@@ -655,6 +655,7 @@
       "invalidOwnerAddress": "無効な所有者アドレスです。",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",
+      "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "コンテンツキーをサーバーに送信してはいけません。",
       "ipfsMetadataValidation": "生成されたメタデータがセキュリティ検証に失敗しました。",
       "unexpected": "問題が発生しました。もう一度お試しください。",

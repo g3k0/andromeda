@@ -13,6 +13,7 @@ import {
 import { assertCanPublishWork } from "./authorize";
 import { publishWorkToIpfs } from "./publish-service";
 import type { WorkUploadMutationResult } from "./types";
+import { assertNoDuplicateWorkUpload } from "./work-upload-duplicate";
 import { parseWorkUploadFiles } from "./upload-form";
 import { parseWorkUploadFields } from "./upload-schemas";
 import { assertWorkUploadWalletRateLimit } from "./work-upload-rate-limit";
@@ -42,6 +43,13 @@ export async function runWorkUploadMutation(
   const hasAuthorProfile = await authorService.hasAuthorProfile(fields.address);
   assertCanPublishWork(signer, fields.address, hasAuthorProfile);
 
+  const uploadService = await getWorkUploadService();
+  const existingUploads = await uploadService.listByAuthor(fields.address);
+  assertNoDuplicateWorkUpload(existingUploads, {
+    name: fields.name,
+    workImprint: fields.imprint,
+  });
+
   const published = await publishWorkToIpfs(deps.ipfs, {
     ciphertext: files.ciphertext,
     coverImage: files.coverImage,
@@ -53,7 +61,6 @@ export async function runWorkUploadMutation(
     externalUrl: fields.externalUrl,
   });
 
-  const uploadService = await getWorkUploadService();
   const upload = await uploadService.createUpload({
     author: fields.address,
     name: fields.name,

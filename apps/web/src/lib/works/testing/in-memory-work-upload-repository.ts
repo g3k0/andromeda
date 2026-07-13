@@ -51,7 +51,11 @@ export class InMemoryWorkUploadRepository implements WorkUploadRepository {
     const normalized = author.toLowerCase();
     return [...this.records.values()]
       .filter((record) => record.author.toLowerCase() === normalized)
-      .sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+      .sort(
+        (left, right) =>
+          right.createdAt.localeCompare(left.createdAt) ||
+          Number(right.id) - Number(left.id),
+      );
   }
 
   async markRegistered(

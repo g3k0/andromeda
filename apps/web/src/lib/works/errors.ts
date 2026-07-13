@@ -63,3 +63,12 @@ export class WorkUploadMetadataExistsError extends WorkPublishError {
     this.name = "WorkUploadMetadataExistsError";
   }
 }
+
+export class WorkUploadDuplicateError extends WorkPublishError {
+  constructor(public readonly name: string) {
+    super(
+      "This work was already uploaded. Submit a reprint edition to publish another version.",
+    );
+    this.name = "WorkUploadDuplicateError";
+  }
+}

@@ -248,6 +248,70 @@ describe("works upload API", () => {
     expect(json.code).toBe("user_suspended");
   });
 
+  it("returns 409 when the same first edition is uploaded twice", async () => {
+    await AuthorModel.create({
+      address: AUTHOR_ADDRESS,
+      displayName: "Writer",
+      avatarUrl: null,
+    });
+
+    const first = await uploadRequest(await signedUploadForm());
+    expect(first.status).toBe(201);
+
+    const duplicate = await uploadRequest(await signedUploadForm());
+    expect(duplicate.status).toBe(409);
+    const json = await duplicate.json();
+    expect(json.code).toBe("work_upload_duplicate");
+  });
+
+  it("allows a reprint upload for the same title", async () => {
+    await AuthorModel.create({
+      address: AUTHOR_ADDRESS,
+      displayName: "Writer",
+      avatarUrl: null,
+    });
+
+    const first = await uploadRequest(await signedUploadForm());
+    expect(first.status).toBe(201);
+
+    const reprint = await uploadRequest(
+      await signedUploadForm({
+        editionKind: "reprint",
+        reprintNumber: "1",
+      }),
+    );
+    expect(reprint.status).toBe(201);
+
+    const stored = await WorkUploadModel.find({ author: AUTHOR_ADDRESS }).lean();
+    expect(stored).toHaveLength(2);
+  });
+
+  it("returns 409 when the same reprint slot is uploaded twice", async () => {
+    await AuthorModel.create({
+      address: AUTHOR_ADDRESS,
+      displayName: "Writer",
+      avatarUrl: null,
+    });
+
+    const first = await uploadRequest(
+      await signedUploadForm({
+        editionKind: "reprint",
+        reprintNumber: "1",
+      }),
+    );
+    expect(first.status).toBe(201);
+
+    const duplicate = await uploadRequest(
+      await signedUploadForm({
+        editionKind: "reprint",
+        reprintNumber: "1",
+      }),
+    );
+    expect(duplicate.status).toBe(409);
+    const json = await duplicate.json();
+    expect(json.code).toBe("work_upload_duplicate");
+  });
+
   it("returns 429 when the per-author upload quota is exceeded", async () => {
     resetServerEnvForTests();
     process.env.TRUST_PROXY = "true";
@@ -262,7 +326,11 @@ describe("works upload API", () => {
     const first = await uploadRequest(await signedUploadForm());
     expect(first.status).toBe(201);
 
-    const limited = await uploadRequest(await signedUploadForm());
+    const limited = await uploadRequest(
+      await signedUploadForm({
+        name: "The Second Gate",
+      }),
+    );
     expect(limited.status).toBe(429);
     const json = await limited.json();
     expect(json.code).toBe("rate_limited");

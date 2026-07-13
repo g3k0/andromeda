@@ -655,6 +655,7 @@
       "invalidOwnerAddress": "Dirección del propietario inválida.",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",
+      "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "Las claves de contenido nunca deben enviarse al servidor.",
       "ipfsMetadataValidation": "Los metadatos generados no pasaron la validación de seguridad.",
       "unexpected": "Algo salió mal. Inténtelo de nuevo.",
