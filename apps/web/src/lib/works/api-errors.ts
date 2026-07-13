@@ -6,6 +6,7 @@ import {
   mapAuthorErrorToStatus,
 } from "@/lib/authors/api-errors";
 import { IpfsConfigError, IpfsMetadataValidationError } from "@/lib/ipfs/errors";
+import { UserSuspendedError } from "@/lib/users/errors";
 
 import {
   ForbiddenContentKeyError,
@@ -32,6 +33,10 @@ export function mapWorkErrorToStatus(error: unknown): number {
 
   if (error instanceof IpfsConfigError) {
     return 500;
+  }
+
+  if (error instanceof UserSuspendedError) {
+    return 403;
   }
 
   return mapAuthorErrorToStatus(error);
@@ -62,6 +67,10 @@ export function mapWorkErrorToMessage(error: unknown): string {
     return "Unexpected server error.";
   }
 
+  if (error instanceof UserSuspendedError) {
+    return error.message;
+  }
+
   return mapAuthorErrorToMessage(error);
 }
 
@@ -84,6 +93,10 @@ export function mapWorkErrorToCode(error: unknown): ApiErrorCode {
 
   if (error instanceof IpfsMetadataValidationError) {
     return "ipfs_metadata_validation";
+  }
+
+  if (error instanceof UserSuspendedError) {
+    return "user_suspended";
   }
 
   return mapAuthorErrorToCode(error);

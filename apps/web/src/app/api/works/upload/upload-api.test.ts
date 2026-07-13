@@ -30,11 +30,13 @@ import {
   createInMemoryIpfsStorage,
 } from "@/lib/ipfs/testing/in-memory-ipfs-storage";
 import { resetAuthorServiceForTests } from "@/lib/authors/server";
+import { resetServerEnvForTests } from "@/lib/config/env";
 import { resetUserServiceForTests } from "@/lib/users/server";
 import { resetRoleServiceForTests } from "@/lib/roles/server";
 import { seedApiSystemRoles } from "@/lib/testing/seed-api-roles";
 import { encryptContent, encodeUtf8Plaintext } from "@/lib/content-crypto/content-cipher";
 import { generateContentKey } from "@/lib/content-crypto/ace-spec";
+import { MINIMAL_PNG_BYTES } from "@/lib/works/cover-image-validation";
 
 import { POST } from "./route";
 import { setIpfsStorageForTests } from "@/lib/works/ipfs-server";
@@ -78,7 +80,7 @@ async function signedUploadForm(extra: Record<string, string | Blob> = {}) {
   );
   formData.set(
     "coverImage",
-    new Blob([new Uint8Array([9, 8, 7])], { type: "image/png" }),
+    new Blob([MINIMAL_PNG_BYTES], { type: "image/png" }),
   );
 
   for (const [key, value] of Object.entries(extra)) {
@@ -86,6 +88,21 @@ async function signedUploadForm(extra: Record<string, string | Blob> = {}) {
   }
 
   return formData;
+}
+
+async function uploadRequest(
+  formData: FormData,
+  ip = "203.0.113.50",
+): Promise<Response> {
+  return POST(
+    new Request("http://localhost/api/works/upload", {
+      method: "POST",
+      headers: {
+        "x-forwarded-for": ip,
+      },
+      body: formData,
+    }),
+  );
 }
 
 describe("works upload API", () => {
@@ -138,12 +155,7 @@ describe("works upload API", () => {
 
   it("returns 404 when author profile is missing", async () => {
     const formData = await signedUploadForm();
-    const response = await POST(
-      new Request("http://localhost/api/works/upload", {
-        method: "POST",
-        body: formData,
-      }),
-    );
+    const response = await uploadRequest(formData);
 
     expect(response.status).toBe(404);
   });
@@ -156,12 +168,7 @@ describe("works upload API", () => {
     });
 
     const formData = await signedUploadForm();
-    const response = await POST(
-      new Request("http://localhost/api/works/upload", {
-        method: "POST",
-        body: formData,
-      }),
-    );
+    const response = await uploadRequest(formData);
 
     expect(response.status).toBe(201);
     const json = await response.json();
@@ -179,15 +186,76 @@ describe("works upload API", () => {
     });
 
     const formData = await signedUploadForm({ contentKey: "never" });
-    const response = await POST(
-      new Request("http://localhost/api/works/upload", {
-        method: "POST",
-        body: formData,
-      }),
-    );
+    const response = await uploadRequest(formData);
 
     expect(response.status).toBe(422);
     const json = await response.json();
     expect(json.code).toBe("forbidden_content_key");
+  });
+
+  it("returns 422 when cover bytes do not match the declared MIME type", async () => {
+    await AuthorModel.create({
+      address: AUTHOR_ADDRESS,
+      displayName: "Writer",
+      avatarUrl: null,
+    });
+
+    const formData = await signedUploadForm();
+    formData.set(
+      "coverImage",
+      new Blob([new Uint8Array([9, 8, 7])], { type: "image/png" }),
+    );
+
+    const response = await uploadRequest(formData);
+
+    expect(response.status).toBe(422);
+    const json = await response.json();
+    expect(json.code).toBe("work_upload_validation");
+  });
+
+  it("returns 403 when the author account is suspended", async () => {
+    await AuthorModel.create({
+      address: AUTHOR_ADDRESS,
+      displayName: "Writer",
+      avatarUrl: null,
+    });
+    await UserModel.create({
+      address: AUTHOR_ADDRESS,
+      roleSlug: "author",
+      status: "suspended",
+      permissionOverrides: [],
+      preferences: { declinedAuthorPage: false },
+    });
+
+    const formData = await signedUploadForm();
+    const response = await uploadRequest(formData);
+
+    expect(response.status).toBe(403);
+    const json = await response.json();
+    expect(json.code).toBe("user_suspended");
+  });
+
+  it("returns 429 when the per-author upload quota is exceeded", async () => {
+    resetServerEnvForTests();
+    process.env.TRUST_PROXY = "true";
+    process.env.WORK_UPLOAD_WALLET_RATE_LIMIT_MAX_REQUESTS = "1";
+
+    await AuthorModel.create({
+      address: AUTHOR_ADDRESS,
+      displayName: "Writer",
+      avatarUrl: null,
+    });
+
+    const first = await uploadRequest(await signedUploadForm());
+    expect(first.status).toBe(201);
+
+    const limited = await uploadRequest(await signedUploadForm());
+    expect(limited.status).toBe(429);
+    const json = await limited.json();
+    expect(json.code).toBe("rate_limited");
+
+    delete process.env.TRUST_PROXY;
+    delete process.env.WORK_UPLOAD_WALLET_RATE_LIMIT_MAX_REQUESTS;
+    resetServerEnvForTests();
   });
 });

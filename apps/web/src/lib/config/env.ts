@@ -38,6 +38,22 @@ const serverEnvSchema = z.object({
   RATE_LIMIT_MAX_REQUESTS: z.string().optional().transform(optionalPositiveInt),
   RATE_LIMIT_WINDOW_MS: z.string().optional().transform(optionalPositiveInt),
   AUTH_MESSAGE_RATE_LIMIT: z.string().optional().transform(optionalPositiveInt),
+  WORK_UPLOAD_IP_RATE_LIMIT_MAX_REQUESTS: z
+    .string()
+    .optional()
+    .transform(optionalPositiveInt),
+  WORK_UPLOAD_IP_RATE_LIMIT_WINDOW_MS: z
+    .string()
+    .optional()
+    .transform(optionalPositiveInt),
+  WORK_UPLOAD_WALLET_RATE_LIMIT_MAX_REQUESTS: z
+    .string()
+    .optional()
+    .transform(optionalPositiveInt),
+  WORK_UPLOAD_WALLET_RATE_LIMIT_WINDOW_MS: z
+    .string()
+    .optional()
+    .transform(optionalPositiveInt),
   CHAIN_INDEXER_ENABLED: z
     .string()
     .optional()

@@ -1,9 +1,13 @@
+import {
+  assertCoverImageBytesMatchMime,
+} from "./cover-image-validation";
 import { ForbiddenContentKeyError, WorkUploadValidationError } from "./errors";
 import {
   ALLOWED_WORK_COVER_MIME_TYPES,
   MAX_WORK_CIPHERTEXT_BYTES,
   MAX_WORK_COVER_BYTES,
   isAllowedWorkCoverMimeType,
+  type AllowedWorkCoverMimeType,
 } from "./upload-limits";
 
 export type ParsedWorkUploadFiles = {
@@ -41,9 +45,16 @@ export async function parseWorkUploadFiles(
     ]);
   }
 
+  const ciphertext = new Uint8Array(await ciphertextFile.arrayBuffer());
+  const coverImage = new Uint8Array(await coverFile.arrayBuffer());
+  assertCoverImageBytesMatchMime(
+    coverImage,
+    coverMimeType as AllowedWorkCoverMimeType,
+  );
+
   return {
-    ciphertext: new Uint8Array(await ciphertextFile.arrayBuffer()),
-    coverImage: new Uint8Array(await coverFile.arrayBuffer()),
+    ciphertext,
+    coverImage,
     coverMimeType,
   };
 }

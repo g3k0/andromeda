@@ -6,6 +6,10 @@ import {
   getWalletAuthNonceTtlMs,
   getWalletBindingTtlMs,
   getWalletSessionTtlMs,
+  getWorkUploadIpRateLimitMaxRequests,
+  getWorkUploadIpRateLimitWindowMs,
+  getWorkUploadWalletRateLimitMaxRequests,
+  getWorkUploadWalletRateLimitWindowMs,
 } from "./auth";
 import { resetServerEnvForTests } from "./env";
 
@@ -21,6 +25,10 @@ describe("auth config", () => {
     expect(getRateLimitMaxRequests()).toBe(30);
     expect(getRateLimitWindowMs()).toBe(60_000);
     expect(getAuthMessageRateLimit()).toBe(10);
+    expect(getWorkUploadIpRateLimitMaxRequests()).toBe(10);
+    expect(getWorkUploadIpRateLimitWindowMs()).toBe(60_000);
+    expect(getWorkUploadWalletRateLimitMaxRequests()).toBe(5);
+    expect(getWorkUploadWalletRateLimitWindowMs()).toBe(3_600_000);
   });
 
   it("applies environment overrides", () => {

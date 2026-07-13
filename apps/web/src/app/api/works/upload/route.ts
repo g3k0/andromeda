@@ -1,19 +1,16 @@
-import { enforceRateLimit } from "@/lib/authors/api-utils";
 import { getIpfsStorage } from "@/lib/works/ipfs-server";
 import { workErrorResponse, jsonResponse } from "@/lib/works/api-utils";
 import { runWorkUploadMutation } from "@/lib/works/work-upload-mutations";
+import { assertWorkUploadIpRateLimit } from "@/lib/works/work-upload-rate-limit";
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const limited = await enforceRateLimit(request, "works-upload");
-    if (limited) {
-      return limited;
-    }
+    await assertWorkUploadIpRateLimit(request);
 
     const formData = await request.formData();
     const result = await runWorkUploadMutation(formData, {
       ipfs: getIpfsStorage(),
-    });
+    }, request);
 
     return jsonResponse(
       {
