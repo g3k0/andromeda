@@ -2,6 +2,7 @@ import { getAddress } from "viem";
 
 import type { IndexerRepositories } from "../ports/work-repository";
 import type {
+  PendingTokenEnvelope,
   TokenRecord,
   UpsertTokenInput,
   UpsertWorkInput,
@@ -174,23 +175,28 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
           authorWorks.map((work) => [work.workId.toString(), work.metadataURI]),
         );
 
-        return [...tokens.values()]
-          .filter(
-            (token) =>
-              !token.envelopeCid &&
-              token.envelopeRecipientPublicKey &&
-              workMetadata.has(token.workId.toString()),
-          )
-          .map((token) => ({
+        const pending: PendingTokenEnvelope[] = [];
+        for (const token of tokens.values()) {
+          if (
+            token.envelopeCid ||
+            !token.envelopeRecipientPublicKey ||
+            !workMetadata.has(token.workId.toString())
+          ) {
+            continue;
+          }
+
+          pending.push({
             tokenId: token.tokenId,
             workId: token.workId,
             metadataURI:
               token.metadataURI ?? workMetadata.get(token.workId.toString())!,
-            recipientPublicKeyBase64: token.envelopeRecipientPublicKey!,
-          }))
-          .sort((left, right) =>
-            left.tokenId < right.tokenId ? -1 : left.tokenId > right.tokenId ? 1 : 0,
-          );
+            recipientPublicKeyBase64: token.envelopeRecipientPublicKey,
+          });
+        }
+
+        return pending.sort((left, right) =>
+          left.tokenId < right.tokenId ? -1 : left.tokenId > right.tokenId ? 1 : 0,
+        );
       },
     },
     chainSync: {

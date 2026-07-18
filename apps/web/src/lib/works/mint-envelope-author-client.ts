@@ -48,20 +48,13 @@ export async function provisionAllPendingEnvelopesForAuthor(input: {
   walletAuth: SignedWalletPayload;
 }): Promise<string[]> {
   const pending = await fetchPendingEnvelopesForAuthor(input.authorAddress);
-  const provisioned: string[] = [];
+  const ready = pending.filter((entry) => loadWorkContentKey(entry.metadataURI));
 
-  for (const entry of pending) {
-    if (!loadWorkContentKey(entry.metadataURI)) {
-      continue;
-    }
-    const envelopeCid = await provisionPendingEnvelopeForAuthor(
-      entry,
-      input.walletAuth,
-    );
-    provisioned.push(envelopeCid);
-  }
-
-  return provisioned;
+  return Promise.all(
+    ready.map((entry) =>
+      provisionPendingEnvelopeForAuthor(entry, input.walletAuth),
+    ),
+  );
 }
 
 export function canProvisionEnvelopeForMetadata(metadataUri: string): boolean {
