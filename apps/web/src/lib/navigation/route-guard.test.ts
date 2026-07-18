@@ -67,7 +67,7 @@ describe("route guard", () => {
     expect(canAccessPage(buildNavUser("admin"), ADMIN_ROUTE, true)).toBe(true);
   });
 
-  it("hides admin and author nav links based on role", () => {
+  it("hides admin and author-only nav links based on role", () => {
     const readerLinks = buildAuthorizedNavLinks({
       user: buildNavUser("reader"),
       hasAuthorProfile: false,
@@ -88,7 +88,6 @@ describe("route guard", () => {
       "/works",
       "/library",
       "/about",
-      "/author",
     ]);
 
     const adminLinks = buildAuthorizedNavLinks({
@@ -100,15 +99,14 @@ describe("route guard", () => {
       "/works",
       "/library",
       "/about",
-      "/author",
     ]);
   });
 
-  it("requires an author profile before showing My page", () => {
+  it("never shows My page in the top-level nav", () => {
     expect(
       canShowRouteInNav(MY_AUTHOR_PAGE_ROUTE, {
         user: buildNavUser("author"),
-        hasAuthorProfile: false,
+        hasAuthorProfile: true,
         isConnected: true,
       }),
     ).toBe(false);

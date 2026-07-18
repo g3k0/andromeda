@@ -7,6 +7,8 @@ import { useTranslation } from "@/lib/i18n/use-translation";
 import {
   MANAGE_USERS_MENU_ITEM,
   MANAGE_USERS_PATH,
+  MY_AUTHOR_PAGE_MENU_ITEM,
+  MY_AUTHOR_PAGE_PATH,
   getRoleMenuItems,
   getRoleMenuLabel,
 } from "@/lib/navigation/role-menu";
@@ -21,18 +23,37 @@ export type RoleMenuDropdownProps = {
   roleSlug: string;
   roleName: string;
   permissions: readonly UserPermission[];
+  hasAuthorProfile: boolean;
   onLogout: () => void;
   isLoggingOut?: boolean;
 };
+
+function getRoleMenuItemHref(itemId: string): string | null {
+  if (itemId === MANAGE_USERS_MENU_ITEM.id) {
+    return MANAGE_USERS_PATH;
+  }
+
+  if (itemId === MY_AUTHOR_PAGE_MENU_ITEM.id) {
+    return MY_AUTHOR_PAGE_PATH;
+  }
+
+  return null;
+}
 
 export function RoleMenuDropdown({
   roleSlug,
   roleName,
   permissions,
+  hasAuthorProfile,
   onLogout,
   isLoggingOut = false,
 }: RoleMenuDropdownProps) {
-  const menuContext: RoleMenuContext = { roleSlug, roleName, permissions };
+  const menuContext: RoleMenuContext = {
+    roleSlug,
+    roleName,
+    permissions,
+    hasAuthorProfile,
+  };
   const localizedHref = useLocalizedHref();
   const { t } = useTranslation();
   const menuId = `role-menu-${roleSlug}`;
@@ -65,18 +86,24 @@ export function RoleMenuDropdown({
         aria-label={`${getRoleMenuLabel(menuContext)} menu`}
         className="absolute right-0 z-20 mt-2 min-w-40 overflow-hidden rounded-lg border border-white/10 bg-[#0b1020] py-1 shadow-lg"
       >
-        {getRoleMenuItems(menuContext).map((item) =>
-          item.id === MANAGE_USERS_MENU_ITEM.id ? (
-            <Link
-              key={item.id}
-              href={localizedHref(MANAGE_USERS_PATH)}
-              role="menuitem"
-              onClick={(event) => closeParentDetails(event.currentTarget)}
-              className="block w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white"
-            >
-              {t(item.labelKey)}
-            </Link>
-          ) : (
+        {getRoleMenuItems(menuContext).map((item) => {
+          const href = getRoleMenuItemHref(item.id);
+
+          if (href) {
+            return (
+              <Link
+                key={item.id}
+                href={localizedHref(href)}
+                role="menuitem"
+                onClick={(event) => closeParentDetails(event.currentTarget)}
+                className="block w-full px-4 py-2 text-left text-sm text-white/80 hover:bg-white/5 hover:text-white"
+              >
+                {t(item.labelKey)}
+              </Link>
+            );
+          }
+
+          return (
             <button
               key={item.id}
               type="button"
@@ -86,8 +113,8 @@ export function RoleMenuDropdown({
             >
               {t(item.labelKey)}
             </button>
-          ),
-        )}
+          );
+        })}
 
         <div className="my-1 border-t border-white/10" />
 

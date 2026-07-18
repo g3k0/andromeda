@@ -62,12 +62,7 @@ export const MY_AUTHOR_PAGE_ROUTE: RouteDefinition = {
   href: "/author",
   labelKey: "nav.myPage",
   pagePermission: "pages:read",
-  showInNav: ({ user, hasAuthorProfile }) => {
-    if (!hasAuthorProfile) {
-      return false;
-    }
-    return user?.roleSlug === "author" || user?.roleSlug === "admin";
-  },
+  showInNav: () => false,
 };
 
 export const APP_ROUTES: RouteDefinition[] = [
