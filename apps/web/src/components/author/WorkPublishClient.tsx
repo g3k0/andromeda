@@ -47,6 +47,7 @@ export function WorkPublishClient({
   const coverImageRef = useRef<File | null>(null);
   const manuscriptFileRef = useRef<File | null>(null);
   const metadataUriRef = useRef<string | null>(null);
+  const provisioningPendingEnvelopesRef = useRef(false);
 
   const { isLoading: isConfirming } = useWaitForTransactionReceipt({
     hash: state.txHash ?? undefined,
@@ -64,21 +65,22 @@ export function WorkPublishClient({
     let cancelled = false;
 
     async function provisionPendingEnvelopes() {
-      if (!address) {
+      if (!address || provisioningPendingEnvelopesRef.current) {
         return;
       }
 
+      provisioningPendingEnvelopesRef.current = true;
+
       try {
-        const walletAuth = await createSignedWalletPayload(
-          address,
-          signMessageAsync,
-        );
         await provisionAllPendingEnvelopesForAuthor({
           authorAddress,
-          walletAuth,
+          address,
+          signMessageAsync,
         });
       } catch {
         // Pending envelope provisioning is best-effort while the author session is open.
+      } finally {
+        provisioningPendingEnvelopesRef.current = false;
       }
     }
 

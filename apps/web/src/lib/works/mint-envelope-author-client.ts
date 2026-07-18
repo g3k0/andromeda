@@ -1,5 +1,10 @@
 import { wrapContentKey } from "@/lib/content-crypto/envelope";
 
+import {
+  createSignedWalletPayload,
+  type SignMessageFn,
+  type SignedWalletPayload,
+} from "@/lib/auth/client-wallet-auth";
 import { loadWorkContentKey } from "./content-key-session";
 import { recipientPublicKeyBytesFromBase64 } from "./envelope-public-key";
 import { WorkMintError } from "./errors";
@@ -8,7 +13,6 @@ import {
   uploadTokenEnvelopeForAuthor,
 } from "./mint-envelope-api-client";
 import type { PendingTokenEnvelope } from "./types";
-import type { SignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 
 export function createTokenEnvelopeBlobFromSession(
   metadataUri: string,
@@ -45,14 +49,23 @@ export async function provisionPendingEnvelopeForAuthor(
 
 export async function provisionAllPendingEnvelopesForAuthor(input: {
   authorAddress: string;
-  walletAuth: SignedWalletPayload;
+  address: `0x${string}`;
+  signMessageAsync: SignMessageFn;
 }): Promise<string[]> {
   const pending = await fetchPendingEnvelopesForAuthor(input.authorAddress);
   const ready = pending.filter((entry) => loadWorkContentKey(entry.metadataURI));
+  if (ready.length === 0) {
+    return [];
+  }
+
+  const walletAuth = await createSignedWalletPayload(
+    input.address,
+    input.signMessageAsync,
+  );
 
   return Promise.all(
     ready.map((entry) =>
-      provisionPendingEnvelopeForAuthor(entry, input.walletAuth),
+      provisionPendingEnvelopeForAuthor(entry, walletAuth),
     ),
   );
 }
