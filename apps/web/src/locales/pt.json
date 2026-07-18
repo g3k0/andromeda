@@ -652,6 +652,7 @@
       "systemRoleMutation": "As funções de sistema não podem ser modificadas.",
       "adminRoleLockout": "Não é possível remover a última função de administrador.",
       "invalidWorkId": "ID de obra inválido.",
+      "invalidTokenId": "ID de token inválido.",
       "invalidOwnerAddress": "Endereço do proprietário inválido.",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",

@@ -36,6 +36,13 @@ export class InvalidWorkIdParamError extends WorkCatalogError {
   }
 }
 
+export class InvalidTokenIdParamError extends WorkCatalogError {
+  constructor(public readonly value: string) {
+    super(`Invalid token id: ${value}`);
+    this.name = "InvalidTokenIdParamError";
+  }
+}
+
 export class InvalidOwnerAddressError extends WorkCatalogError {
   constructor(public readonly value: string) {
     super(`Invalid owner address: ${value}`);

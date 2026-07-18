@@ -4,6 +4,7 @@ import { useEffect, useReducer, useRef } from "react";
 import {
   useAccount,
   useSendTransaction,
+  useSignMessage,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
@@ -28,6 +29,7 @@ import {
   getWorkAvailability,
 } from "@/lib/works/mint-copy-tx";
 import { extractMintedTokenId } from "@/lib/works/mint-receipt";
+import { completeMintEnvelopeSetup } from "@/lib/works/mint-envelope-flow-client";
 import { useTranslation } from "@/lib/i18n/use-translation";
 
 import { MintCopyView } from "./MintCopyView";
@@ -40,6 +42,7 @@ export type MintCopyClientProps = {
 export function MintCopyClient({ work, title }: MintCopyClientProps) {
   const { t } = useTranslation();
   const { address, isConnected } = useAccount();
+  const { signMessageAsync } = useSignMessage();
   const { writeContractAsync } = useWriteContract();
   const { sendTransactionAsync } = useSendTransaction();
 
@@ -94,7 +97,22 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
           value: deployTx.value,
         });
 
-        dispatch({ type: "mint_completed" });
+        dispatch({ type: "envelope_pinning" });
+        const envelopeResult = await completeMintEnvelopeSetup({
+          tokenId,
+          metadataUri: work.metadataURI,
+          signMessageAsync,
+          authorAddress: work.author,
+          signAuthorMessageAsync:
+            address?.toLowerCase() === work.author.toLowerCase()
+              ? signMessageAsync
+              : undefined,
+        });
+
+        dispatch({
+          type: "mint_completed",
+          envelopeCid: envelopeResult.envelopeCid,
+        });
       } catch (error) {
         dispatch({
           type: "mint_failed",
@@ -107,7 +125,7 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
     }
 
     void setupTokenAccount();
-  }, [receipt, state.step, address, workId, sendTransactionAsync, t]);
+  }, [receipt, state.step, address, workId, work.metadataURI, work.author, sendTransactionAsync, signMessageAsync, t]);
 
   async function handleMint() {
     if (!isConnected || !address) {

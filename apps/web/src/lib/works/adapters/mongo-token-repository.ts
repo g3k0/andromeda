@@ -2,7 +2,7 @@ import { toTokenRecord } from "@/lib/db/models/mappers";
 import { TokenModel } from "@/lib/db/models/token.model";
 
 import type { TokenRepository } from "../ports/work-repository";
-import type { TokenRecord, UpsertTokenInput } from "../types";
+import type { PendingTokenEnvelope, TokenRecord, UpsertTokenInput } from "../types";
 
 export class MongoTokenRepository implements TokenRepository {
   async upsertToken(input: UpsertTokenInput): Promise<TokenRecord> {
@@ -20,6 +20,9 @@ export class MongoTokenRepository implements TokenRepository {
             : {}),
           ...(input.envelopeCid !== undefined
             ? { envelopeCid: input.envelopeCid }
+            : {}),
+          ...(input.envelopeRecipientPublicKey !== undefined
+            ? { envelopeRecipientPublicKey: input.envelopeRecipientPublicKey }
             : {}),
           ...(input.metadataURI !== undefined
             ? { metadataURI: input.metadataURI }
@@ -66,5 +69,54 @@ export class MongoTokenRepository implements TokenRepository {
       { $set: { metadataURI } },
     );
     return result.matchedCount > 0;
+  }
+
+  async setEnvelopeRecipientPublicKey(
+    tokenId: bigint,
+    recipientPublicKeyBase64: string,
+  ): Promise<boolean> {
+    const result = await TokenModel.updateOne(
+      { tokenId: tokenId.toString() },
+      { $set: { envelopeRecipientPublicKey: recipientPublicKeyBase64 } },
+    );
+    return result.matchedCount > 0;
+  }
+
+  async setEnvelopeCid(tokenId: bigint, envelopeCid: string): Promise<boolean> {
+    const result = await TokenModel.updateOne(
+      { tokenId: tokenId.toString() },
+      { $set: { envelopeCid } },
+    );
+    return result.matchedCount > 0;
+  }
+
+  async listPendingEnvelopesByAuthor(author: string): Promise<PendingTokenEnvelope[]> {
+    const { WorkModel } = await import("@/lib/db/models/work.model");
+    const authorWorks = await WorkModel.find({ author: author.toLowerCase() })
+      .select({ workId: 1, metadataURI: 1 })
+      .lean();
+    if (authorWorks.length === 0) {
+      return [];
+    }
+
+    const metadataByWorkId = new Map(
+      authorWorks.map((work) => [work.workId, work.metadataURI]),
+    );
+    const workIds = [...metadataByWorkId.keys()];
+
+    const docs = await TokenModel.find({
+      workId: { $in: workIds },
+      envelopeCid: null,
+      envelopeRecipientPublicKey: { $ne: null },
+    })
+      .sort({ tokenId: 1 })
+      .lean();
+
+    return docs.map((doc) => ({
+      tokenId: BigInt(doc.tokenId),
+      workId: BigInt(doc.workId),
+      metadataURI: doc.metadataURI ?? metadataByWorkId.get(doc.workId) ?? "",
+      recipientPublicKeyBase64: doc.envelopeRecipientPublicKey!,
+    }));
   }
 }

@@ -652,6 +652,7 @@
       "systemRoleMutation": "Системные роли нельзя изменять.",
       "adminRoleLockout": "Нельзя удалить последнюю роль администратора.",
       "invalidWorkId": "Недействительный идентификатор произведения.",
+      "invalidTokenId": "Недействительный идентификатор токена.",
       "invalidOwnerAddress": "Недействительный адрес владельца.",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",

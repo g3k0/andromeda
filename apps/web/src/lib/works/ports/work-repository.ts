@@ -1,4 +1,5 @@
 import type {
+  PendingTokenEnvelope,
   TokenRecord,
   UpsertTokenInput,
   UpsertWorkInput,
@@ -21,6 +22,12 @@ export type TokenRepository = {
   setOwner(tokenId: bigint, owner: string): Promise<boolean>;
   /** Sets the token's numbered metadata URI; returns whether the token existed. */
   setMetadataURI(tokenId: bigint, metadataURI: string): Promise<boolean>;
+  setEnvelopeRecipientPublicKey(
+    tokenId: bigint,
+    recipientPublicKeyBase64: string,
+  ): Promise<boolean>;
+  setEnvelopeCid(tokenId: bigint, envelopeCid: string): Promise<boolean>;
+  listPendingEnvelopesByAuthor(author: string): Promise<PendingTokenEnvelope[]>;
 };
 
 export type ChainSyncRepository = {

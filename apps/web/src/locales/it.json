@@ -652,6 +652,7 @@
       "systemRoleMutation": "I ruoli di sistema non possono essere modificati.",
       "adminRoleLockout": "Impossibile rimuovere l'ultimo ruolo admin.",
       "invalidWorkId": "ID opera non valido.",
+      "invalidTokenId": "ID token non valido.",
       "invalidOwnerAddress": "Indirizzo del proprietario non valido.",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",

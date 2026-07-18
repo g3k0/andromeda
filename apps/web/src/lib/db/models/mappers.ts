@@ -157,6 +157,7 @@ export type TokenDocumentLike = {
   copyNumber?: number | null;
   tbaAddress?: string | null;
   envelopeCid?: string | null;
+  envelopeRecipientPublicKey?: string | null;
   metadataURI?: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -170,6 +171,7 @@ export function toTokenRecord(doc: TokenDocumentLike): TokenRecord {
     copyNumber: doc.copyNumber ?? null,
     tbaAddress: doc.tbaAddress ? getAddress(doc.tbaAddress) : null,
     envelopeCid: doc.envelopeCid ?? null,
+    envelopeRecipientPublicKey: doc.envelopeRecipientPublicKey ?? null,
     metadataURI: doc.metadataURI ?? null,
     createdAt: doc.createdAt.toISOString(),
     updatedAt: doc.updatedAt.toISOString(),

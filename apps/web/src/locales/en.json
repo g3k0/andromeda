@@ -652,6 +652,7 @@
       "systemRoleMutation": "System roles cannot be modified.",
       "adminRoleLockout": "Cannot remove the last admin role.",
       "invalidWorkId": "Invalid work id.",
+      "invalidTokenId": "Invalid token id.",
       "invalidOwnerAddress": "Invalid owner address.",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",

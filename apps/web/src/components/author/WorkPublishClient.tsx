@@ -6,6 +6,7 @@ import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 import { andromedaWorksAbi } from "@/lib/chain/contract";
 import { getContractAddress } from "@/lib/config/public-env";
 import { storeWorkContentKey } from "@/lib/works/content-key-session";
+import { provisionAllPendingEnvelopesForAuthor } from "@/lib/works/mint-envelope-author-client";
 import { buildWorkPublishEditionPreview } from "@/lib/works/work-publish-preview";
 import { uploadWorkPublishPayload } from "@/lib/works/work-publish-client";
 import {
@@ -54,6 +55,45 @@ export function WorkPublishClient({
   const canPublish =
     isConnected &&
     address?.toLowerCase() === authorAddress.toLowerCase();
+
+  useEffect(() => {
+    if (!canPublish || !address) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function provisionPendingEnvelopes() {
+      if (!address) {
+        return;
+      }
+
+      try {
+        const walletAuth = await createSignedWalletPayload(
+          address,
+          signMessageAsync,
+        );
+        await provisionAllPendingEnvelopesForAuthor({
+          authorAddress,
+          walletAuth,
+        });
+      } catch {
+        // Pending envelope provisioning is best-effort while the author session is open.
+      }
+    }
+
+    void provisionPendingEnvelopes();
+    const intervalId = window.setInterval(() => {
+      if (!cancelled) {
+        void provisionPendingEnvelopes();
+      }
+    }, 15_000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [canPublish, authorAddress, address, signMessageAsync]);
 
   useEffect(() => {
     const url = state.editionPreview?.coverImageUrl;
