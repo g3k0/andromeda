@@ -98,6 +98,10 @@ export function mapWorkErrorToMessage(error: unknown): string {
     return error.message;
   }
 
+  if (error instanceof IpfsMetadataValidationError) {
+    return "Generated metadata failed security validation.";
+  }
+
   if (error instanceof IpfsConfigError) {
     return "Unexpected server error.";
   }
