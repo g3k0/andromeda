@@ -658,7 +658,7 @@
       "workUploadMetadataExists": "Work upload metadata already exists.",
       "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "Ключи содержимого никогда не должны отправляться на сервер.",
-      "ipfsMetadataValidation": "Сгенерированные метаданные не прошли проверку безопасности.",
+      "ipfsMetadataValidation": "{detail}",
       "unexpected": "Что-то пошло не так. Попробуйте снова.",
       "walletAuthMessageFailed": "Не удалось создать сообщение аутентификации кошелька."
     }

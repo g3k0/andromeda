@@ -167,6 +167,26 @@ describe("works upload API", () => {
     expect(response.status).toBe(404);
   });
 
+  it("returns 422 when the contract address is not configured", async () => {
+    await AuthorModel.create({
+      address: AUTHOR_ADDRESS,
+      displayName: "Writer",
+      avatarUrl: null,
+    });
+
+    delete process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+
+    const response = await uploadRequest(await signedUploadForm());
+
+    expect(response.status).toBe(422);
+    const json = await response.json();
+    expect(json.code).toBe("work_upload_validation");
+    expect(json.params.detail).toMatch(/NEXT_PUBLIC_CONTRACT_ADDRESS/i);
+
+    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS =
+      "0x3333333333333333333333333333333333333333";
+  });
+
   it("pins encrypted work content and metadata for an authenticated author", async () => {
     await AuthorModel.create({
       address: AUTHOR_ADDRESS,

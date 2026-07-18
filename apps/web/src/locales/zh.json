@@ -658,7 +658,7 @@
       "workUploadMetadataExists": "Work upload metadata already exists.",
       "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "内容密钥绝不能发送到服务器。",
-      "ipfsMetadataValidation": "生成的元数据未通过安全验证。",
+      "ipfsMetadataValidation": "{detail}",
       "unexpected": "出了点问题。请重试。",
       "walletAuthMessageFailed": "创建钱包认证消息失败。"
     }

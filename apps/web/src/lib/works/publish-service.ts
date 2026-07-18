@@ -18,6 +18,9 @@ import type {
   PublishWorkResult,
 } from "./types";
 
+const METADATA_URI_PLACEHOLDER =
+  "ipfs://bafybeigcccccccccccccccccccccccccccccccccccc" as const;
+
 export function buildAcePublicMetadata(
   input: BuildAceMetadataInput,
 ): ReturnType<typeof parseAcePublicMetadata> {
@@ -51,6 +54,18 @@ export async function publishWorkToIpfs(
   ipfs: IpfsStoragePort,
   input: PublishWorkInput,
 ): Promise<PublishWorkResult> {
+  buildAcePublicMetadata({
+    name: input.name,
+    workImprint: input.workImprint,
+    imageUri: METADATA_URI_PLACEHOLDER,
+    encryptedContentUri: METADATA_URI_PLACEHOLDER,
+    chainId: input.chainId,
+    contractAddress: input.contractAddress,
+    registryAddress: input.registryAddress,
+    externalUrl: input.externalUrl,
+    attributes: input.attributes,
+  });
+
   const coverPin = await ipfs.pinBlob(input.coverImage, {
     name: `${slugifyPinName(input.name)}-cover`,
   });

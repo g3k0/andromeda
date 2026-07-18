@@ -658,7 +658,7 @@
       "workUploadMetadataExists": "Work upload metadata already exists.",
       "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "Le chiavi di contenuto non devono mai essere inviate al server.",
-      "ipfsMetadataValidation": "I metadati generati non hanno superato la validazione di sicurezza.",
+      "ipfsMetadataValidation": "{detail}",
       "unexpected": "Qualcosa è andato storto. Riprova.",
       "walletAuthMessageFailed": "Impossibile creare il messaggio di autenticazione del wallet."
     }

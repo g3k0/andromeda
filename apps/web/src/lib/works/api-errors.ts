@@ -168,5 +168,13 @@ export function mapWorkErrorToParams(error: unknown): TranslationParams | undefi
   if (error instanceof MintEnvelopeError) {
     return { detail: error.message };
   }
+  if (error instanceof IpfsMetadataValidationError) {
+    return {
+      detail:
+        error.issues.length > 0
+          ? error.issues.join("; ")
+          : error.message,
+    };
+  }
   return undefined;
 }
