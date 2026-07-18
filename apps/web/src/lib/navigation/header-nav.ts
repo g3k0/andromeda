@@ -73,10 +73,7 @@ function toRoleMenuContext(input: HeaderNavInput): RoleMenuContext {
   };
 }
 
-export function shouldShowMyAuthorPageLink(
-  input: HeaderNavInput,
-  _locale: SupportedLocale,
-): boolean {
+export function shouldShowMyAuthorPageLink(input: HeaderNavInput): boolean {
   return shouldShowMyAuthorPageMenuItem(toRoleMenuContext(input));
 }
 

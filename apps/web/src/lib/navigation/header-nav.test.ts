@@ -31,25 +31,25 @@ const LOCALIZED_MY_PAGE = {
 describe("shouldShowMyAuthorPageLink", () => {
   it("returns true for authors", () => {
     expect(
-      shouldShowMyAuthorPageLink({ role: "author", hasAuthorProfile: true }, LOCALE),
+      shouldShowMyAuthorPageLink({ role: "author", hasAuthorProfile: true }),
     ).toBe(true);
   });
 
   it("returns true for admins with a profile", () => {
     expect(
-      shouldShowMyAuthorPageLink({ role: "admin", hasAuthorProfile: true }, LOCALE),
+      shouldShowMyAuthorPageLink({ role: "admin", hasAuthorProfile: true }),
     ).toBe(true);
   });
 
   it("returns false for admins without a profile", () => {
     expect(
-      shouldShowMyAuthorPageLink({ role: "admin", hasAuthorProfile: false }, LOCALE),
+      shouldShowMyAuthorPageLink({ role: "admin", hasAuthorProfile: false }),
     ).toBe(false);
   });
 
   it("returns false for readers including those who declined", () => {
     expect(
-      shouldShowMyAuthorPageLink({ role: "reader", hasAuthorProfile: false }, LOCALE),
+      shouldShowMyAuthorPageLink({ role: "reader", hasAuthorProfile: false }),
     ).toBe(false);
   });
 });
