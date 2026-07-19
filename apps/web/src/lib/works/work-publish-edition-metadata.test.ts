@@ -1,4 +1,4 @@
-import { encodeAbiParameters, encodeEventTopics } from "viem";
+import { encodeAbiParameters, encodeEventTopics, type Log } from "viem";
 import { describe, expect, it, vi } from "vitest";
 
 import { andromedaWorksAbi } from "@/lib/chain/contract";
@@ -40,7 +40,7 @@ function workMetadata() {
   });
 }
 
-function registerLogs() {
+function registerLogs(): Log[] {
   return [
     {
       address: CONTRACT,
@@ -125,9 +125,8 @@ describe("completeEditionMetadataAfterRegister", () => {
       maxCopies: 2n,
       walletAuth: {
         address: AUTHOR,
-        signature: "0x" + "11".repeat(65),
+        signature: `0x${"11".repeat(65)}`,
         message: "test",
-        timestamp: Date.now(),
       },
       contractAddress: CONTRACT,
       abi: andromedaWorksAbi,

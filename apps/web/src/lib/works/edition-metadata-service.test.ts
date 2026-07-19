@@ -59,7 +59,7 @@ describe("provisionEditionMetadata", () => {
   });
 
   it("rejects non-author signers", async () => {
-    const ipfs = createInMemoryIpfsStorage();
+    const ipfs = createInMemoryIpfsStorage(createInMemoryIpfsState());
     await expect(
       provisionEditionMetadata(ipfs, {
         signerAddress: OTHER,
