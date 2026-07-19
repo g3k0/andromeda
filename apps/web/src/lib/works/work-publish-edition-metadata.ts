@@ -87,16 +87,16 @@ export async function writeCopyMetadataUris(
 ): Promise<void> {
   await input.copies.reduce<Promise<void>>(
     (chain, copy) =>
-      chain.then(() =>
-        input.writeContractAsync(
+      chain.then(async () => {
+        await input.writeContractAsync(
           buildSetCopyMetadataRequest({
             tokenId: copy.tokenId,
             metadataUri: copy.metadataUri,
             contractAddress: input.contractAddress,
             abi: input.abi,
           }),
-        ),
-      ),
+        );
+      }),
     Promise.resolve(),
   );
 }

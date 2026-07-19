@@ -3,11 +3,12 @@
 import type { Dispatch, MutableRefObject } from "react";
 
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
+import type { ClientWriteContractAsync } from "@/lib/chain/client-write-contract";
 import { andromedaWorksAbi } from "@/lib/chain/contract";
 import { getContractAddress } from "@/lib/config/public-env";
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { translateClientError } from "@/lib/i18n/api-error-messages";
-import type { TranslateFn } from "@/lib/i18n/use-translation";
+import type { TranslateFn } from "@/lib/i18n/translate";
 import { storeWorkContentKey } from "@/lib/works/content-key-session";
 import { buildWorkPublishEditionPreview } from "@/lib/works/work-publish-preview";
 import { uploadWorkPublishPayload } from "@/lib/works/work-publish-client";
@@ -34,9 +35,7 @@ type UseWorkPublishActionsInput = {
   authorAddress: string;
   authorDisplayName?: string | null;
   signMessageAsync: (args: { message: string }) => Promise<`0x${string}`>;
-  writeContractAsync: ReturnType<
-    typeof import("wagmi").useWriteContract
-  >["writeContractAsync"];
+  writeContractAsync: ClientWriteContractAsync;
   t: TranslateFn;
 };
 

@@ -4,11 +4,12 @@ import { useEffect, useRef } from "react";
 import type { TransactionReceipt } from "viem";
 
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
+import type { ClientWriteContractAsync } from "@/lib/chain/client-write-contract";
 import { andromedaWorksAbi } from "@/lib/chain/contract";
 import { getContractAddress } from "@/lib/config/public-env";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 import { translateClientError } from "@/lib/i18n/api-error-messages";
-import type { TranslateFn } from "@/lib/i18n/use-translation";
+import type { TranslateFn } from "@/lib/i18n/translate";
 import {
   parseRegisterWorkParams,
   type WorkPublishFormValues,
@@ -25,9 +26,7 @@ type UseWorkPublishEditionLabelingInput = {
   address: `0x${string}` | undefined;
   authorAddress: string;
   signMessageAsync: (args: { message: string }) => Promise<`0x${string}`>;
-  writeContractAsync: ReturnType<
-    typeof import("wagmi").useWriteContract
-  >["writeContractAsync"];
+  writeContractAsync: ClientWriteContractAsync;
   dispatch: React.Dispatch<WorkPublishClientAction>;
   t: TranslateFn;
 };
