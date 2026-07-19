@@ -175,7 +175,8 @@
     "connectWallet": "Ligue uma carteira para comprar um exemplar.",
     "notAvailable": "Esta edição não está disponível.",
     "mintFailed": "Não foi possível concluir a cunhagem do exemplar.",
-    "txFailed": "A transação de cunhagem falhou."
+    "txFailed": "A transação de cunhagem falhou.",
+    "receiptTimeout": "A transação foi enviada, mas a confirmação expirou. Verifique o Polygonscan e atualize a página."
   },
   "reader": {
     "metaTitle": "Ler | Andromeda",
@@ -446,6 +447,7 @@
     },
     "actions": {
       "registerOnChain": "Registar on-chain",
+      "labelingCopies": "A numerar as cópias…",
       "previewEdition": "Pré-visualizar edição",
       "encrypting": "A encriptar…",
       "pinningToIpfs": "A fixar no IPFS…",

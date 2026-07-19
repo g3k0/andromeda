@@ -3,6 +3,8 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { buildContentSecurityPolicy } from "./content-security-policy.mjs";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function resolveWalletConnectConnectorModule() {
@@ -30,8 +32,8 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
-    key: "Content-Security-Policy-Report-Only",
-    value: "default-src 'self'; frame-ancestors 'none';",
+    key: "Content-Security-Policy",
+    value: buildContentSecurityPolicy(),
   },
 ];
 

@@ -175,7 +175,8 @@
     "connectWallet": "Connect a wallet to buy a copy.",
     "notAvailable": "This edition is not available.",
     "mintFailed": "Failed to finish minting the copy.",
-    "txFailed": "Mint transaction failed."
+    "txFailed": "Mint transaction failed.",
+    "receiptTimeout": "The transaction was submitted but confirmation timed out. Check Polygonscan, then refresh the page."
   },
   "reader": {
     "metaTitle": "Read | Andromeda",
@@ -446,6 +447,7 @@
     },
     "actions": {
       "registerOnChain": "Register on-chain",
+      "labelingCopies": "Numbering edition copies…",
       "previewEdition": "Preview edition",
       "encrypting": "Encrypting…",
       "pinningToIpfs": "Pinning to IPFS…",

@@ -175,7 +175,8 @@
     "connectWallet": "コピーを購入するにはウォレットを接続してください。",
     "notAvailable": "この版は利用できません。",
     "mintFailed": "コピーのミントを完了できませんでした。",
-    "txFailed": "ミントトランザクションが失敗しました。"
+    "txFailed": "ミントトランザクションが失敗しました。",
+    "receiptTimeout": "トランザクションは送信されましたが、確認がタイムアウトしました。Polygonscan を確認してページを更新してください。"
   },
   "reader": {
     "metaTitle": "読む | Andromeda",
@@ -446,6 +447,7 @@
     },
     "actions": {
       "registerOnChain": "オンチェーン登録",
+      "labelingCopies": "部数を付番中…",
       "previewEdition": "版をプレビュー",
       "encrypting": "暗号化中…",
       "pinningToIpfs": "IPFS にピン留め中…",

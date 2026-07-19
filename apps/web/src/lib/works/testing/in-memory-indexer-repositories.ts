@@ -34,6 +34,8 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
           price: input.price,
           maxCopies: input.maxCopies,
           minted: existing?.minted ?? 0n,
+          primarySaleRemaining:
+            existing?.primarySaleRemaining ?? input.maxCopies,
           active: input.active ?? existing?.active ?? true,
           createdAt: existing?.createdAt ?? nowIso(),
           updatedAt: nowIso(),
@@ -68,6 +70,17 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
             updatedAt: nowIso(),
           });
         }
+      },
+      async decrementPrimarySaleRemaining(workId: bigint) {
+        const record = works.get(workId.toString());
+        if (!record || record.primarySaleRemaining === 0n) {
+          return;
+        }
+        works.set(workId.toString(), {
+          ...record,
+          primarySaleRemaining: record.primarySaleRemaining - 1n,
+          updatedAt: nowIso(),
+        });
       },
     },
     tokens: {

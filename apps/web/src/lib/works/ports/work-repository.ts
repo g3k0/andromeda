@@ -12,6 +12,7 @@ export type WorkRepository = {
   listWorks(): Promise<WorkRecord[]>;
   setActive(workId: bigint, active: boolean): Promise<void>;
   setMinted(workId: bigint, minted: bigint): Promise<void>;
+  decrementPrimarySaleRemaining(workId: bigint): Promise<void>;
 };
 
 export type TokenRepository = {

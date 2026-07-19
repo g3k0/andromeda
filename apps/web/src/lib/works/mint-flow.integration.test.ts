@@ -39,12 +39,12 @@ const CONFIG: Erc6551RegistryConfig = {
   chainId: CHAIN_ID,
 };
 
-function copyMintedLog(workId: bigint, tokenId: bigint): Log {
+function copyPurchasedLog(workId: bigint, tokenId: bigint): Log {
   return {
     address: CONTRACT,
     topics: encodeEventTopics({
       abi: andromedaWorksAbi,
-      eventName: "CopyMinted",
+      eventName: "CopyPurchased",
       args: { workId, tokenId, buyer: BUYER },
     }) as [`0x${string}`, ...`0x${string}`[]],
     data: "0x",
@@ -99,8 +99,8 @@ describe("mint flow integration", () => {
       registryAddress: REGISTRY,
     });
 
-    // 2. Buyer mints copy → tokenId from CopyMinted log.
-    const tokenId = extractMintedTokenId([copyMintedLog(1n, 42n)], {
+    // 2. Buyer purchases copy → tokenId from CopyPurchased log.
+    const tokenId = extractMintedTokenId([copyPurchasedLog(1n, 42n)], {
       workId: 1n,
       buyer: BUYER,
     });

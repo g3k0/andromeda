@@ -17,6 +17,13 @@ export type AndromedaChainEvent =
       kind: "CopyMinted";
       workId: bigint;
       tokenId: bigint;
+      recipient: `0x${string}`;
+      copyNumber: bigint;
+    }
+  | {
+      kind: "CopyPurchased";
+      workId: bigint;
+      tokenId: bigint;
       buyer: `0x${string}`;
     }
   | {
@@ -41,6 +48,7 @@ const INDEXED_EVENT_NAMES = [
   "WorkRegistered",
   "WorkStatusChanged",
   "CopyMinted",
+  "CopyPurchased",
   "CopyMetadataUpdated",
   "Transfer",
 ] as const;
@@ -67,6 +75,14 @@ function toEvent(eventName: string, args: DecodedArgs): AndromedaChainEvent | nu
     case "CopyMinted":
       return {
         kind: "CopyMinted",
+        workId: args.workId as bigint,
+        tokenId: args.tokenId as bigint,
+        recipient: args.recipient as `0x${string}`,
+        copyNumber: args.copyNumber as bigint,
+      };
+    case "CopyPurchased":
+      return {
+        kind: "CopyPurchased",
         workId: args.workId as bigint,
         tokenId: args.tokenId as bigint,
         buyer: args.buyer as `0x${string}`,
@@ -152,14 +168,33 @@ async function applyEvent(
         return; // idempotent: copy already projected
       }
       const work = await repositories.works.getWork(event.workId);
-      const copyNumber = Number((work?.minted ?? 0n) + 1n);
+      const copyNumber = Number(event.copyNumber);
+      if (!Number.isInteger(copyNumber) || copyNumber < 1) {
+        return;
+      }
+      await repositories.tokens.upsertToken({
+        tokenId: event.tokenId,
+        workId: event.workId,
+        owner: event.recipient,
+        copyNumber,
+      });
+      const minted = work?.minted ?? 0n;
+      if (BigInt(copyNumber) > minted) {
+        await repositories.works.setMinted(event.workId, BigInt(copyNumber));
+      }
+      return;
+    }
+    case "CopyPurchased": {
+      const existing = await repositories.tokens.getToken(event.tokenId);
+      if (existing?.owner.toLowerCase() === event.buyer.toLowerCase()) {
+        return;
+      }
       await repositories.tokens.upsertToken({
         tokenId: event.tokenId,
         workId: event.workId,
         owner: event.buyer,
-        copyNumber,
       });
-      await repositories.works.setMinted(event.workId, BigInt(copyNumber));
+      await repositories.works.decrementPrimarySaleRemaining(event.workId);
       return;
     }
     case "CopyMetadataUpdated":

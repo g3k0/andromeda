@@ -175,7 +175,8 @@
     "connectWallet": "Connectez un portefeuille pour acheter un exemplaire.",
     "notAvailable": "Cette édition n'est pas disponible.",
     "mintFailed": "Échec de la frappe de l'exemplaire.",
-    "txFailed": "La transaction de frappe a échoué."
+    "txFailed": "La transaction de frappe a échoué.",
+    "receiptTimeout": "La transaction a été envoyée, mais la confirmation a expiré. Vérifiez Polygonscan puis actualisez la page."
   },
   "reader": {
     "metaTitle": "Lire | Andromeda",
@@ -446,6 +447,7 @@
     },
     "actions": {
       "registerOnChain": "Enregistrer on-chain",
+      "labelingCopies": "Numérotation des exemplaires…",
       "previewEdition": "Aperçu de l'édition",
       "encrypting": "Chiffrement…",
       "pinningToIpfs": "Épinglage sur IPFS…",

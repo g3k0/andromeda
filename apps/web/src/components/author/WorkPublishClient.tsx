@@ -7,6 +7,7 @@ import { andromedaWorksAbi } from "@/lib/chain/contract";
 import { getContractAddress } from "@/lib/config/public-env";
 import { storeWorkContentKey } from "@/lib/works/content-key-session";
 import { provisionAllPendingEnvelopesForAuthor } from "@/lib/works/mint-envelope-author-client";
+import { completeEditionMetadataAfterRegister } from "@/lib/works/work-publish-edition-metadata";
 import { buildWorkPublishEditionPreview } from "@/lib/works/work-publish-preview";
 import { uploadWorkPublishPayload } from "@/lib/works/work-publish-client";
 import {
@@ -22,6 +23,7 @@ import {
 import { useLoading } from "@/components/loading/LoadingProvider";
 import { useTranslation } from "@/lib/i18n/use-translation";
 import { translateClientError } from "@/lib/i18n/api-error-messages";
+import { resolveWorkPublishUiStep } from "@/lib/works/work-publish-ui-step";
 import { WorkPublishView } from "./WorkPublishView";
 
 export type WorkPublishClientProps = {
@@ -48,8 +50,9 @@ export function WorkPublishClient({
   const manuscriptFileRef = useRef<File | null>(null);
   const metadataUriRef = useRef<string | null>(null);
   const provisioningPendingEnvelopesRef = useRef(false);
+  const handledRegisterReceiptRef = useRef<string | null>(null);
 
-  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
+  const { data: receipt, isLoading: isConfirming } = useWaitForTransactionReceipt({
     hash: state.txHash ?? undefined,
   });
 
@@ -96,6 +99,69 @@ export function WorkPublishClient({
       window.clearInterval(intervalId);
     };
   }, [canPublish, authorAddress, address, signMessageAsync]);
+
+  useEffect(() => {
+    if (
+      state.step !== "registering" ||
+      !receipt ||
+      !address ||
+      !state.metadataPreview
+    ) {
+      return;
+    }
+    if (handledRegisterReceiptRef.current === receipt.transactionHash) {
+      return;
+    }
+    handledRegisterReceiptRef.current = receipt.transactionHash;
+
+    async function labelEditionCopies() {
+      try {
+        dispatch({ type: "set_step", step: "labeling_copies" });
+        const { priceWei, maxCopies } = parseRegisterWorkParams(state.values);
+        const walletAuth = await createSignedWalletPayload(
+          address!,
+          signMessageAsync,
+        );
+
+        await completeEditionMetadataAfterRegister({
+          logs: receipt!.logs,
+          authorAddress,
+          workMetadata: state.metadataPreview!,
+          maxCopies,
+          walletAuth,
+          contractAddress: getContractAddress(),
+          abi: andromedaWorksAbi,
+          writeContractAsync: (request) =>
+            writeContractAsync({
+              abi: request.abi,
+              address: request.address,
+              functionName: request.functionName,
+              args: [...request.args],
+            }),
+        });
+
+        dispatch({ type: "set_step", step: "success" });
+      } catch (error) {
+        dispatch({ type: "register_failed" });
+        dispatch({
+          type: "set_error_message",
+          message: translateClientError(t, error),
+        });
+      }
+    }
+
+    void labelEditionCopies();
+  }, [
+    receipt,
+    state.step,
+    state.metadataPreview,
+    state.values,
+    address,
+    authorAddress,
+    signMessageAsync,
+    writeContractAsync,
+    t,
+  ]);
 
   useEffect(() => {
     const url = state.editionPreview?.coverImageUrl;
@@ -278,7 +344,7 @@ export function WorkPublishClient({
       values={state.values}
       errors={state.errors}
       authorAddress={authorAddress}
-      step={isConfirming ? "registering" : state.step}
+      step={resolveWorkPublishUiStep(state.step, isConfirming)}
       coverImageName={state.coverImageName}
       manuscriptFileName={state.manuscriptFileName}
       editionPreview={state.editionPreview}

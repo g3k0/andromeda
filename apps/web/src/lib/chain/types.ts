@@ -4,9 +4,12 @@ export type WorkOnChain = {
   metadataURI: string;
   /** Price per copy in wei. */
   price: bigint;
-  /** Maximum copies; `0n` means unlimited. */
+  /** Maximum copies; `0n` means unlimited (legacy). */
   maxCopies: bigint;
+  /** Total copies minted (full edition size after publish). */
   minted: bigint;
+  /** Copies still held by the author and available for primary sale. */
+  primarySaleRemaining: bigint;
   active: boolean;
 };
 

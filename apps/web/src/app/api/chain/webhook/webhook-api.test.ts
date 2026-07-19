@@ -43,9 +43,9 @@ function copyMintedLog(
     topics: encodeEventTopics({
       abi: andromedaWorksAbi,
       eventName: "CopyMinted",
-      args: { workId, tokenId, buyer: BUYER },
+      args: { workId, tokenId, recipient: BUYER },
     }),
-    data: "0x",
+    data: encodeAbiParameters([{ type: "uint256" }], [1n]),
     index,
   };
 }

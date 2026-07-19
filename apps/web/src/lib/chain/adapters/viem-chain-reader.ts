@@ -38,14 +38,22 @@ export function createViemChainReader({
       })) as bigint;
       assertValidWorkId(workId, totalWorks);
 
-      const raw = (await client.readContract({
-        address,
-        abi: andromedaWorksAbi,
-        functionName: "works",
-        args: [workId],
-      })) as RawWorkTuple;
+      const [raw, primarySaleRemaining] = await Promise.all([
+        client.readContract({
+          address,
+          abi: andromedaWorksAbi,
+          functionName: "works",
+          args: [workId],
+        }) as Promise<RawWorkTuple>,
+        client.readContract({
+          address,
+          abi: andromedaWorksAbi,
+          functionName: "primarySaleRemaining",
+          args: [workId],
+        }) as Promise<bigint>,
+      ]);
 
-      return mapRawWorkToWorkOnChain(workId, raw);
+      return mapRawWorkToWorkOnChain(workId, raw, primarySaleRemaining);
     },
 
     async ownerOf(tokenId: bigint): Promise<TokenOwner> {

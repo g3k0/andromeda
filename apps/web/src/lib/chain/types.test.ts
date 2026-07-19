@@ -16,6 +16,7 @@ describe("chain domain types", () => {
       price: 100n,
       maxCopies: 10n,
       minted: 2n,
+      primarySaleRemaining: 8n,
       active: true,
     };
 

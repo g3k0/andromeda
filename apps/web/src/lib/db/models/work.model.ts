@@ -41,6 +41,11 @@ const workSchema = new Schema(
       required: true,
       default: "0",
     },
+    primarySaleRemaining: {
+      type: String,
+      required: true,
+      default: "0",
+    },
     active: {
       type: Boolean,
       required: true,

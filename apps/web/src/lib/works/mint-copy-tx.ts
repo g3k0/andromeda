@@ -15,8 +15,7 @@ export function getWorkAvailability(work: WorkOnChain): WorkAvailability {
     return { remaining: null, soldOut: false, saleOpen: work.active };
   }
 
-  const remainingRaw = work.maxCopies - work.minted;
-  const remaining = remainingRaw > 0n ? remainingRaw : 0n;
+  const remaining = work.primarySaleRemaining;
   const soldOut = remaining === 0n;
 
   return { remaining, soldOut, saleOpen: work.active && !soldOut };

@@ -46,6 +46,7 @@ describe("mongo indexer repositories", () => {
       maxCopies: 100n,
     });
     expect(created.minted).toBe(0n);
+    expect(created.primarySaleRemaining).toBe(100n);
     expect(created.active).toBe(true);
 
     await works.setMinted(1n, 3n);

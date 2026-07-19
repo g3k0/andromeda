@@ -175,7 +175,8 @@
     "connectWallet": "Conecta una billetera para comprar un ejemplar.",
     "notAvailable": "Esta edición no está disponible.",
     "mintFailed": "No se pudo completar la acuñación del ejemplar.",
-    "txFailed": "La transacción de acuñación falló."
+    "txFailed": "La transacción de acuñación falló.",
+    "receiptTimeout": "La transacción se envió, pero la confirmación expiró. Comprueba Polygonscan y actualiza la página."
   },
   "reader": {
     "metaTitle": "Leer | Andromeda",
@@ -446,6 +447,7 @@
     },
     "actions": {
       "registerOnChain": "Registrar on-chain",
+      "labelingCopies": "Numerando las copias…",
       "previewEdition": "Vista previa de la edición",
       "encrypting": "Cifrando…",
       "pinningToIpfs": "Fijando en IPFS…",

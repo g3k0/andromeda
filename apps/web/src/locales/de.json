@@ -175,7 +175,8 @@
     "connectWallet": "Verbinde eine Wallet, um ein Exemplar zu kaufen.",
     "notAvailable": "Diese Ausgabe ist nicht verfügbar.",
     "mintFailed": "Prägung des Exemplars konnte nicht abgeschlossen werden.",
-    "txFailed": "Prägungstransaktion fehlgeschlagen."
+    "txFailed": "Prägungstransaktion fehlgeschlagen.",
+    "receiptTimeout": "Die Transaktion wurde gesendet, aber die Bestätigung ist abgelaufen. Prüfen Sie Polygonscan und laden Sie die Seite neu."
   },
   "reader": {
     "metaTitle": "Lesen | Andromeda",
@@ -446,6 +447,7 @@
     },
     "actions": {
       "registerOnChain": "On-chain registrieren",
+      "labelingCopies": "Exemplare nummerieren…",
       "previewEdition": "Ausgabe anzeigen",
       "encrypting": "Verschlüsselung…",
       "pinningToIpfs": "Auf IPFS pinnen…",

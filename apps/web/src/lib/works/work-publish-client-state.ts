@@ -137,7 +137,7 @@ export function workPublishClientReducer(
       return {
         ...state,
         txHash: action.txHash,
-        step: "success",
+        step: "registering",
         errorMessage: null,
       };
     case "register_failed":

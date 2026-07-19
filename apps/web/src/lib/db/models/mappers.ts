@@ -130,24 +130,46 @@ export type WorkDocumentLike = {
   price: string;
   maxCopies: string;
   minted: string;
+  primarySaleRemaining?: string;
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
 
 export function toWorkRecord(doc: WorkDocumentLike): WorkRecord {
+  const maxCopies = BigInt(doc.maxCopies);
+  const minted = BigInt(doc.minted);
+  const primarySaleRemaining =
+    doc.primarySaleRemaining !== undefined
+      ? BigInt(doc.primarySaleRemaining)
+      : resolvePrimarySaleRemainingFallback(maxCopies, minted);
+
   return {
     workId: BigInt(doc.workId),
     author: getAddress(doc.author),
     metadataURI: doc.metadataURI,
     encryptedContentCid: doc.encryptedContentCid ?? null,
     price: BigInt(doc.price),
-    maxCopies: BigInt(doc.maxCopies),
-    minted: BigInt(doc.minted),
+    maxCopies,
+    minted,
+    primarySaleRemaining,
     active: doc.active,
     createdAt: doc.createdAt.toISOString(),
     updatedAt: doc.updatedAt.toISOString(),
   };
+}
+
+function resolvePrimarySaleRemainingFallback(
+  maxCopies: bigint,
+  minted: bigint,
+): bigint {
+  if (maxCopies === 0n) {
+    return 0n;
+  }
+  if (minted >= maxCopies) {
+    return maxCopies;
+  }
+  return maxCopies > minted ? maxCopies - minted : 0n;
 }
 
 export type TokenDocumentLike = {

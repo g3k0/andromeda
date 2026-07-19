@@ -7,14 +7,14 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title AndromedaWorks
-/// @notice Registry of author-certified literary works. Each purchased copy is
-///         minted as an ERC-721 token that readers can own and collect.
+/// @notice Registry of author-certified literary works. On publish the author receives
+///         the full numbered edition; primary sales transfer copies from that inventory.
 contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
     struct Work {
         address author;
         string metadataURI;
         uint256 price; // price per copy, in wei
-        uint256 maxCopies; // 0 means unlimited
+        uint256 maxCopies; // must be > 0 at registration
         uint256 minted;
         bool active;
     }
@@ -24,6 +24,8 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
 
     mapping(uint256 => Work) public works;
     mapping(uint256 => uint256) public workOfToken;
+    mapping(uint256 => uint256) public copyNumberOfToken;
+    mapping(uint256 => uint256[]) private _primarySaleInventory;
 
     event WorkRegistered(
         uint256 indexed workId,
@@ -34,6 +36,12 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
     );
     event WorkStatusChanged(uint256 indexed workId, bool active);
     event CopyMinted(
+        uint256 indexed workId,
+        uint256 indexed tokenId,
+        address indexed recipient,
+        uint256 copyNumber
+    );
+    event CopyPurchased(
         uint256 indexed workId,
         uint256 indexed tokenId,
         address indexed buyer
@@ -47,18 +55,22 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
     error SoldOut();
     error InsufficientPayment();
     error PaymentFailed();
+    error InvalidMaxCopies();
+    error NoCopiesAvailable();
 
     constructor(address initialOwner)
         ERC721("Andromeda Works", "ANDR")
         Ownable(initialOwner)
     {}
 
-    /// @notice Register a new work. The caller becomes its certified author.
+    /// @notice Register a work and mint the full edition to the author.
     function registerWork(
         string calldata metadataURI,
         uint256 price,
         uint256 maxCopies
     ) external returns (uint256 workId) {
+        if (maxCopies == 0) revert InvalidMaxCopies();
+
         workId = ++totalWorks;
         works[workId] = Work({
             author: msg.sender,
@@ -69,9 +81,20 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
             active: true
         });
         emit WorkRegistered(workId, msg.sender, metadataURI, price, maxCopies);
+
+        for (uint256 i = 0; i < maxCopies; i++) {
+            _mintCopyToAuthor(workId, msg.sender, metadataURI, i + 1);
+            works[workId].minted += 1;
+        }
     }
 
-    /// @notice Enable or disable sales of a work. Only the author can call.
+    /// @notice Copies still held by the author and available for primary sale.
+    function primarySaleRemaining(uint256 workId) external view returns (uint256) {
+        _getWork(workId);
+        return _primarySaleInventory[workId].length;
+    }
+
+    /// @notice Enable or disable primary sales. Only the author can call.
     function setWorkActive(uint256 workId, bool active) external {
         Work storage work = _getWork(workId);
         if (msg.sender != work.author) revert NotAuthor();
@@ -79,7 +102,7 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
         emit WorkStatusChanged(workId, active);
     }
 
-    /// @notice Buy and mint a copy of a work. Payment is forwarded to the author.
+    /// @notice Buy a copy from the author's primary-sale inventory.
     function mintCopy(uint256 workId)
         external
         payable
@@ -88,38 +111,33 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
     {
         Work storage work = _getWork(workId);
         if (!work.active) revert WorkInactive();
-        if (work.maxCopies != 0 && work.minted >= work.maxCopies) {
-            revert SoldOut();
-        }
+
+        uint256[] storage inventory = _primarySaleInventory[workId];
+        if (inventory.length == 0) revert SoldOut();
         if (msg.value < work.price) revert InsufficientPayment();
 
-        work.minted += 1;
-        tokenId = _nextTokenId++;
-        workOfToken[tokenId] = workId;
+        tokenId = inventory[inventory.length - 1];
+        inventory.pop();
 
-        _safeMint(msg.sender, tokenId);
-        _setTokenURI(tokenId, work.metadataURI);
+        if (ownerOf(tokenId) != work.author) revert NoCopiesAvailable();
+
+        _transfer(work.author, msg.sender, tokenId);
 
         if (work.price > 0) {
             (bool ok, ) = payable(work.author).call{value: work.price}("");
             if (!ok) revert PaymentFailed();
         }
 
-        // Refund any overpayment.
         uint256 excess = msg.value - work.price;
         if (excess > 0) {
             (bool refunded, ) = payable(msg.sender).call{value: excess}("");
             if (!refunded) revert PaymentFailed();
         }
 
-        emit CopyMinted(workId, tokenId, msg.sender);
+        emit CopyPurchased(workId, tokenId, msg.sender);
     }
 
     /// @notice Attach per-token metadata to a minted copy (numbered edition).
-    /// @dev Only the copy owner can set it — the buyer pins their token's ACE
-    ///      metadata (with the `Copy #n/N` attributes) after minting, then
-    ///      points the on-chain `tokenURI` to it. Emits `MetadataUpdate` (via
-    ///      ERC721URIStorage) so marketplaces refresh the numbered metadata.
     function setCopyMetadataURI(uint256 tokenId, string calldata metadataURI)
         external
     {
@@ -127,6 +145,21 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
         if (msg.sender != tokenOwner) revert NotCopyOwner();
         _setTokenURI(tokenId, metadataURI);
         emit CopyMetadataUpdated(tokenId, metadataURI);
+    }
+
+    function _mintCopyToAuthor(
+        uint256 workId,
+        address author,
+        string memory metadataURI,
+        uint256 copyNumber
+    ) private returns (uint256 tokenId) {
+        tokenId = _nextTokenId++;
+        workOfToken[tokenId] = workId;
+        copyNumberOfToken[tokenId] = copyNumber;
+        _primarySaleInventory[workId].push(tokenId);
+        _safeMint(author, tokenId);
+        _setTokenURI(tokenId, metadataURI);
+        emit CopyMinted(workId, tokenId, author, copyNumber);
     }
 
     function _getWork(uint256 workId) private view returns (Work storage) {

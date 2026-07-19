@@ -175,7 +175,8 @@
     "connectWallet": "Connetti un wallet per acquistare una copia.",
     "notAvailable": "Questa edizione non è disponibile.",
     "mintFailed": "Impossibile completare la coniazione della copia.",
-    "txFailed": "Transazione di coniazione fallita."
+    "txFailed": "Transazione di coniazione fallita.",
+    "receiptTimeout": "La transazione è stata inviata ma la conferma è scaduta. Controlla Polygonscan e aggiorna la pagina."
   },
   "reader": {
     "metaTitle": "Leggi | Andromeda",
@@ -446,6 +447,7 @@
     },
     "actions": {
       "registerOnChain": "Registra on-chain",
+      "labelingCopies": "Numerazione delle copie…",
       "previewEdition": "Anteprima dell'edizione",
       "encrypting": "Cifratura…",
       "pinningToIpfs": "Fissaggio su IPFS…",

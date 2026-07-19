@@ -175,7 +175,8 @@
     "connectWallet": "连接钱包以购买副本。",
     "notAvailable": "此版本暂不可用。",
     "mintFailed": "副本铸造未能完成。",
-    "txFailed": "铸造交易失败。"
+    "txFailed": "铸造交易失败。",
+    "receiptTimeout": "交易已提交，但确认超时。请查看 Polygonscan 后刷新页面。"
   },
   "reader": {
     "metaTitle": "阅读 | Andromeda",
@@ -446,6 +447,7 @@
     },
     "actions": {
       "registerOnChain": "链上注册",
+      "labelingCopies": "正在编号副本…",
       "previewEdition": "预览版本",
       "encrypting": "正在加密…",
       "pinningToIpfs": "正在固定到 IPFS…",

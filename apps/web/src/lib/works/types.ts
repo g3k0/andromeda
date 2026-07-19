@@ -60,6 +60,7 @@ export type WorkRecord = {
   price: bigint;
   maxCopies: bigint;
   minted: bigint;
+  primarySaleRemaining: bigint;
   active: boolean;
   createdAt: string;
   updatedAt: string;

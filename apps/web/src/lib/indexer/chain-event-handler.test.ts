@@ -76,7 +76,12 @@ function workStatusChangedLog(
 }
 
 function copyMintedLog(
-  args: { workId: bigint; tokenId: bigint; buyer: `0x${string}` },
+  args: {
+    workId: bigint;
+    tokenId: bigint;
+    recipient: `0x${string}`;
+    copyNumber: bigint;
+  },
   logIndex: number,
   blockNumber?: bigint,
 ): Log {
@@ -85,6 +90,29 @@ function copyMintedLog(
       topics: encodeEventTopics({
         abi: andromedaWorksAbi,
         eventName: "CopyMinted",
+        args: {
+          workId: args.workId,
+          tokenId: args.tokenId,
+          recipient: args.recipient,
+        },
+      }) as `0x${string}`[],
+      data: encodeAbiParameters([{ type: "uint256" }], [args.copyNumber]),
+    },
+    logIndex,
+    blockNumber,
+  );
+}
+
+function copyPurchasedLog(
+  args: { workId: bigint; tokenId: bigint; buyer: `0x${string}` },
+  logIndex: number,
+  blockNumber?: bigint,
+): Log {
+  return baseLog(
+    {
+      topics: encodeEventTopics({
+        abi: andromedaWorksAbi,
+        eventName: "CopyPurchased",
         args,
       }) as `0x${string}`[],
       data: "0x",
@@ -135,7 +163,11 @@ function transferLog(
 describe("decodeAndromedaEvents", () => {
   it("decodes and orders events by block then logIndex", () => {
     const events = decodeAndromedaEvents([
-      copyMintedLog({ workId: 1n, tokenId: 1n, buyer: BUYER }, 5, 2n),
+      copyMintedLog(
+        { workId: 1n, tokenId: 1n, recipient: BUYER, copyNumber: 1n },
+        5,
+        2n,
+      ),
       workRegisteredLog(
         { workId: 1n, metadataURI: "ipfs://m", price: 10n, maxCopies: 100n },
         0,
@@ -170,6 +202,7 @@ describe("handleChainLogs", () => {
     const work = await repos.works.getWork(1n);
     expect(work?.metadataURI).toBe("ipfs://m");
     expect(work?.price).toBe(10n);
+    expect(work?.primarySaleRemaining).toBe(100n);
     expect(work?.active).toBe(true);
   });
 
@@ -193,8 +226,14 @@ describe("handleChainLogs", () => {
         { workId: 1n, metadataURI: "ipfs://m", price: 10n, maxCopies: 100n },
         0,
       ),
-      copyMintedLog({ workId: 1n, tokenId: 10n, buyer: BUYER }, 1),
-      copyMintedLog({ workId: 1n, tokenId: 11n, buyer: BUYER2 }, 2),
+      copyMintedLog(
+        { workId: 1n, tokenId: 10n, recipient: BUYER, copyNumber: 1n },
+        1,
+      ),
+      copyMintedLog(
+        { workId: 1n, tokenId: 11n, recipient: BUYER2, copyNumber: 2n },
+        2,
+      ),
     ]);
 
     expect((await repos.tokens.getToken(10n))?.copyNumber).toBe(1);
@@ -209,7 +248,10 @@ describe("handleChainLogs", () => {
         { workId: 1n, metadataURI: "ipfs://m", price: 10n, maxCopies: 100n },
         0,
       ),
-      copyMintedLog({ workId: 1n, tokenId: 10n, buyer: BUYER }, 1),
+      copyMintedLog(
+        { workId: 1n, tokenId: 10n, recipient: BUYER, copyNumber: 1n },
+        1,
+      ),
     ];
 
     await handleChainLogs(repos, logs);
@@ -226,7 +268,10 @@ describe("handleChainLogs", () => {
         { workId: 1n, metadataURI: "ipfs://m", price: 10n, maxCopies: 100n },
         0,
       ),
-      copyMintedLog({ workId: 1n, tokenId: 10n, buyer: BUYER }, 1),
+      copyMintedLog(
+        { workId: 1n, tokenId: 10n, recipient: BUYER, copyNumber: 1n },
+        1,
+      ),
       copyMetadataUpdatedLog({ tokenId: 10n, metadataURI: "ipfs://token-10" }, 2),
     ]);
 
@@ -243,11 +288,32 @@ describe("handleChainLogs", () => {
         0,
       ),
       transferLog({ from: zeroAddress, to: BUYER, tokenId: 10n }, 1),
-      copyMintedLog({ workId: 1n, tokenId: 10n, buyer: BUYER }, 2),
+      copyMintedLog(
+        { workId: 1n, tokenId: 10n, recipient: BUYER, copyNumber: 1n },
+        2,
+      ),
       transferLog({ from: BUYER, to: BUYER2, tokenId: 10n }, 3, 2n),
     ]);
 
     const token = await repos.tokens.getToken(10n);
     expect(token?.owner.toLowerCase()).toBe(BUYER2);
+  });
+
+  it("transfers ownership and decrements inventory on CopyPurchased", async () => {
+    const repos = createInMemoryIndexerRepositories();
+    await handleChainLogs(repos, [
+      workRegisteredLog(
+        { workId: 1n, metadataURI: "ipfs://m", price: 10n, maxCopies: 100n },
+        0,
+      ),
+      copyMintedLog(
+        { workId: 1n, tokenId: 10n, recipient: AUTHOR, copyNumber: 1n },
+        1,
+      ),
+      copyPurchasedLog({ workId: 1n, tokenId: 10n, buyer: BUYER }, 2),
+    ]);
+
+    expect((await repos.tokens.getToken(10n))?.owner.toLowerCase()).toBe(BUYER);
+    expect((await repos.works.getWork(1n))?.primarySaleRemaining).toBe(99n);
   });
 });

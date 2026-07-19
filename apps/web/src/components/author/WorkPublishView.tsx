@@ -59,7 +59,11 @@ export function WorkPublishView({
   onRegister,
 }: WorkPublishViewProps) {
   const { t } = useTranslation();
-  const isBusy = step === "encrypting" || step === "uploading" || step === "registering";
+  const isBusy =
+    step === "encrypting" ||
+    step === "uploading" ||
+    step === "registering" ||
+    step === "labeling_copies";
   const isComplete = step === "success";
   const disabled = isBusy || isComplete;
 

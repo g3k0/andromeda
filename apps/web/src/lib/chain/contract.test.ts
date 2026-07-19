@@ -25,6 +25,7 @@ describe("chain contract", () => {
         "works",
         "workOfToken",
         "ownerOf",
+        "primarySaleRemaining",
         "mintCopy",
         "registerWork",
       ]),

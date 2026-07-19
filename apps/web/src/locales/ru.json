@@ -175,7 +175,8 @@
     "connectWallet": "Подключите кошелёк, чтобы купить копию.",
     "notAvailable": "Это издание недоступно.",
     "mintFailed": "Не удалось завершить чеканку копии.",
-    "txFailed": "Транзакция чеканки не удалась."
+    "txFailed": "Транзакция чеканки не удалась.",
+    "receiptTimeout": "Транзакция отправлена, но подтверждение не получено вовремя. Проверьте Polygonscan и обновите страницу."
   },
   "reader": {
     "metaTitle": "Чтение | Andromeda",
@@ -446,6 +447,7 @@
     },
     "actions": {
       "registerOnChain": "Зарегистрировать on-chain",
+      "labelingCopies": "Нумерация экземпляров…",
       "previewEdition": "Предпросмотр издания",
       "encrypting": "Шифрование…",
       "pinningToIpfs": "Закрепление в IPFS…",
