@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { verifySignedMutation } from "@/lib/authors/mutation-handler";
+import { walletAuthSchema } from "@/lib/authors/schemas";
 import { acePublicMetadataSchema } from "@/lib/ipfs/metadata-schema";
 import { provisionEditionMetadata } from "@/lib/works/edition-metadata-service";
 import { getIpfsStorage } from "@/lib/works/ipfs-server";
@@ -13,7 +14,7 @@ const copySchema = z.object({
 });
 
 const bodySchema = z.object({
-  walletAuth: z.unknown(),
+  walletAuth: walletAuthSchema,
   authorAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/),
   maxCopies: z.string().regex(/^\d+$/),
   copies: z.array(copySchema).min(1),

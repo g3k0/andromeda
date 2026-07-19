@@ -117,7 +117,7 @@ export function WorkPublishClient({
     async function labelEditionCopies() {
       try {
         dispatch({ type: "set_step", step: "labeling_copies" });
-        const { priceWei, maxCopies } = parseRegisterWorkParams(state.values);
+        const { maxCopies } = parseRegisterWorkParams(state.values);
         const walletAuth = await createSignedWalletPayload(
           address!,
           signMessageAsync,
