@@ -85,16 +85,20 @@ export type WriteCopyMetadataInput = {
 export async function writeCopyMetadataUris(
   input: WriteCopyMetadataInput,
 ): Promise<void> {
-  for (const copy of input.copies) {
-    await input.writeContractAsync(
-      buildSetCopyMetadataRequest({
-        tokenId: copy.tokenId,
-        metadataUri: copy.metadataUri,
-        contractAddress: input.contractAddress,
-        abi: input.abi,
-      }),
-    );
-  }
+  await input.copies.reduce<Promise<void>>(
+    (chain, copy) =>
+      chain.then(() =>
+        input.writeContractAsync(
+          buildSetCopyMetadataRequest({
+            tokenId: copy.tokenId,
+            metadataUri: copy.metadataUri,
+            contractAddress: input.contractAddress,
+            abi: input.abi,
+          }),
+        ),
+      ),
+    Promise.resolve(),
+  );
 }
 
 export type CompleteEditionMetadataInput = {

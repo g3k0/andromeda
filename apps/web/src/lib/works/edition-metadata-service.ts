@@ -30,20 +30,20 @@ export async function provisionEditionMetadata(
 ): Promise<ProvisionedEditionCopy[]> {
   assertSignerIsAuthor(input.signerAddress, input.authorAddress);
 
-  const results: ProvisionedEditionCopy[] = [];
-  for (const copy of input.copies) {
-    const provisioned = await provisionTokenMetadata(ipfs, {
-      tokenId: copy.tokenId,
-      workMetadata: input.workMetadata,
-      copyNumber: copy.copyNumber,
-      maxCopies: input.maxCopies,
-    });
-    results.push({
-      tokenId: copy.tokenId,
-      copyNumber: copy.copyNumber,
-      metadataUri: provisioned.metadataUri,
-    });
-  }
+  return Promise.all(
+    input.copies.map(async (copy) => {
+      const provisioned = await provisionTokenMetadata(ipfs, {
+        tokenId: copy.tokenId,
+        workMetadata: input.workMetadata,
+        copyNumber: copy.copyNumber,
+        maxCopies: input.maxCopies,
+      });
 
-  return results;
+      return {
+        tokenId: copy.tokenId,
+        copyNumber: copy.copyNumber,
+        metadataUri: provisioned.metadataUri,
+      };
+    }),
+  );
 }
