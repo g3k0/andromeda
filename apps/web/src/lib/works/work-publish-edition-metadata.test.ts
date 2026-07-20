@@ -83,8 +83,13 @@ function registerLogs(): Log[] {
 }
 
 describe("writeCopyMetadataUris", () => {
-  it("writes one on-chain metadata URI per copy", async () => {
-    const writeContractAsync = vi.fn().mockResolvedValue("0xabc");
+  it("writes one on-chain metadata URI per copy and waits for each receipt", async () => {
+    const writeContractAsync = vi
+      .fn()
+      .mockResolvedValueOnce("0xabc")
+      .mockResolvedValueOnce("0xdef");
+    const waitForTransactionReceipt = vi.fn().mockResolvedValue({});
+    const onCopyWriteProgress = vi.fn();
 
     await writeCopyMetadataUris({
       copies: [
@@ -94,15 +99,22 @@ describe("writeCopyMetadataUris", () => {
       contractAddress: CONTRACT,
       abi: andromedaWorksAbi,
       writeContractAsync,
+      waitForTransactionReceipt,
+      onCopyWriteProgress,
     });
 
     expect(writeContractAsync).toHaveBeenCalledTimes(2);
+    expect(waitForTransactionReceipt).toHaveBeenCalledTimes(2);
+    expect(waitForTransactionReceipt).toHaveBeenNthCalledWith(1, "0xabc");
+    expect(waitForTransactionReceipt).toHaveBeenNthCalledWith(2, "0xdef");
+    expect(onCopyWriteProgress).toHaveBeenCalledTimes(2);
   });
 });
 
 describe("completeEditionMetadataAfterRegister", () => {
   it("pins numbered metadata and writes token URIs", async () => {
     const writeContractAsync = vi.fn().mockResolvedValue("0xabc");
+    const waitForTransactionReceipt = vi.fn().mockResolvedValue({});
     const fetchImpl = vi.fn().mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -131,11 +143,13 @@ describe("completeEditionMetadataAfterRegister", () => {
       contractAddress: CONTRACT,
       abi: andromedaWorksAbi,
       writeContractAsync,
+      waitForTransactionReceipt,
       fetchImpl,
     });
 
     expect(result).toEqual({ workId: 1n, labeledCopies: 1 });
     expect(fetchImpl).toHaveBeenCalledOnce();
     expect(writeContractAsync).toHaveBeenCalledOnce();
+    expect(waitForTransactionReceipt).toHaveBeenCalledOnce();
   });
 });

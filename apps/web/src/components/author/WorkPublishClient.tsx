@@ -121,6 +121,7 @@ export function WorkPublishClient({
       metadataPreview={state.metadataPreview}
       txHash={state.txHash}
       errorMessage={state.errorMessage}
+      statusMessage={state.statusMessage}
       onFieldChange={updateField}
       onCoverImageChange={(file) => {
         coverImageRef.current = file ?? null;

@@ -392,7 +392,13 @@
       "uploadFailed": "Work upload failed.",
       "connectWalletToRegister": "Connect the author wallet to register the work.",
       "registerFailed": "On-chain registration failed.",
-      "manuscriptRequiredForPreview": "Manuscript file is required for preview."
+      "manuscriptRequiredForPreview": "Manuscript file is required for preview.",
+      "chainClientUnavailable": "Blockchain client is unavailable. Check your network and try again."
+    },
+    "status": {
+      "confirmWalletForLabeling": "Confirm the wallet signature to prepare numbered copy metadata.",
+      "pinningEditionMetadata": "Pinning numbered edition metadata to IPFS…",
+      "confirmCopyMetadataTx": "Confirm MetaMask transaction {index} of {total} to set copy metadata on-chain…"
     },
     "loading": {
       "uploading": "Uploading encrypted work…"
@@ -447,7 +453,7 @@
     },
     "actions": {
       "registerOnChain": "Register on-chain",
-      "labelingCopies": "Numbering edition copies…",
+      "labelingCopies": "Confirm MetaMask prompts to number each copy…",
       "previewEdition": "Preview edition",
       "encrypting": "Encrypting…",
       "pinningToIpfs": "Pinning to IPFS…",

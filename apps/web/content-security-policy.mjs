@@ -12,6 +12,8 @@ const CONNECT_SRC = [
   "https://api.web3modal.org",
   "https://secure.walletconnect.com",
   "https://ipfs.io",
+  "https://gateway.pinata.cloud",
+  "https://api.pinata.cloud",
   "https://*.mypinata.cloud",
 ];
 
@@ -20,8 +22,11 @@ const IMG_SRC = [
   "data:",
   "blob:",
   "https://ipfs.io",
+  "https://gateway.pinata.cloud",
   "https://*.mypinata.cloud",
 ];
+
+const FONT_SRC = ["'self'", "data:", "https://fonts.gstatic.com"];
 
 /** @param {readonly string[]} values */
 function joinDirective(values) {
@@ -36,7 +41,7 @@ export function buildContentSecurityPolicy() {
     `img-src ${joinDirective(IMG_SRC)}`,
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
     "style-src 'self' 'unsafe-inline'",
-    "font-src 'self' data:",
+    `font-src ${joinDirective(FONT_SRC)}`,
     "frame-ancestors 'none'",
   ].join("; ");
 }

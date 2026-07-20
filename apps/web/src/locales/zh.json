@@ -263,11 +263,21 @@
       }
     },
     "fields": {
-      "title": { "label": "标题" },
-      "manuscriptFile": { "label": "手稿文件" },
-      "coverImage": { "label": "封面图片" },
-      "publicationDate": { "label": "出版日期" },
-      "editionNumber": { "label": "版次编号" },
+      "title": {
+        "label": "标题"
+      },
+      "manuscriptFile": {
+        "label": "手稿文件"
+      },
+      "coverImage": {
+        "label": "封面图片"
+      },
+      "publicationDate": {
+        "label": "出版日期"
+      },
+      "editionNumber": {
+        "label": "版次编号"
+      },
       "editionKind": {
         "label": "版本类型",
         "options": {
@@ -275,23 +285,41 @@
           "reprint": "重印"
         }
       },
-      "reprintNumber": { "label": "重印次数" },
-      "seriesName": { "label": "系列名称" },
-      "seriesVolume": { "label": "系列卷号" },
+      "reprintNumber": {
+        "label": "重印次数"
+      },
+      "seriesName": {
+        "label": "系列名称"
+      },
+      "seriesVolume": {
+        "label": "系列卷号"
+      },
       "language": {
         "label": "语言",
         "placeholder": "例如 en、it"
       },
-      "originalPublicationDate": { "label": "首次出版日期" },
-      "backCoverText": { "label": "封底文字" },
-      "aboutAuthor": { "label": "作者简介" },
-      "authorAddress": { "label": "作者公开地址" },
+      "originalPublicationDate": {
+        "label": "首次出版日期"
+      },
+      "backCoverText": {
+        "label": "封底文字"
+      },
+      "aboutAuthor": {
+        "label": "作者简介"
+      },
+      "authorAddress": {
+        "label": "作者公开地址"
+      },
       "priceMatic": {
         "label": "初始定价（MATIC）",
         "placeholder": "留空表示不设初始价格"
       },
-      "maxCopies": { "label": "最大副本数" },
-      "externalUrl": { "label": "外部链接" }
+      "maxCopies": {
+        "label": "最大副本数"
+      },
+      "externalUrl": {
+        "label": "外部链接"
+      }
     },
     "guidance": {
       "intro": "上传手稿和封面，然后在链上注册前将作品加密并固定到 IPFS。",
@@ -350,12 +378,16 @@
         "maxLength": "{label} 不得超过 {max} 个字符。",
         "invalidCharacters": "{label} 包含无效字符。"
       },
-      "publicationDate": { "required": "出版日期为必填项。" },
+      "publicationDate": {
+        "required": "出版日期为必填项。"
+      },
       "editionNumber": {
         "required": "版次编号为必填项。",
         "invalid": "版次编号必须为不小于 1 的整数。"
       },
-      "editionKind": { "required": "请选择首版或重印。" },
+      "editionKind": {
+        "required": "请选择首版或重印。"
+      },
       "reprintNumber": {
         "required": "重印次数为必填项。",
         "invalid": "重印次数必须为不小于 1 的整数。"
@@ -392,7 +424,8 @@
       "uploadFailed": "作品上传失败。",
       "connectWalletToRegister": "请连接作者钱包以注册作品。",
       "registerFailed": "链上注册失败。",
-      "manuscriptRequiredForPreview": "预览需要手稿文件。"
+      "manuscriptRequiredForPreview": "预览需要手稿文件。",
+      "chainClientUnavailable": "区块链客户端不可用。请检查网络后重试。"
     },
     "loading": {
       "uploading": "正在上传加密作品…"
@@ -447,7 +480,7 @@
     },
     "actions": {
       "registerOnChain": "链上注册",
-      "labelingCopies": "正在编号副本…",
+      "labelingCopies": "请确认 MetaMask 提示以为每份副本编号…",
       "previewEdition": "预览版本",
       "encrypting": "正在加密…",
       "pinningToIpfs": "正在固定到 IPFS…",
@@ -455,6 +488,11 @@
     },
     "success": {
       "registered": "作品已链上注册。交易：{txHash}"
+    },
+    "status": {
+      "confirmWalletForLabeling": "请确认钱包签名以准备编号副本元数据。",
+      "pinningEditionMetadata": "正在将编号版本元数据固定到 IPFS…",
+      "confirmCopyMetadataTx": "请在 MetaMask 确认第 {index}/{total} 笔交易以设置链上副本元数据…"
     }
   },
   "authorOnboarding": {

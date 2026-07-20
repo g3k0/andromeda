@@ -80,15 +80,31 @@ export type WriteCopyMetadataInput = {
   contractAddress: `0x${string}`;
   abi: Abi;
   writeContractAsync: (request: ReturnType<typeof buildSetCopyMetadataRequest>) => Promise<`0x${string}`>;
+  /**
+   * Wait until each `setCopyMetadataURI` tx is mined before submitting the next.
+   * Required for wallet nonce ordering (MetaMask hangs if txs are stacked too fast).
+   */
+  waitForTransactionReceipt: (hash: `0x${string}`) => Promise<unknown>;
+  onCopyWriteProgress?: (progress: {
+    index: number;
+    total: number;
+    tokenId: bigint;
+  }) => void;
 };
 
 export async function writeCopyMetadataUris(
   input: WriteCopyMetadataInput,
 ): Promise<void> {
+  const total = input.copies.length;
   await input.copies.reduce<Promise<void>>(
-    (chain, copy) =>
+    (chain, copy, index) =>
       chain.then(async () => {
-        await input.writeContractAsync(
+        input.onCopyWriteProgress?.({
+          index: index + 1,
+          total,
+          tokenId: copy.tokenId,
+        });
+        const hash = await input.writeContractAsync(
           buildSetCopyMetadataRequest({
             tokenId: copy.tokenId,
             metadataUri: copy.metadataUri,
@@ -96,6 +112,7 @@ export async function writeCopyMetadataUris(
             abi: input.abi,
           }),
         );
+        await input.waitForTransactionReceipt(hash);
       }),
     Promise.resolve(),
   );
@@ -110,6 +127,8 @@ export type CompleteEditionMetadataInput = {
   contractAddress: `0x${string}`;
   abi: Abi;
   writeContractAsync: WriteCopyMetadataInput["writeContractAsync"];
+  waitForTransactionReceipt: WriteCopyMetadataInput["waitForTransactionReceipt"];
+  onCopyWriteProgress?: WriteCopyMetadataInput["onCopyWriteProgress"];
   fetchImpl?: typeof fetch;
 };
 
@@ -141,6 +160,8 @@ export async function completeEditionMetadataAfterRegister(
     contractAddress: input.contractAddress,
     abi: input.abi,
     writeContractAsync: input.writeContractAsync,
+    waitForTransactionReceipt: input.waitForTransactionReceipt,
+    onCopyWriteProgress: input.onCopyWriteProgress,
   });
 
   return { workId, labeledCopies: pinned.length };

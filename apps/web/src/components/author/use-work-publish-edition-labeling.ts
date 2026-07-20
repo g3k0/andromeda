@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { TransactionReceipt } from "viem";
+import { usePublicClient } from "wagmi";
 
 import { createSignedWalletPayload } from "@/lib/auth/client-wallet-auth";
 import type { ClientWriteContractAsync } from "@/lib/chain/client-write-contract";
@@ -43,6 +44,7 @@ export function useWorkPublishEditionLabeling({
   dispatch,
   t,
 }: UseWorkPublishEditionLabelingInput): void {
+  const publicClient = usePublicClient();
   const handledRegisterReceiptRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -56,12 +58,26 @@ export function useWorkPublishEditionLabeling({
 
     async function labelEditionCopies() {
       try {
+        if (!publicClient) {
+          throw new Error(t("publish.errors.chainClientUnavailable"));
+        }
+
         dispatch({ type: "set_step", step: "labeling_copies" });
+        dispatch({
+          type: "set_status_message",
+          message: t("publish.status.confirmWalletForLabeling"),
+        });
+
         const { maxCopies } = parseRegisterWorkParams(values);
         const walletAuth = await createSignedWalletPayload(
           address!,
           signMessageAsync,
         );
+
+        dispatch({
+          type: "set_status_message",
+          message: t("publish.status.pinningEditionMetadata"),
+        });
 
         await completeEditionMetadataAfterRegister({
           logs: receipt!.logs,
@@ -78,10 +94,23 @@ export function useWorkPublishEditionLabeling({
               functionName: request.functionName,
               args: [...request.args],
             }),
+          waitForTransactionReceipt: (hash) =>
+            publicClient.waitForTransactionReceipt({ hash }),
+          onCopyWriteProgress: ({ index, total }) => {
+            dispatch({
+              type: "set_status_message",
+              message: t("publish.status.confirmCopyMetadataTx", {
+                index: String(index),
+                total: String(total),
+              }),
+            });
+          },
         });
 
+        dispatch({ type: "set_status_message", message: null });
         dispatch({ type: "set_step", step: "success" });
       } catch (error) {
+        handledRegisterReceiptRef.current = null;
         dispatch({ type: "register_failed" });
         dispatch({
           type: "set_error_message",
@@ -100,6 +129,7 @@ export function useWorkPublishEditionLabeling({
     authorAddress,
     signMessageAsync,
     writeContractAsync,
+    publicClient,
     dispatch,
     t,
   ]);

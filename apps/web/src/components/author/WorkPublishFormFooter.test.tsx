@@ -28,6 +28,7 @@ describe("WorkPublishFormFooter", () => {
         metadataPreview={null}
         txHash={null}
         errorMessage={null}
+        statusMessage={null}
         isBusy={false}
         isComplete={false}
         onFieldChange={() => undefined}
@@ -56,6 +57,7 @@ describe("WorkPublishFormFooter", () => {
         metadataPreview={null}
         txHash={null}
         errorMessage={null}
+        statusMessage={null}
         isBusy={false}
         isComplete={false}
         onFieldChange={() => undefined}

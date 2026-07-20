@@ -263,11 +263,21 @@
       }
     },
     "fields": {
-      "title": { "label": "タイトル" },
-      "manuscriptFile": { "label": "原稿ファイル" },
-      "coverImage": { "label": "カバー画像" },
-      "publicationDate": { "label": "出版日" },
-      "editionNumber": { "label": "版番号" },
+      "title": {
+        "label": "タイトル"
+      },
+      "manuscriptFile": {
+        "label": "原稿ファイル"
+      },
+      "coverImage": {
+        "label": "カバー画像"
+      },
+      "publicationDate": {
+        "label": "出版日"
+      },
+      "editionNumber": {
+        "label": "版番号"
+      },
       "editionKind": {
         "label": "版の種類",
         "options": {
@@ -275,23 +285,41 @@
           "reprint": "重版"
         }
       },
-      "reprintNumber": { "label": "重版番号" },
-      "seriesName": { "label": "シリーズ名" },
-      "seriesVolume": { "label": "シリーズ巻数" },
+      "reprintNumber": {
+        "label": "重版番号"
+      },
+      "seriesName": {
+        "label": "シリーズ名"
+      },
+      "seriesVolume": {
+        "label": "シリーズ巻数"
+      },
       "language": {
         "label": "言語",
         "placeholder": "例: en, it"
       },
-      "originalPublicationDate": { "label": "初版発行日" },
-      "backCoverText": { "label": "帯・裏表紙テキスト" },
-      "aboutAuthor": { "label": "著者について" },
-      "authorAddress": { "label": "著者の公開アドレス" },
+      "originalPublicationDate": {
+        "label": "初版発行日"
+      },
+      "backCoverText": {
+        "label": "帯・裏表紙テキスト"
+      },
+      "aboutAuthor": {
+        "label": "著者について"
+      },
+      "authorAddress": {
+        "label": "著者の公開アドレス"
+      },
       "priceMatic": {
         "label": "初期定価（MATIC）",
         "placeholder": "初期価格を設定しない場合は空欄"
       },
-      "maxCopies": { "label": "最大部数" },
-      "externalUrl": { "label": "外部 URL" }
+      "maxCopies": {
+        "label": "最大部数"
+      },
+      "externalUrl": {
+        "label": "外部 URL"
+      }
     },
     "guidance": {
       "intro": "原稿とカバーをアップロードし、オンチェーン登録の前に作品を暗号化して IPFS にピン留めします。",
@@ -350,12 +378,16 @@
         "maxLength": "{label} は {max} 文字以内にしてください。",
         "invalidCharacters": "{label} に無効な文字が含まれています。"
       },
-      "publicationDate": { "required": "出版日は必須です。" },
+      "publicationDate": {
+        "required": "出版日は必須です。"
+      },
       "editionNumber": {
         "required": "版番号は必須です。",
         "invalid": "版番号は 1 以上の整数である必要があります。"
       },
-      "editionKind": { "required": "初版または重版を選択してください。" },
+      "editionKind": {
+        "required": "初版または重版を選択してください。"
+      },
       "reprintNumber": {
         "required": "重版番号は必須です。",
         "invalid": "重版番号は 1 以上の整数である必要があります。"
@@ -392,7 +424,8 @@
       "uploadFailed": "作品のアップロードに失敗しました。",
       "connectWalletToRegister": "作品を登録するには著者ウォレットを接続してください。",
       "registerFailed": "オンチェーン登録に失敗しました。",
-      "manuscriptRequiredForPreview": "プレビューには原稿ファイルが必要です。"
+      "manuscriptRequiredForPreview": "プレビューには原稿ファイルが必要です。",
+      "chainClientUnavailable": "ブロックチェーンクライアントを利用できません。ネットワークを確認して再試行してください。"
     },
     "loading": {
       "uploading": "暗号化された作品をアップロード中…"
@@ -447,7 +480,7 @@
     },
     "actions": {
       "registerOnChain": "オンチェーン登録",
-      "labelingCopies": "部数を付番中…",
+      "labelingCopies": "各コピーに番号を付けるため MetaMask の確認を承認してください…",
       "previewEdition": "版をプレビュー",
       "encrypting": "暗号化中…",
       "pinningToIpfs": "IPFS にピン留め中…",
@@ -455,6 +488,11 @@
     },
     "success": {
       "registered": "作品をオンチェーン登録しました。トランザクション: {txHash}"
+    },
+    "status": {
+      "confirmWalletForLabeling": "番号付きコピーのメタデータを準備するため、ウォレット署名を確認してください。",
+      "pinningEditionMetadata": "番号付き版メタデータを IPFS にピン留めしています…",
+      "confirmCopyMetadataTx": "コピーメタデータをオンチェーンに設定するため、MetaMask でトランザクション {index}/{total} を確認してください…"
     }
   },
   "authorOnboarding": {

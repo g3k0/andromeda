@@ -22,6 +22,7 @@ export type WorkPublishFormFooterProps = {
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
+  statusMessage: string | null;
   isBusy: boolean;
   isComplete: boolean;
   onFieldChange: (field: keyof WorkPublishFormValues, value: string) => void;
@@ -40,6 +41,7 @@ export function WorkPublishFormFooter({
   metadataPreview,
   txHash,
   errorMessage,
+  statusMessage,
   isBusy,
   isComplete,
   onFieldChange,
@@ -82,6 +84,12 @@ export function WorkPublishFormFooter({
             {formatMetadataPreview(metadataPreview)}
           </pre>
         </div>
+      ) : null}
+
+      {statusMessage ? (
+        <p className="text-sm text-sky-300/90" role="status">
+          {statusMessage}
+        </p>
       ) : null}
 
       {errorMessage ? (
