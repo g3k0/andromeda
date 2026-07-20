@@ -1,7 +1,7 @@
 import {
   assertValidWorkId,
   mapOwnerOf,
-  mapRawWorkToWorkOnChain,
+  normalizeAddress,
 } from "../chain-reader";
 import { TokenNotFoundError, WorkNotFoundError } from "../errors";
 import type { ChainReader } from "../ports/chain-reader-port";
@@ -73,14 +73,11 @@ export function createInMemoryChainReader(
         throw new WorkNotFoundError(workId);
       }
 
-      return mapRawWorkToWorkOnChain(workId, [
-        work.author,
-        work.metadataURI,
-        work.price,
-        work.maxCopies,
-        work.minted,
-        work.active,
-      ]);
+      return {
+        ...work,
+        workId,
+        author: normalizeAddress(work.author),
+      };
     },
 
     async ownerOf(tokenId: bigint) {

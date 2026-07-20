@@ -18,6 +18,7 @@ function workRecord(overrides: Partial<WorkRecord> = {}): WorkRecord {
     price: 1000n,
     maxCopies: 10n,
     minted: 3n,
+    primarySaleRemaining: 7n,
     active: true,
     createdAt: "2026-01-01T00:00:00.000Z",
     updatedAt: "2026-01-01T00:00:00.000Z",
@@ -35,7 +36,7 @@ describe("toPublicWorkDto", () => {
   });
 
   it("marks sold-out editions", () => {
-    const dto = toPublicWorkDto(workRecord({ minted: 10n }));
+    const dto = toPublicWorkDto(workRecord({ primarySaleRemaining: 0n }));
     expect(dto.remainingCopies).toBe("0");
     expect(dto.soldOut).toBe(true);
   });
@@ -61,6 +62,7 @@ describe("toPublicTokenDto", () => {
       copyNumber: 2,
       tbaAddress: null,
       envelopeCid: "bafyenvelope",
+      envelopeRecipientPublicKey: null,
       metadataURI: "ipfs://token-42",
       createdAt: "2026-01-01T00:00:00.000Z",
       updatedAt: "2026-01-01T00:00:00.000Z",

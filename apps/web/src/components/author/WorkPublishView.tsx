@@ -28,6 +28,7 @@ export type WorkPublishViewProps = {
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
+  statusMessage: string | null;
   onFieldChange: (field: keyof WorkPublishFormValues, value: string) => void;
   onCoverImageChange: (file: File | undefined) => void;
   onManuscriptFileChange: (file: File | undefined) => void;
@@ -50,6 +51,7 @@ export function WorkPublishView({
   metadataPreview,
   txHash,
   errorMessage,
+  statusMessage,
   onFieldChange,
   onCoverImageChange,
   onManuscriptFileChange,
@@ -59,7 +61,11 @@ export function WorkPublishView({
   onRegister,
 }: WorkPublishViewProps) {
   const { t } = useTranslation();
-  const isBusy = step === "encrypting" || step === "uploading" || step === "registering";
+  const isBusy =
+    step === "encrypting" ||
+    step === "uploading" ||
+    step === "registering" ||
+    step === "labeling_copies";
   const isComplete = step === "success";
   const disabled = isBusy || isComplete;
 
@@ -111,6 +117,7 @@ export function WorkPublishView({
         metadataPreview={metadataPreview}
         txHash={txHash}
         errorMessage={errorMessage}
+        statusMessage={statusMessage}
         isBusy={isBusy}
         isComplete={isComplete}
         onFieldChange={onFieldChange}

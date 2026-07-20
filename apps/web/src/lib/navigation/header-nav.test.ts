@@ -31,25 +31,25 @@ const LOCALIZED_MY_PAGE = {
 describe("shouldShowMyAuthorPageLink", () => {
   it("returns true for authors", () => {
     expect(
-      shouldShowMyAuthorPageLink({ role: "author", hasAuthorProfile: true }, LOCALE),
+      shouldShowMyAuthorPageLink({ role: "author", hasAuthorProfile: true }),
     ).toBe(true);
   });
 
   it("returns true for admins with a profile", () => {
     expect(
-      shouldShowMyAuthorPageLink({ role: "admin", hasAuthorProfile: true }, LOCALE),
+      shouldShowMyAuthorPageLink({ role: "admin", hasAuthorProfile: true }),
     ).toBe(true);
   });
 
   it("returns false for admins without a profile", () => {
     expect(
-      shouldShowMyAuthorPageLink({ role: "admin", hasAuthorProfile: false }, LOCALE),
+      shouldShowMyAuthorPageLink({ role: "admin", hasAuthorProfile: false }),
     ).toBe(false);
   });
 
   it("returns false for readers including those who declined", () => {
     expect(
-      shouldShowMyAuthorPageLink({ role: "reader", hasAuthorProfile: false }, LOCALE),
+      shouldShowMyAuthorPageLink({ role: "reader", hasAuthorProfile: false }),
     ).toBe(false);
   });
 });
@@ -77,30 +77,23 @@ describe("buildHeaderNavLinks", () => {
     ]);
   });
 
-  it("does not include Admin in the header nav for any role", () => {
+  it("does not include Admin or My page in the header nav for any role", () => {
     expect(buildHeaderNavLinks({ role: "admin", hasAuthorProfile: false }, LOCALE)).toEqual(
       [LOCALIZED_CATALOG, LOCALIZED_LIBRARY, LOCALIZED_ABOUT],
     );
     expect(buildHeaderNavLinks({ role: "author", hasAuthorProfile: true }, LOCALE)).toEqual(
-      [LOCALIZED_CATALOG, LOCALIZED_LIBRARY, LOCALIZED_ABOUT, LOCALIZED_MY_PAGE],
+      [LOCALIZED_CATALOG, LOCALIZED_LIBRARY, LOCALIZED_ABOUT],
     );
   });
 
-  it("omits My page for readers who declined onboarding", () => {
-    expect(buildHeaderNavLinks({ role: "reader", hasAuthorProfile: false }, LOCALE)).not.toContainEqual(
-      LOCALIZED_MY_PAGE,
-    );
-  });
-
-  it("includes My page for authors and admins with a profile", () => {
-    expect(buildHeaderNavLinks({ role: "author", hasAuthorProfile: true }, LOCALE)).toContainEqual(
+  it("omits My page from the header nav for authors and admins with a profile", () => {
+    expect(buildHeaderNavLinks({ role: "author", hasAuthorProfile: true }, LOCALE)).not.toContainEqual(
       LOCALIZED_MY_PAGE,
     );
     expect(buildHeaderNavLinks({ role: "admin", hasAuthorProfile: true }, LOCALE)).toEqual([
       LOCALIZED_CATALOG,
       LOCALIZED_LIBRARY,
       LOCALIZED_ABOUT,
-      LOCALIZED_MY_PAGE,
     ]);
   });
 

@@ -20,7 +20,8 @@ function work(overrides: Partial<WorkOnChain>): WorkOnChain {
     metadataURI: "ipfs://meta",
     price: parseEther("0.05"),
     maxCopies: 100n,
-    minted: 0n,
+    minted: 100n,
+    primarySaleRemaining: 60n,
     active: true,
     ...overrides,
   };
@@ -28,23 +29,27 @@ function work(overrides: Partial<WorkOnChain>): WorkOnChain {
 
 describe("getWorkAvailability", () => {
   it("treats maxCopies 0 as an unlimited open sale", () => {
-    expect(getWorkAvailability(work({ maxCopies: 0n, minted: 999n }))).toEqual({
+    expect(
+      getWorkAvailability(
+        work({ maxCopies: 0n, minted: 999n, primarySaleRemaining: 0n }),
+      ),
+    ).toEqual({
       remaining: null,
       soldOut: false,
       saleOpen: true,
     });
   });
 
-  it("computes remaining copies and keeps the sale open", () => {
-    expect(getWorkAvailability(work({ maxCopies: 100n, minted: 40n }))).toEqual({
+  it("uses primary sale inventory for remaining copies", () => {
+    expect(getWorkAvailability(work({ primarySaleRemaining: 60n }))).toEqual({
       remaining: 60n,
       soldOut: false,
       saleOpen: true,
     });
   });
 
-  it("marks a fully minted work as sold out and closed", () => {
-    expect(getWorkAvailability(work({ maxCopies: 100n, minted: 100n }))).toEqual({
+  it("marks a sold-out inventory as closed", () => {
+    expect(getWorkAvailability(work({ primarySaleRemaining: 0n }))).toEqual({
       remaining: 0n,
       soldOut: true,
       saleOpen: false,

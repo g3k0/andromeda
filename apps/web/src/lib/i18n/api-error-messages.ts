@@ -31,6 +31,7 @@ const API_ERROR_I18N_KEYS: Record<ApiErrorCode, string> = {
   system_role_mutation: "api.errors.systemRoleMutation",
   admin_role_lockout: "api.errors.adminRoleLockout",
   invalid_work_id: "api.errors.invalidWorkId",
+  invalid_token_id: "api.errors.invalidTokenId",
   invalid_owner_address: "api.errors.invalidOwnerAddress",
   work_upload_validation: "api.errors.workUploadValidation",
   work_upload_metadata_exists: "api.errors.workUploadMetadataExists",

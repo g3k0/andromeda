@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { encryptContent, encodeUtf8Plaintext } from "@/lib/content-crypto/content-cipher";
 import { generateContentKey } from "@/lib/content-crypto/ace-spec";
+import { IpfsMetadataValidationError } from "@/lib/ipfs/errors";
 import {
   createInMemoryIpfsState,
   createInMemoryIpfsStorage,
@@ -69,6 +70,30 @@ describe("buildAcePublicMetadata", () => {
 });
 
 describe("publishWorkToIpfs", () => {
+  it("validates metadata before pinning to IPFS", async () => {
+    const state = createInMemoryIpfsState();
+    const ipfs = createInMemoryIpfsStorage(state);
+    const contentKey = generateContentKey();
+    const ciphertext = await encryptContent(
+      encodeUtf8Plaintext("Once upon a time…"),
+      contentKey,
+    );
+
+    await expect(
+      publishWorkToIpfs(ipfs, {
+        ciphertext,
+        coverImage: new TextEncoder().encode("fake-png-bytes"),
+        name: "The Star Gate",
+        workImprint: sampleWorkImprint(),
+        chainId: 80002,
+        contractAddress: "" as `0x${string}`,
+        registryAddress: REGISTRY,
+      }),
+    ).rejects.toThrow(IpfsMetadataValidationError);
+
+    expect(state.records.size).toBe(0);
+  });
+
   it("pins cover, ciphertext, and validated metadata", async () => {
     const state = createInMemoryIpfsState();
     const ipfs = createInMemoryIpfsStorage(state);

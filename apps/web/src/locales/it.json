@@ -175,7 +175,8 @@
     "connectWallet": "Connetti un wallet per acquistare una copia.",
     "notAvailable": "Questa edizione non è disponibile.",
     "mintFailed": "Impossibile completare la coniazione della copia.",
-    "txFailed": "Transazione di coniazione fallita."
+    "txFailed": "Transazione di coniazione fallita.",
+    "receiptTimeout": "La transazione è stata inviata ma la conferma è scaduta. Controlla Polygonscan e aggiorna la pagina."
   },
   "reader": {
     "metaTitle": "Leggi | Andromeda",
@@ -262,11 +263,21 @@
       }
     },
     "fields": {
-      "title": { "label": "Titolo" },
-      "manuscriptFile": { "label": "File del manoscritto" },
-      "coverImage": { "label": "Immagine di copertina" },
-      "publicationDate": { "label": "Data di pubblicazione" },
-      "editionNumber": { "label": "Numero di edizione" },
+      "title": {
+        "label": "Titolo"
+      },
+      "manuscriptFile": {
+        "label": "File del manoscritto"
+      },
+      "coverImage": {
+        "label": "Immagine di copertina"
+      },
+      "publicationDate": {
+        "label": "Data di pubblicazione"
+      },
+      "editionNumber": {
+        "label": "Numero di edizione"
+      },
       "editionKind": {
         "label": "Tipo di edizione",
         "options": {
@@ -274,23 +285,41 @@
           "reprint": "Ristampa"
         }
       },
-      "reprintNumber": { "label": "Numero di ristampa" },
-      "seriesName": { "label": "Nome della serie" },
-      "seriesVolume": { "label": "Volume della serie" },
+      "reprintNumber": {
+        "label": "Numero di ristampa"
+      },
+      "seriesName": {
+        "label": "Nome della serie"
+      },
+      "seriesVolume": {
+        "label": "Volume della serie"
+      },
       "language": {
         "label": "Lingua",
         "placeholder": "es. en, it"
       },
-      "originalPublicationDate": { "label": "Data di prima pubblicazione" },
-      "backCoverText": { "label": "Testo di quarta di copertina" },
-      "aboutAuthor": { "label": "Informazioni sull'autore" },
-      "authorAddress": { "label": "Indirizzo pubblico dell'autore" },
+      "originalPublicationDate": {
+        "label": "Data di prima pubblicazione"
+      },
+      "backCoverText": {
+        "label": "Testo di quarta di copertina"
+      },
+      "aboutAuthor": {
+        "label": "Informazioni sull'autore"
+      },
+      "authorAddress": {
+        "label": "Indirizzo pubblico dell'autore"
+      },
       "priceMatic": {
         "label": "Prezzo di listino iniziale (MATIC)",
         "placeholder": "Lascia vuoto per nessun prezzo iniziale"
       },
-      "maxCopies": { "label": "Copie massime" },
-      "externalUrl": { "label": "URL esterno" }
+      "maxCopies": {
+        "label": "Copie massime"
+      },
+      "externalUrl": {
+        "label": "URL esterno"
+      }
     },
     "guidance": {
       "intro": "Carica manoscritto e copertina, poi cifra e fissa l'opera su IPFS prima della registrazione on-chain.",
@@ -349,12 +378,16 @@
         "maxLength": "{label} deve avere al massimo {max} caratteri.",
         "invalidCharacters": "{label} contiene caratteri non validi."
       },
-      "publicationDate": { "required": "La data di pubblicazione è obbligatoria." },
+      "publicationDate": {
+        "required": "La data di pubblicazione è obbligatoria."
+      },
       "editionNumber": {
         "required": "Il numero di edizione è obbligatorio.",
         "invalid": "Il numero di edizione deve essere un numero intero di almeno 1."
       },
-      "editionKind": { "required": "Seleziona prima edizione o ristampa." },
+      "editionKind": {
+        "required": "Seleziona prima edizione o ristampa."
+      },
       "reprintNumber": {
         "required": "Il numero di ristampa è obbligatorio.",
         "invalid": "Il numero di ristampa deve essere un numero intero di almeno 1."
@@ -391,7 +424,8 @@
       "uploadFailed": "Caricamento dell'opera non riuscito.",
       "connectWalletToRegister": "Connetti il wallet autore per registrare l'opera.",
       "registerFailed": "Registrazione on-chain non riuscita.",
-      "manuscriptRequiredForPreview": "Il file del manoscritto è obbligatorio per l'anteprima."
+      "manuscriptRequiredForPreview": "Il file del manoscritto è obbligatorio per l'anteprima.",
+      "chainClientUnavailable": "Client blockchain non disponibile. Controlla la rete e riprova."
     },
     "loading": {
       "uploading": "Caricamento dell'opera cifrata…"
@@ -446,6 +480,7 @@
     },
     "actions": {
       "registerOnChain": "Registra on-chain",
+      "labelingCopies": "Conferma i prompt MetaMask per numerare ogni copia…",
       "previewEdition": "Anteprima dell'edizione",
       "encrypting": "Cifratura…",
       "pinningToIpfs": "Fissaggio su IPFS…",
@@ -453,6 +488,11 @@
     },
     "success": {
       "registered": "Opera registrata on-chain. Transazione: {txHash}"
+    },
+    "status": {
+      "confirmWalletForLabeling": "Conferma la firma del wallet per preparare i metadata delle copie numerate.",
+      "pinningEditionMetadata": "Pin dei metadata numerati su IPFS…",
+      "confirmCopyMetadataTx": "Conferma in MetaMask la transazione {index} di {total} per impostare i metadata della copia on-chain…"
     }
   },
   "authorOnboarding": {
@@ -652,12 +692,13 @@
       "systemRoleMutation": "I ruoli di sistema non possono essere modificati.",
       "adminRoleLockout": "Impossibile rimuovere l'ultimo ruolo admin.",
       "invalidWorkId": "ID opera non valido.",
+      "invalidTokenId": "ID token non valido.",
       "invalidOwnerAddress": "Indirizzo del proprietario non valido.",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",
       "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "Le chiavi di contenuto non devono mai essere inviate al server.",
-      "ipfsMetadataValidation": "I metadati generati non hanno superato la validazione di sicurezza.",
+      "ipfsMetadataValidation": "{detail}",
       "unexpected": "Qualcosa è andato storto. Riprova.",
       "walletAuthMessageFailed": "Impossibile creare il messaggio di autenticazione del wallet."
     }

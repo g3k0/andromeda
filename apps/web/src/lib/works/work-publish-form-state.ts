@@ -38,6 +38,7 @@ export type WorkPublishStep =
   | "uploading"
   | "ready"
   | "registering"
+  | "labeling_copies"
   | "success"
   | "error";
 

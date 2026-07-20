@@ -56,6 +56,7 @@ export function SiteHeaderNav() {
           roleSlug={snapshot.roleSlug}
           roleName={snapshot.roleName}
           permissions={snapshot.permissions}
+          hasAuthorProfile={snapshot.hasAuthorProfile}
           onLogout={() => {
             void revokeWalletSessionAction();
             disconnect();

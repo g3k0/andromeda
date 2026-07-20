@@ -35,7 +35,6 @@ const walletSessionSchema = new Schema(
     expiresAt: {
       type: Date,
       required: true,
-      index: true,
     },
     lastSeenAt: {
       type: Date,

@@ -16,6 +16,7 @@ export function assertValidWorkId(workId: bigint, totalWorks: bigint): void {
 export function mapRawWorkToWorkOnChain(
   workId: bigint,
   raw: RawWorkTuple,
+  primarySaleRemaining: bigint,
 ): WorkOnChain {
   const [author, metadataURI, price, maxCopies, minted, active] = raw;
 
@@ -26,6 +27,7 @@ export function mapRawWorkToWorkOnChain(
     price,
     maxCopies,
     minted,
+    primarySaleRemaining,
     active,
   };
 }

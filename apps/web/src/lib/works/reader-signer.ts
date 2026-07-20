@@ -35,6 +35,12 @@ export function deriveReaderKeypairFromSignature(
   };
 }
 
+export function deriveReaderPublicKeyFromSignature(
+  signature: `0x${string}`,
+): Uint8Array {
+  return deriveReaderKeypairFromSignature(signature).publicKey;
+}
+
 /** Builds an envelope signer from a wallet signature, for in-browser unwrap. */
 export function createReaderSignerFromSignature(
   signature: `0x${string}`,

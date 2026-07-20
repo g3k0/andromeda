@@ -19,11 +19,7 @@ export type PublicWorkDto = {
 
 export function toPublicWorkDto(work: WorkRecord): PublicWorkDto {
   const unlimited = work.maxCopies === 0n;
-  const remaining = unlimited
-    ? null
-    : work.maxCopies > work.minted
-      ? work.maxCopies - work.minted
-      : 0n;
+  const remaining = unlimited ? null : work.primarySaleRemaining;
 
   return {
     workId: work.workId.toString(),

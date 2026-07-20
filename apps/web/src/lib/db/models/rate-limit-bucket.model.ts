@@ -18,7 +18,6 @@ const rateLimitBucketSchema = new Schema(
     resetAt: {
       type: Date,
       required: true,
-      index: true,
     },
   },
   {

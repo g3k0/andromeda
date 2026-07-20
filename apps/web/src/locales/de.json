@@ -175,7 +175,8 @@
     "connectWallet": "Verbinde eine Wallet, um ein Exemplar zu kaufen.",
     "notAvailable": "Diese Ausgabe ist nicht verfügbar.",
     "mintFailed": "Prägung des Exemplars konnte nicht abgeschlossen werden.",
-    "txFailed": "Prägungstransaktion fehlgeschlagen."
+    "txFailed": "Prägungstransaktion fehlgeschlagen.",
+    "receiptTimeout": "Die Transaktion wurde gesendet, aber die Bestätigung ist abgelaufen. Prüfen Sie Polygonscan und laden Sie die Seite neu."
   },
   "reader": {
     "metaTitle": "Lesen | Andromeda",
@@ -262,11 +263,21 @@
       }
     },
     "fields": {
-      "title": { "label": "Titel" },
-      "manuscriptFile": { "label": "Manuskriptdatei" },
-      "coverImage": { "label": "Coverbild" },
-      "publicationDate": { "label": "Erscheinungsdatum" },
-      "editionNumber": { "label": "Ausgabennummer" },
+      "title": {
+        "label": "Titel"
+      },
+      "manuscriptFile": {
+        "label": "Manuskriptdatei"
+      },
+      "coverImage": {
+        "label": "Coverbild"
+      },
+      "publicationDate": {
+        "label": "Erscheinungsdatum"
+      },
+      "editionNumber": {
+        "label": "Ausgabennummer"
+      },
       "editionKind": {
         "label": "Ausgabenart",
         "options": {
@@ -274,23 +285,41 @@
           "reprint": "Nachdruck"
         }
       },
-      "reprintNumber": { "label": "Nachdrucknummer" },
-      "seriesName": { "label": "Serienname" },
-      "seriesVolume": { "label": "Serienband" },
+      "reprintNumber": {
+        "label": "Nachdrucknummer"
+      },
+      "seriesName": {
+        "label": "Serienname"
+      },
+      "seriesVolume": {
+        "label": "Serienband"
+      },
       "language": {
         "label": "Sprache",
         "placeholder": "z. B. en, it"
       },
-      "originalPublicationDate": { "label": "Datum der Erstveröffentlichung" },
-      "backCoverText": { "label": "Klappentext" },
-      "aboutAuthor": { "label": "Über den Autor" },
-      "authorAddress": { "label": "Öffentliche Autorenadresse" },
+      "originalPublicationDate": {
+        "label": "Datum der Erstveröffentlichung"
+      },
+      "backCoverText": {
+        "label": "Klappentext"
+      },
+      "aboutAuthor": {
+        "label": "Über den Autor"
+      },
+      "authorAddress": {
+        "label": "Öffentliche Autorenadresse"
+      },
       "priceMatic": {
         "label": "Anfangspreis (MATIC)",
         "placeholder": "Leer lassen für keinen Anfangspreis"
       },
-      "maxCopies": { "label": "Max. Exemplare" },
-      "externalUrl": { "label": "Externe URL" }
+      "maxCopies": {
+        "label": "Max. Exemplare"
+      },
+      "externalUrl": {
+        "label": "Externe URL"
+      }
     },
     "guidance": {
       "intro": "Lade Manuskript und Cover hoch, verschlüssele das Werk und pinne es auf IPFS, bevor du es on-chain registrierst.",
@@ -349,12 +378,16 @@
         "maxLength": "{label} darf höchstens {max} Zeichen lang sein.",
         "invalidCharacters": "{label} enthält ungültige Zeichen."
       },
-      "publicationDate": { "required": "Erscheinungsdatum ist erforderlich." },
+      "publicationDate": {
+        "required": "Erscheinungsdatum ist erforderlich."
+      },
       "editionNumber": {
         "required": "Ausgabennummer ist erforderlich.",
         "invalid": "Die Ausgabennummer muss eine ganze Zahl von mindestens 1 sein."
       },
-      "editionKind": { "required": "Wähle Erstausgabe oder Nachdruck." },
+      "editionKind": {
+        "required": "Wähle Erstausgabe oder Nachdruck."
+      },
       "reprintNumber": {
         "required": "Nachdrucknummer ist erforderlich.",
         "invalid": "Die Nachdrucknummer muss eine ganze Zahl von mindestens 1 sein."
@@ -391,7 +424,8 @@
       "uploadFailed": "Upload des Werks fehlgeschlagen.",
       "connectWalletToRegister": "Verbinde die Autoren-Wallet, um das Werk zu registrieren.",
       "registerFailed": "On-Chain-Registrierung fehlgeschlagen.",
-      "manuscriptRequiredForPreview": "Manuskriptdatei ist für die Vorschau erforderlich."
+      "manuscriptRequiredForPreview": "Manuskriptdatei ist für die Vorschau erforderlich.",
+      "chainClientUnavailable": "Blockchain-Client nicht verfügbar. Netzwerk prüfen und erneut versuchen."
     },
     "loading": {
       "uploading": "Verschlüsseltes Werk wird hochgeladen…"
@@ -446,6 +480,7 @@
     },
     "actions": {
       "registerOnChain": "On-chain registrieren",
+      "labelingCopies": "MetaMask-Prompts bestätigen, um jedes Exemplar zu nummerieren…",
       "previewEdition": "Ausgabe anzeigen",
       "encrypting": "Verschlüsselung…",
       "pinningToIpfs": "Auf IPFS pinnen…",
@@ -453,6 +488,11 @@
     },
     "success": {
       "registered": "Werk on-chain registriert. Transaktion: {txHash}"
+    },
+    "status": {
+      "confirmWalletForLabeling": "Bestätige die Wallet-Signatur, um Metadaten für nummerierte Exemplare vorzubereiten.",
+      "pinningEditionMetadata": "Nummerierte Editionsmetadaten werden auf IPFS gepinnt…",
+      "confirmCopyMetadataTx": "Bestätige in MetaMask Transaktion {index} von {total}, um Exemplar-Metadaten on-chain zu setzen…"
     }
   },
   "authorOnboarding": {
@@ -652,12 +692,13 @@
       "systemRoleMutation": "Systemrollen können nicht geändert werden.",
       "adminRoleLockout": "Die letzte Admin-Rolle kann nicht entfernt werden.",
       "invalidWorkId": "Ungültige Werk-ID.",
+      "invalidTokenId": "Ungültige Token-ID.",
       "invalidOwnerAddress": "Ungültige Besitzeradresse.",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",
       "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "Inhaltsschlüssel dürfen niemals an den Server gesendet werden.",
-      "ipfsMetadataValidation": "Generierte Metadaten haben die Sicherheitsvalidierung nicht bestanden.",
+      "ipfsMetadataValidation": "{detail}",
       "unexpected": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
       "walletAuthMessageFailed": "Wallet-Authentifizierungsnachricht konnte nicht erstellt werden."
     }

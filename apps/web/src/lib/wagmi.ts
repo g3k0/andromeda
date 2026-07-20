@@ -1,8 +1,8 @@
 import { getWalletConnectProjectId } from "@/lib/config/public-env";
 import { createWagmiTransports } from "@/lib/chain/wagmi-transports";
 import { getTargetChain } from "@/lib/chain/rpc-config";
+import { injected, walletConnect } from "@/lib/wagmi-connectors";
 import { createConfig } from "wagmi";
-import { injected, walletConnect } from "wagmi/connectors";
 
 const projectId = getWalletConnectProjectId();
 

@@ -4,30 +4,30 @@ import { andromedaWorksAbi } from "@/lib/chain/contract";
 
 import { WorkMintError } from "./errors";
 
-export type CopyMintedEvent = {
+export type CopyPurchasedEvent = {
   workId: bigint;
   tokenId: bigint;
   buyer: `0x${string}`;
 };
 
-type CopyMintedArgs = {
+type CopyPurchasedArgs = {
   workId: bigint;
   tokenId: bigint;
   buyer: `0x${string}`;
 };
 
-/** Decodes every `CopyMinted` event emitted in a transaction's logs. */
-export function parseCopyMintedEvents(
+/** Decodes every `CopyPurchased` event emitted in a transaction's logs. */
+export function parseCopyPurchasedEvents(
   logs: readonly Log[],
-): CopyMintedEvent[] {
+): CopyPurchasedEvent[] {
   const parsed = parseEventLogs({
     abi: andromedaWorksAbi,
-    eventName: "CopyMinted",
+    eventName: "CopyPurchased",
     logs: [...logs],
   });
 
   return parsed.map((log) => {
-    const args = log.args as CopyMintedArgs;
+    const args = log.args as CopyPurchasedArgs;
     return {
       workId: args.workId,
       tokenId: args.tokenId,
@@ -42,14 +42,14 @@ export type ExtractMintedTokenIdOptions = {
 };
 
 /**
- * Returns the `tokenId` of the freshly minted copy from a transaction receipt's
- * logs, optionally narrowing by `workId` / `buyer` when multiple copies mint.
+ * Returns the `tokenId` of the copy purchased in a transaction receipt's logs,
+ * optionally narrowing by `workId` / `buyer`.
  */
 export function extractMintedTokenId(
   logs: readonly Log[],
   options: ExtractMintedTokenIdOptions = {},
 ): bigint {
-  const events = parseCopyMintedEvents(logs);
+  const events = parseCopyPurchasedEvents(logs);
   const buyer = options.buyer?.toLowerCase();
 
   const matches = events.filter((event) => {
@@ -64,7 +64,7 @@ export function extractMintedTokenId(
 
   if (matches.length === 0) {
     throw new WorkMintError(
-      "No matching CopyMinted event found in transaction logs",
+      "No matching CopyPurchased event found in transaction logs",
     );
   }
 

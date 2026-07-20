@@ -175,7 +175,8 @@
     "connectWallet": "Ligue uma carteira para comprar um exemplar.",
     "notAvailable": "Esta edição não está disponível.",
     "mintFailed": "Não foi possível concluir a cunhagem do exemplar.",
-    "txFailed": "A transação de cunhagem falhou."
+    "txFailed": "A transação de cunhagem falhou.",
+    "receiptTimeout": "A transação foi enviada, mas a confirmação expirou. Verifique o Polygonscan e atualize a página."
   },
   "reader": {
     "metaTitle": "Ler | Andromeda",
@@ -262,11 +263,21 @@
       }
     },
     "fields": {
-      "title": { "label": "Título" },
-      "manuscriptFile": { "label": "Ficheiro do manuscrito" },
-      "coverImage": { "label": "Imagem de capa" },
-      "publicationDate": { "label": "Data de publicação" },
-      "editionNumber": { "label": "Número da edição" },
+      "title": {
+        "label": "Título"
+      },
+      "manuscriptFile": {
+        "label": "Ficheiro do manuscrito"
+      },
+      "coverImage": {
+        "label": "Imagem de capa"
+      },
+      "publicationDate": {
+        "label": "Data de publicação"
+      },
+      "editionNumber": {
+        "label": "Número da edição"
+      },
       "editionKind": {
         "label": "Tipo de edição",
         "options": {
@@ -274,23 +285,41 @@
           "reprint": "Reimpressão"
         }
       },
-      "reprintNumber": { "label": "Número da reimpressão" },
-      "seriesName": { "label": "Nome da série" },
-      "seriesVolume": { "label": "Volume da série" },
+      "reprintNumber": {
+        "label": "Número da reimpressão"
+      },
+      "seriesName": {
+        "label": "Nome da série"
+      },
+      "seriesVolume": {
+        "label": "Volume da série"
+      },
       "language": {
         "label": "Idioma",
         "placeholder": "ex. en, it"
       },
-      "originalPublicationDate": { "label": "Data de publicação original" },
-      "backCoverText": { "label": "Texto da contracapa" },
-      "aboutAuthor": { "label": "Sobre o autor" },
-      "authorAddress": { "label": "Endereço público do autor" },
+      "originalPublicationDate": {
+        "label": "Data de publicação original"
+      },
+      "backCoverText": {
+        "label": "Texto da contracapa"
+      },
+      "aboutAuthor": {
+        "label": "Sobre o autor"
+      },
+      "authorAddress": {
+        "label": "Endereço público do autor"
+      },
       "priceMatic": {
         "label": "Preço de tabela inicial (MATIC)",
         "placeholder": "Deixar em branco para sem preço inicial"
       },
-      "maxCopies": { "label": "Cópias máximas" },
-      "externalUrl": { "label": "URL externa" }
+      "maxCopies": {
+        "label": "Cópias máximas"
+      },
+      "externalUrl": {
+        "label": "URL externa"
+      }
     },
     "guidance": {
       "intro": "Carregue o manuscrito e a capa, depois encripte e fixe a obra no IPFS antes do registo on-chain.",
@@ -349,12 +378,16 @@
         "maxLength": "{label} deve ter no máximo {max} caracteres.",
         "invalidCharacters": "{label} contém caracteres inválidos."
       },
-      "publicationDate": { "required": "A data de publicação é obrigatória." },
+      "publicationDate": {
+        "required": "A data de publicação é obrigatória."
+      },
       "editionNumber": {
         "required": "O número da edição é obrigatório.",
         "invalid": "O número da edição deve ser um número inteiro de pelo menos 1."
       },
-      "editionKind": { "required": "Selecione primeira edição ou reimpressão." },
+      "editionKind": {
+        "required": "Selecione primeira edição ou reimpressão."
+      },
       "reprintNumber": {
         "required": "O número da reimpressão é obrigatório.",
         "invalid": "O número da reimpressão deve ser um número inteiro de pelo menos 1."
@@ -391,7 +424,8 @@
       "uploadFailed": "Falha no carregamento da obra.",
       "connectWalletToRegister": "Ligue a carteira do autor para registar a obra.",
       "registerFailed": "Falha no registo on-chain.",
-      "manuscriptRequiredForPreview": "O ficheiro do manuscrito é obrigatório para a pré-visualização."
+      "manuscriptRequiredForPreview": "O ficheiro do manuscrito é obrigatório para a pré-visualização.",
+      "chainClientUnavailable": "Cliente blockchain indisponível. Verifique a rede e tente novamente."
     },
     "loading": {
       "uploading": "A carregar obra encriptada…"
@@ -446,6 +480,7 @@
     },
     "actions": {
       "registerOnChain": "Registar on-chain",
+      "labelingCopies": "Confirme os pedidos do MetaMask para numerar cada cópia…",
       "previewEdition": "Pré-visualizar edição",
       "encrypting": "A encriptar…",
       "pinningToIpfs": "A fixar no IPFS…",
@@ -453,6 +488,11 @@
     },
     "success": {
       "registered": "Obra registada on-chain. Transação: {txHash}"
+    },
+    "status": {
+      "confirmWalletForLabeling": "Confirme a assinatura da carteira para preparar os metadados das cópias numeradas.",
+      "pinningEditionMetadata": "A fixar metadados de edição numerada no IPFS…",
+      "confirmCopyMetadataTx": "Confirme no MetaMask a transação {index} de {total} para definir os metadados da cópia on-chain…"
     }
   },
   "authorOnboarding": {
@@ -652,12 +692,13 @@
       "systemRoleMutation": "As funções de sistema não podem ser modificadas.",
       "adminRoleLockout": "Não é possível remover a última função de administrador.",
       "invalidWorkId": "ID de obra inválido.",
+      "invalidTokenId": "ID de token inválido.",
       "invalidOwnerAddress": "Endereço do proprietário inválido.",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",
       "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "As chaves de conteúdo nunca devem ser enviadas ao servidor.",
-      "ipfsMetadataValidation": "Os metadados gerados falharam na validação de segurança.",
+      "ipfsMetadataValidation": "{detail}",
       "unexpected": "Algo correu mal. Tente novamente.",
       "walletAuthMessageFailed": "Falha ao criar a mensagem de autenticação da carteira."
     }

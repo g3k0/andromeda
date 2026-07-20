@@ -17,6 +17,7 @@ const SAMPLE_WORK = {
   price: 100n,
   maxCopies: 5n,
   minted: 1n,
+  primarySaleRemaining: 4n,
   active: true,
 } as const;
 

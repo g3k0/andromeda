@@ -20,6 +20,7 @@ export type WorkPublishClientState = {
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
+  statusMessage: string | null;
 };
 
 export type WorkPublishClientAction =
@@ -37,6 +38,7 @@ export type WorkPublishClientAction =
   | { type: "clear_edition_preview" }
   | { type: "upload_success"; metadata: AcePublicMetadata }
   | { type: "set_error_message"; message: string | null }
+  | { type: "set_status_message"; message: string | null }
   | { type: "register_success"; txHash: `0x${string}` }
   | { type: "register_failed" };
 
@@ -53,6 +55,7 @@ export function createWorkPublishClientState(): WorkPublishClientState {
     metadataPreview: null,
     txHash: null,
     errorMessage: null,
+    statusMessage: null,
   };
 }
 
@@ -113,6 +116,7 @@ export function workPublishClientReducer(
         editionPreviewReady: true,
         editionPreviewAcknowledged: false,
         errorMessage: null,
+        statusMessage: null,
       };
     case "edition_preview_acknowledged_change":
       return {
@@ -130,20 +134,25 @@ export function workPublishClientReducer(
         metadataPreview: action.metadata,
         step: "ready",
         errorMessage: null,
+        statusMessage: null,
       };
     case "set_error_message":
       return { ...state, errorMessage: action.message };
+    case "set_status_message":
+      return { ...state, statusMessage: action.message };
     case "register_success":
       return {
         ...state,
         txHash: action.txHash,
-        step: "success",
+        step: "registering",
         errorMessage: null,
+        statusMessage: null,
       };
     case "register_failed":
       return {
         ...state,
         step: "ready",
+        statusMessage: null,
       };
     default:
       return state;

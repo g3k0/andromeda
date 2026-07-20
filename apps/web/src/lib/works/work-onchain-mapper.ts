@@ -11,6 +11,7 @@ export function workRecordToOnChain(work: WorkRecord): WorkOnChain {
     price: work.price,
     maxCopies: work.maxCopies,
     minted: work.minted,
+    primarySaleRemaining: work.primarySaleRemaining,
     active: work.active,
   };
 }

@@ -19,7 +19,10 @@ export class MongoWorkRepository implements WorkRepository {
             ? { encryptedContentCid: input.encryptedContentCid }
             : {}),
         },
-        $setOnInsert: { minted: "0" },
+        $setOnInsert: {
+          minted: "0",
+          primarySaleRemaining: input.maxCopies.toString(),
+        },
       },
       {
         upsert: true,
@@ -56,6 +59,23 @@ export class MongoWorkRepository implements WorkRepository {
     await WorkModel.updateOne(
       { workId: workId.toString() },
       { $set: { minted: minted.toString() } },
+    );
+  }
+
+  async decrementPrimarySaleRemaining(workId: bigint): Promise<void> {
+    const doc = await WorkModel.findOne({ workId: workId.toString() }).lean();
+    if (!doc) {
+      return;
+    }
+
+    const current = BigInt(doc.primarySaleRemaining ?? doc.maxCopies);
+    if (current === 0n) {
+      return;
+    }
+
+    await WorkModel.updateOne(
+      { workId: workId.toString() },
+      { $set: { primarySaleRemaining: (current - 1n).toString() } },
     );
   }
 }

@@ -1,16 +1,11 @@
 import "server-only";
 
-import { getContractAddress } from "@/lib/config/public-env";
 import { verifySignedMutation } from "@/lib/authors/mutation-handler";
 import { getAuthorService } from "@/lib/authors/server";
 import { getUserService } from "@/lib/users/server";
 import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
-import {
-  getErc6551RegistryAddress,
-  getTargetChainId,
-} from "@/lib/tba/tba-registry";
-
 import { assertCanPublishWork } from "./authorize";
+import { resolveWorkPublishChainConfig } from "./work-publish-chain-config";
 import { publishWorkToIpfs } from "./publish-service";
 import type { WorkUploadMutationResult } from "./types";
 import { assertNoDuplicateWorkUpload } from "./work-upload-duplicate";
@@ -52,14 +47,16 @@ export async function runWorkUploadMutation(
     workImprint: fields.imprint,
   });
 
+  const chainConfig = resolveWorkPublishChainConfig();
+
   const published = await publishWorkToIpfs(deps.ipfs, {
     ciphertext: files.ciphertext,
     coverImage: files.coverImage,
     name: fields.name,
     workImprint: fields.imprint,
-    chainId: getTargetChainId(),
-    contractAddress: getContractAddress(),
-    registryAddress: getErc6551RegistryAddress(),
+    chainId: chainConfig.chainId,
+    contractAddress: chainConfig.contractAddress,
+    registryAddress: chainConfig.registryAddress,
     externalUrl: fields.externalUrl,
   });
 

@@ -53,6 +53,7 @@ describe("WorkPublishView", () => {
         metadataPreview={metadata}
         txHash={null}
         errorMessage={null}
+        statusMessage={null}
         onFieldChange={() => undefined}
         onCoverImageChange={() => undefined}
         onManuscriptFileChange={() => undefined}
@@ -91,6 +92,7 @@ describe("WorkPublishView", () => {
         metadataPreview={null}
         txHash={null}
         errorMessage={null}
+        statusMessage={null}
         onFieldChange={() => undefined}
         onCoverImageChange={() => undefined}
         onManuscriptFileChange={() => undefined}

@@ -11,6 +11,10 @@ import {
   buildAuthorizedNavLinks,
   type RouteNavContext,
 } from "./route-guard";
+import {
+  shouldShowMyAuthorPageMenuItem,
+  type RoleMenuContext,
+} from "./role-menu";
 import { userFromSnapshot } from "./route-guard";
 import type { UserSnapshot } from "@/lib/users/types";
 
@@ -56,13 +60,21 @@ export const MY_AUTHOR_PAGE_NAV_LINK = {
   labelKey: MY_AUTHOR_PAGE_ROUTE.labelKey,
 };
 
-export function shouldShowMyAuthorPageLink(
-  input: HeaderNavInput,
-  locale: SupportedLocale,
-): boolean {
-  return buildHeaderNavLinks(input, locale).some(
-    (link) => link.href === localizedPath(locale, MY_AUTHOR_PAGE_ROUTE.href),
-  );
+function toRoleMenuContext(input: HeaderNavInput): RoleMenuContext {
+  const context = toRouteNavContext(input);
+
+  return {
+    roleSlug: context.user?.roleSlug ?? input.role,
+    roleName: input.snapshot?.roleName ?? input.role,
+    permissions:
+      context.user?.permissions ??
+      defaultPermissionsForRoleSlug(input.role),
+    hasAuthorProfile: context.hasAuthorProfile,
+  };
+}
+
+export function shouldShowMyAuthorPageLink(input: HeaderNavInput): boolean {
+  return shouldShowMyAuthorPageMenuItem(toRoleMenuContext(input));
 }
 
 function toRouteNavContext(input: HeaderNavInput): RouteNavContext {

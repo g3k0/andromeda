@@ -41,7 +41,8 @@ describe("createViemChainReader", () => {
         0n,
         3n,
         true,
-      ] as const);
+      ] as const)
+      .mockResolvedValueOnce(7n);
 
     const reader = createViemChainReader({
       client: createMockClient(readContract),
@@ -55,6 +56,7 @@ describe("createViemChainReader", () => {
       price: 100n,
       maxCopies: 0n,
       minted: 3n,
+      primarySaleRemaining: 7n,
       active: true,
     });
   });

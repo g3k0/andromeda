@@ -3,23 +3,29 @@ import { defaultPermissionsForRoleSlug } from "@/lib/users/default-role-permissi
 import {
   BECOME_AUTHOR_MENU_ITEM,
   MANAGE_USERS_MENU_ITEM,
+  MY_AUTHOR_PAGE_MENU_ITEM,
   PROFILE_SETTINGS_MENU_ITEM,
   getRoleMenuItems,
   getRoleMenuLabel,
   shouldShowBecomeAuthorMenuItem,
   shouldShowManageUsersMenuItem,
+  shouldShowMyAuthorPageMenuItem,
   type RoleMenuContext,
 } from "./role-menu";
 
 function menuContext(
   roleSlug: string,
   roleName: string,
-  permissions?: RoleMenuContext["permissions"],
+  options?: {
+    permissions?: RoleMenuContext["permissions"];
+    hasAuthorProfile?: boolean;
+  },
 ): RoleMenuContext {
   return {
     roleSlug,
     roleName,
-    permissions: permissions ?? defaultPermissionsForRoleSlug(roleSlug),
+    permissions: options?.permissions ?? defaultPermissionsForRoleSlug(roleSlug),
+    hasAuthorProfile: options?.hasAuthorProfile ?? false,
   };
 }
 
@@ -46,7 +52,7 @@ describe("role menu", () => {
     );
     expect(
       shouldShowManageUsersMenuItem(
-        menuContext("ops", "Ops", ["admin:access", "pages:read"]),
+        menuContext("ops", "Ops", { permissions: ["admin:access", "pages:read"] }),
       ),
     ).toBe(true);
     expect(shouldShowManageUsersMenuItem(menuContext("author", "Author"))).toBe(
@@ -54,16 +60,46 @@ describe("role menu", () => {
     );
   });
 
+  it("shows my page only for authors and admins with a profile", () => {
+    expect(
+      shouldShowMyAuthorPageMenuItem(
+        menuContext("author", "Author", { hasAuthorProfile: true }),
+      ),
+    ).toBe(true);
+    expect(
+      shouldShowMyAuthorPageMenuItem(
+        menuContext("admin", "Admin", { hasAuthorProfile: true }),
+      ),
+    ).toBe(true);
+    expect(
+      shouldShowMyAuthorPageMenuItem(
+        menuContext("admin", "Admin", { hasAuthorProfile: false }),
+      ),
+    ).toBe(false);
+    expect(
+      shouldShowMyAuthorPageMenuItem(
+        menuContext("reader", "Reader", { hasAuthorProfile: true }),
+      ),
+    ).toBe(false);
+  });
+
   it("builds role-specific menu items", () => {
     expect(getRoleMenuItems(menuContext("reader", "Reader"))).toEqual([
       PROFILE_SETTINGS_MENU_ITEM,
       BECOME_AUTHOR_MENU_ITEM,
     ]);
-    expect(getRoleMenuItems(menuContext("author", "Author"))).toEqual([
+    expect(
+      getRoleMenuItems(
+        menuContext("author", "Author", { hasAuthorProfile: true }),
+      ),
+    ).toEqual([PROFILE_SETTINGS_MENU_ITEM, MY_AUTHOR_PAGE_MENU_ITEM]);
+    expect(
+      getRoleMenuItems(
+        menuContext("admin", "Admin", { hasAuthorProfile: true }),
+      ),
+    ).toEqual([
       PROFILE_SETTINGS_MENU_ITEM,
-    ]);
-    expect(getRoleMenuItems(menuContext("admin", "Admin"))).toEqual([
-      PROFILE_SETTINGS_MENU_ITEM,
+      MY_AUTHOR_PAGE_MENU_ITEM,
       MANAGE_USERS_MENU_ITEM,
     ]);
   });

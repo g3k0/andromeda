@@ -22,6 +22,7 @@ export type WorkPublishFormFooterProps = {
   metadataPreview: AcePublicMetadata | null;
   txHash: `0x${string}` | null;
   errorMessage: string | null;
+  statusMessage: string | null;
   isBusy: boolean;
   isComplete: boolean;
   onFieldChange: (field: keyof WorkPublishFormValues, value: string) => void;
@@ -40,6 +41,7 @@ export function WorkPublishFormFooter({
   metadataPreview,
   txHash,
   errorMessage,
+  statusMessage,
   isBusy,
   isComplete,
   onFieldChange,
@@ -84,6 +86,12 @@ export function WorkPublishFormFooter({
         </div>
       ) : null}
 
+      {statusMessage ? (
+        <p className="text-sm text-sky-300/90" role="status">
+          {statusMessage}
+        </p>
+      ) : null}
+
       {errorMessage ? (
         <p className={formErrorClassName} role="alert">
           {errorMessage}
@@ -118,15 +126,22 @@ export function WorkPublishFormFooter({
       ) : null}
 
       <div className="flex flex-wrap items-center gap-3">
-        {step === "ready" || step === "registering" || step === "success" ? (
+        {step === "ready" ||
+        step === "registering" ||
+        step === "labeling_copies" ||
+        step === "success" ? (
           <button
             type="button"
             disabled={isBusy || isComplete}
             onClick={onRegister}
             className="inline-flex items-center gap-2 rounded-lg bg-andromeda px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
-            {step === "registering" ? <LoadingSpinner size="sm" /> : null}
-            {t("publish.actions.registerOnChain")}
+            {step === "registering" || step === "labeling_copies" ? (
+              <LoadingSpinner size="sm" />
+            ) : null}
+            {step === "labeling_copies"
+              ? t("publish.actions.labelingCopies")
+              : t("publish.actions.registerOnChain")}
           </button>
         ) : (
           <>

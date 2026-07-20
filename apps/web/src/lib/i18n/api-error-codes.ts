@@ -19,6 +19,7 @@ export const API_ERROR_CODES = [
   "system_role_mutation",
   "admin_role_lockout",
   "invalid_work_id",
+  "invalid_token_id",
   "invalid_owner_address",
   "work_upload_validation",
   "work_upload_metadata_exists",

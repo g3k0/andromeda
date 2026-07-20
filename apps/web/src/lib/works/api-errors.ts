@@ -11,7 +11,10 @@ import { UserSuspendedError } from "@/lib/users/errors";
 import {
   ForbiddenContentKeyError,
   InvalidOwnerAddressError,
+  InvalidTokenIdParamError,
   InvalidWorkIdParamError,
+  MintEnvelopeError,
+  WorkMintError,
   WorkUploadDuplicateError,
   WorkUploadMetadataExistsError,
   WorkUploadValidationError,
@@ -20,6 +23,7 @@ import {
 export function mapWorkErrorToStatus(error: unknown): number {
   if (
     error instanceof InvalidWorkIdParamError ||
+    error instanceof InvalidTokenIdParamError ||
     error instanceof InvalidOwnerAddressError
   ) {
     return 400;
@@ -28,9 +32,14 @@ export function mapWorkErrorToStatus(error: unknown): number {
   if (
     error instanceof WorkUploadValidationError ||
     error instanceof ForbiddenContentKeyError ||
-    error instanceof IpfsMetadataValidationError
+    error instanceof IpfsMetadataValidationError ||
+    error instanceof MintEnvelopeError
   ) {
     return 422;
+  }
+
+  if (error instanceof WorkMintError) {
+    return 404;
   }
 
   if (error instanceof WorkUploadMetadataExistsError) {
@@ -57,6 +66,10 @@ export function mapWorkErrorToMessage(error: unknown): string {
     return "Invalid work id.";
   }
 
+  if (error instanceof InvalidTokenIdParamError) {
+    return "Invalid token id.";
+  }
+
   if (error instanceof InvalidOwnerAddressError) {
     return "Invalid owner address.";
   }
@@ -74,6 +87,14 @@ export function mapWorkErrorToMessage(error: unknown): string {
   }
 
   if (error instanceof WorkUploadDuplicateError) {
+    return error.message;
+  }
+
+  if (error instanceof MintEnvelopeError) {
+    return error.message;
+  }
+
+  if (error instanceof WorkMintError) {
     return error.message;
   }
 
@@ -97,6 +118,10 @@ export function mapWorkErrorToCode(error: unknown): ApiErrorCode {
     return "invalid_work_id";
   }
 
+  if (error instanceof InvalidTokenIdParamError) {
+    return "invalid_token_id";
+  }
+
   if (error instanceof InvalidOwnerAddressError) {
     return "invalid_owner_address";
   }
@@ -117,6 +142,14 @@ export function mapWorkErrorToCode(error: unknown): ApiErrorCode {
     return "work_upload_duplicate";
   }
 
+  if (error instanceof MintEnvelopeError) {
+    return "work_upload_validation";
+  }
+
+  if (error instanceof WorkMintError) {
+    return "unexpected";
+  }
+
   if (error instanceof IpfsMetadataValidationError) {
     return "ipfs_metadata_validation";
   }
@@ -131,6 +164,17 @@ export function mapWorkErrorToCode(error: unknown): ApiErrorCode {
 export function mapWorkErrorToParams(error: unknown): TranslationParams | undefined {
   if (error instanceof WorkUploadValidationError) {
     return { detail: error.message };
+  }
+  if (error instanceof MintEnvelopeError) {
+    return { detail: error.message };
+  }
+  if (error instanceof IpfsMetadataValidationError) {
+    return {
+      detail:
+        error.issues.length > 0
+          ? error.issues.join("; ")
+          : error.message,
+    };
   }
   return undefined;
 }

@@ -2,6 +2,7 @@ import { getAddress } from "viem";
 
 import type { IndexerRepositories } from "../ports/work-repository";
 import type {
+  PendingTokenEnvelope,
   TokenRecord,
   UpsertTokenInput,
   UpsertWorkInput,
@@ -33,6 +34,8 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
           price: input.price,
           maxCopies: input.maxCopies,
           minted: existing?.minted ?? 0n,
+          primarySaleRemaining:
+            existing?.primarySaleRemaining ?? input.maxCopies,
           active: input.active ?? existing?.active ?? true,
           createdAt: existing?.createdAt ?? nowIso(),
           updatedAt: nowIso(),
@@ -68,6 +71,17 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
           });
         }
       },
+      async decrementPrimarySaleRemaining(workId: bigint) {
+        const record = works.get(workId.toString());
+        if (!record || record.primarySaleRemaining === 0n) {
+          return;
+        }
+        works.set(workId.toString(), {
+          ...record,
+          primarySaleRemaining: record.primarySaleRemaining - 1n,
+          updatedAt: nowIso(),
+        });
+      },
     },
     tokens: {
       async upsertToken(input: UpsertTokenInput) {
@@ -91,6 +105,10 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
             input.envelopeCid !== undefined
               ? input.envelopeCid
               : (existing?.envelopeCid ?? null),
+          envelopeRecipientPublicKey:
+            input.envelopeRecipientPublicKey !== undefined
+              ? input.envelopeRecipientPublicKey
+              : (existing?.envelopeRecipientPublicKey ?? null),
           metadataURI:
             input.metadataURI !== undefined
               ? input.metadataURI
@@ -133,6 +151,65 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
           updatedAt: nowIso(),
         });
         return true;
+      },
+      async setEnvelopeRecipientPublicKey(
+        tokenId: bigint,
+        recipientPublicKeyBase64: string,
+      ) {
+        const record = tokens.get(tokenId.toString());
+        if (!record) {
+          return false;
+        }
+        tokens.set(tokenId.toString(), {
+          ...record,
+          envelopeRecipientPublicKey: recipientPublicKeyBase64,
+          updatedAt: nowIso(),
+        });
+        return true;
+      },
+      async setEnvelopeCid(tokenId: bigint, envelopeCid: string) {
+        const record = tokens.get(tokenId.toString());
+        if (!record) {
+          return false;
+        }
+        tokens.set(tokenId.toString(), {
+          ...record,
+          envelopeCid,
+          updatedAt: nowIso(),
+        });
+        return true;
+      },
+      async listPendingEnvelopesByAuthor(author: string) {
+        const normalized = author.toLowerCase();
+        const authorWorks = [...works.values()].filter(
+          (work) => work.author.toLowerCase() === normalized,
+        );
+        const workMetadata = new Map(
+          authorWorks.map((work) => [work.workId.toString(), work.metadataURI]),
+        );
+
+        const pending: PendingTokenEnvelope[] = [];
+        for (const token of tokens.values()) {
+          if (
+            token.envelopeCid ||
+            !token.envelopeRecipientPublicKey ||
+            !workMetadata.has(token.workId.toString())
+          ) {
+            continue;
+          }
+
+          pending.push({
+            tokenId: token.tokenId,
+            workId: token.workId,
+            metadataURI:
+              token.metadataURI ?? workMetadata.get(token.workId.toString())!,
+            recipientPublicKeyBase64: token.envelopeRecipientPublicKey,
+          });
+        }
+
+        return pending.sort((left, right) =>
+          left.tokenId < right.tokenId ? -1 : left.tokenId > right.tokenId ? 1 : 0,
+        );
       },
     },
     chainSync: {

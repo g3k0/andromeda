@@ -116,6 +116,10 @@ pnpm contracts:deploy:amoy                         # nuovo deploy → nuovo indi
 
 Ogni redeploy produce un **nuovo** indirizzo: aggiorna `NEXT_PUBLIC_CONTRACT_ADDRESS`.
 
+### Link utili
+
+[Faucet](https://faucet.polygon.technology/) rete amoy per ottenere MATIC di test
+
 ---
 
 ## Layer Web3 in `apps/web`

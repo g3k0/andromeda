@@ -60,6 +60,7 @@ export type WorkRecord = {
   price: bigint;
   maxCopies: bigint;
   minted: bigint;
+  primarySaleRemaining: bigint;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -83,6 +84,8 @@ export type TokenRecord = {
   copyNumber: number | null;
   tbaAddress: `0x${string}` | null;
   envelopeCid: string | null;
+  /** Base64-encoded secp256k1 public key for ACE envelope wrapping. */
+  envelopeRecipientPublicKey: string | null;
   /** IPFS URI of the token's numbered metadata, once its `tokenURI` is set. */
   metadataURI: string | null;
   createdAt: string;
@@ -96,7 +99,15 @@ export type UpsertTokenInput = {
   copyNumber?: number | null;
   tbaAddress?: string | null;
   envelopeCid?: string | null;
+  envelopeRecipientPublicKey?: string | null;
   metadataURI?: string | null;
+};
+
+export type PendingTokenEnvelope = {
+  tokenId: bigint;
+  workId: bigint;
+  metadataURI: string;
+  recipientPublicKeyBase64: string;
 };
 
 export const WORK_UPLOAD_STATUSES = ["uploaded", "registered"] as const;

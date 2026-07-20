@@ -175,7 +175,8 @@
     "connectWallet": "Подключите кошелёк, чтобы купить копию.",
     "notAvailable": "Это издание недоступно.",
     "mintFailed": "Не удалось завершить чеканку копии.",
-    "txFailed": "Транзакция чеканки не удалась."
+    "txFailed": "Транзакция чеканки не удалась.",
+    "receiptTimeout": "Транзакция отправлена, но подтверждение не получено вовремя. Проверьте Polygonscan и обновите страницу."
   },
   "reader": {
     "metaTitle": "Чтение | Andromeda",
@@ -262,11 +263,21 @@
       }
     },
     "fields": {
-      "title": { "label": "Название" },
-      "manuscriptFile": { "label": "Файл рукописи" },
-      "coverImage": { "label": "Обложка" },
-      "publicationDate": { "label": "Дата публикации" },
-      "editionNumber": { "label": "Номер издания" },
+      "title": {
+        "label": "Название"
+      },
+      "manuscriptFile": {
+        "label": "Файл рукописи"
+      },
+      "coverImage": {
+        "label": "Обложка"
+      },
+      "publicationDate": {
+        "label": "Дата публикации"
+      },
+      "editionNumber": {
+        "label": "Номер издания"
+      },
       "editionKind": {
         "label": "Тип издания",
         "options": {
@@ -274,23 +285,41 @@
           "reprint": "Переиздание"
         }
       },
-      "reprintNumber": { "label": "Номер переиздания" },
-      "seriesName": { "label": "Название серии" },
-      "seriesVolume": { "label": "Том серии" },
+      "reprintNumber": {
+        "label": "Номер переиздания"
+      },
+      "seriesName": {
+        "label": "Название серии"
+      },
+      "seriesVolume": {
+        "label": "Том серии"
+      },
       "language": {
         "label": "Язык",
         "placeholder": "например, en, it"
       },
-      "originalPublicationDate": { "label": "Дата первой публикации" },
-      "backCoverText": { "label": "Текст задней обложки" },
-      "aboutAuthor": { "label": "Об авторе" },
-      "authorAddress": { "label": "Публичный адрес автора" },
+      "originalPublicationDate": {
+        "label": "Дата первой публикации"
+      },
+      "backCoverText": {
+        "label": "Текст задней обложки"
+      },
+      "aboutAuthor": {
+        "label": "Об авторе"
+      },
+      "authorAddress": {
+        "label": "Публичный адрес автора"
+      },
       "priceMatic": {
         "label": "Начальная цена (MATIC)",
         "placeholder": "Оставьте пустым, если цена не задана"
       },
-      "maxCopies": { "label": "Макс. копий" },
-      "externalUrl": { "label": "Внешняя ссылка" }
+      "maxCopies": {
+        "label": "Макс. копий"
+      },
+      "externalUrl": {
+        "label": "Внешняя ссылка"
+      }
     },
     "guidance": {
       "intro": "Загрузите рукопись и обложку, затем зашифруйте и закрепите произведение в IPFS перед on-chain-регистрацией.",
@@ -349,12 +378,16 @@
         "maxLength": "{label} должен содержать не более {max} символов.",
         "invalidCharacters": "{label} содержит недопустимые символы."
       },
-      "publicationDate": { "required": "Дата публикации обязательна." },
+      "publicationDate": {
+        "required": "Дата публикации обязательна."
+      },
       "editionNumber": {
         "required": "Номер издания обязателен.",
         "invalid": "Номер издания должен быть целым числом не менее 1."
       },
-      "editionKind": { "required": "Выберите первое издание или переиздание." },
+      "editionKind": {
+        "required": "Выберите первое издание или переиздание."
+      },
       "reprintNumber": {
         "required": "Номер переиздания обязателен.",
         "invalid": "Номер переиздания должен быть целым числом не менее 1."
@@ -391,7 +424,8 @@
       "uploadFailed": "Не удалось загрузить произведение.",
       "connectWalletToRegister": "Подключите кошелёк автора для регистрации произведения.",
       "registerFailed": "On-chain-регистрация не удалась.",
-      "manuscriptRequiredForPreview": "Для предпросмотра необходим файл рукописи."
+      "manuscriptRequiredForPreview": "Для предпросмотра необходим файл рукописи.",
+      "chainClientUnavailable": "Клиент блокчейна недоступен. Проверьте сеть и повторите попытку."
     },
     "loading": {
       "uploading": "Загрузка зашифрованного произведения…"
@@ -446,6 +480,7 @@
     },
     "actions": {
       "registerOnChain": "Зарегистрировать on-chain",
+      "labelingCopies": "Подтвердите запросы MetaMask, чтобы пронумеровать каждую копию…",
       "previewEdition": "Предпросмотр издания",
       "encrypting": "Шифрование…",
       "pinningToIpfs": "Закрепление в IPFS…",
@@ -453,6 +488,11 @@
     },
     "success": {
       "registered": "Произведение зарегистрировано on-chain. Транзакция: {txHash}"
+    },
+    "status": {
+      "confirmWalletForLabeling": "Подтвердите подпись кошелька, чтобы подготовить метаданные нумерованных копий.",
+      "pinningEditionMetadata": "Закрепление нумерованных метаданных издания в IPFS…",
+      "confirmCopyMetadataTx": "Подтвердите в MetaMask транзакцию {index} из {total}, чтобы задать метаданные копии в сети…"
     }
   },
   "authorOnboarding": {
@@ -652,12 +692,13 @@
       "systemRoleMutation": "Системные роли нельзя изменять.",
       "adminRoleLockout": "Нельзя удалить последнюю роль администратора.",
       "invalidWorkId": "Недействительный идентификатор произведения.",
+      "invalidTokenId": "Недействительный идентификатор токена.",
       "invalidOwnerAddress": "Недействительный адрес владельца.",
       "workUploadValidation": "{detail}",
       "workUploadMetadataExists": "Work upload metadata already exists.",
       "workUploadDuplicate": "This work was already uploaded. Submit a reprint edition to publish another version.",
       "forbiddenContentKey": "Ключи содержимого никогда не должны отправляться на сервер.",
-      "ipfsMetadataValidation": "Сгенерированные метаданные не прошли проверку безопасности.",
+      "ipfsMetadataValidation": "{detail}",
       "unexpected": "Что-то пошло не так. Попробуйте снова.",
       "walletAuthMessageFailed": "Не удалось создать сообщение аутентификации кошелька."
     }

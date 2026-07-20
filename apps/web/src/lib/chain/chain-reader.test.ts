@@ -35,13 +35,14 @@ describe("chain-reader pure helpers", () => {
       true,
     ];
 
-    expect(mapRawWorkToWorkOnChain(1n, raw)).toEqual({
+    expect(mapRawWorkToWorkOnChain(1n, raw, 3n)).toEqual({
       workId: 1n,
       author: AUTHOR,
       metadataURI: "ipfs://bafywork",
       price: 250n,
       maxCopies: 5n,
       minted: 1n,
+      primarySaleRemaining: 3n,
       active: true,
     });
   });

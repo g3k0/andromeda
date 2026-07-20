@@ -23,7 +23,10 @@ vi.mock("next/link", () => ({
 
 import { RoleMenuDropdown } from "./RoleMenuDropdown";
 
-function renderMenu(roleSlug: "admin" | "author" | "reader") {
+function renderMenu(
+  roleSlug: "admin" | "author" | "reader",
+  options?: { hasAuthorProfile?: boolean },
+) {
   const labels = {
     admin: "Admin",
     author: "Author",
@@ -36,6 +39,7 @@ function renderMenu(roleSlug: "admin" | "author" | "reader") {
         roleSlug={roleSlug}
         roleName={labels[roleSlug]}
         permissions={defaultPermissionsForRoleSlug(roleSlug)}
+        hasAuthorProfile={options?.hasAuthorProfile ?? false}
         onLogout={vi.fn()}
       />
     </I18nProvider>,
@@ -88,6 +92,7 @@ describe("RoleMenuDropdown", () => {
             roleSlug="author"
             roleName="Author"
             permissions={defaultPermissionsForRoleSlug("author")}
+            hasAuthorProfile={false}
             onLogout={vi.fn()}
           />
         </div>
@@ -105,13 +110,25 @@ describe("RoleMenuDropdown", () => {
 
   it("shows manage-users link when snapshot permissions include admin access", async () => {
     const user = userEvent.setup();
-    renderMenu("admin");
+    renderMenu("admin", { hasAuthorProfile: true });
 
     await user.click(screen.getByText("Admin"));
 
     expect(
       screen.getByRole("menuitem", { name: "Manage users and roles" }),
     ).toHaveAttribute("href", "/en/admin/users");
+  });
+
+  it("shows my page link for authors and admins with a profile", async () => {
+    const user = userEvent.setup();
+    renderMenu("author", { hasAuthorProfile: true });
+
+    await user.click(screen.getByText("Author"));
+
+    expect(screen.getByRole("menuitem", { name: "My page" })).toHaveAttribute(
+      "href",
+      "/en/author",
+    );
   });
 
   it("calls onLogout when the user selects logout", async () => {
@@ -124,6 +141,7 @@ describe("RoleMenuDropdown", () => {
           roleSlug="admin"
           roleName="Admin"
           permissions={defaultPermissionsForRoleSlug("admin")}
+          hasAuthorProfile={false}
           onLogout={onLogout}
         />
       </I18nProvider>,
@@ -144,6 +162,7 @@ describe("RoleMenuDropdown", () => {
           roleSlug="reader"
           roleName="Lecteur"
           permissions={defaultPermissionsForRoleSlug("reader")}
+          hasAuthorProfile={false}
           onLogout={vi.fn()}
         />
       </I18nProvider>,

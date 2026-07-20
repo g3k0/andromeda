@@ -13,6 +13,7 @@ describe("workRecordToOnChain", () => {
       price: 500n,
       maxCopies: 10n,
       minted: 4n,
+      primarySaleRemaining: 6n,
       active: true,
       createdAt: "2026-01-01T00:00:00.000Z",
       updatedAt: "2026-01-01T00:00:00.000Z",
@@ -25,6 +26,7 @@ describe("workRecordToOnChain", () => {
       price: 500n,
       maxCopies: 10n,
       minted: 4n,
+      primarySaleRemaining: 6n,
       active: true,
     });
   });
