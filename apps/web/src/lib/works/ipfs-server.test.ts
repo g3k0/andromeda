@@ -1,11 +1,17 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { createArweaveTurboStorage } from "@/lib/ipfs/adapters/arweave-turbo-storage";
+import {
+  createFakeTurboUploadClient,
+  createFakeTurboUploadState,
+} from "@/lib/ipfs/testing/fake-turbo-upload-client";
 import { createInMemoryIpfsState, createInMemoryIpfsStorage } from "@/lib/ipfs/testing/in-memory-ipfs-storage";
 
 import {
   getPermanentStorage,
   resetIpfsStorageForTests,
   setIpfsStorageForTests,
+  setPermanentStorageForTests,
 } from "./ipfs-server";
 
 describe("getPermanentStorage", () => {
@@ -15,6 +21,9 @@ describe("getPermanentStorage", () => {
     delete process.env.IPFS_PINNING_API_KEY;
     delete process.env.IPFS_GATEWAY_BASE_URL;
     delete process.env.ARWEAVE_GATEWAY_BASE_URL;
+    delete process.env.ARWEAVE_JWK;
+    delete process.env.ARWEAVE_TURBO_JWK;
+    vi.restoreAllMocks();
   });
 
   it("defaults to the Pinata-backed permanent adapter", async () => {
@@ -35,8 +44,27 @@ describe("getPermanentStorage", () => {
     expect(() => getPermanentStorage()).toThrow(/Unsupported PERMANENT_STORAGE_BACKEND/);
   });
 
-  it("rejects arweave until the Turbo adapter lands", () => {
+  it("requires ARWEAVE_JWK when backend is arweave", () => {
     process.env.PERMANENT_STORAGE_BACKEND = "arweave";
-    expect(() => getPermanentStorage()).toThrow(/not implemented yet/);
+    expect(() => getPermanentStorage()).toThrow(/ARWEAVE_JWK/);
+  });
+
+  it("uses an injected Arweave permanent storage when set for tests", async () => {
+    process.env.PERMANENT_STORAGE_BACKEND = "arweave";
+    const state = createFakeTurboUploadState();
+    setPermanentStorageForTests(
+      createArweaveTurboStorage({
+        client: createFakeTurboUploadClient(state),
+        gatewayBaseUrl: "https://arweave.test",
+      }),
+    );
+
+    const storage = getPermanentStorage();
+    const uploaded = await storage.uploadJson({ hello: "arweave" });
+
+    expect(uploaded.uri).toBe("ar://fakeTx1");
+    expect(storage.toGatewayUrl(uploaded.uri)).toBe(
+      "https://arweave.test/fakeTx1",
+    );
   });
 });
