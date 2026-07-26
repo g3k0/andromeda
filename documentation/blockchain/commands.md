@@ -46,14 +46,27 @@ cp apps/web/.env.example apps/web/.env.local
 | `ARWEAVE_GATEWAY_BASE_URL` / `NEXT_PUBLIC_ARWEAVE_GATEWAY_BASE_URL` | Server / Client | Gateway HTTP per URI `ar://` (default `https://arweave.net`) |
 
 Storage permanente: vedi [storage-indipendence.md](../plans/storage-indipendence.md).
-`getPermanentStorage()` usa Pinata di default; con `PERMANENT_STORAGE_BACKEND=arweave` carica via Turbo.
+`getPermanentStorage()` alimenta il publish path (`POST /api/works/upload`).
+Default locale/Production: `pinata`. **Preview** (e locale di prova cutover):
+`PERMANENT_STORAGE_BACKEND=arweave` + `ARWEAVE_JWK` + gateway Arweave.
 
-Smoke upload (richiede crediti Turbo + JWK reale):
+Smoke Turbo (richiede crediti + JWK reale):
 
 ```bash
 cd apps/web
-PERMANENT_STORAGE_BACKEND=arweave ARWEAVE_JWK='…' pnpm exec tsx scripts/arweave-turbo-smoke.ts
+PERMANENT_STORAGE_BACKEND=arweave ARWEAVE_JWK='…' pnpm smoke:arweave-turbo
 ```
+
+Smoke publish → `registerWork(ar://…)` su Amoy (manuale):
+
+1. Imposta Preview/local: `PERMANENT_STORAGE_BACKEND=arweave`, `ARWEAVE_JWK`,
+   `NEXT_PUBLIC_CHAIN=amoy`, `NEXT_PUBLIC_CONTRACT_ADDRESS`.
+2. Pubblica un’opera dall’UI author (upload cifra → API → `metadataUri` `ar://…`).
+3. Conferma su Polygonscan Amoy che `registerWork` riceve `metadataURI` che inizia con `ar://`.
+4. `curl https://arweave.net/<txId>` (o il gateway configurato) deve restituire JSON ACE
+   con `image` / `ace.encrypted_content` in `ar://`.
+
+Nota: envelope e edition metadata restano su Pinata fino alla PR5.
 
 `NEXT_PUBLIC_CONTRACT_ADDRESS` serve solo **dopo** un deploy reale. Senza deploy,
 i test del chain reader funzionano ugualmente (fake in-memory / mock viem).
