@@ -41,6 +41,29 @@ describe("parseAcePublicMetadata", () => {
     expect(isAcePublicMetadata(VALID_METADATA)).toBe(true);
   });
 
+  it("accepts ar:// content URIs for image and encrypted_content", () => {
+    const arweaveMetadata = {
+      ...VALID_METADATA,
+      image: "ar://CoverTxId111",
+      ace: {
+        ...VALID_METADATA.ace,
+        encrypted_content: "ar://CipherTxId222",
+      },
+    };
+
+    expect(parseAcePublicMetadata(arweaveMetadata)).toEqual(arweaveMetadata);
+    expect(isAcePublicMetadata(arweaveMetadata)).toBe(true);
+  });
+
+  it("rejects unsupported content URI schemes", () => {
+    expect(() =>
+      parseAcePublicMetadata({
+        ...VALID_METADATA,
+        image: "https://example.com/cover.png",
+      }),
+    ).toThrow(IpfsMetadataValidationError);
+  });
+
   it("rejects metadata missing required ace fields", () => {
     const withoutAce = {
       name: VALID_METADATA.name,
@@ -114,7 +137,25 @@ describe("parseAcePublicMetadata", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(IpfsMetadataValidationError);
       expect((error as IpfsMetadataValidationError).issues[0]).toMatch(
-        /plaintext content CID/,
+        /plaintext content URI/,
+      );
+    }
+
+    try {
+      parseAcePublicMetadata({
+        ...VALID_METADATA,
+        attributes: [
+          {
+            trait_type: "Draft plaintext excerpt",
+            value: "ar://PlaintextTxId",
+          },
+        ],
+      });
+      expect.fail("expected metadata validation to fail");
+    } catch (error) {
+      expect(error).toBeInstanceOf(IpfsMetadataValidationError);
+      expect((error as IpfsMetadataValidationError).issues[0]).toMatch(
+        /plaintext content URI/,
       );
     }
   });
