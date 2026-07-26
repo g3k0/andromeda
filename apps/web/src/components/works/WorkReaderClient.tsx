@@ -6,6 +6,7 @@ import { useAccount, useReadContract, useSignMessage } from "wagmi";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { formErrorClassName } from "@/components/form/form-field-styles";
 import { andromedaWorksAbi } from "@/lib/chain/contract";
+import type { ContentGatewayBases } from "@/lib/ipfs/gateway-url";
 import { useTranslation } from "@/lib/i18n/use-translation";
 import { isCopyOwner } from "@/lib/works/reader-access";
 import { decodeUtf8, readWorkContent } from "@/lib/works/reader-client";
@@ -23,7 +24,7 @@ export type WorkReaderClientProps = {
   tokenId: string;
   metadataUrl: string;
   envelopeUrl: string | null;
-  gatewayBaseUrl: string;
+  contentGateways: ContentGatewayBases;
   contractAddress: `0x${string}`;
 };
 
@@ -39,7 +40,7 @@ export function WorkReaderClient({
   tokenId,
   metadataUrl,
   envelopeUrl,
-  gatewayBaseUrl,
+  contentGateways,
   contractAddress,
 }: WorkReaderClientProps) {
   const { t } = useTranslation();
@@ -79,7 +80,7 @@ export function WorkReaderClient({
       const bytes = await readWorkContent({
         metadataUrl,
         envelopeUrl,
-        gatewayBaseUrl,
+        contentGateways,
         tbaSigner: createReaderSignerFromSignature(signature as `0x${string}`),
         fetchJson: async (url) => {
           const response = await fetch(url, { cache: "no-store" });

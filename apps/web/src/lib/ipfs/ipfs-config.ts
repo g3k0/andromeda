@@ -1,6 +1,9 @@
 import "server-only";
 
-import { DEFAULT_ARWEAVE_GATEWAY_BASE_URL } from "./gateway-url";
+import {
+  DEFAULT_ARWEAVE_GATEWAY_BASE_URL,
+  type ContentGatewayBases,
+} from "./gateway-url";
 import { IpfsConfigError } from "./errors";
 
 const DEFAULT_GATEWAY_BASE_URL = "https://gateway.pinata.cloud/ipfs";
@@ -43,6 +46,14 @@ export function getArweaveGatewayBaseUrl(): string {
     process.env.NEXT_PUBLIC_ARWEAVE_GATEWAY_BASE_URL?.trim();
 
   return (configured || DEFAULT_ARWEAVE_GATEWAY_BASE_URL).replace(/\/+$/, "");
+}
+
+/** Paired gateways for resolving `ipfs://` and `ar://` content URIs. */
+export function getContentGatewayBases(): ContentGatewayBases {
+  return {
+    ipfs: getIpfsGatewayBaseUrl(),
+    arweave: getArweaveGatewayBaseUrl(),
+  };
 }
 
 /**

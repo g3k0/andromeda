@@ -5,7 +5,7 @@ import { MintCopyClient } from "@/components/works/MintCopyClient";
 import { WorkDetailView } from "@/components/works/WorkDetailView";
 import { getServerTranslations } from "@/lib/i18n/server";
 import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
-import { getIpfsGatewayBaseUrl } from "@/lib/ipfs/ipfs-config";
+import { getContentGatewayBases } from "@/lib/ipfs/ipfs-config";
 import { createMongoIndexerRepositories } from "@/lib/works/adapters/create-indexer-repositories";
 import { InvalidWorkIdParamError } from "@/lib/works/errors";
 import { parseWorkIdParam, toPublicWorkDto } from "@/lib/works/public-dto";
@@ -62,13 +62,13 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
     notFound();
   }
 
-  const gatewayBaseUrl = getIpfsGatewayBaseUrl();
+  const contentGateways = getContentGatewayBases();
   const dto = toPublicWorkDto(work);
   const metadata = await loadPublicWorkMetadata(
     work.metadataURI,
-    gatewayBaseUrl,
+    contentGateways,
   );
-  const view = buildWorkView(dto, metadata, gatewayBaseUrl);
+  const view = buildWorkView(dto, metadata, contentGateways);
 
   return (
     <WorkDetailView view={view}>

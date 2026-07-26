@@ -14,11 +14,16 @@ import {
   deriveReaderKeypairFromSignature,
 } from "./reader-signer";
 
-const GATEWAY = "https://gateway.test/ipfs";
+const GATEWAYS = {
+  ipfs: "https://gateway.test/ipfs",
+  arweave: "https://arweave.test",
+};
 const SIGNATURE = ("0x1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8" +
   "1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac81b") as `0x${string}`;
 
-function metadata(): AcePublicMetadata {
+function metadata(
+  encryptedContent: string = "ipfs://bafycipher",
+): AcePublicMetadata {
   return {
     name: "The Star Gate",
     description: "A novella.",
@@ -33,7 +38,7 @@ function metadata(): AcePublicMetadata {
     },
     ace: {
       version: "1",
-      encrypted_content: "ipfs://bafycipher",
+      encrypted_content: encryptedContent,
       cipher: "aes-256-gcm",
       envelope_scheme: "ecies-secp256k1",
       tba_standard: "erc-6551",
@@ -55,16 +60,16 @@ describe("readWorkContent", () => {
     const envelope = wrapContentKey(contentKey, publicKey);
 
     const plaintext = await readWorkContent({
-      metadataUrl: `${GATEWAY}/bafymeta`,
-      envelopeUrl: `${GATEWAY}/bafyenvelope`,
-      gatewayBaseUrl: GATEWAY,
+      metadataUrl: `${GATEWAYS.ipfs}/bafymeta`,
+      envelopeUrl: `${GATEWAYS.ipfs}/bafyenvelope`,
+      contentGateways: GATEWAYS,
       tbaSigner: createReaderSignerFromSignature(SIGNATURE),
       fetchJson: async () => metadata(),
       fetchBytes: async (url) => {
         if (url.endsWith("/bafyenvelope")) {
           return envelope;
         }
-        if (url === `${GATEWAY}/bafycipher`) {
+        if (url === `${GATEWAYS.ipfs}/bafycipher`) {
           return ciphertext;
         }
         throw new Error(`Unexpected fetch: ${url}`);
@@ -74,12 +79,41 @@ describe("readWorkContent", () => {
     expect(decodeUtf8(plaintext)).toBe("Hello, reader.");
   });
 
+  it("resolves ar:// ciphertext via the Arweave gateway", async () => {
+    const { publicKey } = deriveReaderKeypairFromSignature(SIGNATURE);
+    const contentKey = generateContentKey();
+    const ciphertext = await encryptContent(
+      encodeUtf8Plaintext("Arweave ciphertext."),
+      contentKey,
+    );
+    const envelope = wrapContentKey(contentKey, publicKey);
+
+    const plaintext = await readWorkContent({
+      metadataUrl: `${GATEWAYS.arweave}/MetaTxId`,
+      envelopeUrl: `${GATEWAYS.arweave}/EnvelopeTxId`,
+      contentGateways: GATEWAYS,
+      tbaSigner: createReaderSignerFromSignature(SIGNATURE),
+      fetchJson: async () => metadata("ar://CipherTxId"),
+      fetchBytes: async (url) => {
+        if (url === `${GATEWAYS.arweave}/EnvelopeTxId`) {
+          return envelope;
+        }
+        if (url === `${GATEWAYS.arweave}/CipherTxId`) {
+          return ciphertext;
+        }
+        throw new Error(`Unexpected fetch: ${url}`);
+      },
+    });
+
+    expect(decodeUtf8(plaintext)).toBe("Arweave ciphertext.");
+  });
+
   it("rejects metadata that fails ACE validation", async () => {
     await expect(
       readWorkContent({
-        metadataUrl: `${GATEWAY}/bafymeta`,
-        envelopeUrl: `${GATEWAY}/bafyenvelope`,
-        gatewayBaseUrl: GATEWAY,
+        metadataUrl: `${GATEWAYS.ipfs}/bafymeta`,
+        envelopeUrl: `${GATEWAYS.ipfs}/bafyenvelope`,
+        contentGateways: GATEWAYS,
         tbaSigner: createReaderSignerFromSignature(SIGNATURE),
         fetchJson: async () => ({ not: "valid" }),
         fetchBytes: async () => new Uint8Array(),
