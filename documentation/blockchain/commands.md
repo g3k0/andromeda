@@ -39,13 +39,21 @@ cp apps/web/.env.example apps/web/.env.local
 | `NEXT_PUBLIC_ALCHEMY_RPC_URL` | Client | RPC Alchemy per wagmi nel browser |
 | `NEXT_PUBLIC_CONTRACT_ADDRESS` | Client | Indirizzo del contratto `AndromedaWorks` **deployato** sulla rete scelta |
 | `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | Client | WalletConnect (connessione wallet) |
-| `PERMANENT_STORAGE_BACKEND` | Server | `pinata` (default) o `arweave` (target migrazione; non ancora implementato in write) |
+| `PERMANENT_STORAGE_BACKEND` | Server | `pinata` (default) o `arweave` |
 | `IPFS_PINNING_API_KEY` | Server | JWT Pinata — richiesto finché il backend è `pinata` |
 | `IPFS_GATEWAY_BASE_URL` / `NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL` | Server / Client | Gateway HTTP per URI `ipfs://` |
+| `ARWEAVE_JWK` / `ARWEAVE_TURBO_JWK` | Server | JWK Arweave (JSON) per autenticare Turbo — richiesto con backend `arweave` |
 | `ARWEAVE_GATEWAY_BASE_URL` / `NEXT_PUBLIC_ARWEAVE_GATEWAY_BASE_URL` | Server / Client | Gateway HTTP per URI `ar://` (default `https://arweave.net`) |
 
 Storage permanente: vedi [storage-indipendence.md](../plans/storage-indipendence.md).
-Oggi `getPermanentStorage()` usa Pinata; Arweave arriva nelle PR successive.
+`getPermanentStorage()` usa Pinata di default; con `PERMANENT_STORAGE_BACKEND=arweave` carica via Turbo.
+
+Smoke upload (richiede crediti Turbo + JWK reale):
+
+```bash
+cd apps/web
+PERMANENT_STORAGE_BACKEND=arweave ARWEAVE_JWK='…' pnpm exec tsx scripts/arweave-turbo-smoke.ts
+```
 
 `NEXT_PUBLIC_CONTRACT_ADDRESS` serve solo **dopo** un deploy reale. Senza deploy,
 i test del chain reader funzionano ugualmente (fake in-memory / mock viem).
