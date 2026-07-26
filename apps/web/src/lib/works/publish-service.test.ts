@@ -53,6 +53,21 @@ describe("buildAcePublicMetadata", () => {
     expect(metadata.description).toContain("First edition");
   });
 
+  it("builds ACE metadata with ar:// content URIs", () => {
+    const metadata = buildAcePublicMetadata({
+      name: "The Star Gate",
+      workImprint: sampleWorkImprint(),
+      imageUri: "ar://CoverTxId",
+      encryptedContentUri: "ar://CipherTxId",
+      chainId: 80002,
+      contractAddress: CONTRACT,
+      registryAddress: REGISTRY,
+    });
+
+    expect(metadata.image).toBe("ar://CoverTxId");
+    expect(metadata.ace.encrypted_content).toBe("ar://CipherTxId");
+  });
+
   it("rejects forbidden metadata keys", () => {
     expect(() =>
       buildAcePublicMetadata({

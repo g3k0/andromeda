@@ -2,10 +2,12 @@
 
 > Open specification for **third-party readers** of Andromeda works.
 >
-> ACE describes how a literary work is encrypted once, published to IPFS, and
-> made readable **only by the owner of a specific copy (ERC-721 token)** through
-> its ERC-6551 token bound account (TBA). Anyone can implement a compatible
-> reader from this document alone — no access to Andromeda servers is required.
+> ACE describes how a literary work is encrypted once, published to permanent
+> storage (normative URI scheme `ar://` on Arweave; legacy `ipfs://` still
+> accepted in read), and made readable **only by the owner of a specific copy
+> (ERC-721 token)** through its ERC-6551 token bound account (TBA). Anyone can
+> implement a compatible reader from this document alone — no access to
+> Andromeda servers is required.
 
 - **Version:** `1`
 - **Content cipher:** `aes-256-gcm`
@@ -20,17 +22,19 @@ block) so a reader can detect the scheme before attempting decryption.
 ## 1. Design in one paragraph
 
 The plaintext work is encrypted **once** with a random 256-bit symmetric key
-`K` (AES-256-GCM). The resulting ciphertext is pinned to IPFS and shared by
-every copy of the work. For each minted copy, `K` is **wrapped** (ECIES over
-secp256k1) for the public key of that copy's reader identity, producing a small
-per-token *envelope* that is also pinned to IPFS. To read, the owner recovers
-their private key from a wallet signature, unwraps the envelope to recover `K`,
-and decrypts the shared ciphertext. The ciphertext and envelope are byte-for-byte
-independent of the copy number, so numbered editions do not change the crypto.
+`K` (AES-256-GCM). The resulting ciphertext is uploaded to permanent storage
+(Arweave via `ar://` URI; legacy `ipfs://` may still appear on older works) and
+shared by every copy of the work. For each minted copy, `K` is **wrapped**
+(ECIES over secp256k1) for the public key of that copy's reader identity,
+producing a small per-token *envelope* that is also stored permanently. To
+read, the owner recovers their private key from a wallet signature, unwraps the
+envelope to recover `K`, and decrypts the shared ciphertext. The ciphertext and
+envelope are byte-for-byte independent of the copy number, so numbered editions
+do not change the crypto.
 
 ```
-plaintext ──AES-256-GCM(K)──▶ ciphertext ──▶ IPFS  (shared by all copies)
-      K   ──ECIES(pubKey_i)──▶ envelope_i ──▶ IPFS  (one per token i)
+plaintext ──AES-256-GCM(K)──▶ ciphertext ──▶ ar://…  (shared by all copies)
+      K   ──ECIES(pubKey_i)──▶ envelope_i ──▶ ar://…  (one per token i)
 owner_i signs message ─▶ privKey_i ─▶ unwrap(envelope_i) ─▶ K ─▶ decrypt
 ```
 
@@ -38,7 +42,7 @@ owner_i signs message ─▶ privKey_i ─▶ unwrap(envelope_i) ─▶ K ─▶
 
 ## 2. Binary layouts
 
-All blobs are raw bytes pinned to IPFS (not JSON). Multi-byte integers are
+All blobs are raw bytes at a content URI (not JSON). Multi-byte integers are
 big-endian. The leading byte is a **format version** so future revisions can
 coexist.
 
@@ -89,16 +93,18 @@ in plaintext, never sent to a server, and never placed in any JSON metadata.
 
 ## 3. Public metadata (`ace` block)
 
-Each work publishes an OpenSea-compatible JSON document to IPFS; its CID is the
-on-chain `metadataURI` (per-work) or the per-token `tokenURI` for numbered
-editions. Beyond the standard `name` / `description` / `image` / `attributes`,
-it carries an `ace` block that tells a reader how to decrypt:
+Each work publishes an OpenSea-compatible JSON document to permanent storage;
+its content URI is the on-chain `metadataURI` (per-work) or the per-token
+`tokenURI` for numbered editions. Normative scheme is `ar://`; legacy
+`ipfs://` URIs remain valid for reading older works. Beyond the standard
+`name` / `description` / `image` / `attributes`, it carries an `ace` block that
+tells a reader how to decrypt:
 
 ```json
 {
   "name": "The Star Gate — Copy #7 / 100",
   "description": "…author-composed colophon…",
-  "image": "ipfs://bafybeicover…",
+  "image": "ar://CoverTxId…",
   "attributes": [
     { "trait_type": "Copy number", "value": 7 },
     { "trait_type": "Edition size", "value": "100" }
@@ -106,7 +112,7 @@ it carries an `ace` block that tells a reader how to decrypt:
   "work_imprint": { "…": "structured colophon" },
   "ace": {
     "version": "1",
-    "encrypted_content": "ipfs://bafybeiciphertext…",
+    "encrypted_content": "ar://CiphertextTxId…",
     "cipher": "aes-256-gcm",
     "envelope_scheme": "ecies-secp256k1",
     "tba_standard": "erc-6551",
@@ -119,14 +125,16 @@ it carries an `ace` block that tells a reader how to decrypt:
 
 Rules:
 
+- `image` and `ace.encrypted_content` MUST be content URIs: `ar://…` (normative)
+  or `ipfs://…` (legacy).
 - `ace.encrypted_content` points to the **shared ciphertext blob** (§2.1).
 - `chain_id`, `contract`, `registry` are the parameters needed to compute the
   copy's TBA (§4).
 - The public metadata **never** contains `K`, a private key, or plaintext. The
   Andromeda validator rejects forbidden keys (`content_key`, `private_key`,
   `plaintext`, …) and plaintext-exposing attribute traits.
-- The **envelope CID is not stored in the public metadata.** It is discovered
-  off-chain (see §5): the envelope is pinned with the deterministic name
+- The **envelope URI is not stored in the public metadata.** It is discovered
+  off-chain (see §5): the envelope is stored with the deterministic name
   `token-<tokenId>-envelope` and indexed per token.
 
 ---
@@ -184,10 +192,11 @@ unwrap `K`. Implementations that bind the envelope to the on-chain TBA public
 key instead must document that variant; ACE v1 readers assume the
 signature-derived key above.
 
-> Discovery of the per-token envelope CID is deployment-specific. Andromeda pins
-> each envelope as `token-<tokenId>-envelope` and exposes it through its indexer
-> (`tokens.envelopeCid`). A third-party reader that maintains its own index can
-> resolve the same blob from the pin name or from its own records.
+> Discovery of the per-token envelope URI is deployment-specific. Andromeda
+> stores each envelope as `token-<tokenId>-envelope` and exposes it through its
+> indexer (`tokens.envelopeCid`, which may hold a CID or content URI). A
+> third-party reader that maintains its own index can resolve the same blob from
+> the storage name or from its own records.
 
 ---
 
@@ -197,8 +206,10 @@ Given a `tokenId` the reader owns:
 
 1. **Resolve metadata.** Read the token's `tokenURI` (numbered editions) or the
    work's `metadataURI`; parse the `ace` block. Verify `ace.version == "1"` and
-   the `cipher` / `envelope_scheme` / `tba_standard` identifiers.
-2. **Fetch ciphertext.** Download the blob at `ace.encrypted_content` (§2.1).
+   the `cipher` / `envelope_scheme` / `tba_standard` identifiers. Resolve
+   `ar://` / legacy `ipfs://` via an appropriate HTTPS gateway.
+2. **Fetch ciphertext.** Download the blob at `ace.encrypted_content` (§2.1),
+   resolving the content URI through a gateway.
 3. **Fetch envelope.** Resolve and download the per-token envelope blob (§2.2,
    §5).
 4. **Derive keys.** Ask the wallet to sign `Andromeda reader key v1`; derive
@@ -232,11 +243,11 @@ Envelope blob (hex, truncated):
   01                                # format version
   04a1…<eciesjs secp256k1 payload>… # ephemeral pubkey ‖ nonce ‖ aes-gcm
 
-IPFS objects:
-  ipfs://bafybeigdyr…cover           # image (public)
-  ipfs://bafybeihk…ciphertext        # ace.encrypted_content (shared)
-  ipfs://bafybeme…metadata.json      # tokenURI / metadataURI (public)
-  ipfs://bafyben…token-7-envelope    # per-token envelope (owner-only use)
+Content URIs (normative ar://; legacy ipfs:// still readable):
+  ar://CoverTxId…                    # image (public)
+  ar://CipherTxId…                   # ace.encrypted_content (shared)
+  ar://MetaTxId…                     # tokenURI / metadataURI (public)
+  ar://EnvelopeTxId…                 # per-token envelope (owner-only use)
 
 TBA for tokenId 7:
   chainId  = 80002 (Polygon Amoy)

@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import {
   getArweaveGatewayBaseUrl,
+  getContentGatewayBases,
   getIpfsGatewayBaseUrl,
   getIpfsPinningApiKey,
   getPermanentStorageBackend,
@@ -41,5 +42,14 @@ describe("ipfs-config", () => {
     expect(getArweaveGatewayBaseUrl()).toBe("https://arweave.net");
     process.env.ARWEAVE_GATEWAY_BASE_URL = "https://ar.example.test/";
     expect(getArweaveGatewayBaseUrl()).toBe("https://ar.example.test");
+  });
+
+  it("pairs IPFS and Arweave gateways for content URI resolution", () => {
+    process.env.IPFS_GATEWAY_BASE_URL = "https://ipfs.example.test/";
+    process.env.ARWEAVE_GATEWAY_BASE_URL = "https://ar.example.test/";
+    expect(getContentGatewayBases()).toEqual({
+      ipfs: "https://ipfs.example.test",
+      arweave: "https://ar.example.test",
+    });
   });
 });

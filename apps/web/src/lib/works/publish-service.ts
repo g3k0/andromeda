@@ -4,9 +4,9 @@ import {
   ACE_TBA_STANDARD,
   ACE_VERSION,
 } from "@/lib/content-crypto/ace-spec";
+import type { ContentUri } from "@/lib/ipfs/content-uri";
 import { parseAcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
-import type { IpfsUri } from "@/lib/ipfs/types";
 
 import {
   buildWorkDescriptionFromImprint,
@@ -18,8 +18,9 @@ import type {
   PublishWorkResult,
 } from "./types";
 
+/** Placeholder content URI for imprint-only validation before pins exist. */
 const METADATA_URI_PLACEHOLDER =
-  "ipfs://bafybeigcccccccccccccccccccccccccccccccccccc" as const;
+  "ar://AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" as ContentUri;
 
 export function buildAcePublicMetadata(
   input: BuildAceMetadataInput,
@@ -78,7 +79,7 @@ export async function publishWorkToIpfs(
     name: input.name,
     workImprint: input.workImprint,
     imageUri: coverPin.uri,
-    encryptedContentUri: contentPin.uri as IpfsUri,
+    encryptedContentUri: contentPin.uri,
     chainId: input.chainId,
     contractAddress: input.contractAddress,
     registryAddress: input.registryAddress,

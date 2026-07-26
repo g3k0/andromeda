@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 
 import { WorkReaderClient } from "@/components/works/WorkReaderClient";
 import { getContractAddress } from "@/lib/config/public-env";
-import { toGatewayUrl } from "@/lib/ipfs/gateway-url";
-import { getIpfsGatewayBaseUrl } from "@/lib/ipfs/ipfs-config";
+import { toContentGatewayUrl } from "@/lib/ipfs/gateway-url";
+import { getContentGatewayBases } from "@/lib/ipfs/ipfs-config";
 import { getServerTranslations } from "@/lib/i18n/server";
 import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
 import { formatLocalizedCopyLabel } from "@/lib/i18n/work-labels";
@@ -61,7 +61,7 @@ export default async function ReadPage({ params }: ReadPageProps) {
     notFound();
   }
 
-  const gatewayBaseUrl = getIpfsGatewayBaseUrl();
+  const contentGateways = getContentGatewayBases();
   const copyLabel =
     token.copyNumber !== null
       ? formatLocalizedCopyLabel(t, token.copyNumber, work.maxCopies)
@@ -87,16 +87,16 @@ export default async function ReadPage({ params }: ReadPageProps) {
 
       <WorkReaderClient
         tokenId={token.tokenId.toString()}
-        metadataUrl={toGatewayUrl(
+        metadataUrl={toContentGatewayUrl(
           token.metadataURI ?? work.metadataURI,
-          gatewayBaseUrl,
+          contentGateways,
         )}
         envelopeUrl={
           token.envelopeCid
-            ? toGatewayUrl(token.envelopeCid, gatewayBaseUrl)
+            ? toContentGatewayUrl(token.envelopeCid, contentGateways)
             : null
         }
-        gatewayBaseUrl={gatewayBaseUrl}
+        contentGateways={contentGateways}
         contractAddress={getContractAddress()}
       />
     </div>

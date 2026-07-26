@@ -5,7 +5,10 @@ import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 import type { PublicWorkDto } from "./public-dto";
 import { buildWorkView } from "./work-view";
 
-const GATEWAY = "https://gateway.test/ipfs";
+const GATEWAYS = {
+  ipfs: "https://gateway.test/ipfs",
+  arweave: "https://arweave.test",
+};
 
 function dto(overrides: Partial<PublicWorkDto> = {}): PublicWorkDto {
   return {
@@ -30,7 +33,7 @@ const metadata = {
 
 describe("buildWorkView", () => {
   it("combines projection and metadata into a display view", () => {
-    const view = buildWorkView(dto(), metadata, GATEWAY);
+    const view = buildWorkView(dto(), metadata, GATEWAYS);
     expect(view.title).toBe("The Star Gate");
     expect(view.description).toBe("A novella about distant stars.");
     expect(view.coverImageUrl).toBe("https://gateway.test/ipfs/bafycover");
@@ -39,8 +42,17 @@ describe("buildWorkView", () => {
     expect(view.soldOut).toBe(false);
   });
 
+  it("resolves ar:// cover images via the Arweave gateway", () => {
+    const view = buildWorkView(
+      dto(),
+      { ...metadata, image: "ar://CoverTxId" } as AcePublicMetadata,
+      GATEWAYS,
+    );
+    expect(view.coverImageUrl).toBe("https://arweave.test/CoverTxId");
+  });
+
   it("falls back to a generated title and no cover when metadata is missing", () => {
-    const view = buildWorkView(dto({ workId: "9" }), null, GATEWAY);
+    const view = buildWorkView(dto({ workId: "9" }), null, GATEWAYS);
     expect(view.title).toBe("Work #9");
     expect(view.description).toBe("");
     expect(view.coverImageUrl).toBeNull();
@@ -48,11 +60,11 @@ describe("buildWorkView", () => {
 
   it("labels sold-out and open editions", () => {
     expect(
-      buildWorkView(dto({ soldOut: true, remainingCopies: "0" }), null, GATEWAY)
+      buildWorkView(dto({ soldOut: true, remainingCopies: "0" }), null, GATEWAYS)
         .soldOut,
     ).toBe(true);
     expect(
-      buildWorkView(dto({ remainingCopies: null }), null, GATEWAY)
+      buildWorkView(dto({ remainingCopies: null }), null, GATEWAYS)
         .remainingCopies,
     ).toBeNull();
   });

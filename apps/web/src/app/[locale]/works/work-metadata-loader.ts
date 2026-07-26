@@ -1,18 +1,21 @@
 import "server-only";
 
-import { toGatewayUrl } from "@/lib/ipfs/gateway-url";
+import {
+  toContentGatewayUrl,
+  type ContentGatewayBases,
+} from "@/lib/ipfs/gateway-url";
 import {
   parseAcePublicMetadata,
   type AcePublicMetadata,
 } from "@/lib/ipfs/metadata-schema";
 
-/** Best-effort fetch of a work's public metadata JSON from the IPFS gateway. */
+/** Best-effort fetch of a work's public metadata JSON from a content gateway. */
 export async function loadPublicWorkMetadata(
   metadataUri: string,
-  gatewayBaseUrl: string,
+  gateways: ContentGatewayBases,
 ): Promise<AcePublicMetadata | null> {
   try {
-    const response = await fetch(toGatewayUrl(metadataUri, gatewayBaseUrl), {
+    const response = await fetch(toContentGatewayUrl(metadataUri, gateways), {
       cache: "no-store",
     });
     if (!response.ok) {

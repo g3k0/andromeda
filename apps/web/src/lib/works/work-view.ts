@@ -1,4 +1,7 @@
-import { toGatewayUrl } from "@/lib/ipfs/gateway-url";
+import {
+  toContentGatewayUrl,
+  type ContentGatewayBases,
+} from "@/lib/ipfs/gateway-url";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 
 import { formatWorkPrice } from "./mint-copy-tx";
@@ -20,14 +23,14 @@ export type WorkView = {
 export function buildWorkView(
   dto: PublicWorkDto,
   metadata: AcePublicMetadata | null,
-  gatewayBaseUrl: string,
+  gateways: ContentGatewayBases,
 ): WorkView {
   return {
     workId: dto.workId,
     title: metadata?.name?.trim() || `Work #${dto.workId}`,
     description: metadata?.description?.trim() || "",
     coverImageUrl: metadata?.image
-      ? toGatewayUrl(metadata.image, gatewayBaseUrl)
+      ? toContentGatewayUrl(metadata.image, gateways)
       : null,
     priceLabel: formatWorkPrice(BigInt(dto.price)),
     remainingCopies: dto.remainingCopies,

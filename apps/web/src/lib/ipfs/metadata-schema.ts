@@ -7,17 +7,19 @@ import {
   ACE_VERSION,
 } from "@/lib/content-crypto/ace-spec";
 
+import { isContentUri } from "./content-uri";
 import { IpfsMetadataValidationError } from "./errors";
 
-const IPFS_URI_PATTERN = /^ipfs:\/\/.+/;
+/** Normative `ar://…` or legacy `ipfs://…` content locator. */
+const CONTENT_URI_PATTERN = /^(ar|ipfs):\/\/.+/;
 
 const addressSchema = z
   .string()
   .regex(/^0x[0-9a-fA-F]{40}$/, "Expected a checksummed hex address");
 
-const ipfsUriSchema = z
+export const contentUriSchema = z
   .string()
-  .regex(IPFS_URI_PATTERN, "Expected an ipfs:// URI");
+  .regex(CONTENT_URI_PATTERN, "Expected an ar:// or ipfs:// URI");
 
 const attributeSchema = z.object({
   trait_type: z.string().min(1),
@@ -66,7 +68,7 @@ export type WorkImprintMetadata = z.infer<typeof workImprintMetadataSchema>;
 
 const aceMetadataBlockSchema = z.object({
   version: z.literal(ACE_VERSION),
-  encrypted_content: ipfsUriSchema,
+  encrypted_content: contentUriSchema,
   cipher: z.literal(ACE_CONTENT_CIPHER),
   envelope_scheme: z.literal(ACE_ENVELOPE_SCHEME),
   tba_standard: z.literal(ACE_TBA_STANDARD),
@@ -79,7 +81,7 @@ export const acePublicMetadataSchema = z
   .object({
     name: z.string().min(1),
     description: z.string().min(1),
-    image: ipfsUriSchema,
+    image: contentUriSchema,
     external_url: z.string().url().optional(),
     attributes: z.array(attributeSchema).optional(),
     work_imprint: workImprintMetadataSchema,
@@ -157,11 +159,11 @@ function collectPlaintextAttributeIssues(
 
     if (
       typeof attribute.value === "string" &&
-      attribute.value.startsWith("ipfs://") &&
+      isContentUri(attribute.value) &&
       trait.includes("plaintext")
     ) {
       issues.push(
-        `attributes[${index}] references a plaintext content CID`,
+        `attributes[${index}] references a plaintext content URI`,
       );
     }
   }
