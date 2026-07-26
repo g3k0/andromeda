@@ -71,13 +71,15 @@ export async function publishWorkToPermanentStorage(
     attributes: input.attributes,
   });
 
-  const coverUpload = await storage.uploadBlob(input.coverImage, {
-    name: `${slugifyUploadName(input.name)}-cover`,
-  });
-
-  const contentUpload = await storage.uploadBlob(input.ciphertext, {
-    name: `${slugifyUploadName(input.name)}-content`,
-  });
+  const uploadBaseName = slugifyUploadName(input.name);
+  const [coverUpload, contentUpload] = await Promise.all([
+    storage.uploadBlob(input.coverImage, {
+      name: `${uploadBaseName}-cover`,
+    }),
+    storage.uploadBlob(input.ciphertext, {
+      name: `${uploadBaseName}-content`,
+    }),
+  ]);
 
   const metadata = buildAcePublicMetadata({
     name: input.name,
@@ -92,7 +94,7 @@ export async function publishWorkToPermanentStorage(
   });
 
   const metadataUpload = await storage.uploadJson(metadata, {
-    name: `${slugifyUploadName(input.name)}-metadata`,
+    name: `${uploadBaseName}-metadata`,
   });
 
   return {
