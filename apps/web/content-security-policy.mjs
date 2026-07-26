@@ -15,6 +15,9 @@ const CONNECT_SRC = [
   "https://gateway.pinata.cloud",
   "https://api.pinata.cloud",
   "https://*.mypinata.cloud",
+  "https://arweave.net",
+  "https://*.arweave.net",
+  "https://*.ar.io",
 ];
 
 const IMG_SRC = [
@@ -24,6 +27,9 @@ const IMG_SRC = [
   "https://ipfs.io",
   "https://gateway.pinata.cloud",
   "https://*.mypinata.cloud",
+  "https://arweave.net",
+  "https://*.arweave.net",
+  "https://*.ar.io",
 ];
 
 const FONT_SRC = ["'self'", "data:", "https://fonts.gstatic.com"];
