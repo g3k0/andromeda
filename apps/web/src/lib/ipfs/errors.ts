@@ -12,6 +12,14 @@ export class IpfsPinError extends Error {
   }
 }
 
+/** Upload / fetch failures against Arweave (Turbo or gateway). */
+export class ArweaveUploadError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ArweaveUploadError";
+  }
+}
+
 export class IpfsMetadataValidationError extends Error {
   constructor(
     message: string,
