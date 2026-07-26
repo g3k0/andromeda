@@ -39,6 +39,8 @@ const securityHeaders = [
 
 const nextConfig = {
   reactStrictMode: true,
+  // Keep native/node Turbo deps out of the Next bundler.
+  serverExternalPackages: ["@ardrive/turbo-sdk"],
   images: {
     remotePatterns: [
       {

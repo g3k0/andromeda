@@ -45,6 +45,22 @@ export function getArweaveGatewayBaseUrl(): string {
   return (configured || DEFAULT_ARWEAVE_GATEWAY_BASE_URL).replace(/\/+$/, "");
 }
 
+/**
+ * Arweave JWK used to authenticate Turbo uploads.
+ * Prefer `ARWEAVE_JWK`; `ARWEAVE_TURBO_JWK` is accepted as an alias.
+ */
+export function getArweaveJwkRaw(): string {
+  const raw =
+    process.env.ARWEAVE_JWK?.trim() ||
+    process.env.ARWEAVE_TURBO_JWK?.trim();
+  if (!raw) {
+    throw new IpfsConfigError(
+      "ARWEAVE_JWK is not configured (required when PERMANENT_STORAGE_BACKEND=arweave)",
+    );
+  }
+  return raw;
+}
+
 export type PinataIpfsStorageEnvConfig = {
   apiKey: string;
   gatewayBaseUrl: string;
@@ -54,5 +70,17 @@ export function getPinataIpfsStorageEnvConfig(): PinataIpfsStorageEnvConfig {
   return {
     apiKey: getIpfsPinningApiKey(),
     gatewayBaseUrl: getIpfsGatewayBaseUrl(),
+  };
+}
+
+export type ArweaveTurboStorageEnvConfig = {
+  jwkRaw: string;
+  gatewayBaseUrl: string;
+};
+
+export function getArweaveTurboStorageEnvConfig(): ArweaveTurboStorageEnvConfig {
+  return {
+    jwkRaw: getArweaveJwkRaw(),
+    gatewayBaseUrl: getArweaveGatewayBaseUrl(),
   };
 }
