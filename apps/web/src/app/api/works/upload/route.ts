@@ -1,4 +1,4 @@
-import { getIpfsStorage } from "@/lib/works/ipfs-server";
+import { getPermanentStorage } from "@/lib/works/ipfs-server";
 import { workErrorResponse, jsonResponse } from "@/lib/works/api-utils";
 import { toPublicWorkUploadDto } from "@/lib/works/public-dto";
 import { runWorkUploadMutation } from "@/lib/works/work-upload-mutations";
@@ -9,16 +9,20 @@ export async function POST(request: Request): Promise<Response> {
     await assertWorkUploadIpRateLimit(request);
 
     const formData = await request.formData();
-    const result = await runWorkUploadMutation(formData, {
-      ipfs: getIpfsStorage(),
-    }, request);
+    const result = await runWorkUploadMutation(
+      formData,
+      {
+        storage: getPermanentStorage(),
+      },
+      request,
+    );
 
     return jsonResponse(
       {
         metadataUri: result.metadataUri,
-        metadataCid: result.metadataPin.cid,
-        contentCid: result.contentPin.cid,
-        coverCid: result.coverPin.cid,
+        metadataCid: result.metadataUpload.id,
+        contentCid: result.contentUpload.id,
+        coverCid: result.coverUpload.id,
         metadata: result.metadata,
         upload: toPublicWorkUploadDto(result.upload),
       },

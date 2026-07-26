@@ -3,10 +3,10 @@ import "server-only";
 import { verifySignedMutation } from "@/lib/authors/mutation-handler";
 import { getAuthorService } from "@/lib/authors/server";
 import { getUserService } from "@/lib/users/server";
-import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
+import type { PermanentStoragePort } from "@/lib/ipfs/ports/permanent-storage-port";
 import { assertCanPublishWork } from "./authorize";
 import { resolveWorkPublishChainConfig } from "./work-publish-chain-config";
-import { publishWorkToIpfs } from "./publish-service";
+import { publishWorkToPermanentStorage } from "./publish-service";
 import type { WorkUploadMutationResult } from "./types";
 import { assertNoDuplicateWorkUpload } from "./work-upload-duplicate";
 import { parseWorkUploadFiles } from "./upload-form";
@@ -15,7 +15,7 @@ import { assertWorkUploadWalletRateLimit } from "./work-upload-rate-limit";
 import { getWorkUploadService } from "./work-upload-server";
 
 export type WorkUploadMutationDeps = {
-  ipfs: IpfsStoragePort;
+  storage: PermanentStoragePort;
 };
 
 export async function runWorkUploadMutation(
@@ -49,7 +49,7 @@ export async function runWorkUploadMutation(
 
   const chainConfig = resolveWorkPublishChainConfig();
 
-  const published = await publishWorkToIpfs(deps.ipfs, {
+  const published = await publishWorkToPermanentStorage(deps.storage, {
     ciphertext: files.ciphertext,
     coverImage: files.coverImage,
     name: fields.name,
@@ -64,9 +64,10 @@ export async function runWorkUploadMutation(
     author: fields.address,
     name: fields.name,
     metadataURI: published.metadataUri,
-    metadataCid: published.metadataPin.cid,
-    contentCid: published.contentPin.cid,
-    coverCid: published.coverPin.cid,
+    // Mongo field names keep *Cid for opaque storage ids (CID or Arweave tx id).
+    metadataCid: published.metadataUpload.id,
+    contentCid: published.contentUpload.id,
+    coverCid: published.coverUpload.id,
     externalUrl: fields.externalUrl,
     workImprint: fields.imprint,
   });
