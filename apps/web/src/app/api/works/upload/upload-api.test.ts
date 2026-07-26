@@ -26,10 +26,12 @@ import { RateLimitBucketModel } from "@/lib/db/models/rate-limit-bucket.model";
 import { RoleModel } from "@/lib/db/models/role.model";
 import { UserModel } from "@/lib/db/models/user.model";
 import { connectMongo, resetMongoConnectionForTests } from "@/lib/db/mongodb";
+import { createArweaveTurboStorage } from "@/lib/ipfs/adapters/arweave-turbo-storage";
 import {
-  createInMemoryIpfsState,
-  createInMemoryIpfsStorage,
-} from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+  createFakeTurboUploadClient,
+  createFakeTurboUploadState,
+} from "@/lib/ipfs/testing/fake-turbo-upload-client";
+import { createInMemoryPermanentStorage } from "@/lib/ipfs/testing/in-memory-permanent-storage";
 import { resetAuthorServiceForTests } from "@/lib/authors/server";
 import { resetServerEnvForTests } from "@/lib/config/env";
 import { resetUserServiceForTests } from "@/lib/users/server";
@@ -40,7 +42,10 @@ import { generateContentKey } from "@/lib/content-crypto/ace-spec";
 import { MINIMAL_PNG_BYTES } from "@/lib/works/cover-image-validation";
 
 import { POST } from "./route";
-import { setIpfsStorageForTests } from "@/lib/works/ipfs-server";
+import {
+  resetIpfsStorageForTests,
+  setPermanentStorageForTests,
+} from "@/lib/works/ipfs-server";
 import {
   resetWorkUploadServiceForTests,
 } from "@/lib/works/work-upload-server";
@@ -131,14 +136,15 @@ describe("works upload API", () => {
     resetMongoConnectionForTests();
     process.env.MONGODB_URI = memoryServer!.getUri();
     await connectMongo();
-    setIpfsStorageForTests(createInMemoryIpfsStorage(createInMemoryIpfsState()));
+    const { storage } = createInMemoryPermanentStorage();
+    setPermanentStorageForTests(storage);
   });
 
   afterEach(async () => {
     resetWalletAuthStoreForTests();
     resetRateLimitsForTests();
     useInMemoryRateLimitsForTests();
-    setIpfsStorageForTests(null);
+    resetIpfsStorageForTests();
     resetWorkUploadServiceForTests();
     resetAuthorServiceForTests();
     resetUserServiceForTests();
@@ -187,7 +193,7 @@ describe("works upload API", () => {
       "0x3333333333333333333333333333333333333333";
   });
 
-  it("pins encrypted work content and metadata for an authenticated author", async () => {
+  it("uploads encrypted work content and metadata for an authenticated author", async () => {
     await AuthorModel.create({
       address: AUTHOR_ADDRESS,
       displayName: "Writer",
@@ -209,6 +215,30 @@ describe("works upload API", () => {
     const stored = await WorkUploadModel.find({ author: AUTHOR_ADDRESS }).lean();
     expect(stored).toHaveLength(1);
     expect(stored[0]?.metadataCid).toBe(json.metadataCid);
+  });
+
+  it("returns ar:// metadataUri when permanent storage is Arweave", async () => {
+    setPermanentStorageForTests(
+      createArweaveTurboStorage({
+        client: createFakeTurboUploadClient(createFakeTurboUploadState()),
+        gatewayBaseUrl: "https://arweave.test",
+      }),
+    );
+
+    await AuthorModel.create({
+      address: AUTHOR_ADDRESS,
+      displayName: "Writer",
+      avatarUrl: null,
+    });
+
+    const response = await uploadRequest(await signedUploadForm());
+
+    expect(response.status).toBe(201);
+    const json = await response.json();
+    expect(json.metadataUri).toMatch(/^ar:\/\//);
+    expect(json.metadata.image).toMatch(/^ar:\/\//);
+    expect(json.metadata.ace.encrypted_content).toMatch(/^ar:\/\//);
+    expect(json.upload.metadataURI).toBe(json.metadataUri);
   });
 
   it("rejects contentKey in the upload payload", async () => {

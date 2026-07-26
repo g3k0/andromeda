@@ -6,7 +6,7 @@ import {
 } from "@/lib/content-crypto/ace-spec";
 import type { ContentUri } from "@/lib/ipfs/content-uri";
 import { parseAcePublicMetadata } from "@/lib/ipfs/metadata-schema";
-import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
+import type { PermanentStoragePort } from "@/lib/ipfs/ports/permanent-storage-port";
 
 import {
   buildWorkDescriptionFromImprint,
@@ -18,7 +18,7 @@ import type {
   PublishWorkResult,
 } from "./types";
 
-/** Placeholder content URI for imprint-only validation before pins exist. */
+/** Placeholder content URI for imprint-only validation before uploads exist. */
 const METADATA_URI_PLACEHOLDER =
   "ar://AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" as ContentUri;
 
@@ -51,8 +51,12 @@ export function buildAcePublicMetadata(
   });
 }
 
-export async function publishWorkToIpfs(
-  ipfs: IpfsStoragePort,
+/**
+ * Uploads cover, ciphertext, and ACE metadata to permanent storage.
+ * Backend is selected by `getPermanentStorage()` (Pinata or Arweave).
+ */
+export async function publishWorkToPermanentStorage(
+  storage: PermanentStoragePort,
   input: PublishWorkInput,
 ): Promise<PublishWorkResult> {
   buildAcePublicMetadata({
@@ -67,19 +71,21 @@ export async function publishWorkToIpfs(
     attributes: input.attributes,
   });
 
-  const coverPin = await ipfs.pinBlob(input.coverImage, {
-    name: `${slugifyPinName(input.name)}-cover`,
-  });
-
-  const contentPin = await ipfs.pinBlob(input.ciphertext, {
-    name: `${slugifyPinName(input.name)}-content`,
-  });
+  const uploadBaseName = slugifyUploadName(input.name);
+  const [coverUpload, contentUpload] = await Promise.all([
+    storage.uploadBlob(input.coverImage, {
+      name: `${uploadBaseName}-cover`,
+    }),
+    storage.uploadBlob(input.ciphertext, {
+      name: `${uploadBaseName}-content`,
+    }),
+  ]);
 
   const metadata = buildAcePublicMetadata({
     name: input.name,
     workImprint: input.workImprint,
-    imageUri: coverPin.uri,
-    encryptedContentUri: contentPin.uri,
+    imageUri: coverUpload.uri,
+    encryptedContentUri: contentUpload.uri,
     chainId: input.chainId,
     contractAddress: input.contractAddress,
     registryAddress: input.registryAddress,
@@ -87,20 +93,20 @@ export async function publishWorkToIpfs(
     attributes: input.attributes,
   });
 
-  const metadataPin = await ipfs.pinJson(metadata, {
-    name: `${slugifyPinName(input.name)}-metadata`,
+  const metadataUpload = await storage.uploadJson(metadata, {
+    name: `${uploadBaseName}-metadata`,
   });
 
   return {
-    coverPin,
-    contentPin,
-    metadataPin,
+    coverUpload,
+    contentUpload,
+    metadataUpload,
     metadata,
-    metadataUri: metadataPin.uri,
+    metadataUri: metadataUpload.uri,
   };
 }
 
-function slugifyPinName(name: string): string {
+function slugifyUploadName(name: string): string {
   const slug = name
     .trim()
     .toLowerCase()

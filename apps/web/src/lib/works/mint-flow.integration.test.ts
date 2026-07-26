@@ -12,6 +12,7 @@ import { unwrapContentKey } from "@/lib/content-crypto/envelope";
 import { createTbaKeyFixture } from "@/lib/content-crypto/testing/key-fixtures";
 import type { TbaEnvelopeSigner } from "@/lib/content-crypto/tba-envelope-signer";
 import { andromedaWorksAbi } from "@/lib/chain/contract";
+import { adaptIpfsStorageToPermanent } from "@/lib/ipfs/adapters/ipfs-as-permanent-storage";
 import {
   createInMemoryIpfsState,
   createInMemoryIpfsStorage,
@@ -23,7 +24,7 @@ import type { Erc6551RegistryConfig } from "@/lib/tba/tba-registry";
 import { createMintEnvelopeFromSession } from "./mint-envelope-client";
 import { extractMintedTokenId } from "./mint-receipt";
 import { buildTokenTbaLookup, planTokenTbaDeployment } from "./mint-tba-deploy";
-import { publishWorkToIpfs } from "./publish-service";
+import { publishWorkToPermanentStorage } from "./publish-service";
 import { parseWorkImprintFromFormValues } from "./work-imprint-metadata";
 
 const CONTRACT = "0x1111111111111111111111111111111111111111" as const;
@@ -89,15 +90,20 @@ describe("mint flow integration", () => {
       encodeUtf8Plaintext(plaintext),
       contentKey,
     );
-    const published = await publishWorkToIpfs(ipfs, {
-      ciphertext,
-      coverImage: encodeUtf8Plaintext("fake-png"),
-      name: "The Star Gate",
-      workImprint: workImprint(),
-      chainId: CHAIN_ID,
-      contractAddress: CONTRACT,
-      registryAddress: REGISTRY,
-    });
+    const published = await publishWorkToPermanentStorage(
+      adaptIpfsStorageToPermanent(ipfs, {
+        ipfsGatewayBaseUrl: "https://gateway.test/ipfs",
+      }),
+      {
+        ciphertext,
+        coverImage: encodeUtf8Plaintext("fake-png"),
+        name: "The Star Gate",
+        workImprint: workImprint(),
+        chainId: CHAIN_ID,
+        contractAddress: CONTRACT,
+        registryAddress: REGISTRY,
+      },
+    );
 
     // 2. Buyer purchases copy → tokenId from CopyPurchased log.
     const tokenId = extractMintedTokenId([copyPurchasedLog(1n, 42n)], {

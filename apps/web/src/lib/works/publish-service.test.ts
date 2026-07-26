@@ -2,14 +2,19 @@ import { describe, expect, it } from "vitest";
 
 import { encryptContent, encodeUtf8Plaintext } from "@/lib/content-crypto/content-cipher";
 import { generateContentKey } from "@/lib/content-crypto/ace-spec";
+import { createArweaveTurboStorage } from "@/lib/ipfs/adapters/arweave-turbo-storage";
 import { IpfsMetadataValidationError } from "@/lib/ipfs/errors";
 import {
-  createInMemoryIpfsState,
-  createInMemoryIpfsStorage,
-  getInMemoryIpfsRecord,
-} from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+  createFakeTurboUploadClient,
+  createFakeTurboUploadState,
+} from "@/lib/ipfs/testing/fake-turbo-upload-client";
+import { getInMemoryIpfsRecord } from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+import { createInMemoryPermanentStorage } from "@/lib/ipfs/testing/in-memory-permanent-storage";
 
-import { buildAcePublicMetadata, publishWorkToIpfs } from "./publish-service";
+import {
+  buildAcePublicMetadata,
+  publishWorkToPermanentStorage,
+} from "./publish-service";
 import { parseWorkImprintFromFormValues } from "./work-imprint-metadata";
 
 const CONTRACT = "0x1111111111111111111111111111111111111111" as const;
@@ -84,10 +89,9 @@ describe("buildAcePublicMetadata", () => {
   });
 });
 
-describe("publishWorkToIpfs", () => {
-  it("validates metadata before pinning to IPFS", async () => {
-    const state = createInMemoryIpfsState();
-    const ipfs = createInMemoryIpfsStorage(state);
+describe("publishWorkToPermanentStorage", () => {
+  it("validates metadata before uploading", async () => {
+    const { storage, state } = createInMemoryPermanentStorage();
     const contentKey = generateContentKey();
     const ciphertext = await encryptContent(
       encodeUtf8Plaintext("Once upon a time…"),
@@ -95,7 +99,7 @@ describe("publishWorkToIpfs", () => {
     );
 
     await expect(
-      publishWorkToIpfs(ipfs, {
+      publishWorkToPermanentStorage(storage, {
         ciphertext,
         coverImage: new TextEncoder().encode("fake-png-bytes"),
         name: "The Star Gate",
@@ -109,16 +113,15 @@ describe("publishWorkToIpfs", () => {
     expect(state.records.size).toBe(0);
   });
 
-  it("pins cover, ciphertext, and validated metadata", async () => {
-    const state = createInMemoryIpfsState();
-    const ipfs = createInMemoryIpfsStorage(state);
+  it("uploads cover, ciphertext, and validated metadata (Pinata path)", async () => {
+    const { storage, state } = createInMemoryPermanentStorage();
     const contentKey = generateContentKey();
     const ciphertext = await encryptContent(
       encodeUtf8Plaintext("Once upon a time…"),
       contentKey,
     );
 
-    const result = await publishWorkToIpfs(ipfs, {
+    const result = await publishWorkToPermanentStorage(storage, {
       ciphertext,
       coverImage: new TextEncoder().encode("fake-png-bytes"),
       name: "The Star Gate",
@@ -129,10 +132,39 @@ describe("publishWorkToIpfs", () => {
     });
 
     expect(result.metadataUri).toMatch(/^ipfs:\/\//);
-    expect(result.metadata.ace.encrypted_content).toBe(result.contentPin.uri);
-    expect(result.metadata.image).toBe(result.coverPin.uri);
+    expect(result.metadata.ace.encrypted_content).toBe(result.contentUpload.uri);
+    expect(result.metadata.image).toBe(result.coverUpload.uri);
     expect(result.metadata.work_imprint.publication_date).toBe("2026-06-01");
-    expect(getInMemoryIpfsRecord(state, result.contentPin.cid)).toBeDefined();
-    expect(getInMemoryIpfsRecord(state, result.metadataPin.cid)).toBeDefined();
+    expect(getInMemoryIpfsRecord(state, result.contentUpload.id)).toBeDefined();
+    expect(getInMemoryIpfsRecord(state, result.metadataUpload.id)).toBeDefined();
+  });
+
+  it("uploads with ar:// URIs when using the Arweave Turbo adapter", async () => {
+    const turboState = createFakeTurboUploadState();
+    const storage = createArweaveTurboStorage({
+      client: createFakeTurboUploadClient(turboState),
+      gatewayBaseUrl: "https://arweave.test",
+    });
+    const contentKey = generateContentKey();
+    const ciphertext = await encryptContent(
+      encodeUtf8Plaintext("Once upon a time…"),
+      contentKey,
+    );
+
+    const result = await publishWorkToPermanentStorage(storage, {
+      ciphertext,
+      coverImage: new TextEncoder().encode("fake-png-bytes"),
+      name: "The Star Gate",
+      workImprint: sampleWorkImprint(),
+      chainId: 80002,
+      contractAddress: CONTRACT,
+      registryAddress: REGISTRY,
+    });
+
+    expect(result.metadataUri).toMatch(/^ar:\/\//);
+    expect(result.metadata.image).toMatch(/^ar:\/\//);
+    expect(result.metadata.ace.encrypted_content).toMatch(/^ar:\/\//);
+    expect(result.metadata.ace.encrypted_content).toBe(result.contentUpload.uri);
+    expect(turboState.uploads).toHaveLength(3);
   });
 });

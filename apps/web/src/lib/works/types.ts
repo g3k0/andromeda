@@ -1,6 +1,6 @@
 import type { ContentUri } from "@/lib/ipfs/content-uri";
 import type { AcePublicMetadata, WorkImprintMetadata } from "@/lib/ipfs/metadata-schema";
-import type { IpfsUri, PinResult } from "@/lib/ipfs/types";
+import type { UploadResult } from "@/lib/ipfs/ports/permanent-storage-port";
 
 export type WorkAttribute = {
   trait_type: string;
@@ -21,11 +21,11 @@ export type PublishWorkInput = {
 };
 
 export type PublishWorkResult = {
-  coverPin: PinResult;
-  contentPin: PinResult;
-  metadataPin: PinResult;
+  coverUpload: UploadResult;
+  contentUpload: UploadResult;
+  metadataUpload: UploadResult;
   metadata: AcePublicMetadata;
-  metadataUri: IpfsUri;
+  metadataUri: ContentUri;
 };
 
 export type BuildAceMetadataInput = {
