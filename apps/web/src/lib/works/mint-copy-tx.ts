@@ -64,7 +64,7 @@ export type SetCopyMetadataTxRequest = {
 
 export type BuildSetCopyMetadataRequestInput = {
   tokenId: bigint;
-  /** IPFS URI of the token's numbered metadata document. */
+  /** Content URI of the token's numbered metadata document. */
   metadataUri: string;
   contractAddress: `0x${string}`;
   abi: Abi;
@@ -79,5 +79,32 @@ export function buildSetCopyMetadataRequest(
     address: input.contractAddress,
     functionName: "setCopyMetadataURI",
     args: [input.tokenId, input.metadataUri],
+  };
+}
+
+export type SetCopyEnvelopeTxRequest = {
+  abi: Abi;
+  address: `0x${string}`;
+  functionName: "setCopyEnvelopeURI";
+  args: readonly [bigint, string];
+};
+
+export type BuildSetCopyEnvelopeRequestInput = {
+  tokenId: bigint;
+  /** Content URI of the ACE envelope (`ar://…` or legacy `ipfs://…`). */
+  envelopeUri: string;
+  contractAddress: `0x${string}`;
+  abi: Abi;
+};
+
+/** Builds the write request to record a copy's ACE envelope URI on-chain. */
+export function buildSetCopyEnvelopeRequest(
+  input: BuildSetCopyEnvelopeRequestInput,
+): SetCopyEnvelopeTxRequest {
+  return {
+    abi: input.abi,
+    address: input.contractAddress,
+    functionName: "setCopyEnvelopeURI",
+    args: [input.tokenId, input.envelopeUri],
   };
 }

@@ -4,7 +4,7 @@ import { verifySignedMutation } from "@/lib/authors/mutation-handler";
 import { walletAuthSchema } from "@/lib/authors/schemas";
 import { acePublicMetadataSchema } from "@/lib/ipfs/metadata-schema";
 import { provisionEditionMetadata } from "@/lib/works/edition-metadata-service";
-import { getIpfsStorage } from "@/lib/works/ipfs-server";
+import { getPermanentStorage } from "@/lib/works/ipfs-server";
 import { jsonResponse, workErrorResponse } from "@/lib/works/api-utils";
 import { parseWorkIdParam } from "@/lib/works/token-envelope-service";
 
@@ -40,7 +40,7 @@ export async function POST(
       copyNumber: copy.copyNumber,
     }));
 
-    const provisioned = await provisionEditionMetadata(getIpfsStorage(), {
+    const provisioned = await provisionEditionMetadata(getPermanentStorage(), {
       signerAddress: signer,
       authorAddress: parsed.authorAddress,
       workMetadata: parsed.workMetadata,

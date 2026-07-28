@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { WalletAuthorizationError } from "@/lib/auth/errors";
-import { createInMemoryIpfsStorage, createInMemoryIpfsState, getInMemoryIpfsRecord } from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+import { getInMemoryIpfsRecord } from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+import { createInMemoryPermanentStorage } from "@/lib/ipfs/testing/in-memory-permanent-storage";
 
 import { provisionEditionMetadata } from "./edition-metadata-service";
 import { buildAcePublicMetadata } from "./publish-service";
@@ -40,9 +41,9 @@ function workMetadata() {
 }
 
 describe("provisionEditionMetadata", () => {
-  it("pins numbered metadata for each copy", async () => {
-    const ipfs = createInMemoryIpfsStorage(createInMemoryIpfsState());
-    const results = await provisionEditionMetadata(ipfs, {
+  it("uploads numbered metadata for each copy", async () => {
+    const { storage } = createInMemoryPermanentStorage();
+    const results = await provisionEditionMetadata(storage, {
       signerAddress: AUTHOR,
       authorAddress: AUTHOR,
       workMetadata: workMetadata(),
@@ -59,9 +60,9 @@ describe("provisionEditionMetadata", () => {
   });
 
   it("rejects non-author signers", async () => {
-    const ipfs = createInMemoryIpfsStorage(createInMemoryIpfsState());
+    const { storage } = createInMemoryPermanentStorage();
     await expect(
-      provisionEditionMetadata(ipfs, {
+      provisionEditionMetadata(storage, {
         signerAddress: OTHER,
         authorAddress: AUTHOR,
         workMetadata: workMetadata(),
@@ -71,10 +72,9 @@ describe("provisionEditionMetadata", () => {
     ).rejects.toThrow(WalletAuthorizationError);
   });
 
-  it("embeds copy number traits in pinned metadata", async () => {
-    const state = createInMemoryIpfsState();
-    const ipfs = createInMemoryIpfsStorage(state);
-    const [result] = await provisionEditionMetadata(ipfs, {
+  it("embeds copy number traits in uploaded metadata", async () => {
+    const { storage, state } = createInMemoryPermanentStorage();
+    const [result] = await provisionEditionMetadata(storage, {
       signerAddress: AUTHOR,
       authorAddress: AUTHOR,
       workMetadata: workMetadata(),
@@ -82,7 +82,10 @@ describe("provisionEditionMetadata", () => {
       copies: [{ tokenId: 9n, copyNumber: 3 }],
     });
 
-    const record = getInMemoryIpfsRecord(state, result.metadataUri.replace("ipfs://", ""));
+    const record = getInMemoryIpfsRecord(
+      state,
+      result.metadataUri.replace("ipfs://", ""),
+    );
     expect(record).toBeDefined();
     const pinned = JSON.parse(new TextDecoder().decode(record!.bytes)) as {
       name: string;

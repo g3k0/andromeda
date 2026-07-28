@@ -6,6 +6,7 @@ import type { WorkOnChain } from "@/lib/chain/types";
 
 import {
   buildMintCopyRequest,
+  buildSetCopyEnvelopeRequest,
   buildSetCopyMetadataRequest,
   formatWorkPrice,
   getWorkAvailability,
@@ -96,5 +97,19 @@ describe("buildSetCopyMetadataRequest", () => {
     expect(request.functionName).toBe("setCopyMetadataURI");
     expect(request.address).toBe(CONTRACT);
     expect(request.args).toEqual([9n, "ipfs://bafyToken"]);
+  });
+});
+
+describe("buildSetCopyEnvelopeRequest", () => {
+  it("builds a setCopyEnvelopeURI write request", () => {
+    const request = buildSetCopyEnvelopeRequest({
+      tokenId: 9n,
+      envelopeUri: "ar://EnvelopeTx",
+      contractAddress: CONTRACT,
+      abi: andromedaWorksAbi,
+    });
+
+    expect(request.functionName).toBe("setCopyEnvelopeURI");
+    expect(request.args).toEqual([9n, "ar://EnvelopeTx"]);
   });
 });
