@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useReducer, useRef } from "react";
+import { useReducer } from "react";
 import {
   useAccount,
   usePublicClient,
   useSendTransaction,
   useSignMessage,
-  useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
+import type { TransactionReceipt } from "viem";
 
 import { andromedaWorksAbi } from "@/lib/chain/contract";
 import type { WorkOnChain } from "@/lib/chain/types";
@@ -56,148 +56,84 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
     undefined,
     createMintCopyClientState,
   );
-  const handledReceiptRef = useRef<string | null>(null);
-
-  const { data: receipt, isError: isReceiptError } = useWaitForTransactionReceipt({
-    hash: state.txHash ?? undefined,
-  });
 
   const availability = getWorkAvailability(work);
   const workId = work.workId;
 
-  useEffect(() => {
-    if (state.step !== "minting" || !state.txHash) {
+  async function completeMintAfterReceipt(
+    receipt: TransactionReceipt,
+    buyer: `0x${string}`,
+  ): Promise<void> {
+    const tokenId = extractMintedTokenId(receipt.logs, {
+      workId,
+      buyer,
+    });
+    dispatch({
+      type: "mint_confirmed",
+      txHash: receipt.transactionHash,
+      tokenId,
+    });
+
+    const config = getErc6551RegistryConfig(getTargetChainId());
+    const lookup = {
+      chainId: config.chainId,
+      tokenContract: getContractAddress(),
+      tokenId,
+    };
+    const tbaAddress = resolveTbaAddress(config, lookup);
+    dispatch({ type: "tba_deploying", address: tbaAddress });
+
+    const deployTx = buildCreateAccountTransaction(config, lookup);
+    await sendTransactionAsync({
+      to: deployTx.to,
+      data: deployTx.data,
+      value: deployTx.value,
+    });
+
+    dispatch({ type: "envelope_pinning" });
+    const envelopeResult = await completeMintEnvelopeSetup({
+      tokenId,
+      metadataUri: work.metadataURI,
+      signMessageAsync,
+      authorAddress: work.author,
+      signAuthorMessageAsync:
+        buyer.toLowerCase() === work.author.toLowerCase()
+          ? signMessageAsync
+          : undefined,
+    });
+
+    if (!envelopeResult.envelopeCid) {
+      // Author must provision the envelope later; copy is minted but not yet complete.
+      dispatch({
+        type: "mint_completed",
+        envelopeCid: null,
+      });
       return;
     }
 
-    const timeoutId = window.setTimeout(() => {
-      dispatch({
-        type: "mint_failed",
-        message: t("mint.receiptTimeout"),
-      });
-    }, RECEIPT_WAIT_TIMEOUT_MS);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [state.step, state.txHash, t]);
-
-  useEffect(() => {
-    if (state.step !== "minting" || !isReceiptError) {
-      return;
+    if (!publicClient) {
+      throw new Error(t("mint.mintFailed"));
     }
 
     dispatch({
-      type: "mint_failed",
-      message: t("mint.receiptTimeout"),
+      type: "envelope_uri_writing",
+      envelopeCid: envelopeResult.envelopeCid,
     });
-  }, [isReceiptError, state.step, t]);
+    const envelopeTxHash = await writeContractAsync(
+      buildSetCopyEnvelopeRequest({
+        tokenId,
+        envelopeUri: envelopeResult.envelopeCid,
+        contractAddress: getContractAddress(),
+        abi: andromedaWorksAbi,
+      }),
+    );
+    await publicClient.waitForTransactionReceipt({ hash: envelopeTxHash });
 
-  useEffect(() => {
-    if (state.step !== "minting" || !receipt || !address) {
-      return;
-    }
-    if (handledReceiptRef.current === receipt.transactionHash) {
-      return;
-    }
-    handledReceiptRef.current = receipt.transactionHash;
-
-    async function setupTokenAccount() {
-      try {
-        const tokenId = extractMintedTokenId(receipt!.logs, {
-          workId,
-          buyer: address,
-        });
-        dispatch({
-          type: "mint_confirmed",
-          txHash: receipt!.transactionHash,
-          tokenId,
-        });
-
-        const config = getErc6551RegistryConfig(getTargetChainId());
-        const lookup = {
-          chainId: config.chainId,
-          tokenContract: getContractAddress(),
-          tokenId,
-        };
-        const tbaAddress = resolveTbaAddress(config, lookup);
-        dispatch({ type: "tba_deploying", address: tbaAddress });
-
-        const deployTx = buildCreateAccountTransaction(config, lookup);
-        await sendTransactionAsync({
-          to: deployTx.to,
-          data: deployTx.data,
-          value: deployTx.value,
-        });
-
-        dispatch({ type: "envelope_pinning" });
-        const envelopeResult = await completeMintEnvelopeSetup({
-          tokenId,
-          metadataUri: work.metadataURI,
-          signMessageAsync,
-          authorAddress: work.author,
-          signAuthorMessageAsync:
-            address?.toLowerCase() === work.author.toLowerCase()
-              ? signMessageAsync
-              : undefined,
-        });
-
-        if (!envelopeResult.envelopeCid) {
-          // Author must provision the envelope later; copy is minted but not yet complete.
-          dispatch({
-            type: "mint_completed",
-            envelopeCid: null,
-          });
-          return;
-        }
-
-        if (!publicClient) {
-          throw new Error(t("mint.mintFailed"));
-        }
-
-        dispatch({
-          type: "envelope_uri_writing",
-          envelopeCid: envelopeResult.envelopeCid,
-        });
-        const envelopeTxHash = await writeContractAsync(
-          buildSetCopyEnvelopeRequest({
-            tokenId,
-            envelopeUri: envelopeResult.envelopeCid,
-            contractAddress: getContractAddress(),
-            abi: andromedaWorksAbi,
-          }),
-        );
-        await publicClient.waitForTransactionReceipt({ hash: envelopeTxHash });
-
-        dispatch({
-          type: "mint_completed",
-          envelopeCid: envelopeResult.envelopeCid,
-        });
-      } catch (error) {
-        dispatch({
-          type: "mint_failed",
-          message:
-            error instanceof Error
-              ? error.message
-              : t("mint.mintFailed"),
-        });
-      }
-    }
-
-    void setupTokenAccount();
-  }, [
-    receipt,
-    state.step,
-    address,
-    workId,
-    work.metadataURI,
-    work.author,
-    sendTransactionAsync,
-    signMessageAsync,
-    writeContractAsync,
-    publicClient,
-    t,
-  ]);
+    dispatch({
+      type: "mint_completed",
+      envelopeCid: envelopeResult.envelopeCid,
+    });
+  }
 
   async function handleMint() {
     if (!isConnected || !address) {
@@ -206,6 +142,10 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
     }
     if (!availability.saleOpen) {
       dispatch({ type: "mint_failed", message: t("mint.notAvailable") });
+      return;
+    }
+    if (!publicClient) {
+      dispatch({ type: "mint_failed", message: t("mint.mintFailed") });
       return;
     }
 
@@ -220,11 +160,26 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
         value: work.price,
       });
       dispatch({ type: "mint_submitted", txHash: hash });
+
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash,
+        timeout: RECEIPT_WAIT_TIMEOUT_MS,
+      });
+      await completeMintAfterReceipt(receipt, address);
     } catch (error) {
+      const isTimeout =
+        error instanceof Error &&
+        (error.name === "WaitForTransactionReceiptTimeoutError" ||
+          error.name === "TimeoutError" ||
+          /timed? ?out/i.test(error.message));
+      const message = isTimeout
+        ? t("mint.receiptTimeout")
+        : error instanceof Error
+          ? error.message
+          : t("mint.mintFailed");
       dispatch({
         type: "mint_failed",
-        message:
-          error instanceof Error ? error.message : t("mint.txFailed"),
+        message,
       });
     }
   }
