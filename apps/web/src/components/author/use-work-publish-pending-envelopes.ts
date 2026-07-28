@@ -46,11 +46,16 @@ export function useWorkPublishPendingEnvelopes({
           signMessageAsync,
         });
 
+        // Sequential on purpose: same-wallet writes must wait for prior receipts (nonce).
+        let previousHash: `0x${string}` | undefined;
         for (const entry of provisioned) {
           if (cancelled) {
             return;
           }
-          const hash = await writeContractAsync(
+          if (previousHash !== undefined) {
+            await publicClient.waitForTransactionReceipt({ hash: previousHash });
+          }
+          previousHash = await writeContractAsync(
             buildSetCopyEnvelopeRequest({
               tokenId: entry.tokenId,
               envelopeUri: entry.envelopeUri,
@@ -58,7 +63,9 @@ export function useWorkPublishPendingEnvelopes({
               abi: andromedaWorksAbi,
             }),
           );
-          await publicClient.waitForTransactionReceipt({ hash });
+        }
+        if (!cancelled && previousHash !== undefined) {
+          await publicClient.waitForTransactionReceipt({ hash: previousHash });
         }
       } catch {
         // Pending envelope provisioning is best-effort while the author session is open.
