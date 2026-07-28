@@ -34,6 +34,7 @@ describe("MintCopyView", () => {
           tokenId={null}
           txHash={null}
           tbaAddress={null}
+          envelopeCid={null}
           errorMessage={null}
           canMint
           onMint={onMint}
@@ -59,6 +60,7 @@ describe("MintCopyView", () => {
           tokenId={null}
           txHash={null}
           tbaAddress={null}
+          envelopeCid={null}
           errorMessage={null}
           canMint
           onMint={() => undefined}
@@ -80,6 +82,7 @@ describe("MintCopyView", () => {
           tokenId={42n}
           txHash="0xabc"
           tbaAddress="0x000000000000000000000000000000000000dEaD"
+          envelopeCid="ar://EnvelopeTx"
           errorMessage={null}
           canMint
           onMint={() => undefined}
@@ -87,6 +90,6 @@ describe("MintCopyView", () => {
       </I18nProvider>,
     );
 
-    expect(screen.getByText(/Copy #42 minted successfully/)).toBeInTheDocument();
+    expect(screen.getByText(/Copy #42 is ready to read/)).toBeInTheDocument();
   });
 });

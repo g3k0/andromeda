@@ -169,14 +169,17 @@
     "pinningEnvelope": "A preparar a chave de leitura…",
     "copyMinted": "Exemplar cunhado",
     "soldOut": "Esgotado",
-    "successMessage": "Exemplar #{tokenId} cunhado com sucesso.",
+    "successMessage": "O exemplar #{tokenId} está pronto para ler.",
     "tokenAccount": "Conta de token: {address}",
     "transaction": "Transação: {hash}",
     "connectWallet": "Ligue uma carteira para comprar um exemplar.",
     "notAvailable": "Esta edição não está disponível.",
     "mintFailed": "Não foi possível concluir a cunhagem do exemplar.",
     "txFailed": "A transação de cunhagem falhou.",
-    "receiptTimeout": "A transação foi enviada, mas a confirmação expirou. Verifique o Polygonscan e atualize a página."
+    "receiptTimeout": "A transação foi enviada, mas a confirmação expirou. Verifique o Polygonscan e atualize a página.",
+    "writingEnvelopeUri": "A confirmar a chave de leitura on-chain…",
+    "copyComplete": "Exemplar completo",
+    "awaitingReadingKey": "Exemplar #{tokenId} cunhado. A chave de leitura ficará pronta quando o autor concluir a configuração."
   },
   "reader": {
     "metaTitle": "Ler | Andromeda",
@@ -491,7 +494,7 @@
     },
     "status": {
       "confirmWalletForLabeling": "Confirme a assinatura da carteira para preparar os metadados das cópias numeradas.",
-      "pinningEditionMetadata": "A fixar metadados de edição numerada no IPFS…",
+      "pinningEditionMetadata": "A carregar metadados de edição numerada…",
       "confirmCopyMetadataTx": "Confirme no MetaMask a transação {index} de {total} para definir os metadados da cópia on-chain…"
     }
   },

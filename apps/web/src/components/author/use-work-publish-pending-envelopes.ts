@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePublicClient, useWriteContract } from "wagmi";
 
+import { andromedaWorksAbi } from "@/lib/chain/contract";
+import { getContractAddress } from "@/lib/config/public-env";
 import { provisionAllPendingEnvelopesForAuthor } from "@/lib/works/mint-envelope-author-client";
+import { buildSetCopyEnvelopeRequest } from "@/lib/works/mint-copy-tx";
 
 type UseWorkPublishPendingEnvelopesInput = {
   canPublish: boolean;
@@ -18,27 +22,44 @@ export function useWorkPublishPendingEnvelopes({
   signMessageAsync,
 }: UseWorkPublishPendingEnvelopesInput): void {
   const provisioningPendingEnvelopesRef = useRef(false);
+  const { writeContractAsync } = useWriteContract();
+  const publicClient = usePublicClient();
 
   useEffect(() => {
-    if (!canPublish || !address) {
+    if (!canPublish || !address || !publicClient) {
       return;
     }
 
     let cancelled = false;
 
     async function provisionPendingEnvelopes() {
-      if (!address || provisioningPendingEnvelopesRef.current) {
+      if (!address || !publicClient || provisioningPendingEnvelopesRef.current) {
         return;
       }
 
       provisioningPendingEnvelopesRef.current = true;
 
       try {
-        await provisionAllPendingEnvelopesForAuthor({
+        const provisioned = await provisionAllPendingEnvelopesForAuthor({
           authorAddress,
           address,
           signMessageAsync,
         });
+
+        for (const entry of provisioned) {
+          if (cancelled) {
+            return;
+          }
+          const hash = await writeContractAsync(
+            buildSetCopyEnvelopeRequest({
+              tokenId: entry.tokenId,
+              envelopeUri: entry.envelopeUri,
+              contractAddress: getContractAddress(),
+              abi: andromedaWorksAbi,
+            }),
+          );
+          await publicClient.waitForTransactionReceipt({ hash });
+        }
       } catch {
         // Pending envelope provisioning is best-effort while the author session is open.
       } finally {
@@ -57,5 +78,12 @@ export function useWorkPublishPendingEnvelopes({
       cancelled = true;
       window.clearInterval(intervalId);
     };
-  }, [canPublish, authorAddress, address, signMessageAsync]);
+  }, [
+    canPublish,
+    authorAddress,
+    address,
+    signMessageAsync,
+    writeContractAsync,
+    publicClient,
+  ]);
 }

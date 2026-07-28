@@ -3,6 +3,7 @@
 import { useEffect, useReducer, useRef } from "react";
 import {
   useAccount,
+  usePublicClient,
   useSendTransaction,
   useSignMessage,
   useWaitForTransactionReceipt,
@@ -25,6 +26,7 @@ import {
   mintCopyClientReducer,
 } from "@/lib/works/mint-copy-client-state";
 import {
+  buildSetCopyEnvelopeRequest,
   formatWorkPrice,
   getWorkAvailability,
 } from "@/lib/works/mint-copy-tx";
@@ -47,6 +49,7 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
   const { signMessageAsync } = useSignMessage();
   const { writeContractAsync } = useWriteContract();
   const { sendTransactionAsync } = useSendTransaction();
+  const publicClient = usePublicClient();
 
   const [state, dispatch] = useReducer(
     mintCopyClientReducer,
@@ -139,6 +142,33 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
               : undefined,
         });
 
+        if (!envelopeResult.envelopeCid) {
+          // Author must provision the envelope later; copy is minted but not yet complete.
+          dispatch({
+            type: "mint_completed",
+            envelopeCid: null,
+          });
+          return;
+        }
+
+        if (!publicClient) {
+          throw new Error(t("mint.mintFailed"));
+        }
+
+        dispatch({
+          type: "envelope_uri_writing",
+          envelopeCid: envelopeResult.envelopeCid,
+        });
+        const envelopeTxHash = await writeContractAsync(
+          buildSetCopyEnvelopeRequest({
+            tokenId,
+            envelopeUri: envelopeResult.envelopeCid,
+            contractAddress: getContractAddress(),
+            abi: andromedaWorksAbi,
+          }),
+        );
+        await publicClient.waitForTransactionReceipt({ hash: envelopeTxHash });
+
         dispatch({
           type: "mint_completed",
           envelopeCid: envelopeResult.envelopeCid,
@@ -155,7 +185,19 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
     }
 
     void setupTokenAccount();
-  }, [receipt, state.step, address, workId, work.metadataURI, work.author, sendTransactionAsync, signMessageAsync, t]);
+  }, [
+    receipt,
+    state.step,
+    address,
+    workId,
+    work.metadataURI,
+    work.author,
+    sendTransactionAsync,
+    signMessageAsync,
+    writeContractAsync,
+    publicClient,
+    t,
+  ]);
 
   async function handleMint() {
     if (!isConnected || !address) {
@@ -196,6 +238,7 @@ export function MintCopyClient({ work, title }: MintCopyClientProps) {
       tokenId={state.tokenId}
       txHash={state.txHash}
       tbaAddress={state.tbaAddress}
+      envelopeCid={state.envelopeCid}
       errorMessage={state.errorMessage}
       canMint={isConnected && Boolean(address)}
       onMint={() => {

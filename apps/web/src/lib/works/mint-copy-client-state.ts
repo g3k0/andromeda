@@ -5,6 +5,7 @@ export type MintCopyStep =
   | "minting"
   | "deploying_tba"
   | "pinning_envelope"
+  | "writing_envelope_uri"
   | "success"
   | "error";
 
@@ -23,6 +24,7 @@ export type MintCopyClientAction =
   | { type: "mint_confirmed"; txHash: `0x${string}`; tokenId: bigint }
   | { type: "tba_deploying"; address: Address }
   | { type: "envelope_pinning" }
+  | { type: "envelope_uri_writing"; envelopeCid: string }
   | { type: "mint_completed"; envelopeCid?: string | null }
   | { type: "mint_failed"; message: string }
   | { type: "reset" };
@@ -42,6 +44,7 @@ const BUSY_STEPS: ReadonlySet<MintCopyStep> = new Set([
   "minting",
   "deploying_tba",
   "pinning_envelope",
+  "writing_envelope_uri",
 ]);
 
 export function isMintCopyBusy(step: MintCopyStep): boolean {
@@ -81,6 +84,12 @@ export function mintCopyClientReducer(
       return {
         ...state,
         step: "pinning_envelope",
+      };
+    case "envelope_uri_writing":
+      return {
+        ...state,
+        step: "writing_envelope_uri",
+        envelopeCid: action.envelopeCid,
       };
     case "mint_completed":
       return {
