@@ -1,6 +1,6 @@
 import { verifySignedMutation } from "@/lib/authors/mutation-handler";
 import { createMongoIndexerRepositories } from "@/lib/works/adapters/create-indexer-repositories";
-import { getIpfsStorage } from "@/lib/works/ipfs-server";
+import { getPermanentStorage } from "@/lib/works/ipfs-server";
 import { workErrorResponse, jsonResponse } from "@/lib/works/api-utils";
 import {
   parseTokenIdParam,
@@ -34,7 +34,7 @@ export async function POST(
     const repositories = await createMongoIndexerRepositories();
     const result = await pinTokenEnvelopeForAuthor(
       repositories,
-      getIpfsStorage(),
+      getPermanentStorage(),
       signer,
       tokenId,
       envelope,

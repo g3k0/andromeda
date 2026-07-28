@@ -141,6 +141,25 @@ function copyMetadataUpdatedLog(
   );
 }
 
+function copyEnvelopeUpdatedLog(
+  args: { tokenId: bigint; envelopeURI: string },
+  logIndex: number,
+  blockNumber?: bigint,
+): Log {
+  return baseLog(
+    {
+      topics: encodeEventTopics({
+        abi: andromedaWorksAbi,
+        eventName: "CopyEnvelopeUpdated",
+        args: { tokenId: args.tokenId },
+      }) as `0x${string}`[],
+      data: encodeAbiParameters([{ type: "string" }], [args.envelopeURI]),
+    },
+    logIndex,
+    blockNumber,
+  );
+}
+
 function transferLog(
   args: { from: `0x${string}`; to: `0x${string}`; tokenId: bigint },
   logIndex: number,
@@ -277,6 +296,28 @@ describe("handleChainLogs", () => {
 
     expect((await repos.tokens.getToken(10n))?.metadataURI).toBe(
       "ipfs://token-10",
+    );
+  });
+
+  it("sets envelope URI on CopyEnvelopeUpdated", async () => {
+    const repos = createInMemoryIndexerRepositories();
+    await handleChainLogs(repos, [
+      workRegisteredLog(
+        { workId: 1n, metadataURI: "ar://work", price: 10n, maxCopies: 100n },
+        0,
+      ),
+      copyMintedLog(
+        { workId: 1n, tokenId: 10n, recipient: BUYER, copyNumber: 1n },
+        1,
+      ),
+      copyEnvelopeUpdatedLog(
+        { tokenId: 10n, envelopeURI: "ar://token-10-envelope" },
+        2,
+      ),
+    ]);
+
+    expect((await repos.tokens.getToken(10n))?.envelopeCid).toBe(
+      "ar://token-10-envelope",
     );
   });
 

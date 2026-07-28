@@ -18,6 +18,7 @@ export type MintCopyViewProps = {
   tokenId: bigint | null;
   txHash: `0x${string}` | null;
   tbaAddress: `0x${string}` | null;
+  envelopeCid: string | null;
   errorMessage: string | null;
   /** True when the connected wallet can submit the purchase. */
   canMint: boolean;
@@ -29,7 +30,8 @@ const STEP_KEYS: Record<MintCopyStep, string> = {
   minting: "mint.confirmInWallet",
   deploying_tba: "mint.deployingTba",
   pinning_envelope: "mint.pinningEnvelope",
-  success: "mint.copyMinted",
+  writing_envelope_uri: "mint.writingEnvelopeUri",
+  success: "mint.copyComplete",
   error: "mint.buyCopy",
 };
 
@@ -41,6 +43,7 @@ export function MintCopyView({
   tokenId,
   txHash,
   tbaAddress,
+  envelopeCid,
   errorMessage,
   canMint,
   onMint,
@@ -48,6 +51,7 @@ export function MintCopyView({
   const { t } = useTranslation();
   const busy = isMintCopyBusy(step);
   const disabled = !canMint || busy || !availability.saleOpen || step === "success";
+  const successKey = envelopeCid ? "mint.successMessage" : "mint.awaitingReadingKey";
 
   return (
     <section className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-5">
@@ -70,7 +74,7 @@ export function MintCopyView({
 
       {step === "success" ? (
         <div className="space-y-1 text-sm text-emerald-400">
-          <p>{t("mint.successMessage", { tokenId: tokenId?.toString() ?? "" })}</p>
+          <p>{t(successKey, { tokenId: tokenId?.toString() ?? "" })}</p>
           {tbaAddress ? (
             <p className="break-all text-xs text-white/60">
               {t("mint.tokenAccount", { address: tbaAddress })}

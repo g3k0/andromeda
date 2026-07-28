@@ -1,10 +1,11 @@
+import type { ContentUri } from "@/lib/ipfs/content-uri";
+import { parseContentLocator } from "@/lib/ipfs/content-uri";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
-import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
-import { parseIpfsUri, type Cid, type IpfsUri } from "@/lib/ipfs/types";
+import type { PermanentStoragePort } from "@/lib/ipfs/ports/permanent-storage-port";
 
 import { buildTokenMetadata } from "./token-metadata";
 
-/** Deterministic pin name so a token's metadata is easy to locate per `tokenId`. */
+/** Deterministic upload name so a token's metadata is easy to locate per `tokenId`. */
 export function tokenMetadataPinName(tokenId: bigint): string {
   return `token-${tokenId.toString()}-metadata`;
 }
@@ -15,33 +16,34 @@ export type ProvisionTokenMetadataInput = {
   workMetadata: AcePublicMetadata;
   copyNumber: number;
   maxCopies: bigint;
-  /** When set, the token already has numbered metadata and pinning is skipped. */
-  existingMetadataUri?: IpfsUri | null;
+  /** When set, the token already has numbered metadata and uploading is skipped. */
+  existingMetadataUri?: ContentUri | null;
 };
 
 export type ProvisionTokenMetadataResult = {
   tokenId: bigint;
-  metadataCid: Cid;
-  metadataUri: IpfsUri;
-  /** The pinned document, or `null` when an existing URI was reused. */
+  /** Opaque storage id (CID or Arweave tx id). */
+  metadataCid: string;
+  metadataUri: ContentUri;
+  /** The uploaded document, or `null` when an existing URI was reused. */
   metadata: AcePublicMetadata | null;
-  /** True when an existing metadata URI was reused instead of pinning a new one. */
+  /** True when an existing metadata URI was reused instead of uploading a new one. */
   reused: boolean;
 };
 
 /**
  * Idempotent per-token metadata provisioning: reuses an existing metadata URI
- * for the token when present, otherwise derives the numbered document and pins
- * it on IPFS. The ACE encryption block is copied verbatim from the work.
+ * for the token when present, otherwise derives the numbered document and
+ * uploads it to permanent storage. The ACE encryption block is copied verbatim.
  */
 export async function provisionTokenMetadata(
-  ipfs: IpfsStoragePort,
+  storage: PermanentStoragePort,
   input: ProvisionTokenMetadataInput,
 ): Promise<ProvisionTokenMetadataResult> {
   if (input.existingMetadataUri) {
     return {
       tokenId: input.tokenId,
-      metadataCid: parseIpfsUri(input.existingMetadataUri),
+      metadataCid: parseContentLocator(input.existingMetadataUri).id,
       metadataUri: input.existingMetadataUri,
       metadata: null,
       reused: true,
@@ -54,14 +56,14 @@ export async function provisionTokenMetadata(
     maxCopies: input.maxCopies,
   });
 
-  const pin = await ipfs.pinJson(metadata, {
+  const uploaded = await storage.uploadJson(metadata, {
     name: tokenMetadataPinName(input.tokenId),
   });
 
   return {
     tokenId: input.tokenId,
-    metadataCid: pin.cid,
-    metadataUri: pin.uri,
+    metadataCid: uploaded.id,
+    metadataUri: uploaded.uri,
     metadata,
     reused: false,
   };

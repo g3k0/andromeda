@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
+import { getInMemoryIpfsRecord } from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+import { createInMemoryPermanentStorage } from "@/lib/ipfs/testing/in-memory-permanent-storage";
+import { createArweaveTurboStorage } from "@/lib/ipfs/adapters/arweave-turbo-storage";
 import {
-  createInMemoryIpfsState,
-  createInMemoryIpfsStorage,
-  getInMemoryIpfsRecord,
-} from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+  createFakeTurboUploadClient,
+  createFakeTurboUploadState,
+} from "@/lib/ipfs/testing/fake-turbo-upload-client";
 
 import { buildAcePublicMetadata } from "./publish-service";
 import {
@@ -51,11 +53,10 @@ describe("tokenMetadataPinName", () => {
 });
 
 describe("provisionTokenMetadata", () => {
-  it("builds and pins numbered metadata", async () => {
-    const state = createInMemoryIpfsState();
-    const ipfs = createInMemoryIpfsStorage(state);
+  it("builds and uploads numbered metadata", async () => {
+    const { storage, state } = createInMemoryPermanentStorage();
 
-    const result = await provisionTokenMetadata(ipfs, {
+    const result = await provisionTokenMetadata(storage, {
       tokenId: 5n,
       workMetadata: workMetadata(),
       copyNumber: 2,
@@ -68,20 +69,35 @@ describe("provisionTokenMetadata", () => {
     expect(getInMemoryIpfsRecord(state, result.metadataCid)).toBeDefined();
   });
 
-  it("reuses an existing metadata URI without pinning", async () => {
-    const state = createInMemoryIpfsState();
-    const ipfs = createInMemoryIpfsStorage(state);
+  it("uploads ar:// metadata when using the Arweave adapter", async () => {
+    const storage = createArweaveTurboStorage({
+      client: createFakeTurboUploadClient(createFakeTurboUploadState()),
+    });
 
-    const result = await provisionTokenMetadata(ipfs, {
+    const result = await provisionTokenMetadata(storage, {
       tokenId: 5n,
       workMetadata: workMetadata(),
       copyNumber: 2,
       maxCopies: 10n,
-      existingMetadataUri: "ipfs://bafyExisting",
+    });
+
+    expect(result.metadataUri).toMatch(/^ar:\/\//);
+  });
+
+  it("reuses an existing metadata URI without uploading", async () => {
+    const { storage, state } = createInMemoryPermanentStorage();
+
+    const result = await provisionTokenMetadata(storage, {
+      tokenId: 5n,
+      workMetadata: workMetadata(),
+      copyNumber: 2,
+      maxCopies: 10n,
+      existingMetadataUri: "ar://ExistingTx",
     });
 
     expect(result.reused).toBe(true);
-    expect(result.metadataUri).toBe("ipfs://bafyExisting");
+    expect(result.metadataUri).toBe("ar://ExistingTx");
+    expect(result.metadataCid).toBe("ExistingTx");
     expect(result.metadata).toBeNull();
     expect(state.records.size).toBe(0);
   });

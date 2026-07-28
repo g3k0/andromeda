@@ -169,14 +169,17 @@
     "pinningEnvelope": "Preparazione della chiave di lettura…",
     "copyMinted": "Copia coniata",
     "soldOut": "Esaurito",
-    "successMessage": "Copia #{tokenId} coniata con successo.",
+    "successMessage": "La copia #{tokenId} è pronta da leggere.",
     "tokenAccount": "Account token: {address}",
     "transaction": "Transazione: {hash}",
     "connectWallet": "Connetti un wallet per acquistare una copia.",
     "notAvailable": "Questa edizione non è disponibile.",
     "mintFailed": "Impossibile completare la coniazione della copia.",
     "txFailed": "Transazione di coniazione fallita.",
-    "receiptTimeout": "La transazione è stata inviata ma la conferma è scaduta. Controlla Polygonscan e aggiorna la pagina."
+    "receiptTimeout": "La transazione è stata inviata ma la conferma è scaduta. Controlla Polygonscan e aggiorna la pagina.",
+    "writingEnvelopeUri": "Conferma della chiave di lettura on-chain…",
+    "copyComplete": "Copia completa",
+    "awaitingReadingKey": "Copia #{tokenId} coniata. La chiave di lettura sarà pronta quando l’autore completa la configurazione."
   },
   "reader": {
     "metaTitle": "Leggi | Andromeda",
@@ -491,7 +494,7 @@
     },
     "status": {
       "confirmWalletForLabeling": "Conferma la firma del wallet per preparare i metadata delle copie numerate.",
-      "pinningEditionMetadata": "Pin dei metadata numerati su IPFS…",
+      "pinningEditionMetadata": "Caricamento dei metadata numerati…",
       "confirmCopyMetadataTx": "Conferma in MetaMask la transazione {index} di {total} per impostare i metadata della copia on-chain…"
     }
   },

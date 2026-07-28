@@ -1,4 +1,4 @@
-import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
+import type { PermanentStoragePort } from "@/lib/ipfs/ports/permanent-storage-port";
 
 import { assertSignerIsAuthor } from "./authorize";
 import { parseRecipientPublicKeyBase64 } from "./envelope-public-key";
@@ -48,11 +48,11 @@ export async function registerTokenEnvelopeRecipient(
 
 export async function pinTokenEnvelopeForAuthor(
   repositories: IndexerRepositories,
-  ipfs: IpfsStoragePort,
+  storage: PermanentStoragePort,
   signerAddress: string,
   tokenId: bigint,
   envelope: Uint8Array,
-): Promise<{ envelopeCid: string }> {
+): Promise<{ envelopeCid: string; envelopeUri: string }> {
   if (envelope.length < 34) {
     throw new MintEnvelopeError("Invalid envelope payload.");
   }
@@ -62,7 +62,10 @@ export async function pinTokenEnvelopeForAuthor(
     throw new WorkMintError("Minted token was not found.");
   }
   if (token.envelopeCid) {
-    return { envelopeCid: token.envelopeCid };
+    return {
+      envelopeCid: token.envelopeCid,
+      envelopeUri: token.envelopeCid,
+    };
   }
   if (!token.envelopeRecipientPublicKey) {
     throw new MintEnvelopeError(
@@ -77,16 +80,20 @@ export async function pinTokenEnvelopeForAuthor(
 
   assertSignerIsAuthor(signerAddress, work.author);
 
-  const pin = await ipfs.pinBlob(envelope, {
+  const uploaded = await storage.uploadBlob(envelope, {
     name: tokenEnvelopePinName(tokenId),
   });
 
-  const updated = await repositories.tokens.setEnvelopeCid(tokenId, pin.cid);
+  // Persist the full content URI so the read path can resolve ar:// or ipfs://.
+  const updated = await repositories.tokens.setEnvelopeCid(
+    tokenId,
+    uploaded.uri,
+  );
   if (!updated) {
     throw new WorkMintError("Minted token was not found.");
   }
 
-  return { envelopeCid: pin.cid };
+  return { envelopeCid: uploaded.uri, envelopeUri: uploaded.uri };
 }
 
 export async function listPendingTokenEnvelopesForAuthor(

@@ -1,6 +1,6 @@
+import type { ContentUri } from "@/lib/ipfs/content-uri";
 import type { AcePublicMetadata } from "@/lib/ipfs/metadata-schema";
-import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
-import type { IpfsUri } from "@/lib/ipfs/types";
+import type { PermanentStoragePort } from "@/lib/ipfs/ports/permanent-storage-port";
 
 import { assertSignerIsAuthor } from "./authorize";
 import { provisionTokenMetadata } from "./token-metadata-service";
@@ -21,18 +21,18 @@ export type ProvisionEditionMetadataInput = {
 export type ProvisionedEditionCopy = {
   tokenId: bigint;
   copyNumber: number;
-  metadataUri: IpfsUri;
+  metadataUri: ContentUri;
 };
 
 export async function provisionEditionMetadata(
-  ipfs: IpfsStoragePort,
+  storage: PermanentStoragePort,
   input: ProvisionEditionMetadataInput,
 ): Promise<ProvisionedEditionCopy[]> {
   assertSignerIsAuthor(input.signerAddress, input.authorAddress);
 
   return Promise.all(
     input.copies.map(async (copy) => {
-      const provisioned = await provisionTokenMetadata(ipfs, {
+      const provisioned = await provisionTokenMetadata(storage, {
         tokenId: copy.tokenId,
         workMetadata: input.workMetadata,
         copyNumber: copy.copyNumber,

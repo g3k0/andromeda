@@ -109,4 +109,42 @@ describe("AndromedaWorks", () => {
       contract.connect(reader).setCopyMetadataURI(999, "ipfs://ghost"),
     );
   });
+
+  it("lets the copy owner set the ACE envelope URI", async () => {
+    const { contract, author, reader } = await deploy();
+    await contract.connect(author).registerWork("ar://work-1", 0, 10);
+    await contract.connect(reader).mintCopy(1);
+
+    await contract
+      .connect(reader)
+      .setCopyEnvelopeURI(10, "ar://token-10-envelope");
+
+    expect(await contract.envelopeURIOfToken(10)).to.equal(
+      "ar://token-10-envelope",
+    );
+  });
+
+  it("lets the work author set the envelope URI after a sale", async () => {
+    const { contract, author, reader } = await deploy();
+    await contract.connect(author).registerWork("ar://work-1", 0, 10);
+    await contract.connect(reader).mintCopy(1);
+
+    await contract
+      .connect(author)
+      .setCopyEnvelopeURI(10, "ar://author-provisioned");
+
+    expect(await contract.envelopeURIOfToken(10)).to.equal(
+      "ar://author-provisioned",
+    );
+  });
+
+  it("reverts when a stranger sets the envelope URI", async () => {
+    const { contract, author, reader, owner } = await deploy();
+    await contract.connect(author).registerWork("ar://work-1", 0, 10);
+    await contract.connect(reader).mintCopy(1);
+
+    await expectRevert(
+      contract.connect(owner).setCopyEnvelopeURI(10, "ar://hijack"),
+    );
+  });
 });

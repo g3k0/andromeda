@@ -32,6 +32,11 @@ export type AndromedaChainEvent =
       metadataURI: string;
     }
   | {
+      kind: "CopyEnvelopeUpdated";
+      tokenId: bigint;
+      envelopeURI: string;
+    }
+  | {
       kind: "Transfer";
       from: `0x${string}`;
       to: `0x${string}`;
@@ -50,6 +55,7 @@ const INDEXED_EVENT_NAMES = [
   "CopyMinted",
   "CopyPurchased",
   "CopyMetadataUpdated",
+  "CopyEnvelopeUpdated",
   "Transfer",
 ] as const;
 
@@ -92,6 +98,12 @@ function toEvent(eventName: string, args: DecodedArgs): AndromedaChainEvent | nu
         kind: "CopyMetadataUpdated",
         tokenId: args.tokenId as bigint,
         metadataURI: args.metadataURI as string,
+      };
+    case "CopyEnvelopeUpdated":
+      return {
+        kind: "CopyEnvelopeUpdated",
+        tokenId: args.tokenId as bigint,
+        envelopeURI: args.envelopeURI as string,
       };
     case "Transfer":
       return {
@@ -199,6 +211,9 @@ async function applyEvent(
     }
     case "CopyMetadataUpdated":
       await repositories.tokens.setMetadataURI(event.tokenId, event.metadataURI);
+      return;
+    case "CopyEnvelopeUpdated":
+      await repositories.tokens.setEnvelopeCid(event.tokenId, event.envelopeURI);
       return;
     case "Transfer":
       if (event.from === zeroAddress) {

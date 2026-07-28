@@ -169,14 +169,17 @@
     "pinningEnvelope": "正在准备阅读密钥…",
     "copyMinted": "副本已铸造",
     "soldOut": "已售罄",
-    "successMessage": "副本 #{tokenId} 铸造成功。",
+    "successMessage": "副本 #{tokenId} 已可阅读。",
     "tokenAccount": "代币账户：{address}",
     "transaction": "交易：{hash}",
     "connectWallet": "连接钱包以购买副本。",
     "notAvailable": "此版本暂不可用。",
     "mintFailed": "副本铸造未能完成。",
     "txFailed": "铸造交易失败。",
-    "receiptTimeout": "交易已提交，但确认超时。请查看 Polygonscan 后刷新页面。"
+    "receiptTimeout": "交易已提交，但确认超时。请查看 Polygonscan 后刷新页面。",
+    "writingEnvelopeUri": "正在链上确认阅读密钥…",
+    "copyComplete": "副本完成",
+    "awaitingReadingKey": "副本 #{tokenId} 已铸造。作者完成设置后即可使用阅读密钥。"
   },
   "reader": {
     "metaTitle": "阅读 | Andromeda",
@@ -491,7 +494,7 @@
     },
     "status": {
       "confirmWalletForLabeling": "请确认钱包签名以准备编号副本元数据。",
-      "pinningEditionMetadata": "正在将编号版本元数据固定到 IPFS…",
+      "pinningEditionMetadata": "正在上传编号版本元数据…",
       "confirmCopyMetadataTx": "请在 MetaMask 确认第 {index}/{total} 笔交易以设置链上副本元数据…"
     }
   },

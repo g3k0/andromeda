@@ -18,6 +18,7 @@ import {
   createInMemoryIpfsStorage,
   getInMemoryIpfsRecord,
 } from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+import { createInMemoryPermanentStorage } from "@/lib/ipfs/testing/in-memory-permanent-storage";
 import { createInMemoryTba } from "@/lib/tba/testing/in-memory-tba";
 import type { Erc6551RegistryConfig } from "@/lib/tba/tba-registry";
 
@@ -123,10 +124,15 @@ describe("mint flow integration", () => {
     expect(plan.alreadyDeployed).toBe(false);
     expect(plan.deployTransaction).not.toBeNull();
 
-    // 4. Author wraps K for the token's TBA identity and pins the envelope.
+    // 4. Author wraps K for the token's TBA identity and uploads the envelope.
     const tbaKeys = createTbaKeyFixture();
     const envelopeResult = await createMintEnvelopeFromSession(
-      { ipfs, loadContentKey: () => contentKey },
+      {
+        storage: adaptIpfsStorageToPermanent(ipfs, {
+          ipfsGatewayBaseUrl: "https://gateway.test/ipfs",
+        }),
+        loadContentKey: () => contentKey,
+      },
       {
         metadataUri: published.metadataUri,
         tokenId,
@@ -158,13 +164,12 @@ describe("mint flow integration", () => {
   });
 
   it("reuses an existing envelope on a repeated mint completion (idempotent)", async () => {
-    const state = createInMemoryIpfsState();
-    const ipfs = createInMemoryIpfsStorage(state);
+    const { storage, state } = createInMemoryPermanentStorage();
     const contentKey = generateContentKey();
     const tbaKeys = createTbaKeyFixture();
 
     const first = await createMintEnvelopeFromSession(
-      { ipfs, loadContentKey: () => contentKey },
+      { storage, loadContentKey: () => contentKey },
       {
         metadataUri: "ipfs://bafyMeta",
         tokenId: 7n,
@@ -175,7 +180,7 @@ describe("mint flow integration", () => {
     const recordsAfterFirst = state.records.size;
 
     const second = await createMintEnvelopeFromSession(
-      { ipfs, loadContentKey: () => contentKey },
+      { storage, loadContentKey: () => contentKey },
       {
         metadataUri: "ipfs://bafyMeta",
         tokenId: 7n,

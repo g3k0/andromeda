@@ -14,6 +14,7 @@ describe("isMintCopyBusy", () => {
     expect(isMintCopyBusy("minting")).toBe(true);
     expect(isMintCopyBusy("deploying_tba")).toBe(true);
     expect(isMintCopyBusy("pinning_envelope")).toBe(true);
+    expect(isMintCopyBusy("writing_envelope_uri")).toBe(true);
     expect(isMintCopyBusy("idle")).toBe(false);
     expect(isMintCopyBusy("success")).toBe(false);
     expect(isMintCopyBusy("error")).toBe(false);
@@ -53,11 +54,18 @@ describe("mintCopyClientReducer", () => {
     expect(state.step).toBe("pinning_envelope");
 
     state = mintCopyClientReducer(state, {
+      type: "envelope_uri_writing",
+      envelopeCid: "ar://EnvelopeTx",
+    });
+    expect(state.step).toBe("writing_envelope_uri");
+    expect(state.envelopeCid).toBe("ar://EnvelopeTx");
+
+    state = mintCopyClientReducer(state, {
       type: "mint_completed",
-      envelopeCid: "bafyEnvelope",
+      envelopeCid: "ar://EnvelopeTx",
     });
     expect(state.step).toBe("success");
-    expect(state.envelopeCid).toBe("bafyEnvelope");
+    expect(state.envelopeCid).toBe("ar://EnvelopeTx");
     expect(state.errorMessage).toBeNull();
   });
 

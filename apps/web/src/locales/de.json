@@ -169,14 +169,17 @@
     "pinningEnvelope": "Lese-Schlüssel wird vorbereitet…",
     "copyMinted": "Exemplar geprägt",
     "soldOut": "Ausverkauft",
-    "successMessage": "Exemplar #{tokenId} erfolgreich geprägt.",
+    "successMessage": "Exemplar #{tokenId} ist zum Lesen bereit.",
     "tokenAccount": "Token-Konto: {address}",
     "transaction": "Transaktion: {hash}",
     "connectWallet": "Verbinde eine Wallet, um ein Exemplar zu kaufen.",
     "notAvailable": "Diese Ausgabe ist nicht verfügbar.",
     "mintFailed": "Prägung des Exemplars konnte nicht abgeschlossen werden.",
     "txFailed": "Prägungstransaktion fehlgeschlagen.",
-    "receiptTimeout": "Die Transaktion wurde gesendet, aber die Bestätigung ist abgelaufen. Prüfen Sie Polygonscan und laden Sie die Seite neu."
+    "receiptTimeout": "Die Transaktion wurde gesendet, aber die Bestätigung ist abgelaufen. Prüfen Sie Polygonscan und laden Sie die Seite neu.",
+    "writingEnvelopeUri": "Lese-Schlüssel on-chain wird bestätigt…",
+    "copyComplete": "Exemplar vollständig",
+    "awaitingReadingKey": "Exemplar #{tokenId} geprägt. Der Lese-Schlüssel ist bereit, sobald der Autor die Einrichtung abschließt."
   },
   "reader": {
     "metaTitle": "Lesen | Andromeda",
@@ -491,7 +494,7 @@
     },
     "status": {
       "confirmWalletForLabeling": "Bestätige die Wallet-Signatur, um Metadaten für nummerierte Exemplare vorzubereiten.",
-      "pinningEditionMetadata": "Nummerierte Editionsmetadaten werden auf IPFS gepinnt…",
+      "pinningEditionMetadata": "Nummerierte Editionsmetadaten werden hochgeladen…",
       "confirmCopyMetadataTx": "Bestätige in MetaMask Transaktion {index} von {total}, um Exemplar-Metadaten on-chain zu setzen…"
     }
   },

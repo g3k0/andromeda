@@ -49,7 +49,10 @@ describe("provisionAllPendingEnvelopesForAuthor", () => {
     uploadTokenEnvelopeForAuthor.mockReset();
 
     createSignedWalletPayload.mockResolvedValue(WALLET_AUTH);
-    uploadTokenEnvelopeForAuthor.mockResolvedValue({ envelopeCid: "bafy-envelope" });
+    uploadTokenEnvelopeForAuthor.mockResolvedValue({
+      envelopeCid: "ar://bafy-envelope",
+      envelopeUri: "ar://bafy-envelope",
+    });
   });
 
   it("does not request wallet auth when there are no pending envelopes", async () => {
@@ -113,7 +116,9 @@ describe("provisionAllPendingEnvelopesForAuthor", () => {
         address: AUTHOR,
         signMessageAsync,
       }),
-    ).resolves.toEqual(["bafy-envelope"]);
+    ).resolves.toEqual([
+      { tokenId: 1n, envelopeUri: "ar://bafy-envelope" },
+    ]);
 
     expect(createSignedWalletPayload).toHaveBeenCalledWith(AUTHOR, signMessageAsync);
     expect(uploadTokenEnvelopeForAuthor).toHaveBeenCalledTimes(1);

@@ -1,5 +1,5 @@
-import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
-import type { IpfsUri } from "@/lib/ipfs/types";
+import type { ContentUri } from "@/lib/ipfs/content-uri";
+import type { PermanentStoragePort } from "@/lib/ipfs/ports/permanent-storage-port";
 
 import { loadWorkContentKey } from "./content-key-session";
 import { WorkMintError } from "./errors";
@@ -19,19 +19,19 @@ export type CreateMintEnvelopeFromSessionInput = {
   tokenId: bigint;
   /** Resolves the token's TBA secp256k1 public key (ECIES recipient). */
   resolveRecipientPublicKey: ResolveRecipientPublicKey;
-  /** When the token already has an envelope, reuse it instead of re-pinning. */
-  existingEnvelopeUri?: IpfsUri | null;
+  /** When the token already has an envelope, reuse it instead of re-uploading. */
+  existingEnvelopeUri?: ContentUri | null;
 };
 
 export type MintEnvelopeClientDeps = {
-  ipfs: IpfsStoragePort;
+  storage: PermanentStoragePort;
   /** Overridable for tests; defaults to the session-storage backed loader. */
   loadContentKey?: (metadataUri: string) => Uint8Array | null;
 };
 
 /**
  * Author-side orchestration (ACE strategy v1): recover `K` from the author's
- * local session, wrap it for the freshly minted token's TBA, and pin the
+ * local session, wrap it for the freshly minted token's TBA, and upload the
  * envelope. Idempotent when an existing envelope URI is provided.
  */
 export async function createMintEnvelopeFromSession(
@@ -54,7 +54,7 @@ export async function createMintEnvelopeFromSession(
     tokenId: input.tokenId,
   });
 
-  return createTokenEnvelope(deps.ipfs, {
+  return createTokenEnvelope(deps.storage, {
     tokenId: input.tokenId,
     contentKey,
     recipientPublicKey,

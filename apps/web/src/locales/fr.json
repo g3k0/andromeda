@@ -169,14 +169,17 @@
     "pinningEnvelope": "Préparation de votre clé de lecture…",
     "copyMinted": "Exemplaire frappé",
     "soldOut": "Épuisé",
-    "successMessage": "Exemplaire #{tokenId} frappé avec succès.",
+    "successMessage": "L’exemplaire #{tokenId} est prêt à être lu.",
     "tokenAccount": "Compte de jeton : {address}",
     "transaction": "Transaction : {hash}",
     "connectWallet": "Connectez un portefeuille pour acheter un exemplaire.",
     "notAvailable": "Cette édition n'est pas disponible.",
     "mintFailed": "Échec de la frappe de l'exemplaire.",
     "txFailed": "La transaction de frappe a échoué.",
-    "receiptTimeout": "La transaction a été envoyée, mais la confirmation a expiré. Vérifiez Polygonscan puis actualisez la page."
+    "receiptTimeout": "La transaction a été envoyée, mais la confirmation a expiré. Vérifiez Polygonscan puis actualisez la page.",
+    "writingEnvelopeUri": "Confirmation de la clé de lecture on-chain…",
+    "copyComplete": "Exemplaire complet",
+    "awaitingReadingKey": "Exemplaire #{tokenId} frappé. La clé de lecture sera prête quand l’auteur aura terminé la configuration."
   },
   "reader": {
     "metaTitle": "Lire | Andromeda",
@@ -491,7 +494,7 @@
     },
     "status": {
       "confirmWalletForLabeling": "Confirmez la signature du portefeuille pour préparer les métadonnées des exemplaires numérotés.",
-      "pinningEditionMetadata": "Épinglage des métadonnées d’édition numérotées sur IPFS…",
+      "pinningEditionMetadata": "Téléversement des métadonnées d’édition numérotées…",
       "confirmCopyMetadataTx": "Confirmez dans MetaMask la transaction {index} sur {total} pour définir les métadonnées de l’exemplaire on-chain…"
     }
   },

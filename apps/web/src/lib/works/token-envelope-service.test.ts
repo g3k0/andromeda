@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { createTbaKeyFixture } from "@/lib/content-crypto/testing/key-fixtures";
-import {
-  createInMemoryIpfsState,
-  createInMemoryIpfsStorage,
-} from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+import { createInMemoryPermanentStorage } from "@/lib/ipfs/testing/in-memory-permanent-storage";
 import { createInMemoryIndexerRepositories } from "@/lib/works/testing/in-memory-indexer-repositories";
 
 import {
@@ -20,9 +17,9 @@ const AUTHOR = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 const BUYER = "0x2222222222222222222222222222222222222222";
 
 describe("token-envelope-service", () => {
-  it("registers a recipient and lets the author pin an envelope", async () => {
+  it("registers a recipient and lets the author upload an envelope", async () => {
     const repositories = createInMemoryIndexerRepositories();
-    const ipfs = createInMemoryIpfsStorage(createInMemoryIpfsState());
+    const { storage } = createInMemoryPermanentStorage();
     const recipient = createTbaKeyFixture().publicKey;
 
     await repositories.works.upsertWork({
@@ -49,15 +46,16 @@ describe("token-envelope-service", () => {
     const envelope = wrapContentKey(generateContentKey(), recipient);
     const pinned = await pinTokenEnvelopeForAuthor(
       repositories,
-      ipfs,
+      storage,
       AUTHOR,
       42n,
       envelope,
     );
 
-    expect(pinned.envelopeCid.length).toBeGreaterThan(10);
+    expect(pinned.envelopeUri).toMatch(/^ipfs:\/\//);
+    expect(pinned.envelopeCid).toBe(pinned.envelopeUri);
     const token = await repositories.tokens.getToken(42n);
-    expect(token?.envelopeCid).toBe(pinned.envelopeCid);
+    expect(token?.envelopeCid).toBe(pinned.envelopeUri);
   });
 
   it("lists pending envelopes for an author", async () => {

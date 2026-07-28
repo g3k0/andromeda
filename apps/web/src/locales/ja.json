@@ -169,14 +169,17 @@
     "pinningEnvelope": "読書キーを準備中…",
     "copyMinted": "コピーをミントしました",
     "soldOut": "売り切れ",
-    "successMessage": "コピー #{tokenId} のミントに成功しました。",
+    "successMessage": "コピー #{tokenId} を読めるようになりました。",
     "tokenAccount": "トークンアカウント：{address}",
     "transaction": "トランザクション：{hash}",
     "connectWallet": "コピーを購入するにはウォレットを接続してください。",
     "notAvailable": "この版は利用できません。",
     "mintFailed": "コピーのミントを完了できませんでした。",
     "txFailed": "ミントトランザクションが失敗しました。",
-    "receiptTimeout": "トランザクションは送信されましたが、確認がタイムアウトしました。Polygonscan を確認してページを更新してください。"
+    "receiptTimeout": "トランザクションは送信されましたが、確認がタイムアウトしました。Polygonscan を確認してページを更新してください。",
+    "writingEnvelopeUri": "読書キーをオンチェーンで確認中…",
+    "copyComplete": "コピー完了",
+    "awaitingReadingKey": "コピー #{tokenId} をミントしました。著者の設定が完了すると読書キーが利用できます。"
   },
   "reader": {
     "metaTitle": "読む | Andromeda",
@@ -491,7 +494,7 @@
     },
     "status": {
       "confirmWalletForLabeling": "番号付きコピーのメタデータを準備するため、ウォレット署名を確認してください。",
-      "pinningEditionMetadata": "番号付き版メタデータを IPFS にピン留めしています…",
+      "pinningEditionMetadata": "番号付き版メタデータをアップロード中…",
       "confirmCopyMetadataTx": "コピーメタデータをオンチェーンに設定するため、MetaMask でトランザクション {index}/{total} を確認してください…"
     }
   },

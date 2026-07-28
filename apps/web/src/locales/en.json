@@ -169,14 +169,17 @@
     "pinningEnvelope": "Preparing your reading key…",
     "copyMinted": "Copy minted",
     "soldOut": "Sold out",
-    "successMessage": "Copy #{tokenId} minted successfully.",
+    "successMessage": "Copy #{tokenId} is ready to read.",
     "tokenAccount": "Token account: {address}",
     "transaction": "Transaction: {hash}",
     "connectWallet": "Connect a wallet to buy a copy.",
     "notAvailable": "This edition is not available.",
     "mintFailed": "Failed to finish minting the copy.",
     "txFailed": "Mint transaction failed.",
-    "receiptTimeout": "The transaction was submitted but confirmation timed out. Check Polygonscan, then refresh the page."
+    "receiptTimeout": "The transaction was submitted but confirmation timed out. Check Polygonscan, then refresh the page.",
+    "writingEnvelopeUri": "Confirming reading key on-chain…",
+    "copyComplete": "Copy complete",
+    "awaitingReadingKey": "Copy #{tokenId} minted. The reading key will be ready when the author finishes setup."
   },
   "reader": {
     "metaTitle": "Read | Andromeda",
@@ -263,11 +266,21 @@
       }
     },
     "fields": {
-      "title": { "label": "Title" },
-      "manuscriptFile": { "label": "Manuscript file" },
-      "coverImage": { "label": "Cover image" },
-      "publicationDate": { "label": "Publication date" },
-      "editionNumber": { "label": "Edition number" },
+      "title": {
+        "label": "Title"
+      },
+      "manuscriptFile": {
+        "label": "Manuscript file"
+      },
+      "coverImage": {
+        "label": "Cover image"
+      },
+      "publicationDate": {
+        "label": "Publication date"
+      },
+      "editionNumber": {
+        "label": "Edition number"
+      },
       "editionKind": {
         "label": "Edition kind",
         "options": {
@@ -275,23 +288,41 @@
           "reprint": "Reprint"
         }
       },
-      "reprintNumber": { "label": "Reprint number" },
-      "seriesName": { "label": "Series name" },
-      "seriesVolume": { "label": "Series volume" },
+      "reprintNumber": {
+        "label": "Reprint number"
+      },
+      "seriesName": {
+        "label": "Series name"
+      },
+      "seriesVolume": {
+        "label": "Series volume"
+      },
       "language": {
         "label": "Language",
         "placeholder": "e.g. en, it"
       },
-      "originalPublicationDate": { "label": "Original publication date" },
-      "backCoverText": { "label": "Back cover text" },
-      "aboutAuthor": { "label": "About the author" },
-      "authorAddress": { "label": "Author public address" },
+      "originalPublicationDate": {
+        "label": "Original publication date"
+      },
+      "backCoverText": {
+        "label": "Back cover text"
+      },
+      "aboutAuthor": {
+        "label": "About the author"
+      },
+      "authorAddress": {
+        "label": "Author public address"
+      },
       "priceMatic": {
         "label": "Initial list price (MATIC)",
         "placeholder": "Leave blank for no initial price"
       },
-      "maxCopies": { "label": "Max copies" },
-      "externalUrl": { "label": "External URL" }
+      "maxCopies": {
+        "label": "Max copies"
+      },
+      "externalUrl": {
+        "label": "External URL"
+      }
     },
     "guidance": {
       "intro": "Upload your manuscript and cover, then encrypt and pin the work to IPFS before on-chain registration.",
@@ -350,12 +381,16 @@
         "maxLength": "{label} must be {max} characters or fewer.",
         "invalidCharacters": "{label} contains invalid characters."
       },
-      "publicationDate": { "required": "Publication date is required." },
+      "publicationDate": {
+        "required": "Publication date is required."
+      },
       "editionNumber": {
         "required": "Edition number is required.",
         "invalid": "Edition number must be a whole number of at least 1."
       },
-      "editionKind": { "required": "Select first edition or reprint." },
+      "editionKind": {
+        "required": "Select first edition or reprint."
+      },
       "reprintNumber": {
         "required": "Reprint number is required.",
         "invalid": "Reprint number must be a whole number of at least 1."
@@ -397,7 +432,7 @@
     },
     "status": {
       "confirmWalletForLabeling": "Confirm the wallet signature to prepare numbered copy metadata.",
-      "pinningEditionMetadata": "Pinning numbered edition metadata to IPFS…",
+      "pinningEditionMetadata": "Uploading numbered edition metadata…",
       "confirmCopyMetadataTx": "Confirm MetaMask transaction {index} of {total} to set copy metadata on-chain…"
     },
     "loading": {

@@ -169,14 +169,17 @@
     "pinningEnvelope": "Подготовка ключа для чтения…",
     "copyMinted": "Копия отчеканена",
     "soldOut": "Распродано",
-    "successMessage": "Копия №{tokenId} успешно отчеканена.",
+    "successMessage": "Копия №{tokenId} готова к чтению.",
     "tokenAccount": "Токен-аккаунт: {address}",
     "transaction": "Транзакция: {hash}",
     "connectWallet": "Подключите кошелёк, чтобы купить копию.",
     "notAvailable": "Это издание недоступно.",
     "mintFailed": "Не удалось завершить чеканку копии.",
     "txFailed": "Транзакция чеканки не удалась.",
-    "receiptTimeout": "Транзакция отправлена, но подтверждение не получено вовремя. Проверьте Polygonscan и обновите страницу."
+    "receiptTimeout": "Транзакция отправлена, но подтверждение не получено вовремя. Проверьте Polygonscan и обновите страницу.",
+    "writingEnvelopeUri": "Подтверждение ключа чтения в сети…",
+    "copyComplete": "Копия готова",
+    "awaitingReadingKey": "Копия №{tokenId} отчеканена. Ключ чтения будет готов, когда автор завершит настройку."
   },
   "reader": {
     "metaTitle": "Чтение | Andromeda",
@@ -491,7 +494,7 @@
     },
     "status": {
       "confirmWalletForLabeling": "Подтвердите подпись кошелька, чтобы подготовить метаданные нумерованных копий.",
-      "pinningEditionMetadata": "Закрепление нумерованных метаданных издания в IPFS…",
+      "pinningEditionMetadata": "Загрузка нумерованных метаданных издания…",
       "confirmCopyMetadataTx": "Подтвердите в MetaMask транзакцию {index} из {total}, чтобы задать метаданные копии в сети…"
     }
   },

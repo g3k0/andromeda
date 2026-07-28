@@ -26,6 +26,7 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
     mapping(uint256 => uint256) public workOfToken;
     mapping(uint256 => uint256) public copyNumberOfToken;
     mapping(uint256 => uint256[]) private _primarySaleInventory;
+    mapping(uint256 => string) private _envelopeURIOfToken;
 
     event WorkRegistered(
         uint256 indexed workId,
@@ -47,11 +48,13 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
         address indexed buyer
     );
     event CopyMetadataUpdated(uint256 indexed tokenId, string metadataURI);
+    event CopyEnvelopeUpdated(uint256 indexed tokenId, string envelopeURI);
 
     error WorkNotFound();
     error WorkInactive();
     error NotAuthor();
     error NotCopyOwner();
+    error NotAuthorized();
     error SoldOut();
     error InsufficientPayment();
     error PaymentFailed();
@@ -145,6 +148,26 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
         if (msg.sender != tokenOwner) revert NotCopyOwner();
         _setTokenURI(tokenId, metadataURI);
         emit CopyMetadataUpdated(tokenId, metadataURI);
+    }
+
+    /// @notice ACE envelope content URI for a minted copy (`ar://…` or legacy `ipfs://…`).
+    function envelopeURIOfToken(uint256 tokenId) external view returns (string memory) {
+        _requireOwned(tokenId);
+        return _envelopeURIOfToken[tokenId];
+    }
+
+    /// @notice Attach the ACE envelope URI. Callable by the copy owner or the work author.
+    function setCopyEnvelopeURI(uint256 tokenId, string calldata envelopeURI)
+        external
+    {
+        address tokenOwner = _requireOwned(tokenId);
+        uint256 workId = workOfToken[tokenId];
+        address author = works[workId].author;
+        if (msg.sender != tokenOwner && msg.sender != author) {
+            revert NotAuthorized();
+        }
+        _envelopeURIOfToken[tokenId] = envelopeURI;
+        emit CopyEnvelopeUpdated(tokenId, envelopeURI);
     }
 
     function _mintCopyToAuthor(

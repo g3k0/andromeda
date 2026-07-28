@@ -34,7 +34,7 @@ export function createTokenEnvelopeBlobFromSession(
 export async function provisionPendingEnvelopeForAuthor(
   pending: PendingTokenEnvelope,
   walletAuth: SignedWalletPayload,
-): Promise<string> {
+): Promise<{ tokenId: bigint; envelopeUri: string }> {
   const envelope = createTokenEnvelopeBlobFromSession(
     pending.metadataURI,
     pending.recipientPublicKeyBase64,
@@ -44,14 +44,17 @@ export async function provisionPendingEnvelopeForAuthor(
     envelope,
     walletAuth,
   );
-  return result.envelopeCid;
+  return {
+    tokenId: pending.tokenId,
+    envelopeUri: result.envelopeUri,
+  };
 }
 
 export async function provisionAllPendingEnvelopesForAuthor(input: {
   authorAddress: string;
   address: `0x${string}`;
   signMessageAsync: SignMessageFn;
-}): Promise<string[]> {
+}): Promise<Array<{ tokenId: bigint; envelopeUri: string }>> {
   const pending = await fetchPendingEnvelopesForAuthor(input.authorAddress);
   const ready = pending.filter((entry) => loadWorkContentKey(entry.metadataURI));
   if (ready.length === 0) {
