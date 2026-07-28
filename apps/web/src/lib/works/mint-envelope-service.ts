@@ -1,7 +1,8 @@
 import { wrapContentKey } from "@/lib/content-crypto/envelope";
 import type { ContentKey, Envelope } from "@/lib/content-crypto/types";
-import type { IpfsStoragePort } from "@/lib/ipfs/ports/ipfs-storage-port";
-import { parseIpfsUri, type Cid, type IpfsUri } from "@/lib/ipfs/types";
+import type { ContentUri } from "@/lib/ipfs/content-uri";
+import { parseContentLocator } from "@/lib/ipfs/content-uri";
+import type { PermanentStoragePort } from "@/lib/ipfs/ports/permanent-storage-port";
 
 import { MintEnvelopeError } from "./errors";
 
@@ -16,23 +17,24 @@ export type CreateTokenEnvelopeInput = {
 
 export type CreateTokenEnvelopeResult = {
   tokenId: bigint;
-  envelopeCid: Cid;
-  envelopeUri: IpfsUri;
-  /** True when an existing envelope was reused instead of pinning a new one. */
+  /** Opaque storage id (CID or Arweave tx id). */
+  envelopeCid: string;
+  envelopeUri: ContentUri;
+  /** True when an existing envelope was reused instead of uploading a new one. */
   reused: boolean;
 };
 
-/** Deterministic pin name so a token's envelope is easy to locate per `tokenId`. */
+/** Deterministic upload name so a token's envelope is easy to locate per `tokenId`. */
 export function tokenEnvelopePinName(tokenId: bigint): string {
   return `token-${tokenId.toString()}-envelope`;
 }
 
 /**
- * Wraps `K` for the token's TBA public key and pins the resulting envelope on IPFS.
+ * Wraps `K` for the token's TBA public key and uploads the envelope to permanent storage.
  * The plaintext key is only handled transiently in the caller's runtime.
  */
 export async function createTokenEnvelope(
-  ipfs: IpfsStoragePort,
+  storage: PermanentStoragePort,
   input: CreateTokenEnvelopeInput,
 ): Promise<CreateTokenEnvelopeResult> {
   if (input.tokenId < 0n) {
@@ -48,47 +50,47 @@ export async function createTokenEnvelope(
     );
   }
 
-  const pin = await ipfs.pinBlob(envelope, {
+  const uploaded = await storage.uploadBlob(envelope, {
     name: tokenEnvelopePinName(input.tokenId),
   });
 
   return {
     tokenId: input.tokenId,
-    envelopeCid: pin.cid,
-    envelopeUri: pin.uri,
+    envelopeCid: uploaded.id,
+    envelopeUri: uploaded.uri,
     reused: false,
   };
 }
 
-/** Builds a reused result from an already-pinned envelope URI (no new pin). */
+/** Builds a reused result from an already-uploaded envelope URI (no new upload). */
 export function reuseTokenEnvelope(
   tokenId: bigint,
-  envelopeUri: IpfsUri,
+  envelopeUri: ContentUri,
 ): CreateTokenEnvelopeResult {
   return {
     tokenId,
-    envelopeCid: parseIpfsUri(envelopeUri),
+    envelopeCid: parseContentLocator(envelopeUri).id,
     envelopeUri,
     reused: true,
   };
 }
 
 export type ProvisionTokenEnvelopeInput = CreateTokenEnvelopeInput & {
-  /** When set, the token already has an envelope and pinning is skipped. */
-  existingEnvelopeUri?: IpfsUri | null;
+  /** When set, the token already has an envelope and uploading is skipped. */
+  existingEnvelopeUri?: ContentUri | null;
 };
 
 /**
  * Idempotent envelope provisioning: reuses an existing envelope for the token
- * when present, otherwise wraps `K` and pins a fresh one.
+ * when present, otherwise wraps `K` and uploads a fresh one.
  */
 export async function provisionTokenEnvelope(
-  ipfs: IpfsStoragePort,
+  storage: PermanentStoragePort,
   input: ProvisionTokenEnvelopeInput,
 ): Promise<CreateTokenEnvelopeResult> {
   if (input.existingEnvelopeUri) {
     return reuseTokenEnvelope(input.tokenId, input.existingEnvelopeUri);
   }
 
-  return createTokenEnvelope(ipfs, input);
+  return createTokenEnvelope(storage, input);
 }

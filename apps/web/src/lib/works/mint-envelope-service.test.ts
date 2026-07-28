@@ -3,11 +3,13 @@ import { describe, expect, it } from "vitest";
 import { generateContentKey } from "@/lib/content-crypto/ace-spec";
 import { unwrapContentKey } from "@/lib/content-crypto/envelope";
 import { createTbaKeyFixture } from "@/lib/content-crypto/testing/key-fixtures";
+import { getInMemoryIpfsRecord } from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+import { createInMemoryPermanentStorage } from "@/lib/ipfs/testing/in-memory-permanent-storage";
+import { createArweaveTurboStorage } from "@/lib/ipfs/adapters/arweave-turbo-storage";
 import {
-  createInMemoryIpfsState,
-  createInMemoryIpfsStorage,
-  getInMemoryIpfsRecord,
-} from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+  createFakeTurboUploadClient,
+  createFakeTurboUploadState,
+} from "@/lib/ipfs/testing/fake-turbo-upload-client";
 
 import { MintEnvelopeError } from "./errors";
 import {
@@ -24,13 +26,12 @@ describe("tokenEnvelopePinName", () => {
 });
 
 describe("createTokenEnvelope", () => {
-  it("wraps the content key for the TBA pubkey and pins the envelope", async () => {
-    const state = createInMemoryIpfsState();
-    const ipfs = createInMemoryIpfsStorage(state);
+  it("wraps the content key for the TBA pubkey and uploads the envelope", async () => {
+    const { storage, state } = createInMemoryPermanentStorage();
     const contentKey = generateContentKey();
     const tbaKeys = createTbaKeyFixture();
 
-    const result = await createTokenEnvelope(ipfs, {
+    const result = await createTokenEnvelope(storage, {
       tokenId: 7n,
       contentKey,
       recipientPublicKey: tbaKeys.publicKey,
@@ -48,11 +49,25 @@ describe("createTokenEnvelope", () => {
     expect(unwrapped).toEqual(contentKey);
   });
 
+  it("uploads ar:// envelopes when using the Arweave adapter", async () => {
+    const storage = createArweaveTurboStorage({
+      client: createFakeTurboUploadClient(createFakeTurboUploadState()),
+    });
+
+    const result = await createTokenEnvelope(storage, {
+      tokenId: 7n,
+      contentKey: generateContentKey(),
+      recipientPublicKey: createTbaKeyFixture().publicKey,
+    });
+
+    expect(result.envelopeUri).toMatch(/^ar:\/\//);
+  });
+
   it("rejects an invalid content key length", async () => {
-    const ipfs = createInMemoryIpfsStorage(createInMemoryIpfsState());
+    const { storage } = createInMemoryPermanentStorage();
 
     await expect(
-      createTokenEnvelope(ipfs, {
+      createTokenEnvelope(storage, {
         tokenId: 1n,
         contentKey: new Uint8Array(16),
         recipientPublicKey: createTbaKeyFixture().publicKey,
@@ -61,10 +76,10 @@ describe("createTokenEnvelope", () => {
   });
 
   it("rejects a negative token id", async () => {
-    const ipfs = createInMemoryIpfsStorage(createInMemoryIpfsState());
+    const { storage } = createInMemoryPermanentStorage();
 
     await expect(
-      createTokenEnvelope(ipfs, {
+      createTokenEnvelope(storage, {
         tokenId: -1n,
         contentKey: generateContentKey(),
         recipientPublicKey: createTbaKeyFixture().publicKey,
@@ -75,23 +90,22 @@ describe("createTokenEnvelope", () => {
 
 describe("reuseTokenEnvelope", () => {
   it("builds a reused result from an existing envelope URI", () => {
-    const result = reuseTokenEnvelope(5n, "ipfs://bafyExisting");
+    const result = reuseTokenEnvelope(5n, "ar://ExistingTx");
 
     expect(result).toEqual({
       tokenId: 5n,
-      envelopeCid: "bafyExisting",
-      envelopeUri: "ipfs://bafyExisting",
+      envelopeCid: "ExistingTx",
+      envelopeUri: "ar://ExistingTx",
       reused: true,
     });
   });
 });
 
 describe("provisionTokenEnvelope", () => {
-  it("pins a new envelope when none exists yet", async () => {
-    const state = createInMemoryIpfsState();
-    const ipfs = createInMemoryIpfsStorage(state);
+  it("uploads a new envelope when none exists yet", async () => {
+    const { storage, state } = createInMemoryPermanentStorage();
 
-    const result = await provisionTokenEnvelope(ipfs, {
+    const result = await provisionTokenEnvelope(storage, {
       tokenId: 9n,
       contentKey: generateContentKey(),
       recipientPublicKey: createTbaKeyFixture().publicKey,
@@ -101,11 +115,10 @@ describe("provisionTokenEnvelope", () => {
     expect(state.records.size).toBe(1);
   });
 
-  it("reuses an existing envelope without pinning again (idempotent)", async () => {
-    const state = createInMemoryIpfsState();
-    const ipfs = createInMemoryIpfsStorage(state);
+  it("reuses an existing envelope without uploading again (idempotent)", async () => {
+    const { storage, state } = createInMemoryPermanentStorage();
 
-    const result = await provisionTokenEnvelope(ipfs, {
+    const result = await provisionTokenEnvelope(storage, {
       tokenId: 9n,
       contentKey: generateContentKey(),
       recipientPublicKey: createTbaKeyFixture().publicKey,

@@ -38,7 +38,7 @@ export async function uploadTokenEnvelopeForAuthor(
   envelope: Uint8Array,
   walletAuth: SignedWalletPayload,
   fetchImpl: typeof fetch = fetch,
-): Promise<{ envelopeCid: string }> {
+): Promise<{ envelopeCid: string; envelopeUri: string }> {
   const formData = new FormData();
   formData.set("walletAuth", JSON.stringify(walletAuth));
   formData.set(
@@ -63,7 +63,14 @@ export async function uploadTokenEnvelopeForAuthor(
     throw new ApiClientError("unexpected");
   }
 
-  return (await response.json()) as { envelopeCid: string };
+  const json = (await response.json()) as {
+    envelopeCid: string;
+    envelopeUri?: string;
+  };
+  return {
+    envelopeCid: json.envelopeCid,
+    envelopeUri: json.envelopeUri ?? json.envelopeCid,
+  };
 }
 
 export async function fetchPendingEnvelopesForAuthor(
