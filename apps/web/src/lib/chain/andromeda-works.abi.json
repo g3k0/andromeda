@@ -135,6 +135,11 @@
   },
   {
     "inputs": [],
+    "name": "NotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "NotCopyOwner",
     "type": "error"
   },
@@ -252,6 +257,25 @@
       }
     ],
     "name": "BatchMetadataUpdate",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "envelopeURI",
+        "type": "string"
+      }
+    ],
+    "name": "CopyEnvelopeUpdated",
     "type": "event"
   },
   {
@@ -506,6 +530,25 @@
         "type": "uint256"
       }
     ],
+    "name": "envelopeURIOfToken",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
     "name": "getApproved",
     "outputs": [
       {
@@ -725,6 +768,24 @@
       }
     ],
     "name": "setApprovalForAll",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "envelopeURI",
+        "type": "string"
+      }
+    ],
+    "name": "setCopyEnvelopeURI",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
