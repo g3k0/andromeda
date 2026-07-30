@@ -199,6 +199,7 @@
     "envelopeUnavailable": "このコピーの読書キーはまだ利用できません。",
     "metadataLoadFailed": "作品のメタデータを読み込めませんでした。",
     "contentLoadFailed": "暗号化されたコンテンツを読み込めませんでした。",
+    "arweaveUnreachable": "Arweave上のコンテンツに到達できませんでした。",
     "decryptFailed": "このコピーを復号できませんでした。"
   },
   "authorProfile": {

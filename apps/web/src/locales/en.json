@@ -199,6 +199,7 @@
     "envelopeUnavailable": "The reading key for this copy is not available yet.",
     "metadataLoadFailed": "Failed to load work metadata.",
     "contentLoadFailed": "Failed to load encrypted content.",
+    "arweaveUnreachable": "Content could not be reached on Arweave.",
     "decryptFailed": "Failed to decrypt this copy."
   },
   "authorProfile": {

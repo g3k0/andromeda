@@ -199,6 +199,7 @@
     "envelopeUnavailable": "La clé de lecture de cet exemplaire n'est pas encore disponible.",
     "metadataLoadFailed": "Échec du chargement des métadonnées de l'œuvre.",
     "contentLoadFailed": "Échec du chargement du contenu chiffré.",
+    "arweaveUnreachable": "Contenu inaccessible sur Arweave.",
     "decryptFailed": "Échec du déchiffrement de cet exemplaire."
   },
   "authorProfile": {

@@ -199,6 +199,7 @@
     "envelopeUnavailable": "此副本的阅读密钥尚不可用。",
     "metadataLoadFailed": "无法加载作品元数据。",
     "contentLoadFailed": "无法加载加密内容。",
+    "arweaveUnreachable": "无法在 Arweave 上访问内容。",
     "decryptFailed": "无法解密此副本。"
   },
   "authorProfile": {
