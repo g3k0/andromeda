@@ -55,6 +55,14 @@ export class MongoWorkRepository implements WorkRepository {
     );
   }
 
+  async setMetadataURI(workId: bigint, metadataURI: string): Promise<boolean> {
+    const result = await WorkModel.updateOne(
+      { workId: workId.toString() },
+      { $set: { metadataURI } },
+    );
+    return (result.matchedCount ?? 0) > 0;
+  }
+
   async setMinted(workId: bigint, minted: bigint): Promise<void> {
     await WorkModel.updateOne(
       { workId: workId.toString() },

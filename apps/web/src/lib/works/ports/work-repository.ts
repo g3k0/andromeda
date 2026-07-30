@@ -11,6 +11,8 @@ export type WorkRepository = {
   getWork(workId: bigint): Promise<WorkRecord | null>;
   listWorks(): Promise<WorkRecord[]>;
   setActive(workId: bigint, active: boolean): Promise<void>;
+  /** Updates work-level metadata URI; returns whether the work existed. */
+  setMetadataURI(workId: bigint, metadataURI: string): Promise<boolean>;
   setMinted(workId: bigint, minted: bigint): Promise<void>;
   decrementPrimarySaleRemaining(workId: bigint): Promise<void>;
 };

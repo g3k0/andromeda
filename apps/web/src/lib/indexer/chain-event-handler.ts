@@ -37,6 +37,11 @@ export type AndromedaChainEvent =
       envelopeURI: string;
     }
   | {
+      kind: "WorkMetadataUpdated";
+      workId: bigint;
+      metadataURI: string;
+    }
+  | {
       kind: "Transfer";
       from: `0x${string}`;
       to: `0x${string}`;
@@ -52,6 +57,7 @@ export type OrderedChainEvent = {
 const INDEXED_EVENT_NAMES = [
   "WorkRegistered",
   "WorkStatusChanged",
+  "WorkMetadataUpdated",
   "CopyMinted",
   "CopyPurchased",
   "CopyMetadataUpdated",
@@ -77,6 +83,12 @@ function toEvent(eventName: string, args: DecodedArgs): AndromedaChainEvent | nu
         kind: "WorkStatusChanged",
         workId: args.workId as bigint,
         active: args.active as boolean,
+      };
+    case "WorkMetadataUpdated":
+      return {
+        kind: "WorkMetadataUpdated",
+        workId: args.workId as bigint,
+        metadataURI: args.metadataURI as string,
       };
     case "CopyMinted":
       return {
@@ -173,6 +185,9 @@ async function applyEvent(
       return;
     case "WorkStatusChanged":
       await repositories.works.setActive(event.workId, event.active);
+      return;
+    case "WorkMetadataUpdated":
+      await repositories.works.setMetadataURI(event.workId, event.metadataURI);
       return;
     case "CopyMinted": {
       const existing = await repositories.tokens.getToken(event.tokenId);

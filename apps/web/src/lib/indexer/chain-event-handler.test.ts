@@ -160,6 +160,25 @@ function copyEnvelopeUpdatedLog(
   );
 }
 
+function workMetadataUpdatedLog(
+  args: { workId: bigint; metadataURI: string },
+  logIndex: number,
+  blockNumber?: bigint,
+): Log {
+  return baseLog(
+    {
+      topics: encodeEventTopics({
+        abi: andromedaWorksAbi,
+        eventName: "WorkMetadataUpdated",
+        args: { workId: args.workId },
+      }) as `0x${string}`[],
+      data: encodeAbiParameters([{ type: "string" }], [args.metadataURI]),
+    },
+    logIndex,
+    blockNumber,
+  );
+}
+
 function transferLog(
   args: { from: `0x${string}`; to: `0x${string}`; tokenId: bigint },
   logIndex: number,
@@ -319,6 +338,27 @@ describe("handleChainLogs", () => {
     expect((await repos.tokens.getToken(10n))?.envelopeCid).toBe(
       "ar://token-10-envelope",
     );
+  });
+
+  it("sets work metadata URI on WorkMetadataUpdated", async () => {
+    const repos = createInMemoryIndexerRepositories();
+    await handleChainLogs(repos, [
+      workRegisteredLog(
+        {
+          workId: 1n,
+          metadataURI: "ipfs://legacy",
+          price: 10n,
+          maxCopies: 100n,
+        },
+        0,
+      ),
+      workMetadataUpdatedLog(
+        { workId: 1n, metadataURI: "ar://migrated" },
+        1,
+      ),
+    ]);
+
+    expect((await repos.works.getWork(1n))?.metadataURI).toBe("ar://migrated");
   });
 
   it("updates owner on secondary Transfer but ignores mint Transfer", async () => {

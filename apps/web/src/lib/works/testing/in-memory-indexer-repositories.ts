@@ -61,6 +61,18 @@ export function createInMemoryIndexerRepositories(): IndexerRepositories {
           });
         }
       },
+      async setMetadataURI(workId: bigint, metadataURI: string) {
+        const record = works.get(workId.toString());
+        if (!record) {
+          return false;
+        }
+        works.set(workId.toString(), {
+          ...record,
+          metadataURI,
+          updatedAt: nowIso(),
+        });
+        return true;
+      },
       async setMinted(workId: bigint, minted: bigint) {
         const record = works.get(workId.toString());
         if (record) {
