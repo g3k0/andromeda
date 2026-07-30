@@ -63,7 +63,7 @@ function sanitizeContext(context?: LogContext): LogContext {
 }
 
 export type ServerLogEntry = {
-  level: "error" | "warn";
+  level: "error" | "warn" | "info";
   scope: string;
   event: string;
   at: string;
@@ -79,7 +79,7 @@ export type ServerLogEntry = {
 
 /** Builds the structured log entry without emitting it (used by the emitters and tests). */
 export function buildLogEntry(
-  level: "error" | "warn",
+  level: "error" | "warn" | "info",
   scope: string,
   event: string,
   error: unknown,
@@ -112,4 +112,13 @@ export function logServerWarn(
   context?: LogContext,
 ): void {
   console.warn(JSON.stringify(buildLogEntry("warn", scope, event, undefined, context)));
+}
+
+/** Logs a sanitized server-side info event (metrics / operational signals). */
+export function logServerInfo(
+  scope: string,
+  event: string,
+  context?: LogContext,
+): void {
+  console.info(JSON.stringify(buildLogEntry("info", scope, event, undefined, context)));
 }

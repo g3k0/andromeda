@@ -10,6 +10,7 @@ import {
   DEFAULT_ARWEAVE_GATEWAY_BASE_URL,
   toContentGatewayUrl,
 } from "../gateway-url";
+import { recordPermanentUploadMetric } from "../permanent-upload-metrics";
 import type {
   PermanentStoragePort,
   UploadOptions,
@@ -63,6 +64,7 @@ async function uploadWithClient(
   size: number,
   tags: TurboDataItemTag[],
 ): Promise<UploadResult> {
+  const startedAt = Date.now();
   try {
     const result = await client.upload({
       data,
@@ -72,6 +74,13 @@ async function uploadWithClient(
     if (!id) {
       throw new ArweaveUploadError("Arweave upload returned an empty id");
     }
+    recordPermanentUploadMetric({
+      backend: "arweave",
+      outcome: "success",
+      sizeBytes: size,
+      durationMs: Date.now() - startedAt,
+      winc: result.winc,
+    });
     return {
       id,
       uri: toArweaveUri(id),
@@ -79,16 +88,22 @@ async function uploadWithClient(
     };
   } catch (error) {
     if (error instanceof ArweaveUploadError) {
+      recordPermanentUploadMetric({
+        backend: "arweave",
+        outcome: "error",
+        sizeBytes: size,
+        durationMs: Date.now() - startedAt,
+        errorName: error.name,
+      });
       throw error;
     }
-    logServerError(
-      "ipfs.arweave",
-      "turbo_upload_error",
-      "Arweave Turbo upload failed",
-      {
-        errorName: error instanceof Error ? error.name : "unknown",
-      },
-    );
+    recordPermanentUploadMetric({
+      backend: "arweave",
+      outcome: "error",
+      sizeBytes: size,
+      durationMs: Date.now() - startedAt,
+      errorName: error instanceof Error ? error.name : "unknown",
+    });
     throw new ArweaveUploadError("Failed to upload data to Arweave");
   }
 }

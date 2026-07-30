@@ -15,5 +15,5 @@ export type TurboUploadParams = {
 };
 
 export type TurboUploadClient = {
-  upload(params: TurboUploadParams): Promise<{ id: string }>;
+  upload(params: TurboUploadParams): Promise<{ id: string; winc?: string }>;
 };
