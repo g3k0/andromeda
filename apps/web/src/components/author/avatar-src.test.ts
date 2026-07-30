@@ -18,6 +18,12 @@ describe("resolveAuthorAvatarSrc", () => {
     );
   });
 
+  it("maps ar:// URLs to the public Arweave gateway", () => {
+    expect(resolveAuthorAvatarSrc("ar://AvatarTx")).toBe(
+      "https://arweave.net/AvatarTx",
+    );
+  });
+
   it("returns https URLs unchanged", () => {
     expect(resolveAuthorAvatarSrc("https://cdn.example/avatar.png")).toBe(
       "https://cdn.example/avatar.png",

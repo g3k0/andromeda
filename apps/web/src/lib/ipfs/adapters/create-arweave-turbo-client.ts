@@ -33,6 +33,7 @@ export function createTurboUploadClientFromJwk(
 export type ArweaveTurboEnvConfig = {
   jwk: ArweaveJwk;
   gatewayBaseUrl: string;
+  gatewayUrls?: readonly string[];
 };
 
 export function createArweaveTurboStorageFromConfig(
@@ -42,6 +43,7 @@ export function createArweaveTurboStorageFromConfig(
   return createArweaveTurboStorage({
     client: createTurboUploadClientFromJwk(env.jwk),
     gatewayBaseUrl: env.gatewayBaseUrl,
+    gatewayUrls: env.gatewayUrls,
     ...overrides,
   });
 }

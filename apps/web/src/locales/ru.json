@@ -199,6 +199,7 @@
     "envelopeUnavailable": "Ключ для чтения этой копии пока недоступен.",
     "metadataLoadFailed": "Не удалось загрузить метаданные произведения.",
     "contentLoadFailed": "Не удалось загрузить зашифрованное содержимое.",
+    "arweaveUnreachable": "Не удалось получить содержимое в Arweave.",
     "decryptFailed": "Не удалось расшифровать эту копию."
   },
   "authorProfile": {

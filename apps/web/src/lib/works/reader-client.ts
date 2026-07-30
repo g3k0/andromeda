@@ -1,18 +1,20 @@
 import { decryptWorkContent } from "@/lib/content-crypto/decrypt-workflow";
 import type { TbaEnvelopeSigner } from "@/lib/content-crypto/tba-envelope-signer";
-import {
-  toContentGatewayUrl,
-  type ContentGatewayBases,
-} from "@/lib/ipfs/gateway-url";
+import type { ContentGatewayBases } from "@/lib/ipfs/gateway-url";
 import { parseAcePublicMetadata } from "@/lib/ipfs/metadata-schema";
 
-export type FetchBytes = (url: string) => Promise<Uint8Array>;
-export type FetchJson = (url: string) => Promise<unknown>;
+export type FetchBytes = (uriOrUrl: string) => Promise<Uint8Array>;
+export type FetchJson = (uriOrUrl: string) => Promise<unknown>;
 
 export type ReadWorkContentInput = {
-  /** Gateway URL of the public metadata JSON. */
+  /**
+   * Content URI (`ar://` / `ipfs://`) or already-resolved gateway HTTPS URL for
+   * the public metadata JSON.
+   */
   metadataUrl: string;
-  /** Gateway URL of the per-token ACE envelope wrapping `K`. */
+  /**
+   * Content URI or gateway HTTPS URL of the per-token ACE envelope wrapping `K`.
+   */
   envelopeUrl: string;
   /** Gateways used to resolve ciphertext `ar://` / legacy `ipfs://` URIs. */
   contentGateways: ContentGatewayBases;
@@ -29,13 +31,9 @@ export async function readWorkContent(
   input: ReadWorkContentInput,
 ): Promise<Uint8Array> {
   const metadata = parseAcePublicMetadata(await input.fetchJson(input.metadataUrl));
-  const ciphertextUrl = toContentGatewayUrl(
-    metadata.ace.encrypted_content,
-    input.contentGateways,
-  );
 
   const [ciphertext, envelope] = await Promise.all([
-    input.fetchBytes(ciphertextUrl),
+    input.fetchBytes(metadata.ace.encrypted_content),
     input.fetchBytes(input.envelopeUrl),
   ]);
 

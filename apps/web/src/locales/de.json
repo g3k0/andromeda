@@ -199,6 +199,7 @@
     "envelopeUnavailable": "Der Lese-Schlüssel für dieses Exemplar ist noch nicht verfügbar.",
     "metadataLoadFailed": "Metadaten des Werks konnten nicht geladen werden.",
     "contentLoadFailed": "Verschlüsselter Inhalt konnte nicht geladen werden.",
+    "arweaveUnreachable": "Inhalt auf Arweave nicht erreichbar.",
     "decryptFailed": "Dieses Exemplar konnte nicht entschlüsselt werden."
   },
   "authorProfile": {

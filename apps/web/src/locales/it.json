@@ -199,6 +199,7 @@
     "envelopeUnavailable": "La chiave di lettura per questa copia non è ancora disponibile.",
     "metadataLoadFailed": "Impossibile caricare i metadati dell'opera.",
     "contentLoadFailed": "Impossibile caricare il contenuto cifrato.",
+    "arweaveUnreachable": "Contenuto non raggiungibile su Arweave.",
     "decryptFailed": "Impossibile decifrare questa copia."
   },
   "authorProfile": {
