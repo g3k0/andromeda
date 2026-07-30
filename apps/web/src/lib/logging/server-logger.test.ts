@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   buildLogEntry,
   logServerError,
+  logServerInfo,
   logServerWarn,
   redactSensitive,
 } from "./server-logger";
@@ -83,7 +84,7 @@ describe("buildLogEntry", () => {
   });
 });
 
-describe("logServerError / logServerWarn", () => {
+describe("logServerError / logServerWarn / logServerInfo", () => {
   it("writes a single JSON line to console.error", () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     logServerError("chain.webhook", "process_failed", new Error("nope"), {
@@ -112,6 +113,20 @@ describe("logServerError / logServerWarn", () => {
       scope: "chain.indexer",
       event: "range_skipped",
       fromBlock: 10,
+    });
+  });
+
+  it("writes a single JSON line to console.info", () => {
+    const spy = vi.spyOn(console, "info").mockImplementation(() => {});
+    logServerInfo("ipfs.arweave", "turbo_upload_ok", { sizeBytes: 12 });
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    const parsed = JSON.parse(spy.mock.calls[0][0] as string);
+    expect(parsed).toMatchObject({
+      level: "info",
+      scope: "ipfs.arweave",
+      event: "turbo_upload_ok",
+      sizeBytes: 12,
     });
   });
 });

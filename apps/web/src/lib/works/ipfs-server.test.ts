@@ -5,7 +5,10 @@ import {
   createFakeTurboUploadClient,
   createFakeTurboUploadState,
 } from "@/lib/ipfs/testing/fake-turbo-upload-client";
-import { createInMemoryIpfsState, createInMemoryIpfsStorage } from "@/lib/ipfs/testing/in-memory-ipfs-storage";
+import {
+  createInMemoryIpfsState,
+  createInMemoryIpfsStorage,
+} from "@/lib/ipfs/testing/in-memory-ipfs-storage";
 
 import {
   getPermanentStorage,
@@ -18,6 +21,7 @@ describe("getPermanentStorage", () => {
   afterEach(() => {
     resetIpfsStorageForTests();
     delete process.env.PERMANENT_STORAGE_BACKEND;
+    delete process.env.VERCEL_ENV;
     delete process.env.IPFS_PINNING_API_KEY;
     delete process.env.IPFS_GATEWAY_BASE_URL;
     delete process.env.ARWEAVE_GATEWAY_BASE_URL;
@@ -26,10 +30,17 @@ describe("getPermanentStorage", () => {
     vi.restoreAllMocks();
   });
 
-  it("defaults to the Pinata-backed permanent adapter", async () => {
+  it("defaults to Arweave and requires ARWEAVE_JWK", () => {
+    expect(() => getPermanentStorage()).toThrow(/ARWEAVE_JWK/);
+  });
+
+  it("uses Pinata only when backend is explicitly pinata", async () => {
+    process.env.PERMANENT_STORAGE_BACKEND = "pinata";
     process.env.IPFS_PINNING_API_KEY = "test-key";
     process.env.IPFS_GATEWAY_BASE_URL = "https://gateway.test/ipfs";
-    setIpfsStorageForTests(createInMemoryIpfsStorage(createInMemoryIpfsState()));
+    setIpfsStorageForTests(
+      createInMemoryIpfsStorage(createInMemoryIpfsState()),
+    );
 
     const storage = getPermanentStorage();
     const uploaded = await storage.uploadJson({ hello: "world" });
@@ -39,9 +50,18 @@ describe("getPermanentStorage", () => {
     expect(getPermanentStorage()).toBe(storage);
   });
 
+  it("forces Arweave on Vercel Preview even when pinata is configured", () => {
+    process.env.VERCEL_ENV = "preview";
+    process.env.PERMANENT_STORAGE_BACKEND = "pinata";
+    process.env.IPFS_PINNING_API_KEY = "test-key";
+    expect(() => getPermanentStorage()).toThrow(/ARWEAVE_JWK/);
+  });
+
   it("rejects unsupported backends", () => {
     process.env.PERMANENT_STORAGE_BACKEND = "s3";
-    expect(() => getPermanentStorage()).toThrow(/Unsupported PERMANENT_STORAGE_BACKEND/);
+    expect(() => getPermanentStorage()).toThrow(
+      /Unsupported PERMANENT_STORAGE_BACKEND/,
+    );
   });
 
   it("requires ARWEAVE_JWK when backend is arweave", () => {

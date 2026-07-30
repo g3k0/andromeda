@@ -31,7 +31,7 @@ export function createFakeTurboUploadClient(
   state: FakeTurboUploadState = createFakeTurboUploadState(),
 ): TurboUploadClient {
   return {
-    async upload(params: TurboUploadParams): Promise<{ id: string }> {
+    async upload(params: TurboUploadParams): Promise<{ id: string; winc?: string }> {
       if (state.failNext) {
         state.failNext = false;
         throw new Error("simulated turbo failure");
@@ -43,7 +43,7 @@ export function createFakeTurboUploadClient(
         data: params.data,
         tags: params.dataItemOpts?.tags,
       });
-      return { id };
+      return { id, winc: "42" };
     },
   };
 }

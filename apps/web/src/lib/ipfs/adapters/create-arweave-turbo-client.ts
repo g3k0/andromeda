@@ -25,7 +25,7 @@ export function createTurboUploadClientFromJwk(
   return {
     async upload({ data, dataItemOpts }) {
       const result = await turbo.upload({ data, dataItemOpts });
-      return { id: result.id };
+      return { id: result.id, winc: result.winc };
     },
   };
 }

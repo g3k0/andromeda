@@ -39,16 +39,18 @@ cp apps/web/.env.example apps/web/.env.local
 | `NEXT_PUBLIC_ALCHEMY_RPC_URL` | Client | RPC Alchemy per wagmi nel browser |
 | `NEXT_PUBLIC_CONTRACT_ADDRESS` | Client | Indirizzo del contratto `AndromedaWorks` **deployato** sulla rete scelta |
 | `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | Client | WalletConnect (connessione wallet) |
-| `PERMANENT_STORAGE_BACKEND` | Server | `pinata` (default) o `arweave` |
-| `IPFS_PINNING_API_KEY` | Server | JWT Pinata — richiesto finché il backend è `pinata` |
-| `IPFS_GATEWAY_BASE_URL` / `NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL` | Server / Client | Gateway HTTP per URI `ipfs://` |
-| `ARWEAVE_JWK` / `ARWEAVE_TURBO_JWK` | Server | JWK Arweave (JSON) per autenticare Turbo — richiesto con backend `arweave` |
-| `ARWEAVE_GATEWAY_BASE_URL` / `NEXT_PUBLIC_ARWEAVE_GATEWAY_BASE_URL` | Server / Client | Gateway HTTP per URI `ar://` (default `https://arweave.net`) |
+| `PERMANENT_STORAGE_BACKEND` | Server | `arweave` (default) o `pinata` (legacy opt-in). Su Vercel Preview è sempre `arweave`. |
+| `IPFS_PINNING_API_KEY` | Server | JWT Pinata — solo se il backend write è esplicitamente `pinata` (non Preview) |
+| `IPFS_GATEWAY_BASE_URL` / `NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL` | Server / Client | Gateway HTTP per URI `ipfs://` legacy |
+| `ARWEAVE_JWK` / `ARWEAVE_TURBO_JWK` | Server | JWK Arweave (JSON) per autenticare Turbo — richiesto con backend `arweave` / Preview |
+| `ARWEAVE_GATEWAY_URLS` | Server | Lista failover gateway `ar://` (comma-separated) |
+| `ARWEAVE_GATEWAY_BASE_URL` / `NEXT_PUBLIC_ARWEAVE_GATEWAY_BASE_URL` | Server / Client | Gateway HTTP primario per URI `ar://` |
 
-Storage permanente: vedi [storage-indipendence.md](../plans/storage-indipendence.md).
+Storage permanente: vedi [storage-indipendence.md](../plans/storage-indipendence.md)
+e il runbook [arweave-runbook.md](../ops/arweave-runbook.md).
 `getPermanentStorage()` alimenta il publish path (`POST /api/works/upload`).
-Default locale/Production: `pinata`. **Preview** (e locale di prova cutover):
-`PERMANENT_STORAGE_BACKEND=arweave` + `ARWEAVE_JWK` + gateway Arweave.
+**Default e Preview:** `arweave` + `ARWEAVE_JWK` + gateway Arweave.
+`pinata` resta disponibile solo come opt-in legacy fuori da Preview.
 
 Smoke Turbo (richiede crediti + JWK reale):
 
@@ -59,14 +61,15 @@ PERMANENT_STORAGE_BACKEND=arweave ARWEAVE_JWK='…' pnpm smoke:arweave-turbo
 
 Smoke publish → `registerWork(ar://…)` su Amoy (manuale):
 
-1. Imposta Preview/local: `PERMANENT_STORAGE_BACKEND=arweave`, `ARWEAVE_JWK`,
+1. Imposta Preview/local: `ARWEAVE_JWK` (backend default `arweave`),
    `NEXT_PUBLIC_CHAIN=amoy`, `NEXT_PUBLIC_CONTRACT_ADDRESS`.
 2. Pubblica un’opera dall’UI author (upload cifra → API → `metadataUri` `ar://…`).
 3. Conferma su Polygonscan Amoy che `registerWork` riceve `metadataURI` che inizia con `ar://`.
 4. `curl https://arweave.net/<txId>` (o il gateway configurato) deve restituire JSON ACE
    con `image` / `ace.encrypted_content` in `ar://`.
 
-Nota: envelope e edition metadata restano su Pinata fino alla PR5.
+Nota: edition metadata ed envelope usano lo stesso permanent storage (`ar://` + URI on-chain).
+Operazioni Turbo/crediti/retry: [arweave-runbook.md](../ops/arweave-runbook.md).
 
 `NEXT_PUBLIC_CONTRACT_ADDRESS` serve solo **dopo** un deploy reale. Senza deploy,
 i test del chain reader funzionano ugualmente (fake in-memory / mock viem).
