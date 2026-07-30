@@ -45,6 +45,7 @@ export function getPermanentStorage(): PermanentStoragePort {
       cachedPermanentStorage = createArweaveTurboStorageFromConfig({
         jwk: parseArweaveJwk(env.jwkRaw),
         gatewayBaseUrl: env.gatewayBaseUrl,
+        gatewayUrls: env.gatewayUrls,
       });
     }
   }

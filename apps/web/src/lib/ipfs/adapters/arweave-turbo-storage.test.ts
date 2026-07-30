@@ -83,7 +83,10 @@ describe("createArweaveTurboStorage", () => {
 
     const bytes = await storage.fetchBytes!("ar://abc123");
 
-    expect(fetchImpl).toHaveBeenCalledWith("https://arweave.test/abc123");
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "https://arweave.test/abc123",
+      undefined,
+    );
     expect(Array.from(bytes)).toEqual([9, 8, 7]);
   });
 
@@ -91,6 +94,7 @@ describe("createArweaveTurboStorage", () => {
     const storage = createArweaveTurboStorage({
       client: createFakeTurboUploadClient(),
       gatewayBaseUrl: "https://arweave.test",
+      gatewayUrls: ["https://arweave.test"],
       fetchImpl: (async () =>
         new Response("nope", { status: 404 })) as unknown as typeof fetch,
     });
@@ -98,6 +102,25 @@ describe("createArweaveTurboStorage", () => {
     await expect(storage.fetchBytes!("ar://missing")).rejects.toBeInstanceOf(
       ArweaveUploadError,
     );
+  });
+
+  it("fails over to the next gateway when the primary is down", async () => {
+    const fetchImpl = vi.fn(async (url: string) => {
+      if (url.startsWith("https://gw1.test/")) {
+        throw new TypeError("down");
+      }
+      return new Response(new Uint8Array([1, 2]), { status: 200 });
+    });
+    const storage = createArweaveTurboStorage({
+      client: createFakeTurboUploadClient(),
+      gatewayBaseUrl: "https://gw1.test",
+      gatewayUrls: ["https://gw1.test", "https://gw2.test"],
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    const bytes = await storage.fetchBytes!("ar://abc123");
+    expect(Array.from(bytes)).toEqual([1, 2]);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 });
 

@@ -1,5 +1,9 @@
 import { logServerError } from "@/lib/logging/server-logger";
 
+import {
+  ArweaveGatewayUnreachableError,
+  fetchBytesWithArweaveFailover,
+} from "../arweave-gateway-resolver";
 import { toArweaveUri, type ContentUri } from "../content-uri";
 import { ArweaveUploadError } from "../errors";
 import {
@@ -24,6 +28,8 @@ export const ANDROMEDA_APP_NAME_TAG: TurboDataItemTag = {
 export type ArweaveTurboStorageConfig = {
   client: TurboUploadClient;
   gatewayBaseUrl?: string;
+  /** Ordered Arweave gateways for `fetchBytes` failover. */
+  gatewayUrls?: readonly string[];
   /** Extra tags appended after Content-Type / App-Name / optional File-Name. */
   extraTags?: readonly TurboDataItemTag[];
   fetchImpl?: typeof fetch;
@@ -94,6 +100,7 @@ export function createArweaveTurboStorage(
   const gatewayBaseUrl = (
     config.gatewayBaseUrl ?? DEFAULT_ARWEAVE_GATEWAY_BASE_URL
   ).replace(/\/+$/, "");
+  const gatewayUrls = config.gatewayUrls ?? [gatewayBaseUrl];
   const fetchImpl = config.fetchImpl ?? fetch;
 
   return {
@@ -138,32 +145,24 @@ export function createArweaveTurboStorage(
     },
 
     async fetchBytes(uri: ContentUri): Promise<Uint8Array> {
-      const url = toContentGatewayUrl(uri, {
-        ipfs: "https://gateway.pinata.cloud/ipfs",
-        arweave: gatewayBaseUrl,
-      });
-      let response: Response;
       try {
-        response = await fetchImpl(url);
-      } catch {
-        logServerError(
-          "ipfs.arweave",
-          "gateway_fetch_error",
-          "Arweave gateway fetch failed",
-          { uriScheme: uri.startsWith("ar://") ? "ar" : "other" },
-        );
-        throw new ArweaveUploadError("Failed to fetch bytes from Arweave");
+        return await fetchBytesWithArweaveFailover({
+          uriOrId: uri,
+          gatewayUrls,
+          fetchImpl,
+        });
+      } catch (error) {
+        if (error instanceof ArweaveGatewayUnreachableError) {
+          logServerError(
+            "ipfs.arweave",
+            "gateway_unreachable",
+            "Arweave gateway failover exhausted",
+            { uriScheme: uri.startsWith("ar://") ? "ar" : "other" },
+          );
+          throw new ArweaveUploadError("Failed to fetch bytes from Arweave");
+        }
+        throw error;
       }
-      if (!response.ok) {
-        logServerError(
-          "ipfs.arweave",
-          "gateway_http_error",
-          "Arweave gateway returned an error status",
-          { status: response.status },
-        );
-        throw new ArweaveUploadError("Failed to fetch bytes from Arweave");
-      }
-      return new Uint8Array(await response.arrayBuffer());
     },
   };
 }

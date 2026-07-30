@@ -6,6 +6,10 @@ import { useAccount, useReadContract, useSignMessage } from "wagmi";
 import { LoadingSpinner } from "@/components/loading/LoadingSpinner";
 import { formErrorClassName } from "@/components/form/form-field-styles";
 import { andromedaWorksAbi } from "@/lib/chain/contract";
+import {
+  ArweaveGatewayUnreachableError,
+  fetchContentFromGateways,
+} from "@/lib/ipfs/content-gateway-fetch";
 import type { ContentGatewayBases } from "@/lib/ipfs/gateway-url";
 import { useTranslation } from "@/lib/i18n/use-translation";
 import { isCopyOwner } from "@/lib/works/reader-access";
@@ -22,7 +26,9 @@ import {
 
 export type WorkReaderClientProps = {
   tokenId: string;
+  /** Content URI (`ar://` / `ipfs://`) for public metadata JSON. */
   metadataUrl: string;
+  /** Content URI for the per-token ACE envelope, when provisioned. */
   envelopeUrl: string | null;
   contentGateways: ContentGatewayBases;
   contractAddress: `0x${string}`;
@@ -82,15 +88,23 @@ export function WorkReaderClient({
         envelopeUrl,
         contentGateways,
         tbaSigner: createReaderSignerFromSignature(signature as `0x${string}`),
-        fetchJson: async (url) => {
-          const response = await fetch(url, { cache: "no-store" });
+        fetchJson: async (uriOrUrl) => {
+          const response = await fetchContentFromGateways({
+            uriOrId: uriOrUrl,
+            gateways: contentGateways,
+            init: { cache: "no-store" },
+          });
           if (!response.ok) {
             throw new Error(t("reader.metadataLoadFailed"));
           }
           return response.json();
         },
-        fetchBytes: async (url) => {
-          const response = await fetch(url, { cache: "no-store" });
+        fetchBytes: async (uriOrUrl) => {
+          const response = await fetchContentFromGateways({
+            uriOrId: uriOrUrl,
+            gateways: contentGateways,
+            init: { cache: "no-store" },
+          });
           if (!response.ok) {
             throw new Error(t("reader.contentLoadFailed"));
           }
@@ -99,12 +113,15 @@ export function WorkReaderClient({
       });
       dispatch({ type: "decrypt_succeeded", text: decodeUtf8(bytes) });
     } catch (cause) {
+      const message =
+        cause instanceof ArweaveGatewayUnreachableError
+          ? t("reader.arweaveUnreachable")
+          : cause instanceof Error
+            ? cause.message
+            : t("reader.decryptFailed");
       dispatch({
         type: "decrypt_failed",
-        message:
-          cause instanceof Error
-            ? cause.message
-            : t("reader.decryptFailed"),
+        message,
       });
     }
   }

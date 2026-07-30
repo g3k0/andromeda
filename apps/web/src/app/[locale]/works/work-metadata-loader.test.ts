@@ -71,6 +71,26 @@ describe("loadPublicWorkMetadata", () => {
     expect(metadata?.image).toBe("ipfs://bafycover");
   });
 
+  it("fails over when the primary Arweave gateway is down", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url === "https://gw1.test/MetaTx") {
+        return new Response("down", { status: 502 });
+      }
+      expect(url).toBe("https://gw2.test/MetaTx");
+      return new Response(JSON.stringify(VALID_METADATA), { status: 200 });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const metadata = await loadPublicWorkMetadata("ar://MetaTx", {
+      ipfs: "https://gateway.test/ipfs",
+      arweave: "https://gw1.test",
+      arweaveUrls: ["https://gw1.test", "https://gw2.test"],
+    });
+
+    expect(metadata?.name).toBe("Short Story");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it("returns null when the gateway response is not ok", async () => {
     vi.stubGlobal(
       "fetch",
@@ -78,7 +98,10 @@ describe("loadPublicWorkMetadata", () => {
     );
 
     await expect(
-      loadPublicWorkMetadata("ar://missing", GATEWAYS),
+      loadPublicWorkMetadata("ar://missing", {
+        ...GATEWAYS,
+        arweaveUrls: ["https://arweave.test"],
+      }),
     ).resolves.toBeNull();
   });
 });

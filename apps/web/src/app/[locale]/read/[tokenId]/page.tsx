@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { WorkReaderClient } from "@/components/works/WorkReaderClient";
 import { getContractAddress } from "@/lib/config/public-env";
-import { toContentGatewayUrl } from "@/lib/ipfs/gateway-url";
 import { getContentGatewayBases } from "@/lib/ipfs/ipfs-config";
 import { getServerTranslations } from "@/lib/i18n/server";
 import { isSupportedLocale, type SupportedLocale } from "@/lib/i18n/locales";
@@ -87,15 +86,8 @@ export default async function ReadPage({ params }: ReadPageProps) {
 
       <WorkReaderClient
         tokenId={token.tokenId.toString()}
-        metadataUrl={toContentGatewayUrl(
-          token.metadataURI ?? work.metadataURI,
-          contentGateways,
-        )}
-        envelopeUrl={
-          token.envelopeCid
-            ? toContentGatewayUrl(token.envelopeCid, contentGateways)
-            : null
-        }
+        metadataUrl={token.metadataURI ?? work.metadataURI}
+        envelopeUrl={token.envelopeCid}
         contentGateways={contentGateways}
         contractAddress={getContractAddress()}
       />

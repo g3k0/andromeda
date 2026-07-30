@@ -1,9 +1,7 @@
 import "server-only";
 
-import {
-  toContentGatewayUrl,
-  type ContentGatewayBases,
-} from "@/lib/ipfs/gateway-url";
+import { fetchContentFromGateways } from "@/lib/ipfs/content-gateway-fetch";
+import type { ContentGatewayBases } from "@/lib/ipfs/gateway-url";
 import {
   parseAcePublicMetadata,
   type AcePublicMetadata,
@@ -15,8 +13,10 @@ export async function loadPublicWorkMetadata(
   gateways: ContentGatewayBases,
 ): Promise<AcePublicMetadata | null> {
   try {
-    const response = await fetch(toContentGatewayUrl(metadataUri, gateways), {
-      cache: "no-store",
+    const response = await fetchContentFromGateways({
+      uriOrId: metadataUri,
+      gateways,
+      init: { cache: "no-store" },
     });
     if (!response.ok) {
       return null;

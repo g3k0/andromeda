@@ -65,14 +65,17 @@ describe("readWorkContent", () => {
       contentGateways: GATEWAYS,
       tbaSigner: createReaderSignerFromSignature(SIGNATURE),
       fetchJson: async () => metadata(),
-      fetchBytes: async (url) => {
-        if (url.endsWith("/bafyenvelope")) {
+      fetchBytes: async (uriOrUrl) => {
+        if (uriOrUrl.endsWith("/bafyenvelope") || uriOrUrl === "ipfs://bafyenvelope") {
           return envelope;
         }
-        if (url === `${GATEWAYS.ipfs}/bafycipher`) {
+        if (
+          uriOrUrl === `${GATEWAYS.ipfs}/bafycipher` ||
+          uriOrUrl === "ipfs://bafycipher"
+        ) {
           return ciphertext;
         }
-        throw new Error(`Unexpected fetch: ${url}`);
+        throw new Error(`Unexpected fetch: ${uriOrUrl}`);
       },
     });
 
@@ -89,19 +92,19 @@ describe("readWorkContent", () => {
     const envelope = wrapContentKey(contentKey, publicKey);
 
     const plaintext = await readWorkContent({
-      metadataUrl: `${GATEWAYS.arweave}/MetaTxId`,
-      envelopeUrl: `${GATEWAYS.arweave}/EnvelopeTxId`,
+      metadataUrl: "ar://MetaTxId",
+      envelopeUrl: "ar://EnvelopeTxId",
       contentGateways: GATEWAYS,
       tbaSigner: createReaderSignerFromSignature(SIGNATURE),
       fetchJson: async () => metadata("ar://CipherTxId"),
-      fetchBytes: async (url) => {
-        if (url === `${GATEWAYS.arweave}/EnvelopeTxId`) {
+      fetchBytes: async (uriOrUrl) => {
+        if (uriOrUrl === "ar://EnvelopeTxId") {
           return envelope;
         }
-        if (url === `${GATEWAYS.arweave}/CipherTxId`) {
+        if (uriOrUrl === "ar://CipherTxId") {
           return ciphertext;
         }
-        throw new Error(`Unexpected fetch: ${url}`);
+        throw new Error(`Unexpected fetch: ${uriOrUrl}`);
       },
     });
 
