@@ -232,44 +232,65 @@ export async function migrateWorkToArweave(
     };
   }
 
-  for (const token of input.tokens ?? []) {
-    if (token.metadataURI) {
-      const copyMigration = await migrateAceDocument({
-        workId: input.workId,
-        tokenId: token.tokenId,
-        kind: "copy-metadata",
-        uri: token.metadataURI,
-        deps,
-      });
-      rows.push(...copyMigration.rows);
-      if (
-        copyMigration.metadataRow.status === "ok" &&
-        copyMigration.metadataRow.newUri
-      ) {
-        suggestedOnChain.setCopyMetadataURI.push({
-          tokenId: token.tokenId.toString(),
-          metadataUri: copyMigration.metadataRow.newUri,
-        });
-      }
-    }
+  const tokenResults = await Promise.all(
+    (input.tokens ?? []).map(async (token) => {
+      const tokenRows: MigrationRow[] = [];
+      const copyMetadata: Array<{ tokenId: string; metadataUri: string }> = [];
+      const copyEnvelope: Array<{ tokenId: string; envelopeUri: string }> = [];
 
-    if (token.envelopeCid) {
-      const envelope = await migrateIpfsBlob({
-        workId: input.workId,
-        tokenId: token.tokenId,
-        kind: "envelope",
-        uri: token.envelopeCid,
-        deps,
-        name: `token-${token.tokenId}-envelope`,
-      });
-      rows.push(envelope);
-      if (envelope.status === "ok" && envelope.newUri) {
-        suggestedOnChain.setCopyEnvelopeURI.push({
-          tokenId: token.tokenId.toString(),
-          envelopeUri: envelope.newUri,
-        });
+      const [copyMigration, envelope] = await Promise.all([
+        token.metadataURI
+          ? migrateAceDocument({
+              workId: input.workId,
+              tokenId: token.tokenId,
+              kind: "copy-metadata",
+              uri: token.metadataURI,
+              deps,
+            })
+          : Promise.resolve(null),
+        token.envelopeCid
+          ? migrateIpfsBlob({
+              workId: input.workId,
+              tokenId: token.tokenId,
+              kind: "envelope",
+              uri: token.envelopeCid,
+              deps,
+              name: `token-${token.tokenId}-envelope`,
+            })
+          : Promise.resolve(null),
+      ]);
+
+      if (copyMigration) {
+        tokenRows.push(...copyMigration.rows);
+        if (
+          copyMigration.metadataRow.status === "ok" &&
+          copyMigration.metadataRow.newUri
+        ) {
+          copyMetadata.push({
+            tokenId: token.tokenId.toString(),
+            metadataUri: copyMigration.metadataRow.newUri,
+          });
+        }
       }
-    }
+
+      if (envelope) {
+        tokenRows.push(envelope);
+        if (envelope.status === "ok" && envelope.newUri) {
+          copyEnvelope.push({
+            tokenId: token.tokenId.toString(),
+            envelopeUri: envelope.newUri,
+          });
+        }
+      }
+
+      return { tokenRows, copyMetadata, copyEnvelope };
+    }),
+  );
+
+  for (const result of tokenResults) {
+    rows.push(...result.tokenRows);
+    suggestedOnChain.setCopyMetadataURI.push(...result.copyMetadata);
+    suggestedOnChain.setCopyEnvelopeURI.push(...result.copyEnvelope);
   }
 
   return {
