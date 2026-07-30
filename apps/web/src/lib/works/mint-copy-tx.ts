@@ -108,3 +108,29 @@ export function buildSetCopyEnvelopeRequest(
     args: [input.tokenId, input.envelopeUri],
   };
 }
+
+export type UpdateWorkMetadataTxRequest = {
+  abi: Abi;
+  address: `0x${string}`;
+  functionName: "updateWorkMetadataURI";
+  args: readonly [bigint, string];
+};
+
+export type BuildUpdateWorkMetadataRequestInput = {
+  workId: bigint;
+  metadataUri: string;
+  contractAddress: `0x${string}`;
+  abi: Abi;
+};
+
+/** Builds the author-only write to repoint work-level ACE metadata (IPFS → Arweave). */
+export function buildUpdateWorkMetadataRequest(
+  input: BuildUpdateWorkMetadataRequestInput,
+): UpdateWorkMetadataTxRequest {
+  return {
+    abi: input.abi,
+    address: input.contractAddress,
+    functionName: "updateWorkMetadataURI",
+    args: [input.workId, input.metadataUri],
+  };
+}

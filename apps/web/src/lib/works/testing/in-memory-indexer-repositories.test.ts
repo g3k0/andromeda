@@ -44,6 +44,14 @@ describe("in-memory indexer repositories", () => {
     expect((await works.getWork(1n))?.active).toBe(false);
   });
 
+  it("updates work metadata URI when the work exists", async () => {
+    const { works } = createInMemoryIndexerRepositories();
+    await works.upsertWork(baseWork());
+    expect(await works.setMetadataURI(1n, "ar://migrated")).toBe(true);
+    expect((await works.getWork(1n))?.metadataURI).toBe("ar://migrated");
+    expect(await works.setMetadataURI(999n, "ar://ghost")).toBe(false);
+  });
+
   it("lists works and returns null for unknown work", async () => {
     const { works } = createInMemoryIndexerRepositories();
     await works.upsertWork(baseWork());

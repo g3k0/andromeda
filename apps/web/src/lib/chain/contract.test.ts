@@ -28,6 +28,8 @@ describe("chain contract", () => {
         "primarySaleRemaining",
         "mintCopy",
         "registerWork",
+        "updateWorkMetadataURI",
+        "setCopyEnvelopeURI",
       ]),
     );
     expect(andromedaWorksAbi.length).toBeGreaterThan(10);

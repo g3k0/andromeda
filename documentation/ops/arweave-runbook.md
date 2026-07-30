@@ -76,6 +76,33 @@ Each Turbo upload emits structured JSON logs (`scope: ipfs.arweave`):
 
 No secrets, JWK material, or stack traces are logged.
 
+## Legacy IPFS → Arweave migration (PR8)
+
+**Decision:** work-level `metadataURI` is **not** left on IPFS forever. Authors
+repaint the certificate with `updateWorkMetadataURI(workId, newURI)` (author-only,
+emits `WorkMetadataUpdated`). Per-copy paths already use `setCopyMetadataURI` /
+`setCopyEnvelopeURI`.
+
+### Operator flow
+
+1. Redeploy `AndromedaWorks` that includes `updateWorkMetadataURI` (Amoy/mainnet as needed).
+2. Sync ABI: `pnpm --filter @andromeda/web sync:contract-abi`.
+3. Ensure indexer is running so `WorkMetadataUpdated` updates Mongo `works.metadataURI`.
+4. Run migration (uploads only; no chain txs):
+
+```bash
+cd apps/web
+pnpm migrate:ipfs-arweave -- --work-id=1 --out=./migration-report.json
+```
+
+5. Author wallet submits txs from `suggestedOnChain` in the report:
+   - `updateWorkMetadataURI`
+   - `setCopyMetadataURI` / `setCopyEnvelopeURI` for still-`ipfs://` copies
+6. Orphans (`status: "orphan"`) mean IPFS was unreachable — do not update on-chain for those blobs; keep dual-read for remaining `ipfs://` until recoverable or accepted as lost.
+
+DoD check: after txs + indexer, `works(workId).metadataURI`, `tokenURI`, and
+`envelopeURIOfToken` are `ar://…` and readable via gateway failover.
+
 ## Verify Preview DoD
 
 1. Vercel Preview: `ARWEAVE_JWK` set; Pinata key unset or invalid.
@@ -85,6 +112,6 @@ No secrets, JWK material, or stack traces are logged.
 
 ## Related docs
 
-- Plan: [storage-indipendence.md](../plans/storage-indipendence.md) (PR7)
+- Plan: [storage-indipendence.md](../plans/storage-indipendence.md) (PR7–PR8)
 - Chain commands / smoke: [commands.md](../blockchain/commands.md)
 - Env template: `apps/web/.env.example`
