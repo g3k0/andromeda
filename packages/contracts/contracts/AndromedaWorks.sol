@@ -49,6 +49,7 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
     );
     event CopyMetadataUpdated(uint256 indexed tokenId, string metadataURI);
     event CopyEnvelopeUpdated(uint256 indexed tokenId, string envelopeURI);
+    event WorkMetadataUpdated(uint256 indexed workId, string metadataURI);
 
     error WorkNotFound();
     error WorkInactive();
@@ -103,6 +104,17 @@ contract AndromedaWorks is ERC721URIStorage, Ownable, ReentrancyGuard {
         if (msg.sender != work.author) revert NotAuthor();
         work.active = active;
         emit WorkStatusChanged(workId, active);
+    }
+
+    /// @notice Repoint work-level ACE metadata URI (e.g. legacy IPFS → Arweave).
+    /// @dev Author-only so certified works can migrate without reminting.
+    function updateWorkMetadataURI(uint256 workId, string calldata metadataURI)
+        external
+    {
+        Work storage work = _getWork(workId);
+        if (msg.sender != work.author) revert NotAuthor();
+        work.metadataURI = metadataURI;
+        emit WorkMetadataUpdated(workId, metadataURI);
     }
 
     /// @notice Buy a copy from the author's primary-sale inventory.

@@ -147,4 +147,25 @@ describe("AndromedaWorks", () => {
       contract.connect(owner).setCopyEnvelopeURI(10, "ar://hijack"),
     );
   });
+
+  it("lets the author update work-level metadata URI for Arweave migration", async () => {
+    const { contract, author } = await deploy();
+    await contract.connect(author).registerWork("ipfs://legacy-work", 0, 2);
+
+    await contract
+      .connect(author)
+      .updateWorkMetadataURI(1, "ar://migrated-work");
+
+    const work = await contract.works(1);
+    expect(work.metadataURI).to.equal("ar://migrated-work");
+  });
+
+  it("reverts when a non-author updates work-level metadata URI", async () => {
+    const { contract, author, reader } = await deploy();
+    await contract.connect(author).registerWork("ipfs://legacy-work", 0, 2);
+
+    await expectRevert(
+      contract.connect(reader).updateWorkMetadataURI(1, "ar://hijack"),
+    );
+  });
 });

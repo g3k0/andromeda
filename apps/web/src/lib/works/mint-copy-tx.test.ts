@@ -8,6 +8,7 @@ import {
   buildMintCopyRequest,
   buildSetCopyEnvelopeRequest,
   buildSetCopyMetadataRequest,
+  buildUpdateWorkMetadataRequest,
   formatWorkPrice,
   getWorkAvailability,
 } from "./mint-copy-tx";
@@ -111,5 +112,19 @@ describe("buildSetCopyEnvelopeRequest", () => {
 
     expect(request.functionName).toBe("setCopyEnvelopeURI");
     expect(request.args).toEqual([9n, "ar://EnvelopeTx"]);
+  });
+});
+
+describe("buildUpdateWorkMetadataRequest", () => {
+  it("builds an updateWorkMetadataURI write request", () => {
+    const request = buildUpdateWorkMetadataRequest({
+      workId: 3n,
+      metadataUri: "ar://MigratedMeta",
+      contractAddress: CONTRACT,
+      abi: andromedaWorksAbi,
+    });
+
+    expect(request.functionName).toBe("updateWorkMetadataURI");
+    expect(request.args).toEqual([3n, "ar://MigratedMeta"]);
   });
 });
