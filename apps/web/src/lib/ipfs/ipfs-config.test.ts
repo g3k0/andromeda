@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import {
   getArweaveGatewayBaseUrl,
+  getArweaveGatewayUrls,
   getContentGatewayBases,
   getIpfsGatewayBaseUrl,
   getIpfsPinningApiKey,
@@ -15,6 +16,8 @@ describe("ipfs-config", () => {
     delete process.env.NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL;
     delete process.env.ARWEAVE_GATEWAY_BASE_URL;
     delete process.env.NEXT_PUBLIC_ARWEAVE_GATEWAY_BASE_URL;
+    delete process.env.ARWEAVE_GATEWAY_URLS;
+    delete process.env.NEXT_PUBLIC_ARWEAVE_GATEWAY_URLS;
     delete process.env.PERMANENT_STORAGE_BACKEND;
   });
 
@@ -44,12 +47,27 @@ describe("ipfs-config", () => {
     expect(getArweaveGatewayBaseUrl()).toBe("https://ar.example.test");
   });
 
+  it("builds an Arweave failover list from ARWEAVE_GATEWAY_URLS", () => {
+    process.env.ARWEAVE_GATEWAY_URLS = "https://gw1.test/,https://gw2.test";
+    expect(getArweaveGatewayUrls()).toEqual([
+      "https://gw1.test",
+      "https://gw2.test",
+      "https://arweave.net",
+      "https://ar-io.net",
+    ]);
+  });
+
   it("pairs IPFS and Arweave gateways for content URI resolution", () => {
     process.env.IPFS_GATEWAY_BASE_URL = "https://ipfs.example.test/";
     process.env.ARWEAVE_GATEWAY_BASE_URL = "https://ar.example.test/";
     expect(getContentGatewayBases()).toEqual({
       ipfs: "https://ipfs.example.test",
       arweave: "https://ar.example.test",
+      arweaveUrls: [
+        "https://ar.example.test",
+        "https://arweave.net",
+        "https://ar-io.net",
+      ],
     });
   });
 });

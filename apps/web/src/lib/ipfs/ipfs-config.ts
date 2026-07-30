@@ -1,6 +1,10 @@
 import "server-only";
 
 import {
+  parseArweaveGatewayUrls,
+  resolveArweaveGatewayUrls,
+} from "./arweave-gateway-resolver";
+import {
   DEFAULT_ARWEAVE_GATEWAY_BASE_URL,
   type ContentGatewayBases,
 } from "./gateway-url";
@@ -41,18 +45,36 @@ export function getIpfsGatewayBaseUrl(): string {
 }
 
 export function getArweaveGatewayBaseUrl(): string {
-  const configured =
+  const urls = getArweaveGatewayUrls();
+  return urls[0] ?? DEFAULT_ARWEAVE_GATEWAY_BASE_URL;
+}
+
+/**
+ * Ordered Arweave gateway bases for read failover.
+ * Prefer `ARWEAVE_GATEWAY_URLS` (comma-separated); falls back to the single
+ * primary base URL env vars, then public defaults (`arweave.net`, `ar-io.net`).
+ */
+export function getArweaveGatewayUrls(): string[] {
+  const listRaw =
+    process.env.ARWEAVE_GATEWAY_URLS?.trim() ||
+    process.env.NEXT_PUBLIC_ARWEAVE_GATEWAY_URLS?.trim();
+  const primary =
     process.env.ARWEAVE_GATEWAY_BASE_URL?.trim() ||
     process.env.NEXT_PUBLIC_ARWEAVE_GATEWAY_BASE_URL?.trim();
 
-  return (configured || DEFAULT_ARWEAVE_GATEWAY_BASE_URL).replace(/\/+$/, "");
+  return resolveArweaveGatewayUrls({
+    urls: listRaw ? parseArweaveGatewayUrls(listRaw) : undefined,
+    primary: primary || undefined,
+  });
 }
 
 /** Paired gateways for resolving `ipfs://` and `ar://` content URIs. */
 export function getContentGatewayBases(): ContentGatewayBases {
+  const arweaveUrls = getArweaveGatewayUrls();
   return {
     ipfs: getIpfsGatewayBaseUrl(),
-    arweave: getArweaveGatewayBaseUrl(),
+    arweave: arweaveUrls[0] ?? DEFAULT_ARWEAVE_GATEWAY_BASE_URL,
+    arweaveUrls,
   };
 }
 
@@ -87,11 +109,14 @@ export function getPinataIpfsStorageEnvConfig(): PinataIpfsStorageEnvConfig {
 export type ArweaveTurboStorageEnvConfig = {
   jwkRaw: string;
   gatewayBaseUrl: string;
+  gatewayUrls: string[];
 };
 
 export function getArweaveTurboStorageEnvConfig(): ArweaveTurboStorageEnvConfig {
+  const gatewayUrls = getArweaveGatewayUrls();
   return {
     jwkRaw: getArweaveJwkRaw(),
-    gatewayBaseUrl: getArweaveGatewayBaseUrl(),
+    gatewayBaseUrl: gatewayUrls[0] ?? DEFAULT_ARWEAVE_GATEWAY_BASE_URL,
+    gatewayUrls,
   };
 }
