@@ -7,6 +7,7 @@ import {
   getIpfsGatewayBaseUrl,
   getIpfsPinningApiKey,
   getPermanentStorageBackend,
+  resolvePermanentStorageBackend,
 } from "./ipfs-config";
 
 describe("ipfs-config", () => {
@@ -19,6 +20,7 @@ describe("ipfs-config", () => {
     delete process.env.ARWEAVE_GATEWAY_URLS;
     delete process.env.NEXT_PUBLIC_ARWEAVE_GATEWAY_URLS;
     delete process.env.PERMANENT_STORAGE_BACKEND;
+    delete process.env.VERCEL_ENV;
   });
 
   it("requires a server-only pinning API key", () => {
@@ -35,10 +37,25 @@ describe("ipfs-config", () => {
     expect(getIpfsGatewayBaseUrl()).toBe("https://ipfs.example.test");
   });
 
-  it("defaults permanent storage backend to pinata", () => {
-    expect(getPermanentStorageBackend()).toBe("pinata");
-    process.env.PERMANENT_STORAGE_BACKEND = "Arweave";
+  it("defaults permanent storage backend to arweave", () => {
     expect(getPermanentStorageBackend()).toBe("arweave");
+    process.env.PERMANENT_STORAGE_BACKEND = "Pinata";
+    expect(getPermanentStorageBackend()).toBe("pinata");
+  });
+
+  it("forces arweave on Vercel Preview even when pinata is configured", () => {
+    expect(
+      resolvePermanentStorageBackend({
+        configured: "pinata",
+        vercelEnv: "preview",
+      }),
+    ).toBe("arweave");
+  });
+
+  it("rejects unsupported permanent storage backends", () => {
+    expect(() =>
+      resolvePermanentStorageBackend({ configured: "s3" }),
+    ).toThrow(/Unsupported PERMANENT_STORAGE_BACKEND/);
   });
 
   it("resolves the Arweave gateway with a public default", () => {

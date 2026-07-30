@@ -14,17 +14,36 @@ const DEFAULT_GATEWAY_BASE_URL = "https://gateway.pinata.cloud/ipfs";
 
 export type PermanentStorageBackend = "pinata" | "arweave";
 
-export function getPermanentStorageBackend(): PermanentStorageBackend {
-  const configured = process.env.PERMANENT_STORAGE_BACKEND?.trim().toLowerCase();
-  if (!configured || configured === "pinata") {
-    return "pinata";
-  }
-  if (configured === "arweave") {
+/**
+ * Resolves the permanent-storage write backend.
+ * - Vercel Preview always writes to Arweave (Pinata down must not block Preview).
+ * - Default (unset) is Arweave; Pinata remains an explicit legacy opt-in.
+ */
+export function resolvePermanentStorageBackend(input: {
+  configured?: string | null;
+  vercelEnv?: string | null;
+}): PermanentStorageBackend {
+  if (input.vercelEnv?.trim().toLowerCase() === "preview") {
     return "arweave";
+  }
+
+  const configured = input.configured?.trim().toLowerCase();
+  if (!configured || configured === "arweave") {
+    return "arweave";
+  }
+  if (configured === "pinata") {
+    return "pinata";
   }
   throw new IpfsConfigError(
     `Unsupported PERMANENT_STORAGE_BACKEND "${configured}". Use "pinata" or "arweave".`,
   );
+}
+
+export function getPermanentStorageBackend(): PermanentStorageBackend {
+  return resolvePermanentStorageBackend({
+    configured: process.env.PERMANENT_STORAGE_BACKEND,
+    vercelEnv: process.env.VERCEL_ENV,
+  });
 }
 
 export function getIpfsPinningApiKey(): string {
