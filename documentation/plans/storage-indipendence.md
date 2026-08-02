@@ -405,12 +405,12 @@ e **passata finale** in PR 10.
 
 ### Checklist documentazione (acceptance PR 10)
 
-- [ ] `README.md` non indica Pinata/IPFS come unico storage di produzione.  
-- [ ] `ace-v1.md` usa `ar://` negli esempi normativi.  
-- [ ] `.env.example` elenca le variabili Arweave e depreca Pinata.  
-- [ ] `blockchain/commands.md` descrive publish su Arweave.  
-- [ ] Piani `web3-layer-architecture.md` / `catalog.md` non contraddicono il target (banner o patch).  
-- [ ] Nessun secret (JWK, credits) committato negli esempi.  
+- [x] `README.md` non indica Pinata/IPFS come unico storage di produzione.  
+- [x] `ace-v1.md` usa `ar://` negli esempi normativi.  
+- [x] `.env.example` elenca le variabili Arweave e depreca Pinata.  
+- [x] `blockchain/commands.md` descrive publish su Arweave.  
+- [x] Piani `web3-layer-architecture.md` / `catalog.md` non contraddicono il target (banner o patch).  
+- [x] Nessun secret (JWK, credits) committato negli esempi.  
 
 ---
 

@@ -134,8 +134,8 @@ Rules:
   Andromeda validator rejects forbidden keys (`content_key`, `private_key`,
   `plaintext`, …) and plaintext-exposing attribute traits.
 - The **envelope URI is not stored in the public metadata.** It is discovered
-  off-chain (see §5): the envelope is stored with the deterministic name
-  `token-<tokenId>-envelope` and indexed per token.
+  **on-chain** via `envelopeURIOfToken(tokenId)` on `AndromedaWorks` (see §5).
+  Indexers may mirror the same URI for convenience.
 
 ---
 
@@ -192,11 +192,13 @@ unwrap `K`. Implementations that bind the envelope to the on-chain TBA public
 key instead must document that variant; ACE v1 readers assume the
 signature-derived key above.
 
-> Discovery of the per-token envelope URI is deployment-specific. Andromeda
-> stores each envelope as `token-<tokenId>-envelope` and exposes it through its
-> indexer (`tokens.envelopeCid`, which may hold a CID or content URI). A
-> third-party reader that maintains its own index can resolve the same blob from
-> the storage name or from its own records.
+> **Envelope discovery (normative for third-party readers):** call
+> `AndromedaWorks.envelopeURIOfToken(tokenId)` (and `tokenURI(tokenId)` for
+> numbered-edition metadata). Both return content URIs — typically `ar://…`.
+> Resolve them through a public Arweave gateway (or a legacy IPFS gateway if the
+> URI still uses `ipfs://`). Andromeda's Mongo indexer may mirror the same URI
+> in `tokens.envelopeCid` for catalog UX, but **chain is sufficient** for an
+> offline reader (`pnpm reference-reader`).
 
 ---
 
@@ -210,8 +212,8 @@ Given a `tokenId` the reader owns:
    `ar://` / legacy `ipfs://` via an appropriate HTTPS gateway.
 2. **Fetch ciphertext.** Download the blob at `ace.encrypted_content` (§2.1),
    resolving the content URI through a gateway.
-3. **Fetch envelope.** Resolve and download the per-token envelope blob (§2.2,
-   §5).
+3. **Fetch envelope.** Read `envelopeURIOfToken(tokenId)` on-chain, then
+   download the envelope blob (§2.2, §5).
 4. **Derive keys.** Ask the wallet to sign `Andromeda reader key v1`; derive
    `privKey` (§5).
 5. **Unwrap.** `K = ECIES_decrypt(privKey, envelope[1..])` and assert
@@ -271,6 +273,7 @@ The normative behavior above corresponds to these modules in `apps/web`:
 | Envelope (ECIES) | `src/lib/content-crypto/envelope.ts` |
 | Decrypt workflow | `src/lib/content-crypto/decrypt-workflow.ts` |
 | Reader key derivation | `src/lib/works/reader-signer.ts` |
+| Offline copy reader (RPC + gateways) | `src/lib/works/offline-copy-reader.ts` |
 | Public metadata schema | `src/lib/ipfs/metadata-schema.ts` |
 | Per-token numbered metadata | `src/lib/works/token-metadata.ts` |
 | TBA address (ERC-6551) | `src/lib/tba/tba-address.ts` |

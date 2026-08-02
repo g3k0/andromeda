@@ -41,16 +41,21 @@ gain a genuine, ownable, and collectible edition of the texts they love.
 
 ## Content & NFT Flow
 
-Andromeda separates **where the text lives** (off-chain, on IPFS) from
-**what is recorded on-chain** (ownership and author certification). Third-party
-marketplaces such as [OpenSea](https://opensea.io/) are used for discovery and
-secondary trading — not for the primary minting flow.
+Andromeda separates **where the text lives** (off-chain, on [Arweave](https://arweave.org/)
+as permanent storage with `ar://` URIs) from **what is recorded on-chain**
+(ownership and author certification). Third-party marketplaces such as
+[OpenSea](https://opensea.io/) are used for discovery and secondary trading —
+not for the primary minting flow.
+
+Older works may still reference legacy `ipfs://` URIs; the app dual-reads them
+via gateways. New publishes use Arweave. See
+[storage independence](documentation/plans/storage-indipendence.md).
 
 ### Roles of each layer
 
 | Layer | Responsibility |
 | --- | --- |
-| **IPFS** | Stores the literary work and token metadata (title, author, cover, edition attributes). |
+| **Arweave** | Permanent storage for encrypted work content, ACE metadata, and per-copy envelopes (`ar://` URIs). |
 | **Andromeda** (smart contract + web app) | Author certification, limited-edition minting, primary sales, reading access, and platform administration. |
 | **OpenSea** (optional) | Indexes ERC-721 tokens on Polygon and enables secondary-market trading between collectors. |
 
@@ -60,7 +65,7 @@ secondary trading — not for the primary minting flow.
 Author uploads work + metadata
         │
         ▼
-   IPFS (text + JSON metadata)
+   Arweave (ciphertext + JSON metadata + envelopes)  →  ar://…
         │
         ▼
 registerWork(metadataURI, price, maxCopies)   ← author certifies the work on-chain
@@ -73,15 +78,20 @@ Readers buy via Andromeda: mintCopy(workId)   ← one NFT per copy (e.g. 100 edi
         └──► OpenSea — list and resell owned copies (secondary market)
 ```
 
-### What goes on IPFS
+A third-party **ACE reference reader** can decrypt a copy with only Polygon RPC,
+public Arweave gateways, and a wallet signature — the Andromeda app and MongoDB
+are not required (`pnpm reference-reader`). Spec:
+[`documentation/ace-v1.md`](documentation/ace-v1.md).
 
-Two distinct assets are stored off-chain:
+### What goes on permanent storage (Arweave)
 
-1. **Work content** — the text of the literary work (or an encrypted file
-   accessible only to token holders).
+Two distinct assets are stored off-chain (plus a per-copy envelope at mint time):
+
+1. **Work content** — the encrypted text of the literary work (ACE ciphertext),
+   accessible only to token holders who can unwrap their envelope.
 2. **Token metadata** — a JSON document compatible with the
    [OpenSea metadata standard](https://docs.opensea.io/docs/metadata-standards),
-   referenced by the on-chain `metadataURI`.
+   referenced by the on-chain `metadataURI` / `tokenURI`.
 
 Example metadata for a numbered edition:
 
@@ -89,19 +99,26 @@ Example metadata for a numbered edition:
 {
   "name": "Short Story — Copy #7/100",
   "description": "Author-certified edition.",
-  "image": "ipfs://…cover…",
+  "image": "ar://…cover…",
   "external_url": "https://andromeda.example/read/…",
   "attributes": [
     { "trait_type": "Author", "value": "Jane Doe" },
     { "trait_type": "Copy", "value": "7" },
-    { "trait_type": "Edition", "value": "100" },
-    { "trait_type": "Content", "value": "ipfs://…text…" }
-  ]
+    { "trait_type": "Edition", "value": "100" }
+  ],
+  "ace": {
+    "version": "1",
+    "encrypted_content": "ar://…ciphertext…",
+    "cipher": "aes-256-gcm",
+    "envelope_scheme": "ecies-secp256k1",
+    "tba_standard": "erc-6551"
+  }
 }
 ```
 
 OpenSea reads this JSON to display the token name, image, traits, and links.
-Andromeda uses the content pointer to grant read access to owners.
+Andromeda (and third-party readers) use `ace.encrypted_content` plus the
+on-chain envelope URI to decrypt for owners.
 
 ### Why mint on Andromeda, not on OpenSea
 
@@ -122,7 +139,7 @@ resell a copy they already own.
 The `AndromedaWorks` contract supports a maximum number of copies per work
 (e.g. `maxCopies = 100`). Each minted copy can carry its own metadata so that
 OpenSea and wallets display distinct edition numbers (Copy #1/100, #2/100, …).
-After a copy is minted, its owner pins a per-token metadata JSON — identical to
+After a copy is minted, its owner uploads a per-token metadata JSON — identical to
 the work metadata plus `Copy number` / `Edition size` attributes — and points
 the token's on-chain `tokenURI` at it via `setCopyMetadataURI(tokenId, uri)`.
 The shared ciphertext and per-token envelope are unchanged, so numbering never
@@ -132,7 +149,7 @@ affects the encryption model. See [`documentation/ace-v1.md`](documentation/ace-
 
 | Capability | Andromeda | OpenSea |
 | --- | :---: | :---: |
-| IPFS upload & pinning workflow | ✓ | |
+| Permanent storage upload (Arweave / Turbo) | ✓ | |
 | Author certification | ✓ | |
 | Primary sale (mint + pay author) | ✓ | |
 | Read access for token holders | ✓ | |
@@ -140,23 +157,26 @@ affects the encryption model. See [`documentation/ace-v1.md`](documentation/ace-
 | Secondary-market listing & trading | | ✓ |
 | Discovery for NFT collectors | | ✓ |
 
-## Web3 layer (blockchain + IPFS)
+## Web3 layer (blockchain + Arweave)
 
 The Web3 layer connects `apps/web` to Polygon, the `AndromedaWorks` ERC-721
-contract, ERC-6551 token bound accounts, and IPFS. Reading is protected by a
-**technical paywall**: metadata is public, the work text is encrypted, and each
-copy carries a per-token *envelope* that only its owner can unwrap in the
-browser. The server never custodies keys or streams plaintext.
+contract, ERC-6551 token bound accounts, and Arweave permanent storage. Reading
+is protected by a **technical paywall**: metadata is public, the work text is
+encrypted, and each copy carries a per-token *envelope* that only its owner can
+unwrap in the browser. The server never custodies keys or streams plaintext.
 
 - **Architecture & rationale:** [documentation/plans/web3-layer-architecture.md](documentation/plans/web3-layer-architecture.md)
 - **ACE v1 encryption spec (for third-party readers):** [documentation/ace-v1.md](documentation/ace-v1.md)
+- **Storage migration plan:** [documentation/plans/storage-indipendence.md](documentation/plans/storage-indipendence.md)
+- **Ops runbook (Turbo credits, gateways, migrate):** [documentation/ops/arweave-runbook.md](documentation/ops/arweave-runbook.md)
 
 **Content flow:** author encrypts the work once with a random key `K`
-(AES-256-GCM) → ciphertext pinned to IPFS → `K` wrapped (ECIES/secp256k1) per
-token into an envelope → owner signs a message to derive their reading key,
-unwraps the envelope, and decrypts locally. Off-chain reads (catalog, library)
-are served from a MongoDB projection kept in sync by a chain indexer (polling
-and/or Alchemy Notify webhook).
+(AES-256-GCM) → ciphertext uploaded to Arweave (`ar://`) → `K` wrapped
+(ECIES/secp256k1) per token into an envelope also stored on Arweave → on-chain
+`tokenURI` / `envelopeURIOfToken` point at those URIs → owner signs a message to
+derive their reading key, unwraps the envelope, and decrypts locally. Off-chain
+reads (catalog, library) are served from a MongoDB projection kept in sync by a
+chain indexer (polling and/or Alchemy Notify webhook).
 
 ## Tech Stack
 
@@ -173,8 +193,9 @@ and/or Alchemy Notify webhook).
   [OpenZeppelin](https://www.openzeppelin.com/contracts) (ERC-721), developed and
   tested with [Hardhat](https://hardhat.org/).
 - **Monorepo** — [pnpm](https://pnpm.io/) workspaces.
-- **Decentralized storage** — [IPFS](https://ipfs.tech/) for work content and
-  token metadata; pinning via a provider such as Pinata or web3.storage.
+- **Permanent storage** — [Arweave](https://arweave.org/) via
+  [Turbo](https://docs.ardrive.io/docs/turbo/) (`ar://` URIs). Legacy `ipfs://`
+  reads remain supported for older works; Pinata is not required for new deploys.
 
 ## Project Structure
 
@@ -464,13 +485,17 @@ with `NEXT_PUBLIC_`. Rotate provider keys from their dashboards, not in the repo
 | `NEXT_PUBLIC_ERC6551_REGISTRY` | public | Registry address (defaults to Tokenbound v0.3.1 canonical) |
 | `NEXT_PUBLIC_ERC6551_IMPLEMENTATION` | public | Account proxy address (defaults to Tokenbound v0.3.1) |
 
-**IPFS (Pinata / gateway)**
+**Permanent storage (Arweave / Turbo)**
 
 | Variable | Scope | Purpose |
 | --- | --- | --- |
-| `IPFS_PINNING_API_KEY` | server | Pinning provider API key (Pinata or compatible) |
-| `IPFS_GATEWAY_BASE_URL` | server | Gateway base URL for server-side fetches |
-| `NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL` | public | Gateway base URL for browser fetches |
+| `PERMANENT_STORAGE_BACKEND` | server | `arweave` (default / Production). `pinata` is legacy opt-in only |
+| `ARWEAVE_JWK` | server | Arweave JWK JSON for Turbo auth (**never** commit real keys) |
+| `ARWEAVE_GATEWAY_URLS` | server | Comma-separated failover list for `ar://` reads |
+| `ARWEAVE_GATEWAY_BASE_URL` | server | Primary gateway base when the list is empty |
+| `NEXT_PUBLIC_ARWEAVE_GATEWAY_BASE_URL` | public | Gateway base for browser `ar://` resolution |
+| `IPFS_PINNING_API_KEY` | server | **Legacy** Pinata key — not required for Production writes |
+| `IPFS_GATEWAY_BASE_URL` / `NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL` | server / public | **Legacy** gateways for remaining `ipfs://` URIs |
 
 **Indexer & platform data**
 
@@ -488,11 +513,12 @@ Use **separate Alchemy apps** and **separate contract addresses** for Preview
 ## Roadmap
 
 - [x] Core smart contracts for minting and certifying works
-- [x] IPFS upload workflow for work content and metadata
+- [x] Permanent storage on Arweave (Turbo) for work content, metadata, and envelopes
 - [x] Author publishing flow
 - [x] Per-copy metadata for numbered editions
 - [x] Reader marketplace and library
 - [x] In-app reading experience (client-side ACE decryption)
+- [x] Offline ACE reference reader (RPC + public gateways)
 - [ ] OpenSea integration for secondary-market visibility
 
 ## Contributing

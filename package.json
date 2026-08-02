@@ -1,6 +1,6 @@
 {
   "name": "andromeda",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "description": "A blockchain platform that empowers writers to share and sell their work as author-certified NFT copies.",
   "keywords": [
     "andromeda",
@@ -8,7 +8,7 @@
     "decentralized-publishing",
     "erc-721",
     "hardhat",
-    "ipfs",
+    "arweave",
     "monorepo",
     "nextjs",
     "nft",
