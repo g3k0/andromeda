@@ -101,7 +101,7 @@
     "title": "Über Andromeda",
     "intro": "Andromeda ist eine Blockchain-Publishing-Plattform für literarische Werke. Autoren zertifizieren, nummerieren und prägen limitierte Ausgaben als NFTs; Leser kaufen, lesen und sammeln echte Exemplare. Die Plattform verbindet Autoren und Leser — sie behält keinen Anteil an deinen Verkäufen.",
     "whatWeDoTitle": "Was wir tun",
-    "whatWeDoBody": "Jedes Werk wird off-chain auf IPFS gespeichert und on-chain auf Polygon zertifiziert. Jedes Exemplar ist ein ERC-721-Token, der an die Wallet seines Autors gebunden ist. Eigentum und Übertragungshistorie sind öffentlich und überprüfbar.",
+    "whatWeDoBody": "Jedes Werk wird dauerhaft auf Arweave gespeichert und on-chain auf Polygon zertifiziert. Jedes Exemplar ist ein ERC-721-Token, der an die Wallet seines Autors gebunden ist. Eigentum und Übertragungshistorie sind öffentlich und überprüfbar.",
     "noFeesTitle": "Keine Plattformgebühren",
     "noFeesItem1": "Andromeda erhebt keine Abonnement- oder Listing-Gebühren von Autoren.",
     "noFeesItem2": "Andromeda behält keinen Prozentsatz von Primär- oder Sekundärverkäufen ein.",
@@ -114,8 +114,8 @@
     "authorsPayIntroAfter": "— nicht die Plattform:",
     "authorsPayGasStrong": "Blockchain-Gasgebühren (Polygon)",
     "authorsPayGasRest": "— in MATIC bezahlt beim Registrieren eines Werks, Prägen von Exemplaren und Aktualisieren on-chain-Einstellungen. Diese Gebühren gehen an die Polygon-Netzwerkvalidatoren, nicht an Andromeda.",
-    "authorsPayIpfsStrong": "IPFS-Speicher",
-    "authorsPayIpfsRest": "— Speicherung von Text und Metadaten, typischerweise über einen Pinning-Dienst, den der Autor wählt und bezahlt.",
+    "authorsPayIpfsStrong": "Permanenter Speicher auf Arweave",
+    "authorsPayIpfsRest": "— einmalige Speicherung von Text und Metadaten über Turbo, in v1 von der Plattform finanziert (kein Arweave-Wallet nötig).",
     "authorsPayBuyerStrong": "Transaktionsgebühren des Käufers",
     "authorsPayBuyerRest": "— wenn ein Leser ein Exemplar kauft, zahlt er Netzwerk-Gas zusätzlich zum Verkaufspreis. Diese Kosten trägt der Käufer, nicht der Autor.",
     "authorsPayFootnote": "Andromeda selbst stellt Autoren keine Rechnungen für Prägung oder Veröffentlichung.",
@@ -326,7 +326,7 @@
       }
     },
     "guidance": {
-      "intro": "Lade Manuskript und Cover hoch, verschlüssele das Werk und pinne es auf IPFS, bevor du es on-chain registrierst.",
+      "intro": "Laden Sie Manuskript und Cover hoch, verschlüsseln und laden Sie das Werk dann dauerhaft auf Arweave hoch, bevor die On-Chain-Registrierung erfolgt.",
       "title": "Öffentlicher Titel in Metadaten und auf Marktplätzen.",
       "publicationDate": "Datum der Veröffentlichung dieser Ausgabe (Erscheinungsdatum im Kolophon).",
       "editionNumber": "Nummer dieser Ausgabe (z. B. 1 für die erste nummerierte Ausgabe).",
@@ -423,7 +423,7 @@
       "connectWalletAndFiles": "Verbinde die Autoren-Wallet und füge Cover- und Manuskriptdateien hinzu.",
       "previewFailed": "Ausgabenvorschau fehlgeschlagen.",
       "connectWalletToPublishShort": "Verbinde die Autoren-Wallet zum Veröffentlichen.",
-      "previewBeforeUpload": "Sieh dir die Ausgabe an, bevor du sie auf IPFS hochlädst.",
+      "previewBeforeUpload": "Vorschau der Ausgabe vor dem Upload zu Arweave.",
       "confirmImmutability": "Bestätige, dass du die Ausgabenvorschau geprüft hast und die On-Chain-Unveränderlichkeit akzeptierst.",
       "uploadFailed": "Upload des Werks fehlgeschlagen.",
       "connectWalletToRegister": "Verbinde die Autoren-Wallet, um das Werk zu registrieren.",
@@ -436,7 +436,7 @@
     },
     "preview": {
       "sectionTitle": "Ausgabenvorschau",
-      "sectionDescription": "Prüfe die formatierte Ausgabe, bevor du sie auf IPFS pinnst.",
+      "sectionDescription": "Prüfen Sie die formatierte Ausgabe vor dem Upload zu Arweave.",
       "ariaLabel": "Ausgabenvorschau",
       "coverAlt": "Cover für {title}",
       "coverPlaceholder": "Coverbild",
@@ -487,8 +487,8 @@
       "labelingCopies": "MetaMask-Prompts bestätigen, um jedes Exemplar zu nummerieren…",
       "previewEdition": "Ausgabe anzeigen",
       "encrypting": "Verschlüsselung…",
-      "pinningToIpfs": "Auf IPFS pinnen…",
-      "uploadToIpfs": "Auf IPFS hochladen"
+      "pinningToIpfs": "Upload zu Arweave…",
+      "uploadToIpfs": "Zu Arweave hochladen"
     },
     "success": {
       "registered": "Werk on-chain registriert. Transaktion: {txHash}"

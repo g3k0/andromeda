@@ -101,7 +101,7 @@
     "title": "Su Andromeda",
     "intro": "Andromeda è una piattaforma di pubblicazione blockchain per opere letterarie. Gli scrittori certificano, numerano e coniano edizioni limitate come NFT; i lettori acquistano, leggono e collezionano copie autentiche. La piattaforma collega autori e lettori — non trattiene una quota delle tue vendite.",
     "whatWeDoTitle": "Cosa facciamo",
-    "whatWeDoBody": "Ogni opera è archiviata off-chain su IPFS e certificata on-chain su Polygon. Ogni copia è un token ERC-721 legato al wallet del suo autore. Proprietà e cronologia dei trasferimenti sono pubbliche e verificabili.",
+    "whatWeDoBody": "Ogni opera è archiviata in modo permanente su Arweave e certificata on-chain su Polygon. Ogni copia è un token ERC-721 legato al wallet del suo autore. Proprietà e cronologia dei trasferimenti sono pubbliche e verificabili.",
     "noFeesTitle": "Nessuna commissione di piattaforma",
     "noFeesItem1": "Andromeda non addebita agli autori abbonamenti o commissioni di pubblicazione.",
     "noFeesItem2": "Andromeda non trattiene una percentuale sulle vendite primarie o secondarie.",
@@ -114,8 +114,8 @@
     "authorsPayIntroAfter": "— non la piattaforma:",
     "authorsPayGasStrong": "Commissioni gas della blockchain (Polygon)",
     "authorsPayGasRest": "— pagate in MATIC quando si registra un'opera, si coniano copie e si aggiornano le impostazioni on-chain. Queste commissioni vanno ai validatori della rete Polygon, non ad Andromeda.",
-    "authorsPayIpfsStrong": "Archiviazione IPFS",
-    "authorsPayIpfsRest": "— archiviazione del testo e dei metadati, di solito tramite un servizio di pinning scelto e pagato dall'autore.",
+    "authorsPayIpfsStrong": "Archiviazione permanente su Arweave",
+    "authorsPayIpfsRest": "— archiviazione una tantum di testo e metadati via Turbo, finanziata dalla piattaforma in v1 (l'autore non serve un wallet Arweave).",
     "authorsPayBuyerStrong": "Commissioni di transazione dell'acquirente",
     "authorsPayBuyerRest": "— quando un lettore acquista una copia, paga il gas di rete oltre al prezzo di vendita. Tale costo è a carico dell'acquirente, non dell'autore.",
     "authorsPayFootnote": "Andromeda in sé non fattura agli autori per conio o pubblicazione.",
@@ -326,7 +326,7 @@
       }
     },
     "guidance": {
-      "intro": "Carica manoscritto e copertina, poi cifra e fissa l'opera su IPFS prima della registrazione on-chain.",
+      "intro": "Carica manoscritto e copertina, poi cifra e carica l'opera su Arweave prima della registrazione on-chain.",
       "title": "Titolo pubblico mostrato nei metadati e sui marketplace.",
       "publicationDate": "Data di pubblicazione di questa edizione (data di pubblicazione del colophon).",
       "editionNumber": "Numero di questa edizione (ad esempio, 1 per la prima edizione numerata).",
@@ -423,7 +423,7 @@
       "connectWalletAndFiles": "Connetti il wallet autore e allega i file di copertina e manoscritto.",
       "previewFailed": "Anteprima dell'edizione non riuscita.",
       "connectWalletToPublishShort": "Connetti il wallet autore per pubblicare.",
-      "previewBeforeUpload": "Visualizza l'anteprima dell'edizione prima di caricarla su IPFS.",
+      "previewBeforeUpload": "Anteprima dell'edizione prima del caricamento su Arweave.",
       "confirmImmutability": "Conferma di aver esaminato l'anteprima dell'edizione e di accettare l'immutabilità on-chain.",
       "uploadFailed": "Caricamento dell'opera non riuscito.",
       "connectWalletToRegister": "Connetti il wallet autore per registrare l'opera.",
@@ -436,7 +436,7 @@
     },
     "preview": {
       "sectionTitle": "Anteprima dell'edizione",
-      "sectionDescription": "Rivedi l'edizione formattata prima di fissarla su IPFS.",
+      "sectionDescription": "Controlla l'edizione formattata prima di caricarla su Arweave.",
       "ariaLabel": "Anteprima dell'edizione",
       "coverAlt": "Copertina di {title}",
       "coverPlaceholder": "Immagine di copertina",
@@ -487,8 +487,8 @@
       "labelingCopies": "Conferma i prompt MetaMask per numerare ogni copia…",
       "previewEdition": "Anteprima dell'edizione",
       "encrypting": "Cifratura…",
-      "pinningToIpfs": "Fissaggio su IPFS…",
-      "uploadToIpfs": "Carica su IPFS"
+      "pinningToIpfs": "Caricamento su Arweave…",
+      "uploadToIpfs": "Carica su Arweave"
     },
     "success": {
       "registered": "Opera registrata on-chain. Transazione: {txHash}"

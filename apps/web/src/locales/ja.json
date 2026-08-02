@@ -101,7 +101,7 @@
     "title": "Andromeda について",
     "intro": "Andromeda は文学作品のためのブロックチェーン出版プラットフォームです。作家は限定版を NFT として認証・番号付け・ミントし、読者は本物のコピーを購入・読み・コレクションします。プラットフォームは著者と読者をつなぎます——売上から手数料は取りません。",
     "whatWeDoTitle": "私たちの役割",
-    "whatWeDoBody": "各作品は IPFS にオフチェーンで保存され、Polygon 上でオンチェーン認証されます。各コピーは著者のウォレットに紐づく ERC-721 トークンです。所有権と譲渡履歴は公開され検証可能です。",
+    "whatWeDoBody": "各作品は Arweave に永続保存され、Polygon 上でオンチェーン認証されます。各コピーは著者のウォレットに紐づく ERC-721 トークンです。所有権と譲渡履歴は公開され検証可能です。",
     "noFeesTitle": "プラットフォーム手数料なし",
     "noFeesItem1": "Andromeda は著者にサブスクリプション料や出品料を請求しません。",
     "noFeesItem2": "Andromeda は一次・二次販売から割合を取りません。",
@@ -114,8 +114,8 @@
     "authorsPayIntroAfter": "コストがかかります——プラットフォームではありません：",
     "authorsPayGasStrong": "ブロックチェーンのガス代（Polygon）",
     "authorsPayGasRest": "——作品登録、コピーのミント、オンチェーン設定の更新時に MATIC で支払います。これらの手数料は Polygon ネットワークのバリデーターに支払われ、Andromeda には入りません。",
-    "authorsPayIpfsStrong": "IPFS ストレージ",
-    "authorsPayIpfsRest": "——テキストとメタデータの保存。通常は著者が選び支払うピニングサービス経由です。",
+    "authorsPayIpfsStrong": "Arweave への永続ストレージ",
+    "authorsPayIpfsRest": "——Turbo 経由でテキストとメタデータを一度保存。v1 ではプラットフォームが負担します（著者に Arweave ウォレットは不要）。",
     "authorsPayBuyerStrong": "購入者の取引手数料",
     "authorsPayBuyerRest": "——読者がコピーを購入する際、販売価格に加えてネットワークのガス代を支払います。この費用は購入者が負担し、著者ではありません。",
     "authorsPayFootnote": "Andromeda 自体はミントや出版について著者に請求しません。",
@@ -326,7 +326,7 @@
       }
     },
     "guidance": {
-      "intro": "原稿とカバーをアップロードし、オンチェーン登録の前に作品を暗号化して IPFS にピン留めします。",
+      "intro": "原稿とカバーをアップロードし、オンチェーン登録前に作品を暗号化して Arweave に永続アップロードします。",
       "title": "メタデータやマーケットプレイスに表示される公開タイトル。",
       "publicationDate": "この版の出版日（奥付の出版日）。",
       "editionNumber": "この版の番号（例: 最初の番号付き版は 1）。",
@@ -423,7 +423,7 @@
       "connectWalletAndFiles": "著者ウォレットを接続し、カバーと原稿ファイルを添付してください。",
       "previewFailed": "版のプレビューに失敗しました。",
       "connectWalletToPublishShort": "公開するには著者ウォレットを接続してください。",
-      "previewBeforeUpload": "IPFS にアップロードする前に版をプレビューしてください。",
+      "previewBeforeUpload": "Arweave へのアップロード前に版のプレビューを確認します。",
       "confirmImmutability": "版のプレビューを確認し、オンチェーンの不変性に同意したことを確認してください。",
       "uploadFailed": "作品のアップロードに失敗しました。",
       "connectWalletToRegister": "作品を登録するには著者ウォレットを接続してください。",
@@ -436,7 +436,7 @@
     },
     "preview": {
       "sectionTitle": "版のプレビュー",
-      "sectionDescription": "IPFS にピン留めする前に、整形された版を確認してください。",
+      "sectionDescription": "Arweave へアップロードする前に整形された版を確認します。",
       "ariaLabel": "版のプレビュー",
       "coverAlt": "{title} のカバー",
       "coverPlaceholder": "カバー画像",
@@ -487,8 +487,8 @@
       "labelingCopies": "各コピーに番号を付けるため MetaMask の確認を承認してください…",
       "previewEdition": "版をプレビュー",
       "encrypting": "暗号化中…",
-      "pinningToIpfs": "IPFS にピン留め中…",
-      "uploadToIpfs": "IPFS にアップロード"
+      "pinningToIpfs": "Arweave にアップロード中…",
+      "uploadToIpfs": "Arweave にアップロード"
     },
     "success": {
       "registered": "作品をオンチェーン登録しました。トランザクション: {txHash}"

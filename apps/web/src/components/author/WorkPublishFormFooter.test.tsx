@@ -39,7 +39,9 @@ describe("WorkPublishFormFooter", () => {
       />,
     );
 
-    const uploadButton = screen.getByRole("button", { name: /Upload to IPFS/i });
+    const uploadButton = screen.getByRole("button", {
+      name: /Upload to Arweave/i,
+    });
     expect(uploadButton).toBeDisabled();
 
     await user.click(screen.getByRole("checkbox"));
@@ -68,6 +70,8 @@ describe("WorkPublishFormFooter", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: /Upload to IPFS/i })).toBeEnabled();
+    expect(
+      screen.getByRole("button", { name: /Upload to Arweave/i }),
+    ).toBeEnabled();
   });
 });

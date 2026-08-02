@@ -12,7 +12,7 @@ const MAX_WORK_COVER_MB = MAX_WORK_COVER_BYTES / (1024 * 1024);
 
 export const WORK_PUBLISH_FORM_GUIDANCE = {
   intro:
-    "Upload your manuscript and cover, then encrypt and pin the work to IPFS before on-chain registration.",
+    "Upload your manuscript and cover, then encrypt and upload the work to permanent Arweave storage before on-chain registration.",
   title: "Public title shown in metadata and on marketplaces.",
   publicationDate: "Date this edition was published (colophon publication date).",
   editionNumber:
