@@ -1,5 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "if [ -f ../../pnpm-workspace.yaml ]; then cd ../..; fi; corepack enable && pnpm install --frozen-lockfile",
+  "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "next build"
 }
