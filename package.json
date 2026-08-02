@@ -55,13 +55,5 @@
     "contracts:build": "pnpm --filter @andromeda/contracts build",
     "contracts:test": "pnpm --filter @andromeda/contracts test",
     "contracts:deploy:amoy": "pnpm --filter @andromeda/contracts deploy:amoy"
-  },
-  "overrides": {
-    "uuid": "11.1.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "uuid": "11.1.0"
-    }
   }
 }

@@ -1,7 +1,5 @@
 import "server-only";
 
-import { TurboFactory, type ArweaveJWK } from "@ardrive/turbo-sdk";
-
 import {
   parseArweaveJwk,
   type ArweaveJwk,
@@ -12,6 +10,7 @@ import {
   createArweaveTurboStorage,
   type ArweaveTurboStorageConfig,
 } from "./arweave-turbo-storage";
+import { createTurboHttpUploadClient } from "./create-turbo-http-upload-client";
 
 export type { ArweaveJwk };
 export { parseArweaveJwk };
@@ -19,15 +18,7 @@ export { parseArweaveJwk };
 export function createTurboUploadClientFromJwk(
   jwk: ArweaveJwk,
 ): TurboUploadClient {
-  const turbo = TurboFactory.authenticated({
-    privateKey: jwk as unknown as ArweaveJWK,
-  });
-  return {
-    async upload({ data, dataItemOpts }) {
-      const result = await turbo.upload({ data, dataItemOpts });
-      return { id: result.id, winc: result.winc };
-    },
-  };
+  return createTurboHttpUploadClient({ jwk });
 }
 
 export type ArweaveTurboEnvConfig = {

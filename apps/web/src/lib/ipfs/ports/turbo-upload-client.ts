@@ -1,6 +1,6 @@
 /**
  * Minimal Turbo upload surface used by the Arweave permanent-storage adapter.
- * Keeps domain/adapter tests free of the real `@ardrive/turbo-sdk` dependency.
+ * Production uses arbundles + Turbo HTTP; tests inject a fake client.
  */
 export type TurboDataItemTag = {
   name: string;
