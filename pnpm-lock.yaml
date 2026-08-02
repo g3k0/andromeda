@@ -43,6 +43,9 @@ importers:
       server-only:
         specifier: file:./vendor/server-only
         version: file:apps/web/vendor/server-only
+      uuid:
+        specifier: 11.1.0
+        version: 11.1.0
       viem:
         specifier: ^2.21.0
         version: 2.52.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)(zod@4.4.3)

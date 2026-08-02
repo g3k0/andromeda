@@ -33,9 +33,13 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "server-only": "file:./vendor/server-only",
+    "uuid": "11.1.0",
     "viem": "^2.21.0",
     "wagmi": "^2.14.0",
     "zod": "^4.4.3"
+  },
+  "overrides": {
+    "uuid": "11.1.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.0",
