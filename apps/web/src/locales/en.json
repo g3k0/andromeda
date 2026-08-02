@@ -101,7 +101,7 @@
     "title": "About Andromeda",
     "intro": "Andromeda is a blockchain publishing platform for literary works. Writers certify, number, and mint limited editions as NFTs; readers buy, read, and collect genuine copies. The platform connects authors and readers — it does not take a cut of your sales.",
     "whatWeDoTitle": "What we do",
-    "whatWeDoBody": "Each work is stored off-chain on IPFS and certified on-chain on Polygon. Every copy is an ERC-721 token tied to its author's wallet. Ownership and transfer history are public and verifiable.",
+    "whatWeDoBody": "Each work is stored permanently on Arweave and certified on-chain on Polygon. Every copy is an ERC-721 token tied to its author's wallet. Ownership and transfer history are public and verifiable.",
     "noFeesTitle": "No platform fees",
     "noFeesItem1": "Andromeda does not charge authors subscription fees or listing fees.",
     "noFeesItem2": "Andromeda does not take a percentage of primary or secondary sales.",
@@ -114,8 +114,8 @@
     "authorsPayIntroAfter": "— not the platform:",
     "authorsPayGasStrong": "Blockchain gas fees (Polygon)",
     "authorsPayGasRest": "— paid in MATIC when registering a work, minting copies, and updating on-chain settings. These fees go to the Polygon network validators, not to Andromeda.",
-    "authorsPayIpfsStrong": "IPFS storage",
-    "authorsPayIpfsRest": "— storing the text and metadata, typically via a pinning service the author chooses and pays for.",
+    "authorsPayIpfsStrong": "Permanent storage on Arweave",
+    "authorsPayIpfsRest": "— storing the text and metadata once via Turbo, funded by the platform in v1 (authors do not need an Arweave wallet).",
     "authorsPayBuyerStrong": "Buyer transaction fees",
     "authorsPayBuyerRest": "— when a reader purchases a copy, they pay network gas on top of the sale price. That cost is borne by the buyer, not the author.",
     "authorsPayFootnote": "Andromeda itself does not invoice authors for minting or publishing.",
@@ -326,7 +326,7 @@
       }
     },
     "guidance": {
-      "intro": "Upload your manuscript and cover, then encrypt and pin the work to IPFS before on-chain registration.",
+      "intro": "Upload your manuscript and cover, then encrypt and upload the work to permanent Arweave storage before on-chain registration.",
       "title": "Public title shown in metadata and on marketplaces.",
       "publicationDate": "Date this edition was published (colophon publication date).",
       "editionNumber": "Number of this edition (for example, 1 for the first numbered edition).",
@@ -423,7 +423,7 @@
       "connectWalletAndFiles": "Connect the author wallet and attach cover and manuscript files.",
       "previewFailed": "Edition preview failed.",
       "connectWalletToPublishShort": "Connect the author wallet to publish.",
-      "previewBeforeUpload": "Preview the edition before uploading to IPFS.",
+      "previewBeforeUpload": "Preview the edition before uploading to Arweave.",
       "confirmImmutability": "Confirm that you reviewed the edition preview and accept on-chain immutability.",
       "uploadFailed": "Work upload failed.",
       "connectWalletToRegister": "Connect the author wallet to register the work.",
@@ -441,7 +441,7 @@
     },
     "preview": {
       "sectionTitle": "Edition preview",
-      "sectionDescription": "Review the formatted edition before pinning it to IPFS.",
+      "sectionDescription": "Review the formatted edition before uploading it to Arweave.",
       "ariaLabel": "Edition preview",
       "coverAlt": "Cover for {title}",
       "coverPlaceholder": "Cover image",
@@ -492,8 +492,8 @@
       "labelingCopies": "Confirm MetaMask prompts to number each copy…",
       "previewEdition": "Preview edition",
       "encrypting": "Encrypting…",
-      "pinningToIpfs": "Pinning to IPFS…",
-      "uploadToIpfs": "Upload to IPFS"
+      "pinningToIpfs": "Uploading to Arweave…",
+      "uploadToIpfs": "Upload to Arweave"
     },
     "success": {
       "registered": "Work registered on-chain. Transaction: {txHash}"

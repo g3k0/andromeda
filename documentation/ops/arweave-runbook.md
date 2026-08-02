@@ -110,8 +110,52 @@ DoD check: after txs + indexer, `works(workId).metadataURI`, `tokenURI`, and
 3. Fetch via gateway: `curl https://arweave.net/<txId>` returns ACE JSON.
 4. Logs show `turbo_upload_ok` (not Pinata pin events).
 
+## Production cutover (PR9)
+
+Vercel **Production** secrets (critical for publish):
+
+| Variable | Required |
+| --- | --- |
+| `PERMANENT_STORAGE_BACKEND` | `arweave` (also the code default) |
+| `ARWEAVE_JWK` | yes |
+| `ARWEAVE_GATEWAY_URLS` | recommended |
+| `IPFS_PINNING_API_KEY` | **not** required for writes |
+
+Pinata may remain configured only for legacy `ipfs://` reads. With Pinata unset,
+Production publish must still succeed.
+
+## Offline ACE reference reader (PR9)
+
+With the Andromeda app / Mongo offline, a copy is still readable from chain + gateways:
+
+```bash
+cd apps/web
+pnpm reference-reader -- \
+  --rpc="$ALCHEMY_RPC_URL" \
+  --contract="$NEXT_PUBLIC_CONTRACT_ADDRESS" \
+  --token-id=10 \
+  --signature=0x… \
+  --chain=amoy
+```
+
+Sign the message `Andromeda reader key v1`. Discovery uses `tokenURI` +
+`envelopeURIOfToken` (must be `ar://` unless `--allow-ipfs`).
+
+## Continuity URI index (PR9)
+
+Export a bootstrap index of work/token URIs and pin it on Arweave:
+
+```bash
+cd apps/web
+pnpm export:continuity-index -- --out=./continuity-index.json   # optional local dump
+pnpm export:continuity-index                                     # upload via Turbo
+```
+
+The index is a convenience for third-party bootstraps; the reference reader does
+**not** require it when URIs are on-chain.
+
 ## Related docs
 
-- Plan: [storage-indipendence.md](../plans/storage-indipendence.md) (PR7–PR8)
+- Plan: [storage-indipendence.md](../plans/storage-indipendence.md) (PR7–PR9)
 - Chain commands / smoke: [commands.md](../blockchain/commands.md)
 - Env template: `apps/web/.env.example`

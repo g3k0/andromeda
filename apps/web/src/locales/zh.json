@@ -101,7 +101,7 @@
     "title": "关于 Andromeda",
     "intro": "Andromeda 是一个面向文学作品的区块链出版平台。作家认证、编号并铸造限量版 NFT；读者购买、阅读并收藏正版副本。平台连接作者与读者——不从中抽取销售分成。",
     "whatWeDoTitle": "我们做什么",
-    "whatWeDoBody": "每部作品在 IPFS 上链下存储，并在 Polygon 上链认证。每份副本是与作者钱包绑定的 ERC-721 代币。所有权和转让记录公开可验证。",
+    "whatWeDoBody": "每部作品永久存储在 Arweave 上，并在 Polygon 上链认证。每份副本是与作者钱包绑定的 ERC-721 代币。所有权和转让记录公开可验证。",
     "noFeesTitle": "无平台费用",
     "noFeesItem1": "Andromeda 不向作者收取订阅费或上架费。",
     "noFeesItem2": "Andromeda 不抽取一级或二级销售的百分比。",
@@ -114,8 +114,8 @@
     "authorsPayIntroAfter": "——而非平台：",
     "authorsPayGasStrong": "区块链 gas 费（Polygon）",
     "authorsPayGasRest": "——注册作品、铸造副本和更新链上设置时以 MATIC 支付。这些费用支付给 Polygon 网络验证者，而非 Andromeda。",
-    "authorsPayIpfsStrong": "IPFS 存储",
-    "authorsPayIpfsRest": "——存储文本和元数据，通常通过作者选择并付费的固定服务。",
+    "authorsPayIpfsStrong": "Arweave 永久存储",
+    "authorsPayIpfsRest": "——通过 Turbo 一次性存储文本与元数据；v1 由平台出资（作者无需 Arweave 钱包）。",
     "authorsPayBuyerStrong": "买家交易费",
     "authorsPayBuyerRest": "——读者购买副本时，除售价外还需支付网络 gas。该费用由买家承担，而非作者。",
     "authorsPayFootnote": "Andromeda 本身不向作者收取铸造或发布费用。",
@@ -326,7 +326,7 @@
       }
     },
     "guidance": {
-      "intro": "上传手稿和封面，然后在链上注册前将作品加密并固定到 IPFS。",
+      "intro": "上传手稿与封面，加密后上传到 Arweave，再进行链上登记。",
       "title": "在元数据和市场列表中显示的公开标题。",
       "publicationDate": "本版出版日期（版权页出版日期）。",
       "editionNumber": "本版次编号（例如首版编号为 1）。",
@@ -423,7 +423,7 @@
       "connectWalletAndFiles": "请连接作者钱包并附上封面和手稿文件。",
       "previewFailed": "版本预览失败。",
       "connectWalletToPublishShort": "请连接作者钱包以发布。",
-      "previewBeforeUpload": "上传到 IPFS 前请先预览版本。",
+      "previewBeforeUpload": "上传到 Arweave 前预览版本。",
       "confirmImmutability": "请确认您已审阅版本预览并接受链上不可变性。",
       "uploadFailed": "作品上传失败。",
       "connectWalletToRegister": "请连接作者钱包以注册作品。",
@@ -436,7 +436,7 @@
     },
     "preview": {
       "sectionTitle": "版本预览",
-      "sectionDescription": "在固定到 IPFS 之前审阅格式化后的版本。",
+      "sectionDescription": "上传到 Arweave 前检查已排版版本。",
       "ariaLabel": "版本预览",
       "coverAlt": "{title} 的封面",
       "coverPlaceholder": "封面图片",
@@ -487,8 +487,8 @@
       "labelingCopies": "请确认 MetaMask 提示以为每份副本编号…",
       "previewEdition": "预览版本",
       "encrypting": "正在加密…",
-      "pinningToIpfs": "正在固定到 IPFS…",
-      "uploadToIpfs": "上传到 IPFS"
+      "pinningToIpfs": "正在上传到 Arweave…",
+      "uploadToIpfs": "上传到 Arweave"
     },
     "success": {
       "registered": "作品已链上注册。交易：{txHash}"

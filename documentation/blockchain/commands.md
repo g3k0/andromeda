@@ -72,6 +72,10 @@ Nota: edition metadata ed envelope usano lo stesso permanent storage (`ar://` + 
 Operazioni Turbo/crediti/retry: [arweave-runbook.md](../ops/arweave-runbook.md).
 Migrazione legacy IPFS → Arweave: `pnpm --filter @andromeda/web migrate:ipfs-arweave`
 (vedi runbook § PR8; richiede `updateWorkMetadataURI` author-only).
+Reference reader offline (RPC + `ar://` + decrypt):
+`pnpm --filter @andromeda/web reference-reader`.
+Export indice continuità su Arweave:
+`pnpm --filter @andromeda/web export:continuity-index`.
 
 `NEXT_PUBLIC_CONTRACT_ADDRESS` serve solo **dopo** un deploy reale. Senza deploy,
 i test del chain reader funzionano ugualmente (fake in-memory / mock viem).
