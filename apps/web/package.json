@@ -19,7 +19,8 @@
     "sync:chain-events": "tsx ./scripts/sync-chain-events.ts",
     "smoke:arweave-turbo": "tsx ./scripts/arweave-turbo-smoke.ts",
     "migrate:ipfs-arweave": "tsx ./scripts/migrate-ipfs-to-arweave.ts",
-    "reference-reader": "tsx ./scripts/reference-reader.ts"
+    "reference-reader": "tsx ./scripts/reference-reader.ts",
+    "export:continuity-index": "tsx ./scripts/export-continuity-index.ts"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.42.0",
