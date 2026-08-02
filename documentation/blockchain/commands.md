@@ -269,11 +269,12 @@ L’indirizzo del contratto è **specifico per rete**: un deploy su Amoy non val
 
 ## Cosa non copre ancora questo documento
 
-Funzionalità pianificate ma non ancora esposte come comandi CLI (vedi piano Web3):
+Già documentati sopra (smoke / script npm): publish → Arweave + `registerWork(ar://…)`,
+migrate IPFS→Arweave, reference reader offline, export continuità.
 
-- publish autore → IPFS + `registerWork` (PR 6)
-- mint copia + envelope TBA (PR 7)
-- indexer eventi → MongoDB (PR 8)
-- webhook Alchemy Notify (PR 10)
+Funzionalità pianificate ma non ancora esposte come comandi CLI dedicati:
+
+- mint copia + envelope TBA come one-liner Hardhat (il flusso UI/API esiste)
+- webhook Alchemy Notify come script di setup
 
 Quando verranno aggiunti script o comandi npm dedicati, vanno documentati in questa pagina.
