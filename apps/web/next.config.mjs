@@ -39,8 +39,9 @@ const securityHeaders = [
 
 const nextConfig = {
   reactStrictMode: true,
-  // Keep native/node Turbo deps out of the Next bundler.
-  serverExternalPackages: ["@ardrive/turbo-sdk"],
+  // Arweave Turbo uploads use @dha-team/arbundles + fetch (not @ardrive/turbo-sdk),
+  // so we avoid pulling Solana/rpc-websockets into the serverless runtime.
+  serverExternalPackages: ["@dha-team/arbundles", "arweave"],
   images: {
     remotePatterns: [
       {

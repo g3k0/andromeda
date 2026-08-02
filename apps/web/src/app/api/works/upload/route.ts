@@ -1,5 +1,10 @@
+import { logServerError } from "@/lib/logging/server-logger";
 import { getPermanentStorage } from "@/lib/works/ipfs-server";
-import { workErrorResponse, jsonResponse } from "@/lib/works/api-utils";
+import {
+  workErrorResponse,
+  jsonResponse,
+} from "@/lib/works/api-utils";
+import { mapWorkErrorToStatus } from "@/lib/works/api-errors";
 import { toPublicWorkUploadDto } from "@/lib/works/public-dto";
 import { runWorkUploadMutation } from "@/lib/works/work-upload-mutations";
 import { assertWorkUploadIpRateLimit } from "@/lib/works/work-upload-rate-limit";
@@ -29,6 +34,9 @@ export async function POST(request: Request): Promise<Response> {
       201,
     );
   } catch (error) {
+    if (mapWorkErrorToStatus(error) >= 500) {
+      logServerError("works.upload", "failed", error);
+    }
     return workErrorResponse(error);
   }
 }
