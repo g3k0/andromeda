@@ -1,18 +1,28 @@
 # Piano: architettura Web3 (blockchain + IPFS)
 
+> **Addendum (storage target):** lo storage permanente di produzione è **Arweave**
+> (`ar://` via Turbo), non più Pinata/IPFS come path primario. Le sezioni storiche
+> sotto possono ancora parlare di IPFS/Pinata (cronologia PR 1–12); per il target
+> attuale vedi [`storage-indipendence.md`](./storage-indipendence.md),
+> [`ace-v1.md`](../ace-v1.md), [`arweave-runbook.md`](../ops/arweave-runbook.md)
+> e il [README](../../README.md). La lettura legacy `ipfs://` resta supportata in dual-read.
+
 Definizione dell’infrastruttura software che collega `apps/web` alla rete Polygon, al contratto
-`AndromedaWorks` e a IPFS. Il documento descrive **cosa costruire** e **come organizzarlo** nel
-monorepo, in coerenza con il flusso descritto nel [README](../../README.md) e con i principi di
-clean architecture già applicati al layer auth/DB.
+`AndromedaWorks` e allo storage permanente (oggi Arweave; storicamente IPFS). Il documento
+descrive **cosa costruire** e **come organizzarlo** nel monorepo, in coerenza con il flusso
+descritto nel [README](../../README.md) e con i principi di clean architecture già applicati
+al layer auth/DB.
 
 **Provider RPC scelto:** [Alchemy](https://www.alchemy.com/) (Polygon mainnet + Polygon Amoy).
 **Client library:** [viem](https://viem.sh/) (server) e [wagmi](https://wagmi.sh/) (browser).
-**Storage decentralizzato:** IPFS con pinning gestito (es. Pinata o web3.storage).
-**Accesso al testo:** paywall **tecnico** — metadata pubblico su IPFS, contenuto cifrato, envelope
+**Storage decentralizzato (target attuale):** Arweave con upload Turbo (`ar://`); IPFS/Pinata
+restano solo per opere legacy in lettura (e opt-in write fuori da Preview).
+**Accesso al testo:** paywall **tecnico** — metadata pubblico, contenuto cifrato, envelope
 per token tramite [ERC-6551](https://eips.ethereum.org/EIPS/eip-6551) (Token Bound Account).
 
-**Specifica ACE pubblica:** il formato di cifratura, il layout IPFS, il calcolo del TBA e il flusso
-di decrypt per client terzi sono documentati in [`ace-v1.md`](../ace-v1.md).
+**Specifica ACE pubblica:** il formato di cifratura, i content URI (`ar://` normativo),
+il calcolo del TBA e il flusso di decrypt per client terzi sono documentati in
+[`ace-v1.md`](../ace-v1.md).
 
 ---
 

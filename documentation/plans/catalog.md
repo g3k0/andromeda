@@ -1,5 +1,10 @@
 # Piano: pagina catalogo opere
 
+> **Addendum (storage):** i metadata ACE vivono su storage permanente **Arweave**
+> (`ar://`); eventuali URI `ipfs://` sono legacy in dual-read. Dove questo piano
+> dice ancora “fetch IPFS”, intende “fetch metadata ACE via gateway Arweave
+> (o gateway IPFS legacy)”. Target storage: [`storage-indipendence.md`](./storage-indipendence.md).
+
 Implementazione incrementale della **pagina catalogo** in `apps/web`: consultazione pubblica
 delle opere registrate on-chain e indicizzate in MongoDB, con **ricerca testuale**, **filtri**
 e **paginazione**. Ogni commit corrisponde a un’unità di lavoro reviewabile; i commit sono
@@ -22,8 +27,8 @@ ruoli (`reader`, `author`, `admin`) con o senza wallet connesso.
 | **Lista opere** | Griglia di card (riuso `WorkSummaryCard` / `WorkView`) con titolo, cover, autore, disponibilità. |
 | **Paginazione** | **20 opere per pagina** (default); dimensione configurabile via env. Navigazione pagine + indicatore “X–Y di Z”. |
 
-**Non obiettivo v1:** full-text search su testo dell’opera (contenuto cifrato su IPFS); filtri su
-prezzo numerico avanzato; raccomandazioni; wishlist.
+**Non obiettivo v1:** full-text search su testo dell’opera (contenuto cifrato su Arweave /
+legacy IPFS); filtri su prezzo numerico avanzato; raccomandazioni; wishlist.
 
 ---
 
@@ -34,20 +39,22 @@ prezzo numerico avanzato; raccomandazioni; wishlist.
 | Route | `/[locale]/works` | Invariata (nav `nav.catalog` → `/works`) |
 | Accesso | Pubblico (`pages:read`) | Invariato |
 | Dati | `listWorks()` → tutte le opere attive | Query paginata con filtri |
-| Metadata | Fetch IPFS **per ogni opera** in SSR (`work-metadata-loader.ts`) | Campi ricercabili **denormalizzati** su Mongo; IPFS solo per cover se assente in projection |
+| Metadata | Fetch metadata ACE via gateway Arweave (o legacy IPFS) **per ogni opera** in SSR (`work-metadata-loader.ts`) | Campi ricercabili **denormalizzati** su Mongo; gateway solo per cover se assente in projection |
 | API | `GET /api/works` → array completo | `GET /api/works?q=&author=&language=&…&page=&pageSize=` → `{ works, pagination }` |
 | UI | `WorksCatalog` statico, nessun filtro | Layout search + sidebar filtri + paginazione |
 | i18n | `catalog.*` base (titolo, empty, card) | + search, filtri, paginazione, errori |
 | Test | `catalog-service.test.ts`, `WorksCatalog.test.tsx` | Coverage ≥ **80%** su moduli toccati |
 
-### Vincolo architetturale (metadata IPFS)
+### Vincolo architetturale (metadata ACE / storage permanente)
 
-Titolo, lingua e impronta edizione vivono oggi nel **metadata ACE su IPFS**, non nel documento
-`works`. Per filtri e ricerca scalabili senza N fetch IPFS:
+Titolo, lingua e impronta edizione vivono nel **metadata ACE su Arweave** (`ar://`;
+legacy `ipfs://` ancora possibile), non solo nel documento `works`. Per filtri e ricerca
+scalabili senza N fetch gateway:
 
 1. **Denormalizzare** al momento dell’upsert indexer (o al completamento publish) i campi
    necessari sul documento Mongo `works`.
-2. Trattare Mongo come **proiezione di consultazione**; la fonte di verità resta chain + IPFS.
+2. Trattare Mongo come **proiezione di consultazione**; la fonte di verità resta chain +
+   storage permanente (Arweave, o IPFS legacy in dual-read).
 
 ---
 
@@ -58,7 +65,7 @@ Titolo, lingua e impronta edizione vivono oggi nel **metadata ACE su IPFS**, non
 | Paginazione default | 20 | Specifica utente |
 | Page size configurabile | `CATALOG_PAGE_SIZE` (server) + validazione max | Evita abuse (`pageSize=100000`) |
 | Ordinamento default | `createdAt` desc (più recenti prima) | UX catalogo tipica; oggi è `asc` — **breaking UX intenzionale** |
-| Ricerca | Titolo + nome autore (denormalizzato) | Campi indicizzabili; no scan IPFS |
+| Ricerca | Titolo + nome autore (denormalizzato) | Campi indicizzabili; no scan gateway per query |
 | Filtro autore | Indirizzo wallet normalizzato **o** select da autori con opere | Autocomplete v2; v1: input address + validazione Zod |
 | Lingua | Codice ISO da `work_imprint.language` | Già in schema ACE |
 | Disponibilità | `openEdition` / `soldOut` / `hasCopiesLeft` | Derivato da `maxCopies`, `minted` (logica esistente in `public-dto.ts`) |
@@ -128,7 +135,8 @@ Aggiungere al documento Mongoose (`lib/db/models/work.model.ts`) con indici dedi
 | Series | `{ active: 1, seriesName: 1 }` | Filtro serie (sparse) |
 
 **Migrazione:** script `scripts/backfill-work-catalog-projection.ts` che, per ogni work attivo,
-scarica metadata IPFS una volta e popola i campi (eseguibile manualmente post-deploy).
+scarica metadata ACE via gateway (Arweave / legacy IPFS) una volta e popola i campi
+(eseguibile manualmente post-deploy).
 
 ### Nessuna nuova collection obbligatoria
 
@@ -414,9 +422,9 @@ Eseguire `pnpm web:test:coverage` a fine ogni PR.
 
 `feat(web): populate catalog projection fields on work upsert`
 
-- `chain-indexer.ts` / handler register: estrae campi da metadata ACE (fetch IPFS server-side una
-  volta all’index) + lookup `authors.displayName`.
-- Test indexer con metadata fixture (no IPFS reale).
+- `chain-indexer.ts` / handler register: estrae campi da metadata ACE (fetch gateway
+  server-side una volta all’index) + lookup `authors.displayName`.
+- Test indexer con metadata fixture (no gateway reale).
 
 #### Commit 4 — Script backfill opere esistenti
 
