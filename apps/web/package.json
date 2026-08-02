@@ -18,7 +18,8 @@
     "sync:contract-abi": "node ./scripts/sync-andromeda-works-abi.mjs",
     "sync:chain-events": "tsx ./scripts/sync-chain-events.ts",
     "smoke:arweave-turbo": "tsx ./scripts/arweave-turbo-smoke.ts",
-    "migrate:ipfs-arweave": "tsx ./scripts/migrate-ipfs-to-arweave.ts"
+    "migrate:ipfs-arweave": "tsx ./scripts/migrate-ipfs-to-arweave.ts",
+    "reference-reader": "tsx ./scripts/reference-reader.ts"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.42.0",
